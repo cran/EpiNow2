@@ -4,7 +4,12 @@
 \alias{report_plots}
 \title{Report plots}
 \usage{
-report_plots(summarised_estimates, reported, target_folder, max_plot = 10)
+report_plots(
+  summarised_estimates,
+  reported,
+  target_folder = NULL,
+  max_plot = 10
+)
 }
 \arguments{
 \item{summarised_estimates}{A data.table of summarised estimates containing the following variables:
@@ -26,41 +31,23 @@ Report plots
 }
 \examples{
 \donttest{
-## Define example cases
+# define example cases
 cases <- EpiNow2::example_confirmed[1:40]
 
- 
-## Set up example generation time
-generation_time <- list(mean = EpiNow2::covid_generation_times[1, ]$mean,
-                        mean_sd = EpiNow2::covid_generation_times[1, ]$mean_sd,
-                        sd = EpiNow2::covid_generation_times[1, ]$sd,
-                        sd_sd = EpiNow2::covid_generation_times[1, ]$sd_sd,
-                        max = 30)
-## Set                   
-incubation_period <- list(mean = EpiNow2::covid_incubation_period[1, ]$mean,
-                          mean_sd = EpiNow2::covid_incubation_period[1, ]$mean_sd,
-                          sd = EpiNow2::covid_incubation_period[1, ]$sd,
-                          sd_sd = EpiNow2::covid_incubation_period[1, ]$sd_sd,
-                          max = 30)
-                   
-reporting_delay <- list(mean = log(5),
-                        mean_sd = log(2),
-                        sd = log(2),
-                        sd_sd = log(1.5),
-                        max = 30)
+# set up example delays
+generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
+incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
                         
-## Run model
-out <- EpiNow2::estimate_infections(cases, family = "negbin",
+# run model
+out <- EpiNow2::estimate_infections(cases, samples = 100, 
                                     generation_time = generation_time,
                                     delays = list(incubation_period, reporting_delay),
-                                    samples = 1000, warmup = 200, cores = 4, chains = 4,
-                                    horizon = 7, estimate_rt = TRUE, verbose = TRUE)
+                                    stan_args = list(warmup = 100, cores = 4))
                             
-                     
-## Plot infections
+# plot infections
 plots <- report_plots(summarised_estimates = out$summarised,
                       reported = cases)
-                      
 plots
 }
 }

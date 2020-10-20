@@ -10,6 +10,7 @@ bootstrapped_dist_fit(
   samples = 2000,
   bootstraps = 10,
   bootstrap_samples = 250,
+  max_value,
   verbose = FALSE
 )
 }
@@ -27,6 +28,9 @@ of the delay distribution to take.}
 \item{bootstrap_samples}{Numeric, defaults to 100. The number of samples to take in each bootstrap.
 When the sample size of the supplied delay distribution is less than 100 this is used instead.}
 
+\item{max_value}{Numeric, defaults to  the maximum value in the observed data. Maximum delay to
+allow (added to output but does impact fitting).}
+
 \item{verbose}{Logical, defaults to \code{FALSE}. Should progress messages be printed}
 }
 \value{
@@ -36,16 +40,11 @@ A list summarising the bootstrapped distribution
 Fit a Subsampled Bootstrap to Integer Values and Summarise Distribution Parameters
 }
 \examples{
-
 \donttest{
 # lognormal
 delays <- rlnorm(500, log(5), 1)
-
 out <- bootstrapped_dist_fit(delays, samples = 1000, bootstraps = 10, 
                              dist = "lognormal")
-
-## Inspect
 out
-
 }
 }

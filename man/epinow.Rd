@@ -6,44 +6,29 @@
 \usage{
 epinow(
   reported_cases,
-  family = "negbin",
-  generation_time,
-  delays,
-  gp = list(basis_prop = 0.3, boundary_scale = 2, lengthscale_mean = 0, lengthscale_sd
-    = 2),
-  rt_prior = list(mean = 1, sd = 1),
-  model,
-  prior_smoothing_window = 7,
-  cores = 1,
-  chains = 4,
   samples = 1000,
-  warmup = 200,
-  adapt_delta = 0.99,
-  max_treedepth = 15,
-  estimate_rt = TRUE,
-  estimate_week_eff = TRUE,
-  estimate_breakpoints = FALSE,
-  burn_in = 0,
-  stationary = FALSE,
-  fixed = FALSE,
-  fixed_future_rt = FALSE,
-  return_fit = FALSE,
-  forecast_model,
   horizon = 7,
-  ensemble_type = "mean",
-  return_estimates = TRUE,
-  target_folder,
+  generation_time,
+  delays = list(),
+  CrIs = c(0.2, 0.5, 0.9),
+  return_output = FALSE,
+  output = c("samples", "plots", "latest"),
+  target_folder = NULL,
   target_date,
-  verbose = TRUE,
-  debug = FALSE
+  forecast_args = NULL,
+  logs = tempdir(),
+  id = "epinow",
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
 \item{reported_cases}{A data frame of confirmed cases (confirm) by date (date). confirm must be integer and date must be
 in date format.}
 
-\item{family}{A character string indicating the reporting model to use. Defaults to negative
-binomial ("negbin") with poisson ("poisson") also supported.}
+\item{samples}{Numeric, defaults to 1000. Number of samples post warmup.}
+
+\item{horizon}{Numeric, defaults to 7. Number of days into the future to forecast.}
 
 \item{generation_time}{A list containing the mean, standard deviation of the mean (mean_sd),
 standard deviation (sd), standard deviation of the standard deviation and the maximum allowed value for the
@@ -53,140 +38,86 @@ generation time (assuming a gamma distribution).}
 Each list entry must also be a list containing the mean, standard deviation of the mean (mean_sd),
 standard deviation (sd), standard deviation of the standard deviation and the maximum allowed value for the
 that delay (assuming a lognormal distribution with all parameters excepting the max allowed value
-on the log scale).}
+on the log scale). To use no delays set this to \code{list()}.}
 
-\item{gp}{List controlling the Gaussian process approximation. Must contain
-the \code{basis_prop} (number of basis functions based on scaling the time points) which defaults to 0.3 and must be
-between 0 and 1 (increasing this increases the accuracy of the approximation and the cost of additional compute.
-Must also contain the \code{boundary_scale} (multiplied by half the range of the input time series). Increasing this
-increases the accuracy of the approximation at the cost of additional compute.
-See here: https://arxiv.org/abs/2004.11408 for more information on setting these parameters.
-Can optionally also contain the  \code{lengthscale_mean} and \code{lengthscale_sd}. If these are specified this will override
-the defaults of 0 and 2 (normal distributed truncated at zero).}
+\item{CrIs}{Numeric vector of credible intervals to calculate.}
 
-\item{rt_prior}{A list contain the mean and standard deviation (sd) of the gamma distributed prior for
-Rt. By default this is assumed to be mean 1 with a standard deviation of 1.}
+\item{return_output}{Logical, defaults to FALSE. Should output be returned, this automatically updates to TRUE
+if no directory for saving is specified.}
 
-\item{model}{A compiled stan model. By default uses the internal package model.}
-
-\item{prior_smoothing_window}{Numeric defaults to 7. The number of days over which to take a rolling average
-for the prior based on reported cases.}
-
-\item{cores}{Numeric, defaults to 2. The number of cores to use when fitting the stan model.}
-
-\item{chains}{Numeric, defaults to 2. The number of MCMC chains to use.}
-
-\item{samples}{Numeric, defaults to 1000. Number of samples post warmup.}
-
-\item{warmup}{Numeric, defaults to 200. Number of iteration of warmup to use.}
-
-\item{adapt_delta}{Numeric, defaults to 0.99. See ?rstan::sampling.}
-
-\item{max_treedepth}{Numeric, defaults to 15. See ?rstan::sampling.}
-
-\item{estimate_rt}{Logical, defaults TRUE. Should Rt be estimated when imputing infections.}
-
-\item{estimate_week_eff}{Logical, defaults TRUE. Should weekly reporting effects be estimated.}
-
-\item{estimate_breakpoints}{Logical, defaults to FALSE. Should breakpoints in Rt be estimated. If true then \code{reported_cases}
-must contain a \code{breakpoint} variable that is 1 on the dates with breakpoints and otherwise 0. Breakpoints are fit jointly with
-a global non-parametric effect and so represent a conservative estimate of breakpoint changes.}
-
-\item{burn_in}{Numeric, defaults to 0. The number of initial estimates to discard. This argument may be used to reduce
-spurious findings when running \code{estimate_infections} on a partial timeseries (as the earliest estimates will not be informed by
-all cases that occurred only those supplied to \code{estimate_infections}). The combined delays used will inform the appropriate length
-of this burn in but 7 days is likely a sensible starting point.}
-
-\item{stationary}{Logical, defaults to FALSE. Should Rt be estimated with a global mean. When estimating Rt
-this should substantially improve run times but will revert to the global average for real time and forecasted estimates.
-This setting is most appropriate when estimating historic Rt or when combined with breakpoints.}
-
-\item{fixed}{Logical, defaults to FALSE. If TRUE then a Gaussian process is not used and Rt is assumed to be constant over time
-(apart from any manually included breakpoints). If \code{estimate_rt} is FALSE then this reduces the backcalculation to a simple mean shift.
-This option can be used to produce a null model estimate, to produce a single Rt estimate for a short timeseries or as part of a wider
-analysis on the impact of interventions.}
-
-\item{fixed_future_rt}{Logical, defaults to FALSE. IF TRUE then the estimated Rt from the last time point with data is used for all
-future time points without data.}
-
-\item{return_fit}{Logical, defaults to FALSE. Should the fitted stan model be returned.}
-
-\item{forecast_model}{An uninitialised forecast model function to be passed to \code{EpiSoon::forecast_rt}. Used
-for forecasting future Rt and case co An example of the required structure is: \code{function(ss, y){bsts::AddSemilocalLinearTrend(ss, y = y)}}.}
-
-\item{horizon}{Numeric, defaults to 7. Number of days into the future to forecast.}
-
-\item{ensemble_type}{Character string indicating the type of ensemble to use. By default this is
-an unweighted ensemble ("mean") with no other types currently supported.}
-
-\item{return_estimates}{Logical, defaults to TRUE. Should estimates be returned.}
+\item{output}{A character vector of optional output to return. Supported options are samples ("samples"),
+plots ("plots"), the run time ("timing"), copying the dated folder into a latest folder (if \code{target_folder} is not null
+\itemize{
+\item set using "latest"), and the stan fit ("fit"). The default is to return samples and plots alongside summarised estimates
+and summary statistics. This argument uses partial matching so for example passing "sam" will lead to samples
+being reported.
+}}
 
 \item{target_folder}{Character string specifying where to save results (will create if not present).}
 
 \item{target_date}{Date, defaults to maximum found in the data if not specified.}
 
-\item{verbose}{Logical, defaults to \code{TRUE}. Should verbose progress messages be printed.}
+\item{forecast_args}{A list of arguments to pass to \code{forecast_infections}. Unless at a minimum a \code{forecast_model} is passed
+tin his list then \code{forecast_infections} will be bypassed.}
 
-\item{debug}{Logical, defaults to \code{FALSE}. Enables debug model in which additional diagnostics are available}
+\item{logs}{Character path indicating the target folder in which to store log
+information. Defaults to the temporary directory if not specified. Default logging
+can be disabled if \code{logs} is set to NULL. If specifying a custom logging setup then
+the code for \code{setup_default_logging} and the \code{setup_logging} function are a sensible
+place to start.}
+
+\item{id}{A character string used to assign logging information on error. Used by \code{regional_epinow}
+to assign \code{epinow} errors to regions.}
+
+\item{verbose}{Logical, defaults to \code{FALSE}. Should verbose debug progress messages be printed. Corresponds to the "DEBUG" level from
+\code{futile.logger}. See \code{setup_logging} for more detailed logging options.}
+
+\item{...}{Additional arguments passed to \code{estimate_infections}. See that functions documentation for options.}
 }
 \value{
 A list of output from estimate_infections, forecast_infections,  report_cases, and report_summary.
 }
 \description{
-Estimate Rt and cases by date of infection, forecast into the future, transform to date
-of report and then save summary measures and plots.
+This function wraps the functionality of \code{estimate_infections} and \code{forecast_infections} in order
+to estimate Rt and cases by date of infection, forecast into these infections into the future. It also contains
+additional functionality to convert forecasts to date of report and produce summary output useful for reporting
+results and interpreting them.
 }
 \examples{
 \donttest{
-## Construct example distributions
-generation_time <- list(mean = EpiNow2::covid_generation_times[1, ]$mean,
-                        mean_sd = EpiNow2::covid_generation_times[1, ]$mean_sd,
-                        sd = EpiNow2::covid_generation_times[1, ]$sd,
-                        sd_sd = EpiNow2::covid_generation_times[1, ]$sd_sd,
-                        max = 30)
-                          
-incubation_period <- list(mean = EpiNow2::covid_incubation_period[1, ]$mean,
-                          mean_sd = EpiNow2::covid_incubation_period[1, ]$mean_sd,
-                          sd = EpiNow2::covid_incubation_period[1, ]$sd,
-                          sd_sd = EpiNow2::covid_incubation_period[1, ]$sd_sd,
-                          max = 30)
-                   
-reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1))
-## Set max allowed delay to 60 days to truncate computation
-reporting_delay$max <- 60
+# construct example distributions
+generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
+incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+reporting_delay <- bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
 
-## Example case data
+# example case data
 reported_cases <- EpiNow2::example_confirmed[1:40] 
 
-## Report Rt along with forecasts
+# estimate Rt and nowcast/forecast cases by date of infection
 out <- epinow(reported_cases = reported_cases, generation_time = generation_time,
               delays = list(incubation_period, reporting_delay),
-              rt_prior = list(mean = 1, sd = 1),
-              samples = 1000, warmup = 200, cores = ifelse(interactive(), 4, 1), chains = 4,
-              verbose = TRUE, return_fit = TRUE)
-
+              stan_args = list(cores = ifelse(interactive(), 4, 1),
+              control = list(adapt_delta = 0.95)))
 out
 
-## For optional forecasting
+# optional forecasting using EpiSoon plug-in
 if(requireNamespace("EpiSoon")){
    if(requireNamespace("forecastHybrid")){
-
-   ## Report Rt along with forecasts
-   out <- epinow(reported_cases = cases, generation_time = generation_time,
+   # report Rt along with forecasts
+   out <- epinow(reported_cases = reported_cases, samples = 200,
+                 generation_time = generation_time, 
                  delays = list(incubation_period, reporting_delay),
-                 rt_prior = list(mean = 1, sd = 1),
-                 forecast_model = function(y, ...){
-                   EpiSoon::forecastHybrid_model(
-                     y = y[max(1, length(y) - 21):length(y)],
-                     model_params = list(models = "aefz", weights = "equal"),
-                     forecast_params = list(PI.combination = "mean"), ...)},
-                 samples = 1000, warmup = 500, cores = ifelse(interactive(), 4, 1), chains = 4,
-                 verbose = TRUE, return_fit = TRUE)
-
-out
+                 forecast_args = list(
+                     forecast_model = function(y, ...){
+                     EpiSoon::forecastHybrid_model(
+                          y = y[max(1, length(y) - 21):length(y)],
+                          model_params = list(models = "aefz", weights = "equal"),
+                          forecast_params = list(PI.combination = "mean"), ...)}
+                          ),
+                 stan_args = list(warmup = 200, cores = ifelse(interactive(), 4, 1)))
+    out
    }
 }
-
 }
 
 }

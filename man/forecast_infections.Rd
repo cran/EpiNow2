@@ -12,6 +12,7 @@ forecast_infections(
   gt_max = 30,
   ensemble_type = "mean",
   forecast_model,
+  CrIs = c(0.2, 0.5, 0.9),
   horizon = 14,
   samples = 1000
 )
@@ -33,6 +34,8 @@ an unweighted ensemble ("mean") with no other types currently supported.}
 \item{forecast_model}{An uninitialised forecast model function to be passed to \code{EpiSoon::forecast_rt}. Used
 for forecasting future Rt and case co An example of the required structure is: \code{function(ss, y){bsts::AddSemilocalLinearTrend(ss, y = y)}}.}
 
+\item{CrIs}{Numeric vector of credible intervals to calculate.}
+
 \item{horizon}{Numeric, defaults to 14. The horizon over which to forecast Rts and cases.}
 
 \item{samples}{Numeric, the number of forecast samples to take.}
@@ -48,42 +51,23 @@ available \href{https://epiforecasts.io/EpiSoon/}{here}.
 }
 \examples{
 \donttest{
-
 if(requireNamespace("EpiSoon")){
    if(requireNamespace("forecastHybrid")){
-
-## Example case data
+# example case data
 reported_cases <- EpiNow2::example_confirmed[1:40]
  
-generation_time <- list(mean = EpiNow2::covid_generation_times[1, ]$mean,
-                        mean_sd = EpiNow2::covid_generation_times[1, ]$mean_sd,
-                        sd = EpiNow2::covid_generation_times[1, ]$sd,
-                        sd_sd = EpiNow2::covid_generation_times[1, ]$sd_sd,
-                        max = 30)
-                          
-incubation_period <- list(mean = EpiNow2::covid_incubation_period[1, ]$mean,
-                          mean_sd = EpiNow2::covid_incubation_period[1, ]$mean_sd,
-                          sd = EpiNow2::covid_incubation_period[1, ]$sd,
-                          sd_sd = EpiNow2::covid_incubation_period[1, ]$sd_sd,
-                          max = 30)
-                   
-reporting_delay <- list(mean = log(5),
-                        mean_sd = log(2),
-                        sd = log(2),
-                        sd_sd = log(1.5),
-                        max = 30)
-                        
-## Estimate Rt and infections from data
-out <- estimate_infections(reported_cases, family = "negbin",
-                           generation_time = generation_time,
-                           delays = list(incubation_period, reporting_delay),
-                           rt_prior = list(mean = 1, sd = 1),
-                           samples = 1000, warmup = 500,
-                           cores = ifelse(interactive(), 4, 1), chains = 4,
-                           estimate_rt = TRUE,
-                           verbose = FALSE, return_fit = TRUE)
+generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
+incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 15)
 
-## Forecast Rt and infections from estimates
+# estimate Rt and infections from data
+out <- estimate_infections(reported_cases, generation_time = generation_time,
+                           delays = list(incubation_period, reporting_delay),
+                           gp = list(), samples = 100,
+                           stan_args = list(cores = ifelse(interactive(), 4, 1), 
+                                            warmup = 100, chains = 4))
+
+# forecast Rt and infections from estimates
 forecast <- forecast_infections(
     infections = out$summarised[variable == "infections"],
     rts = out$summarised[variable == "R"],

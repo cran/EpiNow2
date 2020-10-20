@@ -4,7 +4,13 @@
 \alias{get_regional_results}
 \title{Get Combined Regional Results}
 \usage{
-get_regional_results(regional_output, results_dir, date, forecast = FALSE)
+get_regional_results(
+  regional_output,
+  results_dir,
+  date,
+  samples = TRUE,
+  forecast = FALSE
+)
 }
 \arguments{
 \item{regional_output}{A list of output as produced by \code{regional_epinow} and stored in the
@@ -16,6 +22,8 @@ results to extract.}
 \item{date}{A Character string (in the format "yyyy-mm-dd") indicating the date to extract
 data for. Defaults to "latest" which finds the latest results available.}
 
+\item{samples}{Logical, defaults to \code{TRUE}. Should samples be returned.}
+
 \item{forecast}{Logical, defaults to \code{FALSE}. Should forecast results be returned.}
 }
 \value{
@@ -25,45 +33,31 @@ A list of estimates, forecasts and estimated cases by date of report.
 Get Combined Regional Results
 }
 \examples{
-
-
 \donttest{
-# Construct example distributions
-generation_time <- list(mean = EpiNow2::covid_generation_times[1, ]$mean,
-                        mean_sd = EpiNow2::covid_generation_times[1, ]$mean_sd,
-                        sd = EpiNow2::covid_generation_times[1, ]$sd,
-                        sd_sd = EpiNow2::covid_generation_times[1, ]$sd_sd,
-                        max = 30)
-                          
-incubation_period <- list(mean = EpiNow2::covid_incubation_period[1, ]$mean,
-                          mean_sd = EpiNow2::covid_incubation_period[1, ]$mean_sd,
-                          sd = EpiNow2::covid_incubation_period[1, ]$sd,
-                          sd_sd = EpiNow2::covid_incubation_period[1, ]$sd_sd,
-                          max = 30)
-                   
-reporting_delay <- list(mean = log(10),
-                        mean_sd = 0.8,
-                        sd = log(2),
-                        sd_sd = 0.1,
-                        max = 30)
-                        
-# Uses example case vector from EpiSoon
-cases <- EpiNow2::example_confirmed[1:30]
+# construct example distributions
+generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
+incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
 
+# example case vector from EpiSoon
+cases <- EpiNow2::example_confirmed[1:30]
 cases <- data.table::rbindlist(list(
   data.table::copy(cases)[, region := "testland"],
   cases[, region := "realland"]))
   
-# Run basic nowcasting pipeline
+# run multiregion estimates
 regional_out <- regional_epinow(reported_cases = cases,
+                                samples = 100,
                                 generation_time = generation_time,
-                                incubation_period = incubation_period,
-                                reporting_delay = reporting_delay,
-                                samples = 2000, warmup = 200, cores = ifelse(interactive(), 4, 1),
-                                adapt_delta = 0.95, chains = 4, verbose = TRUE,
-                                summary = FALSE)
-                                
-get_regional_results(regional_out$regional, forecast = TRUE)
+                                delays = list(incubation_period, reporting_delay),
+                                stan_args = list(warmup = 100,
+                                                 cores = ifelse(interactive(), 4, 1)),
+                                output = c("regions"))
 
+summary_only <- get_regional_results(regional_out$regional, forecast = FALSE, samples = FALSE)
+names(summary_only)
+
+all <- get_regional_results(regional_out$regional, forecast = TRUE)
+names(all)
 }
 }
