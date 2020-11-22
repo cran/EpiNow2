@@ -18,5 +18,6 @@ a date}
 A data frame containing the parameter name, date, sample id and sample value
 }
 \description{
-Extract Samples for a Parameter from a Stan model
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+Extracts a single from a list of \code{stan} output and returns it as a \code{data.table}.
 }

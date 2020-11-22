@@ -1,6 +1,7 @@
 #' Clean Nowcasts for a Supplied Date
 #'
-#' @description This function removes nowcasts in the format produced by `EpiNow2` from a target
+#' @description `r lifecycle::badge("stable")`
+#' This function removes nowcasts in the format produced by `EpiNow2` from a target
 #' directory for the date supplied.
 #' @param date Date object. Defaults to today's date
 #' @param nowcast_dir Character string giving the filepath to the nowcast results directory. Defaults 
@@ -26,14 +27,13 @@ clean_nowcasts <- function(date = NULL, nowcast_dir = ".") {
                            )
                          })
                 }
-                
               })
-  
-  
 }
 
 #' Format Credible Intervals
 #' 
+#' @description `r lifecycle::badge("stable")`
+#' Combines a list of values into formatted credible intervals.
 #' @param value List of value to map into a string. Requires,
 #'  `point`, `lower`, and `upper.`
 #' @param CrI Numeric, credible interval to report. Defaults to 90
@@ -56,7 +56,8 @@ make_conf <- function(value, CrI = 90, reverse = FALSE) {
 
 #' Categorise the Probability of Change for Rt
 #'
-#' @description Categorises a numeric variable into "Increasing" (< 0.05), 
+#' @description `r lifecycle::badge("stable")`
+#' Categorises a numeric variable into "Increasing" (< 0.05), 
 #' "Likely increasing" (<0.2), "Unsure" (< 0.8), "Likely decreasing" (< 0.95), "Decreasing" (<= 1)
 #' @param var Numeric variable to be categorised
 #'
@@ -80,8 +81,10 @@ map_prob_change <- function(var) {
 
 #' Convert Growth Rates to Reproduction numbers.
 #'
-#' @description See [here](https://www.medrxiv.org/content/10.1101/2020.01.30.20019877v3.full.pdf) 
-#' for justification.
+#' @description `r lifecycle::badge("questioning")`
+#' See [here](https://www.medrxiv.org/content/10.1101/2020.01.30.20019877v3.full.pdf) 
+#' for justification. Now handled internally by stan so may be removed in future updates if 
+#' no user demand.
 #' @param r Numeric, rate of growth estimates
 #' @param gamma_mean Numeric, mean of the gamma distribution
 #' @param gamma_sd Numeric, standard deviation of the gamma distribution
@@ -97,8 +100,10 @@ growth_to_R <- function(r, gamma_mean, gamma_sd) {
   
 #' Convert Reproduction Numbers to Growth Rates
 #'
-#' @description See [here](https://www.medrxiv.org/content/10.1101/2020.01.30.20019877v3.full.pdf) 
-#' for justification.
+#' @description `r lifecycle::badge("questioning")`
+#' See [here](https://www.medrxiv.org/content/10.1101/2020.01.30.20019877v3.full.pdf) 
+#' for justification. Now handled internally by stan so may be removed in future updates if 
+#' no user demand.
 #' @param R Numeric, Reproduction number estimates
 #' @inheritParams growth_to_R
 #' @return Numeric vector of reproduction number estimates
@@ -114,6 +119,8 @@ R_to_growth <- function(R, gamma_mean, gamma_sd) {
 
 #' Allocate Delays into Required Stan Format
 #'
+#' @description `r lifecycle::badge("stable")`
+#' Allocate delays for stan. Used in `delay_opts`.
 #' @param delay_var List of numeric delays
 #' @param no_delays Numeric, number of delays
 #' @return A numeric array
@@ -121,51 +128,57 @@ allocate_delays <- function(delay_var, no_delays) {
   if (no_delays > 0) {
     out <- unlist(delay_var)
   }else{
-    out <- 1
+    out <- numeric(0)
   }
   return(array(out))
 }
 
-
-#' Timeout Error
-#' @param fit A stan fit object
-#' @return Nothing
-#' @importFrom futile.logger flog.error
-stop_timeout <- function(fit) {
-  if (is.null(fit)) {
-    futile.logger::flog.error("fitting timed out - try increasing max_execution_time",
-                              name = "Epinow2.epinow.estimate_infections.fit")
-    stop("model fitting timed out - try increasing max_execution_time")
-  }
-  return(invisible(NULL))
-}
-
-
-#' Match Input Output Arguments with Supported Options
+#' Allocate Empty Parameters to a List
 #'
+#' @description `r lifecycle::badge("stable")`
+#' Allocate missing parameters to be empty two dimensional arrays. Used 
+#' internally by `simulate_infections.`
+#' @param data A list of parameters
+#' @param params A character vector of parameters to allocate to
+#' empty if missing.
+#' @return A list of parameters some allocated to be empty
+#' @examples
+#' data <- list(x = 1, y = 2, z = 30)
+#' EpiNow2:::allocate_empty(data, params = c("x", "t"))
+allocate_empty <- function(data, params) {
+  for (param in params) {
+    if (!exists(param, data)) {
+      data[[param]] <- array(0, dim = c(0, 0))
+    }
+  }
+  return(data)
+}
+#' Match User Supplied Arguments with Supported Options
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Match user supplied arguments with supported options and return a logical list for 
+#' internal usage
 #' @param input_args A character vector of input arguments (can be partial).
 #' @param supported_args A character vector of supported output arguments.
 #' @param logger A character vector indicating the logger to target messages at. Defaults 
 #' to no logging.
 #' @param level Character string defaulting to "info". Logging level see documentation 
 #' of futile.logger for details. Supported options are "info" and "debug"
-#'
 #' @return A logical vector of named output arguments
-#' @export
 #' @importFrom  futile.logger flog.info flog.debug
 #' @examples
 #' # select nothing
-#' match_output_arguments(supported_args = c("fit", "plots", "samples"))
+#' EpiNow2:::match_output_arguments(supported_args = c("fit", "plots", "samples"))
 #' 
 #' # select just plots
-#' match_output_arguments("plots", supported_args = c("fit", "plots", "samples"))
+#' EpiNow2:::match_output_arguments("plots", supported_args = c("fit", "plots", "samples"))
 #' 
 #' # select plots and samples
-#' match_output_arguments(c("plots", "samples"),
+#' EpiNow2:::match_output_arguments(c("plots", "samples"),
 #'                        supported_args = c("fit", "plots", "samples"))
 #' 
 #' # lazily select arguments
-#' match_output_arguments("p",
+#' EpiNow2:::match_output_arguments("p",
 #'                        supported_args = c("fit", "plots", "samples"))
 match_output_arguments <- function(input_args = c(),
                                    supported_args =  c(),
@@ -204,6 +217,97 @@ match_output_arguments <- function(input_args = c(),
   return(output_args)
 }
 
+
+#' Expose internal package stan functions in R
+#'
+#' @description `r lifecycle::badge("stable")`
+#' his function exposes internal stan functions in R from a user
+#' supplied list of target files. Allows for testing of stan functions in R and potentially 
+#' user use in R code.
+#' @param files A character vector indicating the target files
+#' @param target_dir A character string indicating the target directory for the file
+#' @param ... Additional arguments passed to `rstan::expose_stan_functions`.
+#' @return NULL
+#' @export
+#' @importFrom rstan expose_stan_functions stanc
+#' @importFrom purrr map_chr
+#' @examples
+#' \donttest{
+#' expose_stan_fns("rt.stan", target_dir = system.file("stan/functions", package = "EpiNow2"))
+#' 
+#' # test by updating Rt
+#' update_Rt(rep(1, 10), log(1.2), rep(0.1, 9), rep(10, 0), numeric(0), 0)
+#' }
+expose_stan_fns <- function(files, target_dir, ...) {
+  functions <- paste0("\n functions{ \n",
+                      paste(purrr::map_chr(files, 
+                                           ~ paste(readLines(file.path(target_dir, .)), collapse = "\n")),
+                            collapse = "\n"), 
+                      "\n }")
+  rstan::expose_stan_functions(rstan::stanc(model_code = functions), ...)
+  return(invisible(NULL))
+}
+
+
+
+#' Convert mean and sd to log mean for a log normal distribution
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Convert from mean and standard deviation to the log mean of the 
+#' lognormal distribution. Useful for defining distributions supported by 
+#' `estimate_infections`, `epinow`, and `regional_epinow`.
+#' @param mean Numeric, mean of a distribution
+#' @param sd Numeric, standard deviation of a distribution
+#'
+#' @return The log mean of a lognormal distribution
+#' @export
+#'
+#' @examples
+#' 
+#' convert_to_logmean(2, 1)
+convert_to_logmean <- function(mean, sd){
+  log(mean^2 / sqrt(sd^2 + mean^2))
+}
+
+#' Convert mean and sd to log standard deviation for a log normal distribution
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Convert from mean and standard deviation to the log standard deviation of the 
+#' lognormal distribution. Useful for defining distributions supported by 
+#' `estimate_infections`, `epinow`, and `regional_epinow`.
+#' @param mean Numeric, mean of a distribution
+#' @param sd Numeric, standard deviation of a distribution
+#'
+#' @return The log standard deviation of a lognormal distribution
+#' @export
+#'
+#' @examples
+#' 
+#' convert_to_logsd(2, 1)
+convert_to_logsd <- function(mean, sd) {
+  sqrt(log(1 + (sd^2 / mean^2)))
+}
+
+
+#' Update a List
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Used to handle updating settings in a list. For example when making
+#' changes to `opts_list` output.
+#' @param defaults A list of default settings
+#' @param optional A list of optional settings to override defaults
+#' @return A list
+#' @export
+update_list <- function(defaults = list(), optional = list()) {
+  if (length(optional) != 0) {
+    defaults <- defaults[setdiff(names(defaults), names(optional))]
+    updated <- c(defaults, optional)
+  }else{
+    updated <- defaults
+  }
+  return(updated)
+}
+
 #' @importFrom stats glm median na.omit pexp pgamma plnorm quasipoisson rexp rgamma rlnorm rnorm rpois runif sd var
 globalVariables(
   c("bottom", "cases", "confidence", "confirm", "country_code", "crps", 
@@ -222,5 +326,6 @@ globalVariables(
     "New confirmed cases by infection date", "Data", "R", "reference",
     ".SD", "day_of_week", "forecast_type", "measure" ,"numeric_estimate", 
     "point", "strat", "estimate", "breakpoint", "variable", "value.V1", "central_lower", "central_upper",
-    "mean_sd", "sd_sd", "average_7",  "..lowers", "..upper_CrI", "..uppers"))
+    "mean_sd", "sd_sd", "average_7",  "..lowers", "..upper_CrI", "..uppers", "timing",
+    "dataset", "last_confirm", "report_date"))
 

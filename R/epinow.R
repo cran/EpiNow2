@@ -1,77 +1,75 @@
 #' Real-time Rt Estimation, Forecasting and Reporting
 #'
-#' @description This function wraps the functionality of `estimate_infections` and `forecast_infections` in order
+#' @description `r lifecycle::badge("maturing")`
+#' This function wraps the functionality of `estimate_infections()` and `forecast_infections()` in order
 #' to estimate Rt and cases by date of infection, forecast into these infections into the future. It also contains 
 #' additional functionality to convert forecasts to date of report and produce summary output useful for reporting 
-#' results and interpreting them.
+#' results and interpreting them. See [here](https://gist.github.com/seabbs/163d0f195892cde685c70473e1f5e867) for an 
+#' example of using `epinow` to estimate Rt for Covid-19 in a country from the ECDC data source. 
 #' @param output A character vector of optional output to return. Supported options are samples ("samples"), 
 #' plots ("plots"), the run time ("timing"), copying the dated folder into a latest folder (if `target_folder` is not null
-#'  - set using "latest"), and the stan fit ("fit"). The default is to return samples and plots alongside summarised estimates
-#' and summary statistics. This argument uses partial matching so for example passing "sam" will lead to samples
+#'  - set using "latest"), and the stan fit ("fit"). The default is to return all options. This argument uses partial matching so for example passing "sam" will lead to samples
 #' being reported.
 #' @param return_output Logical, defaults to FALSE. Should output be returned, this automatically updates to TRUE 
 #' if no directory for saving is specified. 
-#' @param forecast_args A list of arguments to pass to `forecast_infections`. Unless at a minimum a `forecast_model` is passed 
+#' @param forecast_args A list of arguments to pass to `forecast_infections()`. Unless at a minimum a `forecast_model` is passed 
 #' tin his list then `forecast_infections` will be bypassed. 
-#' @param id A character string used to assign logging information on error. Used by `regional_epinow`
-#' to assign `epinow` errors to regions.
-#' @param ... Additional arguments passed to `estimate_infections`. See that functions documentation for options.
 #' @return A list of output from estimate_infections, forecast_infections,  report_cases, and report_summary.
 #' @export
+#' @seealso estimate_infections simulate_infections forecast_infections regional_epinow
 #' @inheritParams setup_target_folder
 #' @inheritParams estimate_infections
 #' @inheritParams forecast_infections
 #' @inheritParams setup_default_logging
 #' @importFrom data.table setDT
 #' @importFrom lubridate days
-#' @importFrom futile.logger flog.fatal flog.warn flog.error
+#' @importFrom futile.logger flog.fatal flog.warn flog.error flog.debug ftry
 #' @importFrom rlang cnd_muffle
 #' @examples
 #' \donttest{
+#' #set number of cores to use
+#' options(mc.cores = ifelse(interactive(), 4, 1))
 #' # construct example distributions
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- list(mean = convert_to_logmean(3, 1), 
+#'                         mean_sd = 0.1,
+#'                         sd = convert_to_logsd(3, 1), 
+#'                         sd_sd = 0.1, 
+#'                         max = 10)
 #' 
 #' # example case data
-#' reported_cases <- EpiNow2::example_confirmed[1:40] 
+#' reported_cases <- example_confirmed[1:40] 
 #' 
 #' # estimate Rt and nowcast/forecast cases by date of infection
 #' out <- epinow(reported_cases = reported_cases, generation_time = generation_time,
-#'               delays = list(incubation_period, reporting_delay),
-#'               stan_args = list(cores = ifelse(interactive(), 4, 1),
-#'               control = list(adapt_delta = 0.95)))
-#' out
+#'               rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
+#'               delays = delay_opts(incubation_period, reporting_delay))
+#' # summary of the latest estimates
+#' summary(out)     
+#' # plot estimates        
+#' plot(out)
 #' 
-#' # optional forecasting using EpiSoon plug-in
-#' if(requireNamespace("EpiSoon")){
-#'    if(requireNamespace("forecastHybrid")){
-#'    # report Rt along with forecasts
-#'    out <- epinow(reported_cases = reported_cases, samples = 200,
-#'                  generation_time = generation_time, 
-#'                  delays = list(incubation_period, reporting_delay),
-#'                  forecast_args = list(
-#'                      forecast_model = function(y, ...){
-#'                      EpiSoon::forecastHybrid_model(
-#'                           y = y[max(1, length(y) - 21):length(y)],
-#'                           model_params = list(models = "aefz", weights = "equal"),
-#'                           forecast_params = list(PI.combination = "mean"), ...)}
-#'                           ),
-#'                  stan_args = list(warmup = 200, cores = ifelse(interactive(), 4, 1)))
-#'     out
-#'    }
+#' # summary of R estimates
+#' summary(out, type = "parameters", params = "R")
 #' }
-#' }
-#'
-epinow <- function(reported_cases, samples = 1000, horizon = 7, 
-                   generation_time, delays = list(),
+epinow <- function(reported_cases, 
+                   generation_time, 
+                   delays = delay_opts(),
+                   truncation = trunc_opts(),
+                   rt = rt_opts(),
+                   backcalc = backcalc_opts(),
+                   gp = gp_opts(),
+                   obs = obs_opts(),
+                   stan = stan_opts(),
+                   horizon = 7,
                    CrIs = c(0.2, 0.5, 0.9),
-                   return_output = FALSE, output = c("samples", "plots", "latest"), 
+                   return_output = FALSE,
+                   output = c("samples", "plots", "latest", "fit", "timing"), 
                    target_folder = NULL, target_date, 
                    forecast_args = NULL, logs = tempdir(),
-                   id = "epinow", verbose = FALSE,
-                   ...) {
-
+                   id = "epinow", verbose = interactive()) {
+ 
   if (is.null(target_folder)) {
     return_output <- TRUE
   }
@@ -89,14 +87,13 @@ epinow <- function(reported_cases, samples = 1000, horizon = 7,
   }
   # target data -------------------------------------------------------------
   if (missing(target_date)) {
-    target_date <- max(reported_cases$date)
+    target_date <- max(reported_cases$date, na.rm = TRUE)
   }
 
   # setup logging -----------------------------------------------------------
   setup_default_logging(logs = logs, 
                         target_date = target_date,
-                        mirror_epinow = TRUE,
-                        mirror_epinow_fit = verbose)
+                        mirror_epinow = TRUE)
   
   # setup input -------------------------------------------------------------
   output <- match_output_arguments(output, 
@@ -131,13 +128,22 @@ epinow <- function(reported_cases, samples = 1000, horizon = 7,
     # estimate infections and Reproduction no ---------------------------------
     estimates <- estimate_infections(reported_cases = reported_cases, 
                                      generation_time = generation_time,
-                                     CrIs = CrIs,
                                      delays = delays,
-                                     samples = samples,
+                                     truncation = truncation,
+                                     rt = rt,
+                                     backcalc = backcalc,
+                                     gp = gp,
+                                     obs = obs,
+                                     stan = stan,
+                                     CrIs = CrIs,
                                      horizon = horizon,
-                                     return_fit = output["fit"],
                                      verbose = verbose,
-                                     ...)
+                                     id = id)
+    
+    if (!output["fit"]) {
+      estimates$fit <- NULL
+      estimates$args <- NULL
+    }
     
     save_estimate_infections(estimates, target_folder, 
                              samples = output["samples"],
@@ -152,7 +158,6 @@ epinow <- function(reported_cases, samples = 1000, horizon = 7,
                                  gt_sd = estimates$summarised[variable == "gt_sd"]$mean,
                                  gt_max = generation_time$max,
                                  horizon = horizon,
-                                 samples = samples,
                                  CrIs = CrIs),
                             forecast_args))
       
@@ -169,16 +174,13 @@ epinow <- function(reported_cases, samples = 1000, horizon = 7,
                                                          CrIs = CrIs)
     
     # report estimates --------------------------------------------------------
-    summary <- report_summary(
-      summarised_estimates = estimates$summarised[!is.na(date)][type != "forecast"][date == max(date)],
-      rt_samples = estimates$samples[variable == "R"][type != "forecast"][date == max(date), .(sample, value)],
-      target_folder = target_folder)
+    summary <- summary.estimate_infections(estimates, return_numeric = TRUE, 
+                                           target_folder = target_folder)
     
     # plot --------------------------------------------------------------------
     if (output["plots"]) {
-      plots <- report_plots(summarised_estimates = estimates$summarised,
-                            reported = reported_cases, 
-                            target_folder = target_folder)
+      plots <- plot.estimate_infections(estimates, type = "all", 
+                                        target_folder = target_folder)
     }else{
       plots <- NULL
     }
@@ -197,28 +199,39 @@ epinow <- function(reported_cases, samples = 1000, horizon = 7,
   }
   
   # start processing with system timing and error catching
-  timing <- system.time({
-    out <- tryCatch(
-      withCallingHandlers(epinow_internal(),
-        warning = function(w) {
-          futile.logger::flog.warn("%s: %s - %s", id, w$message, toString(w$call),
-                                   name = "EpiNow2.epinow")
-          rlang::cnd_muffle(w)
-        }),
-      TimeoutException = function(ex) {
-        futile.logger::flog.warn("region %s timed out", id,
-                                 name = "EpiNow2.epinow")
-        return(list("timing" = Inf))
-      })
-  })
+  start_time <- Sys.time()
+  out <- tryCatch(withCallingHandlers(
+    epinow_internal(),
+    warning = function(w) {
+      futile.logger::flog.warn("%s: %s - %s", id, w$message, toString(w$call),
+                               name = "EpiNow2.epinow")
+      rlang::cnd_muffle(w)
+    }),
+    error = function(e) {
+      if (id %in% "epinow") {
+        stop(e)
+      }else{
+      error_text <- sprintf("%s: %s - %s", id, e$message, toString(e$call))
+      futile.logger::flog.error(error_text,
+                                name = "EpiNow2.epinow")
+      rlang::cnd_muffle(e)
+      return(list(error = error_text))}
+    })
+  end_time <- Sys.time()
+  if (!is.null(out$error)) {
+    out$trace <- rlang::trace_back()
+  }
+  
+  if (!is.null(target_folder) & !is.null(out$error)) {
+    saveRDS(out$error, paste0(target_folder, "/error.rds"))
+    saveRDS(out$trace, paste0(target_folder, "/trace.rds"))
+  }
   
   # log timing if specified
   if (output["timing"]) {
-    if (return_output) {
-      out$timing <- timing['elapsed']
-    }
+    out$timing <- round(as.numeric(end_time - start_time), 1)
     if (!is.null(target_folder)) {
-      saveRDS(timing['elapsed'], paste0(target_folder, "/runtime.rds"))
+      saveRDS(out$timing, paste0(target_folder, "/runtime.rds"))
     }
   }
   
@@ -229,6 +242,7 @@ epinow <- function(reported_cases, samples = 1000, horizon = 7,
 
   # return output
   if (return_output) {
+    class(out) <- c("epinow", class(out))
     return(out)
   }else{
     return(invisible(NULL))

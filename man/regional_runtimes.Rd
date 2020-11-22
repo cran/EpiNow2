@@ -27,17 +27,18 @@ if no directory for saving is specified.}
 A data.table of region run times
 }
 \description{
-Summarise Regional Runtimes
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a>}}{\strong{Maturing}}
+Used internally by \code{regional_epinow} to summarise region run times.
 }
 \examples{
 \donttest{
 # example delays
 generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+reporting_delay <- example_delay(rlnorm(100, log(6), 1), max_value = 15)
                         
 # example case vector from EpiSoon
-cases <- EpiNow2::example_confirmed[1:30]
+cases <- example_confirmed[1:30]
 cases <- data.table::rbindlist(list(
   data.table::copy(cases)[, region := "testland"],
   cases[, region := "realland"]))
@@ -45,10 +46,13 @@ cases <- data.table::rbindlist(list(
 # run basic nowcasting pipeline
 regional_out <- regional_epinow(reported_cases = cases,
                                 generation_time = generation_time,
-                                delays = list(incubation_period, reporting_delay),
+                                delays = delay_opts(incubation_period, reporting_delay),
                                 samples = 100, stan_args = list(warmup = 100),
                                 output = c("region", "timing"))
 
 regional_runtimes(regional_output = regional_out$regional)
 } 
+}
+\seealso{
+regional_summary regional_epinow
 }

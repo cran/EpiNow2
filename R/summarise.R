@@ -1,5 +1,8 @@
 #' Summarise Real-time Results
 #'
+#' @description `r lifecycle::badge("questioning")`
+#' Used internally by `regional_summary` to produce a summary table of results. May be streamlined in later 
+#' releases.
 #' @param regions An character string containing the list of regions to extract results for 
 #' (must all have results for the same target date).
 #' @param summaries A list of summary data frames as output by `epinow` 
@@ -86,8 +89,10 @@ summarise_results <- function(regions,
 }
 
 
-#' Generate Regional Summary Output
+#' Regional Summary Output
 #'
+#' @description `r lifecycle::badge("maturing")`
+#' Used to produce summary output either internally in `regional_epinow` or externally.
 #' @param summary_dir A character string giving the directory
 #'  in which to store summary of results.
 #' @param target_date A character string giving the target date for which to extract results
@@ -96,6 +101,7 @@ summarise_results <- function(regions,
 #' rather than just regions of interest.
 #' @return A list of summary measures and plots
 #' @export
+#' @seealso regional_epinow
 #' @inheritParams summarise_results
 #' @inheritParams plot_summary
 #' @inheritParams summarise_key_measures
@@ -113,10 +119,10 @@ summarise_results <- function(regions,
 #' # example delays
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 30)
 #'                         
 #' # example case vector from EpiSoon
-#' cases <- EpiNow2::example_confirmed[1:30]
+#' cases <- example_confirmed[1:30]
 #' cases <- data.table::rbindlist(list(
 #'   data.table::copy(cases)[, region := "testland"],
 #'   cases[, region := "realland"]))
@@ -124,11 +130,9 @@ summarise_results <- function(regions,
 #' # run basic nowcasting pipeline
 #' out <- regional_epinow(reported_cases = cases,
 #'                        generation_time = generation_time,
-#'                        delays = list(incubation_period, reporting_delay),
-#'                        samples = 50, output = "region",
-#'                        stan_args = list(warmup = 50,
-#'                                         control = list(adapt_delta = 0.95)),
-#'                                         logs = NULL)
+#'                        delays = delay_opts(incubation_period, reporting_delay),
+#'                        output = "region",
+#'                        rt = NULL)
 #'
 #' regional_summary(regional_output = out$regional,
 #'                  reported_cases = cases)
@@ -269,7 +273,7 @@ regional_summary <- function(regional_output = NULL,
     purrr::map(high_plots, ~ . + ggplot2::facet_wrap(~ region, scales = "free_y", ncol = 2))
   
   if (!is.null(summary_dir)) {
-    save_ggplot(high_plots$reff, "high_rt_plot.png")
+    save_ggplot(high_plots$R, "high_rt_plot.png")
     save_ggplot(high_plots$infections, "high_infections_plot.png")
     save_ggplot(high_plots$reports, "high_reported_cases_plot.png")
   }
@@ -293,7 +297,7 @@ regional_summary <- function(regional_output = NULL,
                     width = 24, 
                     limitsize = FALSE)
       }
-      save_big_ggplot(plots$reff, "rt_plot.png")
+      save_big_ggplot(plots$R, "rt_plot.png")
       save_big_ggplot(plots$infections, "infections_plot.png")
       save_big_ggplot(plots$reports, "reported_cases_plot.png")
     }
@@ -319,11 +323,14 @@ regional_summary <- function(regional_output = NULL,
 
 #' Summarise rt and cases
 #'
+#' @description `r lifecycle::badge("maturing")`
+#' Produces summarised data frames of output across regions. Used internally by `regional_summary`.
 #' @param regional_results A list of dataframes as produced by `get_regional_results`
 #' @param results_dir Character string indicating the directory from which to extract results.
 #' @param summary_dir Character string the directory into which to save results as a csv.
 #' @param type Character string, the region identifier to apply (defaults to region).
 #' @inheritParams get_regional_results
+#' @seealso regional_summary
 #' @return A list of summarised Rt, cases by date of infection and cases by date of report
 #' @export
 #' @importFrom data.table setnames fwrite setorderv
@@ -380,6 +387,9 @@ summarise_key_measures <- function(regional_results = NULL,
 
 #' Summarise Regional Runtimes
 #'
+#' @description `r lifecycle::badge("maturing")`
+#' Used internally by `regional_epinow` to summarise region run times.
+#' @seealso regional_summary regional_epinow
 #' @inheritParams regional_summary
 #' @inheritParams epinow
 #' @return A data.table of region run times
@@ -391,10 +401,10 @@ summarise_key_measures <- function(regional_results = NULL,
 #' # example delays
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- example_delay(rlnorm(100, log(6), 1), max_value = 15)
 #'                         
 #' # example case vector from EpiSoon
-#' cases <- EpiNow2::example_confirmed[1:30]
+#' cases <- example_confirmed[1:30]
 #' cases <- data.table::rbindlist(list(
 #'   data.table::copy(cases)[, region := "testland"],
 #'   cases[, region := "realland"]))
@@ -402,7 +412,7 @@ summarise_key_measures <- function(regional_results = NULL,
 #' # run basic nowcasting pipeline
 #' regional_out <- regional_epinow(reported_cases = cases,
 #'                                 generation_time = generation_time,
-#'                                 delays = list(incubation_period, reporting_delay),
+#'                                 delays = delay_opts(incubation_period, reporting_delay),
 #'                                 samples = 100, stan_args = list(warmup = 100),
 #'                                 output = c("region", "timing"))
 #'
@@ -452,7 +462,8 @@ regional_runtimes <- function(regional_output = NULL,
 
 #' Calculate Credible Interval
 #'
-#' @description Adds symmetric a credible interval based on quantiles.
+#' @description `r lifecycle::badge("stable")`
+#' Adds symmetric a credible interval based on quantiles.
 #' @param samples A data.table containing at least a value variable
 #' @param summarise_by A character vector of variables to group by.
 #' @param CrI Numeric between 0 and 1. The credible interval for which to return values. 
@@ -483,7 +494,8 @@ calc_CrI <- function(samples, summarise_by = c(), CrI = 0.9) {
 
 #' Calculate Credible Intervals
 #' 
-#' @description Adds symmetric credible intervals based on quantiles.
+#' @description `r lifecycle::badge("stable")`
+#' Adds symmetric credible intervals based on quantiles.
 #' @param CrIs Numeric vector of credible intervals to calculate.
 #' @inheritParams calc_CrI
 #' @return A data.table containing the `summarise_by` variables and the specified lower and upper 
@@ -513,6 +525,8 @@ calc_CrIs <- function(samples, summarise_by = c(), CrIs = c(0.2, 0.5, 0.9)) {
 
 #' Extract Credible Intervals Present
 #'
+#' @description `r lifecycle::badge("stable")`
+#' Helper function to extract the credible intervals present in a data frame.
 #' @param summarised A data frame as processed by `calc_CrIs`
 #' @return A numeric vector of credible intervals detected in the data frame.
 #' @export
@@ -530,7 +544,8 @@ extract_CrIs <- function(summarised) {
 
 #' Calculate Summary Statistics
 #'
-#' @description Calculate summary statistics from a data frame by group. Currently supports the 
+#' @description `r lifecycle::badge("stable")`
+#' Calculate summary statistics from a data frame by group. Currently supports the 
 #' mean, median and standard deviation.
 #' @return A data.table containing the upper and lower bounds for the specified credible interval 
 #' @export
@@ -554,7 +569,8 @@ calc_summary_stats <- function(samples, summarise_by = c()) {
 
 #' Calculate All Summary Measures
 #'
-#' @description Calculate summary statistics and credible intervals from a data frame by group. 
+#' @description `r lifecycle::badge("stable")`
+#' Calculate summary statistics and credible intervals from a data frame by group. 
 #' @param order_by A character vector of parameters to order by, defaults to all `summarise_by`
 #' variables.
 #' @return A data.table containing summary statistics by group. 
@@ -590,3 +606,82 @@ calc_summary_measures <- function(samples,
   return(summarised)
 }
 
+
+#' Summary output from epinow
+#'
+#' @description `r lifecycle::badge("stable")`
+#'  \code{summary} method for class "epinow".
+#' @param object A list of output as produced by "epinow".
+#' @param output A character string of output to summarise. Defaults to "estimates" 
+#' but also supports "forecast", and "estimated_reported_cases".
+#' @inheritParams summary.estimate_infections
+#' @param ... Pass additional summary arguments to lower level methods
+#' @seealso summary.estimate_infections epinow 
+#' @aliases summary
+#' @method summary epinow
+#' @return Returns a data frame of summary output
+#' @export
+summary.epinow <- function(object, output = "estimates", 
+                           date = NULL, params = NULL,
+                           ...) {
+  choices <- c("estimates", "forecast", "estimated_reported_cases")
+  output <- match.arg(output, choices, several.ok = FALSE)
+  if (output %in% "estimates") {
+    out <- summary(object$estimates, date = date, 
+            params = params, ...)
+  }else {
+   out <- object[[output]]$summarised
+   if (!is.null(date)) {
+     target_date <- as.Date(date)
+     out <- out[date == target_date]
+   }
+   if (!is.null(params)) {
+     out <- out[variable == params]
+   }
+  }
+  return(out)
+}
+
+#' Summary output from estimate_infections
+#'
+#' @description `r lifecycle::badge("stable")`
+#' \code{summary} method for class "estimate_infections".
+#' @param object A list of output as produced by "estimate_infections".
+#' @param type A character vector of data types to return. Defaults to "snapshot" 
+#' but also supports "parameters". "snapshot" returns a summary at a given date 
+#' (by default the latest date informed by data). "parameters" returns summarised
+#' parameter estimates that can be further filtered using `params` to show just the 
+#' parameters of interest and date.
+#' @param date A date in the form "yyyy-mm-dd" to inspect estimates for.
+#' @param params A character vector of parameters to filter for.
+#' @param ... Pass additional arguments to `report_summary`
+#' @seealso summary estimate_infections report_summary
+#' @method summary estimate_infections
+#' @return Returns a data frame of summary output
+#' @export
+summary.estimate_infections <- function(object, type = "snapshot",
+                                        date = NULL, params = NULL, ...) {
+  choices <- c("snapshot", "parameters")
+  type <- match.arg(type, choices, several.ok = FALSE)
+  if (is.null(date)) {
+    target_date <- unique(object$summarised[type != "forecast"][date == max(date)]$date)
+  }else{
+    target_date <- as.Date(date)
+  }
+  
+  if (type %in% "snapshot") {
+    out <- report_summary(
+      summarised_estimates = object$summarised[date == target_date],
+      rt_samples = object$samples[variable == "R"][, date == target_date, .(sample, value)],
+      ...)
+  }else if (type %in% "parameters") {
+    out <- object$summarised
+    if (!is.null(date)) {
+      out <- out[date == target_date]
+    }
+    if (!is.null(params)) {
+      out <- out[variable %in% params]
+    }
+  }
+  return(out)
+}

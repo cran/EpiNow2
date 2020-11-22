@@ -19,7 +19,8 @@ credible interval be switched.}
 A character vector formatted for reporting
 }
 \description{
-Format Credible Intervals
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+Combines a list of values into formatted credible intervals.
 }
 \examples{
 value <- list(median = 2, lower_90 = 1, upper_90 = 3)

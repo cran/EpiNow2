@@ -13,7 +13,8 @@ extract_CrIs(summarised)
 A numeric vector of credible intervals detected in the data frame.
 }
 \description{
-Extract Credible Intervals Present
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+Helper function to extract the credible intervals present in a data frame.
 }
 \examples{
 samples <- data.frame(value = 1:10, type = "car")

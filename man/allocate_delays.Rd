@@ -15,5 +15,6 @@ allocate_delays(delay_var, no_delays)
 A numeric array
 }
 \description{
-Allocate Delays into Required Stan Format
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+Allocate delays for stan. Used in \code{delay_opts}.
 }

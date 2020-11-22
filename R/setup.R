@@ -1,8 +1,10 @@
 #' Setup Logging
 #'
-#' @description Sets up `futile.logger` logging, which is integrated into `EpiNow2`. See the 
+#' @description `r lifecycle::badge("questioning")`
+#' Sets up `futile.logger` logging, which is integrated into `EpiNow2`. See the 
 #' documentation for `futile.logger` for full details. By default `EpiNow2` prints all logs at 
-#' the "INFO" level and returns them to the console.
+#' the "INFO" level and returns them to the console. Usage of logging is currently being explored 
+#' as the current setup cannot log stan errors or progress.
 #' @param threshold Character string indicating the logging level see (?futile.logger 
 #' for details of the available options). Defaults to "INFO".
 #' @param file Character string indicating the path to save logs to. By default logs will be
@@ -47,6 +49,9 @@ setup_logging <- function(threshold = "INFO", file = NULL,
 
 #' Setup Default Logging
 #'
+#' @description `r lifecycle::badge("questioning")`
+#' Sets up default logging. Usage of logging is currently being explored as the current setup
+#' cannot log stan errors or progress.
 #' @param logs Character path indicating the target folder in which to store log 
 #' information. Defaults to the temporary directory if not specified. Default logging 
 #' can be disabled if `logs` is set to NULL. If specifying a custom logging setup then 
@@ -54,8 +59,6 @@ setup_logging <- function(threshold = "INFO", file = NULL,
 #' place to start.
 #' @param mirror_epinow Logical, defaults to FALSE. Should internal logging be 
 #' returned from `epinow` to the console.
-#' @param mirror_epinow_fit Logical, defaults to FALSE. Should internal logging
-#' be returned from internal fitting functions to the console.
 #' @inheritParams setup_target_folder
 #' @return NULL
 #' @export
@@ -64,7 +67,6 @@ setup_logging <- function(threshold = "INFO", file = NULL,
 #' setup_default_logging()
 setup_default_logging <- function(logs = tempdir(),
                                   mirror_epinow = FALSE,
-                                  mirror_epinow_fit = FALSE,
                                   target_date = NULL) {
   if (!is.null(logs)) {
     if (is.null(target_date)) {
@@ -74,7 +76,6 @@ setup_default_logging <- function(logs = tempdir(),
     log_path <- list()
     log_path$regional_epinow <- file.path(logs, "regional-epinow")
     log_path$epinow <- file.path(logs, "epinow")
-    log_path$epinow_fit <- file.path(logs, "epinow-estimate-infections")
     
     purrr::walk(log_path, function(path){
       if (!dir.exists(path)) {
@@ -88,15 +89,13 @@ setup_default_logging <- function(logs = tempdir(),
     setup_logging("INFO", file = paste0(log_path$epinow, "/", target_date, ".log"),
                   mirror_to_console = mirror_epinow,
                   name = "EpiNow2.epinow")
-    setup_logging("INFO", file = paste0(log_path$epinow_fit, "/" , target_date, ".log"),
-                  mirror_to_console = mirror_epinow_fit,
-                  name = "EpiNow2.epinow.estimate_infections")
   }
   return(invisible(NULL))
 }
 
 #' Set up Future Backend
-#' @description A utility function that aims to streamline the set up 
+#' @description `r lifecycle::badge("stable")`
+#' A utility function that aims to streamline the set up 
 #' of the required future backend with sensible defaults for most users of `regional_epinow`.
 #' More advanced users are recommended to setup their own `future` backend based on their
 #' available resources. 
@@ -120,12 +119,10 @@ setup_future <- function(reported_cases, strategies = c("multiprocess", "multipr
     futile.logger::flog.error("1 or 2 strategies should be used")
     stop("1 or 2 strategies should be used")
   }
-  
   if (is.null(reported_cases$region)) {
     futile.logger::flog.error("Reported cases must contain a region")
     stop("Exactly 2 strategies should be used")
   }
-  
   if (length(strategies) == 1) {
     workers <- future::availableCores()
     futile.logger::flog.info("Using %s workers with 1 core per worker",
@@ -150,9 +147,10 @@ setup_future <- function(reported_cases, strategies = c("multiprocess", "multipr
 }
 
 #' Convert to Data Table
-#'
+#' @description `r lifecycle::badge("stable")`
+#' Convenience function that sets the number of `data.table` cores to 1 and 
+#' maps input to be a `data.table`
 #' @inheritParams estimate_infections
-#'
 #' @return A data table
 #' @export
 setup_dt <- function(reported_cases) {
@@ -164,9 +162,10 @@ setup_dt <- function(reported_cases) {
 
 #' Setup Target Folder for Saving
 #'
+#' @description `r lifecycle::badge("stable")`
+#' Sets up a folders for saving results
 #' @param target_date Date, defaults to maximum found in the data if not specified.
 #' @param target_folder Character string specifying where to save results (will create if not present).
-#'
 #' @return A list containing the path to the dated folder and the latest folder
 #' @export
 setup_target_folder <- function(target_folder = NULL, target_date) {

@@ -1,4 +1,8 @@
-#' Report case counts by date of report                        
+#' Report case counts by date of report  
+#' 
+#' @description `r lifecycle::badge("soft-deprecated")`
+#' Convolves latent infections to reported cases via an observation model. Likely to be removed/replaced 
+#' in later releases by functionality drawing on the `stan` implementation.                      
 #' @param case_estimates A data.table of case estimates with the following variables: date, sample, cases
 #' @param case_forecast A data.table of case forecasts with the following variables: date, sample, cases. If not supplied the
 #' default is not to incorporate forecasts.
@@ -15,25 +19,23 @@
 #' @examples 
 #' \donttest{
 #' # define example cases
-#' cases <- EpiNow2::example_confirmed[1:40]
+#' cases <- example_confirmed[1:40]
 #' 
 #' # set up example delays
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
 #'                         
 #' # run model
-#' out <- EpiNow2::estimate_infections(cases, samples = 100, 
-#'                                     generation_time = generation_time,
-#'                                     delays = list(incubation_period, reporting_delay),
-#'                                     stan_args = list(warmup = 100, 
-#'                                                      cores = ifelse(interactive(), 4, 1)),
-#'                                     estimate_rt = FALSE)
+#' out <- estimate_infections(cases, samples = 100, 
+#'                            generation_time = generation_time,
+#'                            delays = delay_opts(incubation_period, reporting_delay),
+#'                            rt = NULL)
 #'                             
 #' reported_cases <- report_cases(case_estimates = 
-#'                                 out$samples[variable == "infections"][, 
-#'                                 cases := as.integer(value)][, value := NULL],
-#'                                delays = list(incubation_period, reporting_delay),
+#'                                out$samples[variable == "infections"][, 
+#'                                cases := as.integer(value)][, value := NULL],
+#'                                delays = delay_opts(incubation_period, reporting_delay),
 #'                                type = "sample")
 #' print(reported_cases)
 #' }
@@ -96,17 +98,22 @@ report_cases <- function(case_estimates,
 
 
 #' Provide Summary Statistics for Estimated Infections and Rt
+#' @description `r lifecycle::badge("questioning")`
+#' Creates a snapshot summary of estimates. May be removed in later releases as S3 methods are 
+#' enhanced.
 #' @param summarised_estimates A data.table of summarised estimates containing the following variables:
 #'  variable, median, bottom, and top. It should contain the following estimates: R, infections, and r 
 #'  (rate of growth).
 #' @param rt_samples A data.table containing Rt samples with the following variables: sample and value.
+#' @param return_numeric Should numeric summary information be returned.
 #' @inheritParams setup_target_folder
 #' @return A data.table containing formatted and numeric summary measures
 #' @export
 #' @importFrom data.table data.table setDT
 #' @importFrom purrr map
 report_summary <- function(summarised_estimates,
-                           rt_samples, target_folder = NULL) { 
+                           rt_samples, target_folder = NULL,
+                           return_numeric = FALSE) { 
   # set input to data.table
   summarised_estimates <- data.table::setDT(summarised_estimates)
   rt_samples <- data.table::setDT(rt_samples)
@@ -153,13 +160,15 @@ report_summary <- function(summarised_estimates,
                  as.character(EpiNow2::map_prob_change(prob_control)),
                  make_conf(R_latest, max_CrI),
                  make_conf(r_latest, max_CrI),
-                 make_conf(doubling_time_latest, max_CrI, reverse = TRUE)),
-    numeric_estimate = list(current_cases,
-                         prob_control,
-                         R_latest,
-                         r_latest,
-                         doubling_time_latest)
-  )
+                 make_conf(doubling_time_latest, max_CrI, reverse = TRUE)))
+ 
+ if (return_numeric) {
+   summary$numeric_estimate = list(current_cases,
+                                   prob_control,
+                                   R_latest,
+                                   r_latest,
+                                   doubling_time_latest)
+ }
  
  if (!is.null(target_folder)) {
    saveRDS(summary, paste0(target_folder, "/summary.rds"))
@@ -171,6 +180,9 @@ report_summary <- function(summarised_estimates,
 
 #' Report plots
 #'
+#' @description `r lifecycle::badge("questioning")`
+#' Returns key summary plots for estimates. May be depreciated in later releases as current S3 methods 
+#' are enhanced.
 #' @param summarised_estimates A data.table of summarised estimates containing the following variables:
 #'  variable, median, bottom, and top. It should contain the following estimates: R, infections, reported_cases_rt,
 #'   and r (rate of growth).
@@ -186,18 +198,18 @@ report_summary <- function(summarised_estimates,
 #' @examples 
 #' \donttest{
 #' # define example cases
-#' cases <- EpiNow2::example_confirmed[1:40]
+#' cases <- example_confirmed[1:40]
 #' 
 #' # set up example delays
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
 #'                         
 #' # run model
-#' out <- EpiNow2::estimate_infections(cases, samples = 100, 
-#'                                     generation_time = generation_time,
-#'                                     delays = list(incubation_period, reporting_delay),
-#'                                     stan_args = list(warmup = 100, cores = 4))
+#' out <- estimate_infections(cases, samples = 100, 
+#'                            generation_time = generation_time,
+#'                            delays = delay_opts(incubation_period, reporting_delay),
+#'                            rt = NULL)
 #'                             
 #' # plot infections
 #' plots <- report_plots(summarised_estimates = out$summarised,
@@ -244,14 +256,14 @@ if (!is.null(target_folder)) {
 
 
 # Rt plot ------------------------------------------------------------------
-reff <- plot_estimates(estimate = summarised_estimates[variable == "R"],
+R <- plot_estimates(estimate = summarised_estimates[variable == "R"],
                        ylab = "Effective \n reproduction no.", hline = 1)
 
 if (!is.null(target_folder)) {
   suppressWarnings(
     suppressMessages(
       ggplot2::ggsave(paste0(target_folder, "/reff_plot.png"),
-                      reff,
+                      R,
                       width = 12,
                       height = 3,
                       dpi = 320)
@@ -290,7 +302,7 @@ if (!is.null(target_folder)) {
             axis.ticks.x = ggplot2::element_blank()
           ) +
           ggplot2::labs(tag = "B") +
-        reff +
+        R +
           ggplot2::labs(tag = "C") +
         patchwork::plot_layout(ncol = 1) &
         ggplot2::scale_x_date(date_breaks = "1 week",
@@ -314,7 +326,7 @@ if (!is.null(target_folder)) {
   plots <- list(
     infections = infections,
     reports = reports,
-    reff = reff,
+    R = R,
     growth_rate = growth_rate,
     summary = summary
   )

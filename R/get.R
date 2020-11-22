@@ -1,8 +1,8 @@
-#' Get Folders with Nowcast Results
+#' Get Folders with Results
 #'
+#' @description `r lifecycle::badge("stable")`
 #' @param results_dir A character string giving the directory in which results
 #'  are stored (as produced by `regional_rt_pipeline`).
-#'
 #' @return A named character vector containing the results to plot.
 #' @export
 get_regions <- function(results_dir) {
@@ -12,15 +12,14 @@ get_regions <- function(results_dir) {
                        full.names = FALSE)
   
   # put into alphabetical order
+  regions <- regions[!(regions %in% "runtimes.csv")]
   regions <- regions[order(regions)]
   names(regions) <- regions
   return(regions)
 }
-
-
-
 #' Get a Single Raw Result
 #'
+#' @description `r lifecycle::badge("stable")`
 #' @param file Character string giving the result files name.
 #' @param region Character string giving the region of interest.
 #' @param date Target date (in the format `"yyyy-mm-dd`).
@@ -33,8 +32,11 @@ get_raw_result <- function(file, region, date,
   object <- readRDS(file_path)
   return(object)
 }
-
 #' Get Combined Regional Results
+#' 
+#' @description `r lifecycle::badge("stable")`
+#' Summarises results across regions either from input or from disk. See the examples for
+#' details.
 #' @param regional_output A list of output as produced by `regional_epinow` and stored in the 
 #' `regional` list.
 #' @param results_dir A character string indicating the folder containing the `EpiNow2`
@@ -52,28 +54,31 @@ get_raw_result <- function(file, region, date,
 #' # construct example distributions
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
 #' 
 #' # example case vector from EpiSoon
-#' cases <- EpiNow2::example_confirmed[1:30]
+#' cases <- example_confirmed[1:30]
 #' cases <- data.table::rbindlist(list(
 #'   data.table::copy(cases)[, region := "testland"],
 #'   cases[, region := "realland"]))
 #'   
+#' # save results to tmp folder
+#' dir <- file.path(tempdir(), "results")
 #' # run multiregion estimates
 #' regional_out <- regional_epinow(reported_cases = cases,
-#'                                 samples = 100,
 #'                                 generation_time = generation_time,
-#'                                 delays = list(incubation_period, reporting_delay),
-#'                                 stan_args = list(warmup = 100,
-#'                                                  cores = ifelse(interactive(), 4, 1)),
-#'                                 output = c("regions"))
-#'
-#' summary_only <- get_regional_results(regional_out$regional, forecast = FALSE, samples = FALSE)
-#' names(summary_only)
+#'                                 delays = delay_opts(incubation_period, reporting_delay),
+#'                                 rt = rt_opts(rw = 7), gp = NULL,
+#'                                 output = c("regions", "latest"), 
+#'                                 target_folder = dir, 
+#'                                 return_output = TRUE)
+#' # from output
+#' results <- get_regional_results(regional_out$regional, samples = FALSE)
+#' names(results)
 #' 
-#' all <- get_regional_results(regional_out$regional, forecast = TRUE)
-#' names(all)
+#' # from a folder
+#' folder_results <- get_regional_results(results_dir = dir, samples = FALSE)
+#' names(folder_results)
 #' }
 get_regional_results <- function(regional_output,
                                  results_dir, date,
@@ -89,8 +94,7 @@ get_regional_results <- function(regional_output,
       date <- "latest"
     }
     # find all regions
-    regions <- list.files(results_dir, recursive = FALSE)
-    names(regions) <- regions
+    regions <- get_regions(results_dir)
     
     load_data <- purrr::safely(EpiNow2::get_raw_result)
   
@@ -147,19 +151,21 @@ get_regional_results <- function(regional_output,
   }
   return(out)
 }
-
-
 #' Get a Literature Distribution
 #'
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Search a data frame for a distribution and return it in the format expected 
+#' by `delay_opts` and the `generation_time` argument of `epinow` and `estimate_infections`.
 #' @param data A `data.table` in the format of `generation_times`.
 #' @param disease A character string indicating the disease of interest.
 #' @param source A character string indicating the source of interest.
-#' @param max_value Numeric, the maximum value to allow. Defaults to 30 days.
+#' @param max_value Numeric, the maximum value to allow. Defaults to 15 days.
 #' @return A list defining a distribution
 #' @export
 #' @examples
 #' get_dist(EpiNow2::generation_times, disease = "SARS-CoV-2", source = "ganyani") 
-get_dist <- function(data, disease, source, max_value = 30) {
+get_dist <- function(data, disease, source, max_value = 15) {
   
   target_disease <- disease
   target_source <- source
@@ -167,44 +173,42 @@ get_dist <- function(data, disease, source, max_value = 30) {
   dist <- as.list(data[, .(mean, mean_sd, sd, sd_sd, max = max_value)])
   return(dist)
 }
-
 #'  Get a Literature Distribution for the Generation Time
 #'
-#' @description Extracts a literature distribution from `generation_times`
+#' @description `r lifecycle::badge("stable")`
+#' Extracts a literature distribution from `generation_times`
 #' @inheritParams get_dist
 #' @inherit get_dist
 #' @export
 #' @examples
 #' get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-get_generation_time <- function(disease, source, max_value = 30) {
+get_generation_time <- function(disease, source, max_value = 15) {
   dist <- get_dist(EpiNow2::generation_times,
                    disease = disease, source = source, 
                    max_value = max_value)
   
   return(dist)
 }
-
-
 #'  Get a Literature Distribution for the Incubation Period
 #'
-#' @description Extracts a literature distribution from `incubation_periods`
+#' @description `r lifecycle::badge("stable")`
+#' Extracts a literature distribution from `incubation_periods`
 #' @inheritParams get_dist
 #' @inherit get_dist
 #' @export
 #' @examples
 #' get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-get_incubation_period <- function(disease, source, max_value = 30) {
+get_incubation_period <- function(disease, source, max_value = 15) {
   dist <- get_dist(EpiNow2::incubation_periods,
                    disease = disease, source = source, 
                    max_value = max_value)
   
   return(dist)
 }
-
-
-
 #' Get Regions with Most Reported Cases
 #'
+#' @description `r lifecycle::badge("stable")`
+#' Extract a vector of regions with the most reported cases in a set time window.
 #' @param time_window Numeric, number of days to include from latest date in data.
 #' Defaults to 7 days.
 #' @param no_regions Numeric, number of regions to return. Defaults to 6.

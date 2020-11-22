@@ -1,5 +1,39 @@
+#' Plot EpiNow2 Credible Intervals
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Adds lineranges for user specified credible intervals
+#' @param plot A `ggplot2` plot
+#' @param CrIs Numeric list of credible intervals present in the data. As produced
+#' by `extract_CrIs`
+#' @param alpha Numeric, overall alpha of the target line range
+#' @param size Numeric, size of the default line range.
+#' @return A `ggplot2` plot.
+plot_CrIs <- function(plot, CrIs, alpha, size) {
+  index <- 1
+  alpha_per_CrI <- alpha / (length(CrIs) - 1)
+  for (CrI in CrIs) {
+    bottom <- paste0("lower_", CrI)
+    top <-  paste0("upper_", CrI)
+    if (index == 1) {
+      plot <- plot +
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]]), 
+                             alpha = 0.2, size = size)
+    }else{
+      plot <- plot +
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]],
+                                          col = NULL), 
+                             alpha = alpha_per_CrI)
+    }
+    index <- index + 1
+  }
+  return(plot)
+}
+
 #' Plot Estimates
 #'
+#' @description `r lifecycle::badge("questioning")`
+#' Allows users to plot the output from `estimate_infections` easily. In future releases it 
+#' may be depreciated in favour of increasing the functionality of the S3 plot methods.
 #' @param estimate A data.table of estimates containing the following variables: date, type
 #' (must contain "estimate", "estimate based on partial data" and optionally "forecast"), 
 #' @param reported A data.table of reported cases with the following variables: date, confirm.
@@ -19,18 +53,16 @@
 #' @examples
 #' \donttest{
 #' # define example cases
-#' cases <- EpiNow2::example_confirmed[1:40]
+#' cases <- example_confirmed[1:40]
 #' 
 #' # set up example delays
 #' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 #' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- EpiNow2::bootstrapped_dist_fit(rlnorm(100, log(6), 1), max_value = 30)
+#' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
 #' 
-#'                         
 #' # run model
-#' out <- EpiNow2::estimate_infections(cases, generation_time = generation_time,
-#'                                     delays = list(incubation_period, reporting_delay),
-#'                                     stan_args = list(cores = ifelse(interactive(), 4, 1)))
+#' out <- estimate_infections(cases, generation_time = generation_time,
+#'                            delays = delay_opts(incubation_period, reporting_delay))
 #' # plot infections
 #' plot_estimates(
 #'   estimate = out$summarised[variable == "infections"],
@@ -92,16 +124,16 @@ plot_estimates <- function(estimate, reported, ylab = "Cases", hline,
         ggplot2::geom_col(data = reported[date >= min(estimate$date, na.rm = TRUE) &
                                             date <= max(estimate$date, na.rm = TRUE)],
                           ggplot2::aes(y = confirm), fill = "grey", col = "white",
-                          show.legend = FALSE)
+                          show.legend = FALSE, na.rm = TRUE)
     }else{
       plot <- plot +
         ggplot2::geom_line(data = reported, 
                            ggplot2::aes(y = confirm, fill = NULL),
-                           size = 1.1, alpha = 0.5, col = "black") +
+                           size = 1.1, alpha = 0.5, col = "black", na.rm = TRUE) +
         ggplot2::geom_point(data = reported,
                             ggplot2::aes(y = confirm, fill = NULL),
                             size = 1.1, alpha = 1, col = "black",
-                            show.legend = FALSE)
+                            show.legend = FALSE, na.rm = TRUE)
     }
   }
   
@@ -112,37 +144,21 @@ plot_estimates <- function(estimate, reported, ylab = "Cases", hline,
       linetype = 2)
   
   # plot CrIs
-  CrIs <- extract_CrIs(estimate)
-  index <- 1
-  alpha_per_CrI <- 0.6 / (length(CrIs) - 1)
-  for (CrI in CrIs) {
-    bottom <- paste0("lower_", CrI)
-    top <-  paste0("upper_", CrI)
-    if (index == 1) {
-      plot <- plot +
-        ggplot2::geom_ribbon(ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]]), 
-                             alpha = 0.2, size = 0.05)
-    }else{
-      plot <- plot +
-        ggplot2::geom_ribbon(ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]],
-                                          col = NULL), 
-                             alpha = alpha_per_CrI)
-    }
-    index <- index + 1
-  }
+  plot <- plot_CrIs(plot, extract_CrIs(estimate),
+                    alpha = 0.6, size = 0.05)
   
 # add plot theming
-plot <- plot +
-    cowplot::theme_cowplot() +
-    ggplot2::theme(legend.position = "bottom") +
-    ggplot2::scale_color_brewer(palette = "Dark2") +
-    ggplot2::scale_fill_brewer(palette = "Dark2") +
-    ggplot2::labs(y = ylab, x = "Date", col = "Type", fill = "Type") +
-    ggplot2::expand_limits(y = 0) + 
-    ggplot2::scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
-    ggplot2::scale_y_continuous(labels = scales::comma) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
-  
+  plot <- plot +
+      cowplot::theme_cowplot() +
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::scale_color_brewer(palette = "Dark2") +
+      ggplot2::scale_fill_brewer(palette = "Dark2") +
+      ggplot2::labs(y = ylab, x = "Date", col = "Type", fill = "Type") +
+      ggplot2::expand_limits(y = 0) + 
+      ggplot2::scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
+      ggplot2::scale_y_continuous(labels = scales::comma) +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
+    
   # add in a horizontal line if required
   if (!missing(hline)) {
     plot <- plot + 
@@ -154,6 +170,9 @@ plot <- plot +
 
 #' Plot a Summary of the Latest Results
 #'
+#' @description `r lifecycle::badge("questioning")`
+#' Used to return a summary plot across regions (using results generated by `summarise_results`). 
+#' May be depreciated in later releases in favour of enhanced S3 methods.
 #' @param summary_results A data.table as returned by `summarise_results` (the `data` object).
 #' @param x_lab A character string giving the label for the x axis, defaults to region.
 #' @param log_cases Logical, should cases be shown on a logged scale. Defaults to `FALSE`
@@ -251,4 +270,52 @@ plot_summary <- function(summary_results,
   # join plots together
   plot <- cases_plot + rt_plot + patchwork::plot_layout(ncol = 1)
   return(plot)
+}
+
+#' Plot method for estimate_infections
+#'
+#' @description `r lifecycle::badge("maturing")`
+#' `plot` method for class "estimate_infections". 
+#' @param x A list of output as produced by `estimate_infections`
+#' @param type A character vector indicating the name of plots to return. Defaults
+#' to  "summary" with supported options being "infections", "reports", "R", "growth_rate",
+#'  "summary", "all".
+#' @param ... Pass additional arguments to report_plots
+#' @seealso plot report_plots estimate_infections
+#' @aliases plot
+#' @method plot estimate_infections
+#' @return List of plots as produced by `report_plots`
+#' @export
+plot.estimate_infections <- function(x, type = "summary", ...) {
+  out <- report_plots(summarised_estimates = x$summarised,
+                      reported = x$observations, ...)
+  choices <- c("infections", "reports", "R", "growth_rate", "summary", "all")
+  type <- match.arg(type, choices, several.ok = TRUE)
+  if (type %in% "all") {
+    type <- choices[-length(choices)]
+  }
+  
+  if (!is.null(out)) {
+    out <- out[type]
+    if (length(type) == 1) {
+      out <- out[[1]]
+    }
+    return(out)
+  }else{
+    return(invisible(NULL))
+  }
+}
+
+#' Plot method for epinow
+#'
+#' @description `r lifecycle::badge("maturing")`
+#' `plot` method for class "epinow". 
+#' @param x A list of output as produced by `epinow`
+#' @inheritParams plot.estimate_infections
+#' @seealso plot plot.estimate_infections report_plots estimate_infections
+#' @method plot epinow
+#' @return List of plots as produced by `report_plots`
+#' @export
+plot.epinow <- function(x, type = "summary", ...) {
+  plot.estimate_infections(x$estimates, type = type, ...)
 }
