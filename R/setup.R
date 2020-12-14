@@ -18,12 +18,6 @@
 #' @importFrom futile.logger flog.threshold flog.appender appender.tee appender.file flog.info
 #' @return Nothing
 #' @export
-#' @examples
-#' # set up info only logs with errors only 
-#' # for logging related to epinow (or nested) calls
-#' # (info logs are enabled by default at all levels.)
-#' setup_logging("Info", name = "EpiNow2")
-#' setup_logging("ERROR", name = "EpiNow2.epinow")
 setup_logging <- function(threshold = "INFO", file = NULL,
                           mirror_to_console = FALSE, name = "EpiNow2") {
   if (is.null(name)) {
@@ -34,10 +28,12 @@ setup_logging <- function(threshold = "INFO", file = NULL,
   futile.logger::flog.threshold(threshold, name = name)
   
   if (!is.null(file)) {
-    message(sprintf("Writing %s logs to: %s", name, file))
+
     if (mirror_to_console) {
+      message(sprintf("Writing %s logs to the console and: %s", name, file))
       futile.logger::flog.appender(futile.logger::appender.tee(file), name = name)
     }else{
+      message(sprintf("Writing %s logs to: %s", name, file))
       futile.logger::flog.appender(futile.logger::appender.file(file), name = name)  
     }
   }else{
@@ -65,7 +61,7 @@ setup_logging <- function(threshold = "INFO", file = NULL,
 #' @importFrom purrr walk
 #' @examples
 #' setup_default_logging()
-setup_default_logging <- function(logs = tempdir(),
+setup_default_logging <- function(logs = tempdir(check = TRUE),
                                   mirror_epinow = FALSE,
                                   target_date = NULL) {
   if (!is.null(logs)) {

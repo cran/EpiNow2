@@ -61,7 +61,8 @@
 #'                        generation_time = generation_time,
 #'                        delays = delay_opts(incubation_period, reporting_delay),
 #'                        rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
-#'                        stan = stan_opts(samples = 100, warmup = 200),
+#'                        stan = stan_opts(samples = 100, warmup = 200, 
+#'                                         control = list(adapt_delta = 0.95)),
 #'                        verbose = interactive())
 #'                        
 #' # apply a different rt method per region
@@ -73,7 +74,8 @@
 #'                              generation_time = generation_time,
 #'                              delays = delay_opts(incubation_period, reporting_delay),
 #'                              rt = rt, gp = gp,
-#'                              stan = stan_opts(samples = 100, warmup = 200),
+#'                              stan = stan_opts(samples = 100, warmup = 200,
+#'                                               control = list(adapt_delta = 0.95)),
 #'                              verbose = interactive())
 #'}
 regional_epinow <- function(reported_cases, 
@@ -95,7 +97,7 @@ regional_epinow <- function(reported_cases,
                             return_output = FALSE,
                             summary_args = list(), 
                             verbose = FALSE,
-                            logs = tempdir(), ...) {
+                            logs = tempdir(check = TRUE), ...) {
   # supported output
   output <- match_output_arguments(output, 
                                    supported_args = c("plots", "samples", "fit",
@@ -126,7 +128,6 @@ regional_epinow <- function(reported_cases,
   
   # run regions (make parallel using future::plan)
   futile.logger::flog.trace("calling future apply to process each region through the run_region function")
-  futile.logger::flog.info("Showing progress using progressr.")
   
   progressr::with_progress({
     progress_fn <- progressr::progressor(along = regions)
