@@ -4,7 +4,7 @@
 \alias{get_incubation_period}
 \title{Get a Literature Distribution for the Incubation Period}
 \usage{
-get_incubation_period(disease, source, max_value = 15)
+get_incubation_period(disease, source, max_value = 15, fixed = FALSE)
 }
 \arguments{
 \item{disease}{A character string indicating the disease of interest.}
@@ -12,14 +12,20 @@ get_incubation_period(disease, source, max_value = 15)
 \item{source}{A character string indicating the source of interest.}
 
 \item{max_value}{Numeric, the maximum value to allow. Defaults to 15 days.}
+
+\item{fixed}{Logical, defaults to \code{FALSE}. Should distributions be supplied
+as fixed values (vs with uncertainty)?}
 }
 \value{
 A list defining a distribution
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
-Extracts a literature distribution from \code{incubation_periods}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+Extracts a literature distribution from \code{incubation_periods}.
 }
 \examples{
 get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+}
+\author{
+Sam Abbott
 }

@@ -7,7 +7,7 @@ using namespace Rcpp ;
 RCPP_MODULE(stan_fit4tune_inv_gamma_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_tune_inv_gamma")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_tune_inv_gamma")
 
     .constructor<SEXP,SEXP,SEXP>()
 

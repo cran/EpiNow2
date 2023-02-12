@@ -13,12 +13,14 @@ regional_summary(
   region_scale = "Region",
   all_regions = TRUE,
   return_output = FALSE,
-  max_plot = 10
+  plot = TRUE,
+  max_plot = 10,
+  ...
 )
 }
 \arguments{
-\item{regional_output}{A list of output as produced by \code{regional_epinow} and stored in the
-\code{regional} list.}
+\item{regional_output}{A list of output as produced by \code{regional_epinow} and
+stored in the \code{regional} list.}
 
 \item{reported_cases}{A data frame of confirmed cases (confirm) by date (date), and region (\code{region}).}
 
@@ -28,26 +30,33 @@ from.}
 \item{summary_dir}{A character string giving the directory
 in which to store summary of results.}
 
-\item{target_date}{A character string giving the target date for which to extract results
+\item{target_date}{A character string giving the target date for which to
+extract results
 (in the format "yyyy-mm-dd"). Defaults to latest available estimates.}
 
 \item{region_scale}{A character string indicating the name to give the regions being summarised.}
 
-\item{all_regions}{Logical, defaults to \code{TRUE}. Should summary plots for all regions be returned
-rather than just regions of interest.}
+\item{all_regions}{Logical, defaults to \code{TRUE}. Should summary plots for all
+regions be returned rather than just regions of interest.}
 
-\item{return_output}{Logical, defaults to FALSE. Should output be returned, this automatically updates to TRUE
-if no directory for saving is specified.}
+\item{return_output}{Logical, defaults to FALSE. Should output be returned,
+this automatically updates to TRUE if no directory for saving is specified.}
+
+\item{plot}{Logical, defaults to \code{TRUE}. Should regional summary plots be
+produced.}
 
 \item{max_plot}{Numeric, defaults to 10. A multiplicative upper bound on the number of cases shown on the plot. Based
 on the maximum number of reported cases.}
+
+\item{...}{Additional arguments passed to \code{report_plots}.}
 }
 \value{
 A list of summary measures and plots
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a>}}{\strong{Maturing}}
-Used to produce summary output either internally in \code{regional_epinow} or externally.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
+Used to produce summary output either internally in \code{regional_epinow} or
+externally.
 }
 \examples{
 \donttest{
@@ -55,23 +64,28 @@ Used to produce summary output either internally in \code{regional_epinow} or ex
 generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
 reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 30)
-                        
+
 # example case vector from EpiSoon
 cases <- example_confirmed[1:30]
 cases <- data.table::rbindlist(list(
   data.table::copy(cases)[, region := "testland"],
-  cases[, region := "realland"]))
-  
-# run basic nowcasting pipeline
-out <- regional_epinow(reported_cases = cases,
-                       generation_time = generation_time,
-                       delays = delay_opts(incubation_period, reporting_delay),
-                       output = "region",
-                       rt = NULL)
+  cases[, region := "realland"]
+))
 
-regional_summary(regional_output = out$regional,
-                 reported_cases = cases)
-} 
+# run basic nowcasting pipeline
+out <- regional_epinow(
+  reported_cases = cases,
+  generation_time = generation_time,
+  delays = delay_opts(incubation_period, reporting_delay),
+  output = "region",
+  rt = NULL
+)
+
+regional_summary(
+  regional_output = out$regional,
+  reported_cases = cases
+)
+}
 }
 \seealso{
 regional_epinow

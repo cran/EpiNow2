@@ -18,36 +18,49 @@ dist_fit(
 
 \item{samples}{Numeric, number of samples to take}
 
-\item{cores}{Numeric, defaults to 1. Number of CPU cores to use (no effect if greater than the number of chains).}
+\item{cores}{Numeric, defaults to 1. Number of CPU cores to use (no effect
+if greater than the number of chains).}
 
-\item{chains}{Numeric, defaults to 2. Number of MCMC chains to use. More is better with the minimum being two.}
+\item{chains}{Numeric, defaults to 2. Number of MCMC chains to use. More is
+better with the minimum being two.}
 
-\item{dist}{Character string, which distribution to fit. Defaults to exponential (\code{"exp"}) but
-gamma (\code{"gamma"}) and lognormal (\code{"lognorma"}) are also supported.}
+\item{dist}{Character string, which distribution to fit. Defaults to
+exponential (\code{"exp"}) but gamma (\code{"gamma"}) and lognormal (\code{"lognormal"}) are
+also supported.}
 
-\item{verbose}{Logical, defaults to FALSE. Should verbose progress messages be printed.}
+\item{verbose}{Logical, defaults to FALSE. Should verbose progress messages
+be printed.}
 }
 \value{
 A \code{stan} fit of an interval censored distribution
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Fits an integer adjusted exponential, gamma or lognormal distribution using
 \code{stan}.
 }
 \examples{
 \donttest{
 # integer adjusted exponential model
-dist_fit(rexp(1:100, 2), samples = 1000, dist = "exp", 
-         cores = ifelse(interactive(), 4, 1), verbose = TRUE)
+dist_fit(rexp(1:100, 2),
+  samples = 1000, dist = "exp",
+  cores = ifelse(interactive(), 4, 1), verbose = TRUE
+)
 
 
 # integer adjusted gamma model
-dist_fit(rgamma(1:100, 5, 5), samples = 1000, dist = "gamma", 
-         cores = ifelse(interactive(), 4, 1), verbose = TRUE)
+dist_fit(rgamma(1:100, 5, 5),
+  samples = 1000, dist = "gamma",
+  cores = ifelse(interactive(), 4, 1), verbose = TRUE
+)
 
 # integer adjusted lognormal model
-dist_fit(rlnorm(1:100, log(5), 0.2), samples = 1000, dist = "lognormal",
-         cores = ifelse(interactive(), 4, 1), verbose = TRUE)
+dist_fit(rlnorm(1:100, log(5), 0.2),
+  samples = 1000, dist = "lognormal",
+  cores = ifelse(interactive(), 4, 1), verbose = TRUE
+)
 }
+}
+\author{
+Sam Abbott
 }

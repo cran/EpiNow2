@@ -19,13 +19,16 @@ before failing.}
 \item{...}{Additional parameters to pass to \code{rstan::vb}.}
 }
 \value{
-A list of arguments to pass to \code{rstan::vb}
+A list of arguments to pass to \code{rstan::vb}.
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Defines a list specifying the arguments passed to
 \code{rstan::vb}. Custom settings can be supplied which override the defaults.
 }
 \examples{
 rstan_vb_opts(samples = 1000)
+}
+\author{
+Sam Abbott
 }

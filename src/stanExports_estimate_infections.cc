@@ -7,7 +7,7 @@ using namespace Rcpp ;
 RCPP_MODULE(stan_fit4estimate_infections_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_estimate_infections")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_estimate_infections")
 
     .constructor<SEXP,SEXP,SEXP>()
 

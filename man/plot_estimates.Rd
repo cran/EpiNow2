@@ -10,7 +10,8 @@ plot_estimates(
   ylab = "Cases",
   hline,
   obs_as_col = TRUE,
-  max_plot = 10
+  max_plot = 10,
+  estimate_type = NULL
 )
 }
 \arguments{
@@ -28,12 +29,16 @@ as points (linked using a line).}
 
 \item{max_plot}{Numeric, defaults to 10. A multiplicative upper bound on the number of cases shown on the plot. Based
 on the maximum number of reported cases.}
+
+\item{estimate_type}{Character vector indicating the type of data to plot.
+Default to all types with supported options being: "Estimate", "Estimate
+based on partial data", and "Forecast".}
 }
 \value{
 A \code{ggplot2} object
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#questioning'><img src='figures/lifecycle-questioning.svg' alt='Questioning lifecycle'></a>}}{\strong{Questioning}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#questioning}{\figure{lifecycle-questioning.svg}{options: alt='[Questioning]'}}}{\strong{[Questioning]}}
 Allows users to plot the output from \code{estimate_infections} easily. In future releases it
 may be depreciated in favour of increasing the functionality of the S3 plot methods.
 }
@@ -48,22 +53,36 @@ incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lau
 reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
 
 # run model
-out <- estimate_infections(cases, generation_time = generation_time,
-                           delays = delay_opts(incubation_period, reporting_delay))
+out <- estimate_infections(cases,
+  generation_time = generation_time,
+  delays = delay_opts(incubation_period, reporting_delay)
+)
 # plot infections
 plot_estimates(
   estimate = out$summarised[variable == "infections"],
   reported = cases,
-  ylab = "Cases", max_plot = 2) + ggplot2::facet_wrap(~type, scales = "free_y")
+  ylab = "Cases", max_plot = 2
+) + ggplot2::facet_wrap(~type, scales = "free_y")
 
 # plot reported cases estimated via Rt
-plot_estimates(estimate = out$summarised[variable == "reported_cases"],
-               reported = cases,
-               ylab = "Cases")
-               
+plot_estimates(
+  estimate = out$summarised[variable == "reported_cases"],
+  reported = cases,
+  ylab = "Cases"
+)
+
 # plot Rt estimates
-plot_estimates(estimate = out$summarised[variable == "R"],
-               ylab = "Effective Reproduction No.",
-               hline = 1)
+plot_estimates(
+  estimate = out$summarised[variable == "R"],
+  ylab = "Effective Reproduction No.",
+  hline = 1
+)
+
+#' # plot Rt estimates without forecasts
+plot_estimates(
+  estimate = out$summarised[variable == "R"],
+  ylab = "Effective Reproduction No.",
+  hline = 1, estimate_type = "Estimate"
+)
 }
 }

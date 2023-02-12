@@ -33,44 +33,43 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_estimate_secondary");
-    reader.add_event(1, 1, "include", "functions/pmfs.stan");
-    reader.add_event(1, 0, "start", "functions/pmfs.stan");
-    reader.add_event(55, 54, "end", "functions/pmfs.stan");
-    reader.add_event(55, 2, "restart", "model_estimate_secondary");
-    reader.add_event(55, 2, "include", "functions/convolve.stan");
-    reader.add_event(55, 0, "start", "functions/convolve.stan");
-    reader.add_event(106, 51, "end", "functions/convolve.stan");
-    reader.add_event(106, 3, "restart", "model_estimate_secondary");
-    reader.add_event(106, 3, "include", "functions/observation_model.stan");
-    reader.add_event(106, 0, "start", "functions/observation_model.stan");
-    reader.add_event(239, 133, "end", "functions/observation_model.stan");
-    reader.add_event(239, 4, "restart", "model_estimate_secondary");
-    reader.add_event(239, 4, "include", "functions/secondary.stan");
-    reader.add_event(239, 0, "start", "functions/secondary.stan");
-    reader.add_event(293, 54, "end", "functions/secondary.stan");
-    reader.add_event(293, 5, "restart", "model_estimate_secondary");
-    reader.add_event(300, 12, "include", "data/secondary.stan");
-    reader.add_event(300, 0, "start", "data/secondary.stan");
-    reader.add_event(306, 6, "end", "data/secondary.stan");
-    reader.add_event(306, 13, "restart", "model_estimate_secondary");
-    reader.add_event(306, 13, "include", "data/delays.stan");
-    reader.add_event(306, 0, "start", "data/delays.stan");
-    reader.add_event(312, 6, "end", "data/delays.stan");
-    reader.add_event(312, 14, "restart", "model_estimate_secondary");
-    reader.add_event(312, 14, "include", "data/observation_model.stan");
-    reader.add_event(312, 0, "start", "data/observation_model.stan");
-    reader.add_event(325, 13, "end", "data/observation_model.stan");
-    reader.add_event(325, 15, "restart", "model_estimate_secondary");
-    reader.add_event(377, 65, "end", "model_estimate_secondary");
+    reader.add_event(1, 1, "include", "functions/convolve.stan");
+    reader.add_event(1, 0, "start", "functions/convolve.stan");
+    reader.add_event(48, 47, "end", "functions/convolve.stan");
+    reader.add_event(48, 2, "restart", "model_estimate_secondary");
+    reader.add_event(48, 2, "include", "functions/pmfs.stan");
+    reader.add_event(48, 0, "start", "functions/pmfs.stan");
+    reader.add_event(142, 94, "end", "functions/pmfs.stan");
+    reader.add_event(142, 3, "restart", "model_estimate_secondary");
+    reader.add_event(142, 3, "include", "functions/observation_model.stan");
+    reader.add_event(142, 0, "start", "functions/observation_model.stan");
+    reader.add_event(263, 121, "end", "functions/observation_model.stan");
+    reader.add_event(263, 4, "restart", "model_estimate_secondary");
+    reader.add_event(263, 4, "include", "functions/secondary.stan");
+    reader.add_event(263, 0, "start", "functions/secondary.stan");
+    reader.add_event(316, 53, "end", "functions/secondary.stan");
+    reader.add_event(316, 5, "restart", "model_estimate_secondary");
+    reader.add_event(323, 12, "include", "data/secondary.stan");
+    reader.add_event(323, 0, "start", "data/secondary.stan");
+    reader.add_event(329, 6, "end", "data/secondary.stan");
+    reader.add_event(329, 13, "restart", "model_estimate_secondary");
+    reader.add_event(329, 13, "include", "data/delays.stan");
+    reader.add_event(329, 0, "start", "data/delays.stan");
+    reader.add_event(343, 14, "end", "data/delays.stan");
+    reader.add_event(343, 14, "restart", "model_estimate_secondary");
+    reader.add_event(343, 14, "include", "data/observation_model.stan");
+    reader.add_event(343, 0, "start", "data/observation_model.stan");
+    reader.add_event(362, 19, "end", "data/observation_model.stan");
+    reader.add_event(362, 15, "restart", "model_estimate_secondary");
+    reader.add_event(462, 113, "end", "model_estimate_secondary");
     return reader;
 }
-template <typename T1__, typename T2__>
-Eigen::Matrix<typename boost::math::tools::promote_args<T1__, T2__>::type, Eigen::Dynamic, 1>
-discretised_gamma_pmf(const std::vector<int>& y,
-                          const T1__& mu,
-                          const T2__& sigma,
-                          const int& max_val, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T1__, T2__>::type local_scalar_t__;
+template <typename T0__, typename T1__>
+Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+convolve(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& y,
+             const int& len, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
     (void) propto__;
@@ -79,77 +78,35 @@ discretised_gamma_pmf(const std::vector<int>& y,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 4;
-        int n(0);
-        (void) n;  // dummy to suppress unused var warning
-        stan::math::fill(n, std::numeric_limits<int>::min());
-        stan::math::assign(n,num_elements(y));
-        current_statement_begin__ = 5;
-        validate_non_negative_index("pmf", "n", n);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> pmf(n);
-        stan::math::initialize(pmf, DUMMY_VAR__);
-        stan::math::fill(pmf, DUMMY_VAR__);
         current_statement_begin__ = 6;
-        local_scalar_t__ trunc_pmf(DUMMY_VAR__);
-        (void) trunc_pmf;  // dummy to suppress unused var warning
-        stan::math::initialize(trunc_pmf, DUMMY_VAR__);
-        stan::math::fill(trunc_pmf, DUMMY_VAR__);
+        int xlen(0);
+        (void) xlen;  // dummy to suppress unused var warning
+        stan::math::fill(xlen, std::numeric_limits<int>::min());
+        stan::math::assign(xlen,num_elements(x));
+        current_statement_begin__ = 7;
+        int ylen(0);
+        (void) ylen;  // dummy to suppress unused var warning
+        stan::math::fill(ylen, std::numeric_limits<int>::min());
+        stan::math::assign(ylen,num_elements(y));
         current_statement_begin__ = 8;
-        local_scalar_t__ small(DUMMY_VAR__);
-        (void) small;  // dummy to suppress unused var warning
-        stan::math::initialize(small, DUMMY_VAR__);
-        stan::math::fill(small, DUMMY_VAR__);
-        stan::math::assign(small,1e-5);
+        validate_non_negative_index("convolution", "len", len);
+        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> convolution(len);
+        stan::math::initialize(convolution, DUMMY_VAR__);
+        stan::math::fill(convolution, DUMMY_VAR__);
+        stan::math::assign(convolution,rep_vector(0, len));
         current_statement_begin__ = 9;
-        local_scalar_t__ large(DUMMY_VAR__);
-        (void) large;  // dummy to suppress unused var warning
-        stan::math::initialize(large, DUMMY_VAR__);
-        stan::math::fill(large, DUMMY_VAR__);
-        stan::math::assign(large,1e8);
-        current_statement_begin__ = 10;
-        local_scalar_t__ c_sigma(DUMMY_VAR__);
-        (void) c_sigma;  // dummy to suppress unused var warning
-        stan::math::initialize(c_sigma, DUMMY_VAR__);
-        stan::math::fill(c_sigma, DUMMY_VAR__);
-        stan::math::assign(c_sigma,(logical_lt(sigma, small) ? stan::math::promote_scalar<local_scalar_t__>(small) : stan::math::promote_scalar<local_scalar_t__>(sigma) ));
-        current_statement_begin__ = 11;
-        local_scalar_t__ c_mu(DUMMY_VAR__);
-        (void) c_mu;  // dummy to suppress unused var warning
-        stan::math::initialize(c_mu, DUMMY_VAR__);
-        stan::math::fill(c_mu, DUMMY_VAR__);
-        stan::math::assign(c_mu,(logical_lt(mu, small) ? stan::math::promote_scalar<local_scalar_t__>(small) : stan::math::promote_scalar<local_scalar_t__>(mu) ));
-        current_statement_begin__ = 12;
-        local_scalar_t__ alpha(DUMMY_VAR__);
-        (void) alpha;  // dummy to suppress unused var warning
-        stan::math::initialize(alpha, DUMMY_VAR__);
-        stan::math::fill(alpha, DUMMY_VAR__);
-        stan::math::assign(alpha,pow((c_mu / c_sigma), 2));
-        current_statement_begin__ = 13;
-        local_scalar_t__ beta(DUMMY_VAR__);
-        (void) beta;  // dummy to suppress unused var warning
-        stan::math::initialize(beta, DUMMY_VAR__);
-        stan::math::fill(beta, DUMMY_VAR__);
-        stan::math::assign(beta,(c_mu / pow(c_sigma, 2)));
-        current_statement_begin__ = 15;
-        stan::math::assign(alpha, (logical_lt(alpha, small) ? stan::math::promote_scalar<local_scalar_t__>(small) : stan::math::promote_scalar<local_scalar_t__>(alpha) ));
-        current_statement_begin__ = 16;
-        stan::math::assign(alpha, (logical_gt(alpha, large) ? stan::math::promote_scalar<local_scalar_t__>(large) : stan::math::promote_scalar<local_scalar_t__>(alpha) ));
-        current_statement_begin__ = 17;
-        stan::math::assign(beta, (logical_lt(beta, small) ? stan::math::promote_scalar<local_scalar_t__>(small) : stan::math::promote_scalar<local_scalar_t__>(beta) ));
-        current_statement_begin__ = 18;
-        stan::math::assign(beta, (logical_gt(beta, large) ? stan::math::promote_scalar<local_scalar_t__>(large) : stan::math::promote_scalar<local_scalar_t__>(beta) ));
-        current_statement_begin__ = 20;
-        stan::math::assign(trunc_pmf, (gamma_cdf((max_val + 1), alpha, beta) - gamma_cdf(1, alpha, beta)));
-        current_statement_begin__ = 21;
-        for (int i = 1; i <= n; ++i) {
-            current_statement_begin__ = 22;
-            stan::model::assign(pmf, 
-                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                        ((gamma_cdf((get_base1(y, i, "y", 1) + 1), alpha, beta) - gamma_cdf(get_base1(y, i, "y", 1), alpha, beta)) / trunc_pmf), 
-                        "assigning variable pmf");
+        for (int i = 1; i <= xlen; ++i) {
+            current_statement_begin__ = 10;
+            for (int j = 1; j <= std::min(((len - i) + 1), ylen); ++j) {
+                current_statement_begin__ = 11;
+                stan::model::assign(convolution, 
+                            stan::model::cons_list(stan::model::index_uni(((i + j) - 1)), stan::model::nil_index_list()), 
+                            (stan::model::rvalue(convolution, stan::model::cons_list(stan::model::index_uni(((i + j) - 1)), stan::model::nil_index_list()), "convolution") + (get_base1(x, i, "x", 1) * get_base1(y, j, "y", 1))), 
+                            "assigning variable convolution");
+            }
         }
-        current_statement_begin__ = 25;
-        return stan::math::promote_scalar<fun_return_scalar_t__>(pmf);
+        current_statement_begin__ = 14;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(convolution);
         }
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -157,23 +114,21 @@ discretised_gamma_pmf(const std::vector<int>& y,
         throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
     }
 }
-struct discretised_gamma_pmf_functor__ {
-    template <typename T1__, typename T2__>
-        Eigen::Matrix<typename boost::math::tools::promote_args<T1__, T2__>::type, Eigen::Dynamic, 1>
-    operator()(const std::vector<int>& y,
-                          const T1__& mu,
-                          const T2__& sigma,
-                          const int& max_val, std::ostream* pstream__) const {
-        return discretised_gamma_pmf(y, mu, sigma, max_val, pstream__);
+struct convolve_functor__ {
+    template <typename T0__, typename T1__>
+        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& x,
+             const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& y,
+             const int& len, std::ostream* pstream__) const {
+        return convolve(x, y, len, pstream__);
     }
 };
-template <typename T1__, typename T2__>
-Eigen::Matrix<typename boost::math::tools::promote_args<T1__, T2__>::type, Eigen::Dynamic, 1>
-discretised_lognormal_pmf(const std::vector<int>& y,
-                              const T1__& mu,
-                              const T2__& sigma,
-                              const int& max_val, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T1__, T2__>::type local_scalar_t__;
+template <typename T0__, typename T1__>
+Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+convolve_dot_product(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& x,
+                         const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& y,
+                         const int& len, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
     (void) propto__;
@@ -182,79 +137,188 @@ discretised_lognormal_pmf(const std::vector<int>& y,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 30;
-        int n(0);
-        (void) n;  // dummy to suppress unused var warning
-        stan::math::fill(n, std::numeric_limits<int>::min());
-        stan::math::assign(n,num_elements(y));
-        current_statement_begin__ = 31;
+        current_statement_begin__ = 22;
+        int ylen(0);
+        (void) ylen;  // dummy to suppress unused var warning
+        stan::math::fill(ylen, std::numeric_limits<int>::min());
+        stan::math::assign(ylen,num_elements(y));
+        current_statement_begin__ = 23;
+        validate_non_negative_index("z", "len", len);
+        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> z(len);
+        stan::math::initialize(z, DUMMY_VAR__);
+        stan::math::fill(z, DUMMY_VAR__);
+        current_statement_begin__ = 24;
+        for (int s = 1; s <= len; ++s) {
+            current_statement_begin__ = 25;
+            stan::model::assign(z, 
+                        stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
+                        dot_product(stan::model::rvalue(x, stan::model::cons_list(stan::model::index_min_max(std::max(1, ((s - ylen) + 1)), s), stan::model::nil_index_list()), "x"), tail(y, std::min(ylen, s))), 
+                        "assigning variable z");
+        }
+        current_statement_begin__ = 29;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(z);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct convolve_dot_product_functor__ {
+    template <typename T0__, typename T1__>
+        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& x,
+                         const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& y,
+                         const int& len, std::ostream* pstream__) const {
+        return convolve_dot_product(x, y, len, pstream__);
+    }
+};
+template <typename T0__, typename T1__>
+Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+convolve_to_report(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& infections,
+                       const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& delay_rev_pmf,
+                       const int& seeding_time, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 37;
+        int t(0);
+        (void) t;  // dummy to suppress unused var warning
+        stan::math::fill(t, std::numeric_limits<int>::min());
+        stan::math::assign(t,num_elements(infections));
+        current_statement_begin__ = 38;
+        validate_non_negative_index("reports", "(t - seeding_time)", (t - seeding_time));
+        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> reports((t - seeding_time));
+        stan::math::initialize(reports, DUMMY_VAR__);
+        stan::math::fill(reports, DUMMY_VAR__);
+        current_statement_begin__ = 39;
+        validate_non_negative_index("unobs_reports", "t", t);
+        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> unobs_reports(t);
+        stan::math::initialize(unobs_reports, DUMMY_VAR__);
+        stan::math::fill(unobs_reports, DUMMY_VAR__);
+        stan::math::assign(unobs_reports,infections);
+        current_statement_begin__ = 40;
+        int delays(0);
+        (void) delays;  // dummy to suppress unused var warning
+        stan::math::fill(delays, std::numeric_limits<int>::min());
+        stan::math::assign(delays,num_elements(delay_rev_pmf));
+        current_statement_begin__ = 41;
+        if (as_bool(delays)) {
+            current_statement_begin__ = 42;
+            stan::math::assign(unobs_reports, convolve_dot_product(unobs_reports, delay_rev_pmf, t, pstream__));
+            current_statement_begin__ = 43;
+            stan::math::assign(reports, stan::model::rvalue(unobs_reports, stan::model::cons_list(stan::model::index_min_max((seeding_time + 1), t), stan::model::nil_index_list()), "unobs_reports"));
+        } else {
+            current_statement_begin__ = 45;
+            stan::math::assign(reports, stan::model::rvalue(infections, stan::model::cons_list(stan::model::index_min_max((seeding_time + 1), t), stan::model::nil_index_list()), "infections"));
+        }
+        current_statement_begin__ = 47;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(reports);
+        }
+    } catch (const std::exception& e) {
+        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
+        // Next line prevents compiler griping about no return
+        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
+    }
+}
+struct convolve_to_report_functor__ {
+    template <typename T0__, typename T1__>
+        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& infections,
+                       const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& delay_rev_pmf,
+                       const int& seeding_time, std::ostream* pstream__) const {
+        return convolve_to_report(infections, delay_rev_pmf, seeding_time, pstream__);
+    }
+};
+template <typename T0__, typename T1__>
+Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+discretised_pmf(const T0__& mu,
+                    const T1__& sigma,
+                    const int& n,
+                    const int& dist,
+                    const int& left_truncate, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T0__, T1__>::type local_scalar_t__;
+    typedef local_scalar_t__ fun_return_scalar_t__;
+    const static bool propto__ = true;
+    (void) propto__;
+        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+        (void) DUMMY_VAR__;  // suppress unused var warning
+    int current_statement_begin__ = -1;
+    try {
+        {
+        current_statement_begin__ = 57;
         validate_non_negative_index("pmf", "n", n);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> pmf(n);
         stan::math::initialize(pmf, DUMMY_VAR__);
         stan::math::fill(pmf, DUMMY_VAR__);
-        current_statement_begin__ = 32;
-        local_scalar_t__ small(DUMMY_VAR__);
-        (void) small;  // dummy to suppress unused var warning
-        stan::math::initialize(small, DUMMY_VAR__);
-        stan::math::fill(small, DUMMY_VAR__);
-        stan::math::assign(small,1e-5);
-        current_statement_begin__ = 33;
-        local_scalar_t__ c_sigma(DUMMY_VAR__);
-        (void) c_sigma;  // dummy to suppress unused var warning
-        stan::math::initialize(c_sigma, DUMMY_VAR__);
-        stan::math::fill(c_sigma, DUMMY_VAR__);
-        stan::math::assign(c_sigma,(logical_lt(sigma, small) ? stan::math::promote_scalar<local_scalar_t__>(small) : stan::math::promote_scalar<local_scalar_t__>(sigma) ));
-        current_statement_begin__ = 34;
-        local_scalar_t__ c_mu(DUMMY_VAR__);
-        (void) c_mu;  // dummy to suppress unused var warning
-        stan::math::initialize(c_mu, DUMMY_VAR__);
-        stan::math::fill(c_mu, DUMMY_VAR__);
-        stan::math::assign(c_mu,(logical_lt(mu, small) ? stan::math::promote_scalar<local_scalar_t__>(small) : stan::math::promote_scalar<local_scalar_t__>(mu) ));
-        current_statement_begin__ = 35;
-        validate_non_negative_index("adj_y", "n", n);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> adj_y(n);
-        stan::math::initialize(adj_y, DUMMY_VAR__);
-        stan::math::fill(adj_y, DUMMY_VAR__);
-        stan::math::assign(adj_y,add(to_vector(y), small));
-        current_statement_begin__ = 36;
-        validate_non_negative_index("upper_y", "n", n);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> upper_y(n);
-        stan::math::initialize(upper_y, DUMMY_VAR__);
-        stan::math::fill(upper_y, DUMMY_VAR__);
-        stan::math::assign(upper_y,divide(subtract(stan::math::log(add(adj_y, 1)), c_mu), c_sigma));
-        current_statement_begin__ = 37;
-        validate_non_negative_index("lower_y", "n", n);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> lower_y(n);
-        stan::math::initialize(lower_y, DUMMY_VAR__);
-        stan::math::fill(lower_y, DUMMY_VAR__);
-        stan::math::assign(lower_y,divide(subtract(stan::math::log(adj_y), c_mu), c_sigma));
-        current_statement_begin__ = 38;
-        local_scalar_t__ max_cdf(DUMMY_VAR__);
-        (void) max_cdf;  // dummy to suppress unused var warning
-        stan::math::initialize(max_cdf, DUMMY_VAR__);
-        stan::math::fill(max_cdf, DUMMY_VAR__);
-        stan::math::assign(max_cdf,normal_cdf(((stan::math::log((max_val + small)) - c_mu) / c_sigma), 0.0, 1.0));
-        current_statement_begin__ = 39;
-        local_scalar_t__ min_cdf(DUMMY_VAR__);
-        (void) min_cdf;  // dummy to suppress unused var warning
-        stan::math::initialize(min_cdf, DUMMY_VAR__);
-        stan::math::fill(min_cdf, DUMMY_VAR__);
-        stan::math::assign(min_cdf,normal_cdf(((stan::math::log(small) - c_mu) / c_sigma), 0.0, 1.0));
-        current_statement_begin__ = 40;
-        local_scalar_t__ trunc_cdf(DUMMY_VAR__);
-        (void) trunc_cdf;  // dummy to suppress unused var warning
-        stan::math::initialize(trunc_cdf, DUMMY_VAR__);
-        stan::math::fill(trunc_cdf, DUMMY_VAR__);
-        stan::math::assign(trunc_cdf,(max_cdf - min_cdf));
-        current_statement_begin__ = 41;
-        for (int i = 1; i <= n; ++i) {
-            current_statement_begin__ = 42;
+        current_statement_begin__ = 58;
+        if (as_bool(logical_gt(sigma, 0))) {
+            {
+            current_statement_begin__ = 59;
+            validate_non_negative_index("upper_cdf", "(n + 1)", (n + 1));
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> upper_cdf((n + 1));
+            stan::math::initialize(upper_cdf, DUMMY_VAR__);
+            stan::math::fill(upper_cdf, DUMMY_VAR__);
+            current_statement_begin__ = 60;
+            if (as_bool(logical_eq(dist, 0))) {
+                current_statement_begin__ = 61;
+                for (int i = 1; i <= (n + 1); ++i) {
+                    current_statement_begin__ = 62;
+                    stan::model::assign(upper_cdf, 
+                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                lognormal_cdf(((i - 1) + left_truncate), mu, sigma), 
+                                "assigning variable upper_cdf");
+                }
+            } else if (as_bool(logical_eq(dist, 1))) {
+                {
+                current_statement_begin__ = 65;
+                local_scalar_t__ alpha(DUMMY_VAR__);
+                (void) alpha;  // dummy to suppress unused var warning
+                stan::math::initialize(alpha, DUMMY_VAR__);
+                stan::math::fill(alpha, DUMMY_VAR__);
+                stan::math::assign(alpha,(pow(mu, 2) / pow(sigma, 2)));
+                current_statement_begin__ = 66;
+                local_scalar_t__ beta(DUMMY_VAR__);
+                (void) beta;  // dummy to suppress unused var warning
+                stan::math::initialize(beta, DUMMY_VAR__);
+                stan::math::fill(beta, DUMMY_VAR__);
+                stan::math::assign(beta,(mu / pow(sigma, 2)));
+                current_statement_begin__ = 67;
+                for (int i = 1; i <= (n + 1); ++i) {
+                    current_statement_begin__ = 68;
+                    stan::model::assign(upper_cdf, 
+                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                                gamma_cdf(((i - 1) + left_truncate), alpha, beta), 
+                                "assigning variable upper_cdf");
+                }
+                }
+            } else {
+                current_statement_begin__ = 71;
+                std::stringstream errmsg_stream__;
+                errmsg_stream__ << "Unknown distribution function provided.";
+                throw std::domain_error(errmsg_stream__.str());
+            }
+            current_statement_begin__ = 74;
+            stan::math::assign(pmf, subtract(stan::model::rvalue(upper_cdf, stan::model::cons_list(stan::model::index_min_max(2, (n + 1)), stan::model::nil_index_list()), "upper_cdf"), stan::model::rvalue(upper_cdf, stan::model::cons_list(stan::model::index_min_max(1, n), stan::model::nil_index_list()), "upper_cdf")));
+            current_statement_begin__ = 76;
+            stan::math::assign(pmf, divide(pmf, (get_base1(upper_cdf, (n + 1), "upper_cdf", 1) - get_base1(upper_cdf, 1, "upper_cdf", 1))));
+            }
+        } else {
+            current_statement_begin__ = 79;
+            stan::math::assign(pmf, rep_vector(0, n));
+            current_statement_begin__ = 80;
             stan::model::assign(pmf, 
-                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                        ((normal_cdf(get_base1(upper_y, i, "upper_y", 1), 0.0, 1.0) - normal_cdf(get_base1(lower_y, i, "lower_y", 1), 0.0, 1.0)) / trunc_cdf), 
+                        stan::model::cons_list(stan::model::index_uni(n), stan::model::nil_index_list()), 
+                        1, 
                         "assigning variable pmf");
         }
-        current_statement_begin__ = 45;
+        current_statement_begin__ = 82;
         return stan::math::promote_scalar<fun_return_scalar_t__>(pmf);
         }
     } catch (const std::exception& e) {
@@ -263,20 +327,20 @@ discretised_lognormal_pmf(const std::vector<int>& y,
         throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
     }
 }
-struct discretised_lognormal_pmf_functor__ {
-    template <typename T1__, typename T2__>
-        Eigen::Matrix<typename boost::math::tools::promote_args<T1__, T2__>::type, Eigen::Dynamic, 1>
-    operator()(const std::vector<int>& y,
-                              const T1__& mu,
-                              const T2__& sigma,
-                              const int& max_val, std::ostream* pstream__) const {
-        return discretised_lognormal_pmf(y, mu, sigma, max_val, pstream__);
+struct discretised_pmf_functor__ {
+    template <typename T0__, typename T1__>
+        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
+    operator()(const T0__& mu,
+                    const T1__& sigma,
+                    const int& n,
+                    const int& dist,
+                    const int& left_truncate, std::ostream* pstream__) const {
+        return discretised_pmf(mu, sigma, n, dist, left_truncate, pstream__);
     }
 };
 template <typename T0__>
 Eigen::Matrix<typename boost::math::tools::promote_args<T0__>::type, Eigen::Dynamic, 1>
-reverse_mf(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& pmf,
-               const int& max_pmf, std::ostream* pstream__) {
+reverse_mf(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& pmf, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -286,20 +350,25 @@ reverse_mf(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& pmf,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 50;
+        current_statement_begin__ = 87;
+        int max_pmf(0);
+        (void) max_pmf;  // dummy to suppress unused var warning
+        stan::math::fill(max_pmf, std::numeric_limits<int>::min());
+        stan::math::assign(max_pmf,num_elements(pmf));
+        current_statement_begin__ = 88;
         validate_non_negative_index("rev_pmf", "max_pmf", max_pmf);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rev_pmf(max_pmf);
         stan::math::initialize(rev_pmf, DUMMY_VAR__);
         stan::math::fill(rev_pmf, DUMMY_VAR__);
-        current_statement_begin__ = 51;
+        current_statement_begin__ = 89;
         for (int d = 1; d <= max_pmf; ++d) {
-            current_statement_begin__ = 52;
+            current_statement_begin__ = 90;
             stan::model::assign(rev_pmf, 
                         stan::model::cons_list(stan::model::index_uni(d), stan::model::nil_index_list()), 
                         get_base1(pmf, ((max_pmf - d) + 1), "pmf", 1), 
                         "assigning variable rev_pmf");
         }
-        current_statement_begin__ = 54;
+        current_statement_begin__ = 92;
         return stan::math::promote_scalar<fun_return_scalar_t__>(rev_pmf);
         }
     } catch (const std::exception& e) {
@@ -311,72 +380,20 @@ reverse_mf(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& pmf,
 struct reverse_mf_functor__ {
     template <typename T0__>
         Eigen::Matrix<typename boost::math::tools::promote_args<T0__>::type, Eigen::Dynamic, 1>
-    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& pmf,
-               const int& max_pmf, std::ostream* pstream__) const {
-        return reverse_mf(pmf, max_pmf, pstream__);
-    }
-};
-template <typename T0__, typename T1__>
-Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
-convolve(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& cases,
-             const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& rev_pmf, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T0__, T1__>::type local_scalar_t__;
-    typedef local_scalar_t__ fun_return_scalar_t__;
-    const static bool propto__ = true;
-    (void) propto__;
-        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
-        (void) DUMMY_VAR__;  // suppress unused var warning
-    int current_statement_begin__ = -1;
-    try {
-        {
-        current_statement_begin__ = 58;
-        int t(0);
-        (void) t;  // dummy to suppress unused var warning
-        stan::math::fill(t, std::numeric_limits<int>::min());
-        stan::math::assign(t,num_elements(cases));
-        current_statement_begin__ = 59;
-        int max_pmf(0);
-        (void) max_pmf;  // dummy to suppress unused var warning
-        stan::math::fill(max_pmf, std::numeric_limits<int>::min());
-        stan::math::assign(max_pmf,num_elements(rev_pmf));
-        current_statement_begin__ = 60;
-        validate_non_negative_index("conv_cases", "t", t);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> conv_cases(t);
-        stan::math::initialize(conv_cases, DUMMY_VAR__);
-        stan::math::fill(conv_cases, DUMMY_VAR__);
-        stan::math::assign(conv_cases,rep_vector(1e-5, t));
-        current_statement_begin__ = 61;
-        for (int s = 1; s <= t; ++s) {
-            current_statement_begin__ = 62;
-            stan::model::assign(conv_cases, 
-                        stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
-                        (stan::model::rvalue(conv_cases, stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), "conv_cases") + dot_product(stan::model::rvalue(cases, stan::model::cons_list(stan::model::index_min_max(std::max(1, ((s - max_pmf) + 1)), s), stan::model::nil_index_list()), "cases"), tail(rev_pmf, std::min(max_pmf, s)))), 
-                        "assigning variable conv_cases");
-        }
-        current_statement_begin__ = 65;
-        return stan::math::promote_scalar<fun_return_scalar_t__>(conv_cases);
-        }
-    } catch (const std::exception& e) {
-        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
-        // Next line prevents compiler griping about no return
-        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
-    }
-}
-struct convolve_functor__ {
-    template <typename T0__, typename T1__>
-        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
-    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& cases,
-             const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& rev_pmf, std::ostream* pstream__) const {
-        return convolve(cases, rev_pmf, pstream__);
+    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& pmf, std::ostream* pstream__) const {
+        return reverse_mf(pmf, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__>
 Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__, T2__>::type, Eigen::Dynamic, 1>
-convolve_to_report(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& infections,
-                       const std::vector<T1__>& delay_mean,
-                       const std::vector<T2__>& delay_sd,
-                       const std::vector<int>& max_delay,
-                       const int& seeding_time, std::ostream* pstream__) {
+combine_pmfs(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& fixed_pmf,
+                 const std::vector<T1__>& pmf_mu,
+                 const std::vector<T2__>& pmf_sigma,
+                 const std::vector<int>& pmf_n,
+                 const std::vector<int>& dist,
+                 const int& len,
+                 const int& left_truncate,
+                 const int& reverse_pmf, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -386,64 +403,57 @@ convolve_to_report(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& infections,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 75;
-        int t(0);
-        (void) t;  // dummy to suppress unused var warning
-        stan::math::fill(t, std::numeric_limits<int>::min());
-        stan::math::assign(t,num_elements(infections));
-        current_statement_begin__ = 76;
-        validate_non_negative_index("reports", "(t - seeding_time)", (t - seeding_time));
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> reports((t - seeding_time));
-        stan::math::initialize(reports, DUMMY_VAR__);
-        stan::math::fill(reports, DUMMY_VAR__);
-        current_statement_begin__ = 77;
-        validate_non_negative_index("unobs_reports", "t", t);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> unobs_reports(t);
-        stan::math::initialize(unobs_reports, DUMMY_VAR__);
-        stan::math::fill(unobs_reports, DUMMY_VAR__);
-        stan::math::assign(unobs_reports,infections);
-        current_statement_begin__ = 78;
-        int delays(0);
-        (void) delays;  // dummy to suppress unused var warning
-        stan::math::fill(delays, std::numeric_limits<int>::min());
-        stan::math::assign(delays,num_elements(delay_mean));
-        current_statement_begin__ = 79;
-        if (as_bool(delays)) {
-            current_statement_begin__ = 80;
-            for (int s = 1; s <= delays; ++s) {
-                {
-                current_statement_begin__ = 81;
-                validate_non_negative_index("pmf", "get_base1(max_delay, s, \"max_delay\", 1)", get_base1(max_delay, s, "max_delay", 1));
-                Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> pmf(get_base1(max_delay, s, "max_delay", 1));
-                stan::math::initialize(pmf, DUMMY_VAR__);
-                stan::math::fill(pmf, DUMMY_VAR__);
-                stan::math::assign(pmf,rep_vector(1e-5, get_base1(max_delay, s, "max_delay", 1)));
-                current_statement_begin__ = 82;
-                validate_non_negative_index("delay_indexes", "get_base1(max_delay, s, \"max_delay\", 1)", get_base1(max_delay, s, "max_delay", 1));
-                std::vector<int  > delay_indexes(get_base1(max_delay, s, "max_delay", 1), int(0));
-                stan::math::fill(delay_indexes, std::numeric_limits<int>::min());
-                current_statement_begin__ = 83;
-                for (int i = 1; i <= get_base1(max_delay, s, "max_delay", 1); ++i) {
-                    current_statement_begin__ = 84;
-                    stan::model::assign(delay_indexes, 
-                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (get_base1(max_delay, s, "max_delay", 1) - i), 
-                                "assigning variable delay_indexes");
-                }
-                current_statement_begin__ = 86;
-                stan::math::assign(pmf, add(pmf, discretised_lognormal_pmf(delay_indexes, get_base1(delay_mean, s, "delay_mean", 1), get_base1(delay_sd, s, "delay_sd", 1), get_base1(max_delay, s, "max_delay", 1), pstream__)));
-                current_statement_begin__ = 88;
-                stan::math::assign(unobs_reports, convolve(unobs_reports, pmf, pstream__));
-                }
-            }
-            current_statement_begin__ = 90;
-            stan::math::assign(reports, stan::model::rvalue(unobs_reports, stan::model::cons_list(stan::model::index_min_max((seeding_time + 1), t), stan::model::nil_index_list()), "unobs_reports"));
-        } else {
-            current_statement_begin__ = 92;
-            stan::math::assign(reports, stan::model::rvalue(infections, stan::model::cons_list(stan::model::index_min_max((seeding_time + 1), t), stan::model::nil_index_list()), "infections"));
+        current_statement_begin__ = 97;
+        int n_fixed(0);
+        (void) n_fixed;  // dummy to suppress unused var warning
+        stan::math::fill(n_fixed, std::numeric_limits<int>::min());
+        stan::math::assign(n_fixed,num_elements(fixed_pmf));
+        current_statement_begin__ = 98;
+        int n_variable(0);
+        (void) n_variable;  // dummy to suppress unused var warning
+        stan::math::fill(n_variable, std::numeric_limits<int>::min());
+        stan::math::assign(n_variable,num_elements(pmf_mu));
+        current_statement_begin__ = 99;
+        validate_non_negative_index("pmf", "len", len);
+        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> pmf(len);
+        stan::math::initialize(pmf, DUMMY_VAR__);
+        stan::math::fill(pmf, DUMMY_VAR__);
+        stan::math::assign(pmf,rep_vector(0, len));
+        current_statement_begin__ = 100;
+        if (as_bool(logical_gt(n_fixed, 0))) {
+            current_statement_begin__ = 101;
+            stan::model::assign(pmf, 
+                        stan::model::cons_list(stan::model::index_min_max(1, n_fixed), stan::model::nil_index_list()), 
+                        fixed_pmf, 
+                        "assigning variable pmf");
+        } else if (as_bool(logical_gt(n_variable, 0))) {
+            current_statement_begin__ = 103;
+            stan::model::assign(pmf, 
+                        stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list()), 
+                        1, 
+                        "assigning variable pmf");
         }
-        current_statement_begin__ = 94;
-        return stan::math::promote_scalar<fun_return_scalar_t__>(reports);
+        current_statement_begin__ = 105;
+        for (int s = 1; s <= n_variable; ++s) {
+            {
+            current_statement_begin__ = 106;
+            validate_non_negative_index("variable_pmf", "get_base1(pmf_n, s, \"pmf_n\", 1)", get_base1(pmf_n, s, "pmf_n", 1));
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> variable_pmf(get_base1(pmf_n, s, "pmf_n", 1));
+            stan::math::initialize(variable_pmf, DUMMY_VAR__);
+            stan::math::fill(variable_pmf, DUMMY_VAR__);
+            current_statement_begin__ = 107;
+            stan::math::assign(variable_pmf, discretised_pmf(get_base1(pmf_mu, s, "pmf_mu", 1), get_base1(pmf_sigma, s, "pmf_sigma", 1), get_base1(pmf_n, s, "pmf_n", 1), get_base1(dist, s, "dist", 1), left_truncate, pstream__));
+            current_statement_begin__ = 108;
+            stan::math::assign(pmf, convolve(pmf, variable_pmf, len, pstream__));
+            }
+        }
+        current_statement_begin__ = 110;
+        if (as_bool(reverse_pmf)) {
+            current_statement_begin__ = 111;
+            stan::math::assign(pmf, reverse_mf(pmf, pstream__));
+        }
+        current_statement_begin__ = 113;
+        return stan::math::promote_scalar<fun_return_scalar_t__>(pmf);
         }
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -451,15 +461,18 @@ convolve_to_report(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& infections,
         throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
     }
 }
-struct convolve_to_report_functor__ {
+struct combine_pmfs_functor__ {
     template <typename T0__, typename T1__, typename T2__>
         Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__, T2__>::type, Eigen::Dynamic, 1>
-    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& infections,
-                       const std::vector<T1__>& delay_mean,
-                       const std::vector<T2__>& delay_sd,
-                       const std::vector<int>& max_delay,
-                       const int& seeding_time, std::ostream* pstream__) const {
-        return convolve_to_report(infections, delay_mean, delay_sd, max_delay, seeding_time, pstream__);
+    operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& fixed_pmf,
+                 const std::vector<T1__>& pmf_mu,
+                 const std::vector<T2__>& pmf_sigma,
+                 const std::vector<int>& pmf_n,
+                 const std::vector<int>& dist,
+                 const int& len,
+                 const int& left_truncate,
+                 const int& reverse_pmf, std::ostream* pstream__) const {
+        return combine_pmfs(fixed_pmf, pmf_mu, pmf_sigma, pmf_n, dist, len, left_truncate, reverse_pmf, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__, typename T_lp__, typename T_lp_accum__>
@@ -470,6 +483,7 @@ delays_lp(const std::vector<T0__>& delay_mean,
               const std::vector<T3__>& delay_sd,
               const std::vector<T4__>& delay_sd_mean,
               const std::vector<T5__>& delay_sd_sd,
+              const std::vector<int>& delay_dist,
               const int& weight, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__, T2__, T3__, typename boost::math::tools::promote_args<T4__, T5__, T_lp__>::type>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
@@ -480,19 +494,43 @@ delays_lp(const std::vector<T0__>& delay_mean,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 99;
-        int delays(0);
-        (void) delays;  // dummy to suppress unused var warning
-        stan::math::fill(delays, std::numeric_limits<int>::min());
-        stan::math::assign(delays,num_elements(delay_mean));
-        current_statement_begin__ = 100;
-        if (as_bool(delays)) {
-            current_statement_begin__ = 101;
-            for (int s = 1; s <= delays; ++s) {
-                current_statement_begin__ = 102;
-                lp_accum__.add((normal_log(get_base1(delay_mean, s, "delay_mean", 1), get_base1(delay_mean_mean, s, "delay_mean_mean", 1), get_base1(delay_mean_sd, s, "delay_mean_sd", 1)) * weight));
-                current_statement_begin__ = 103;
-                lp_accum__.add((normal_log(get_base1(delay_sd, s, "delay_sd", 1), get_base1(delay_sd_mean, s, "delay_sd_mean", 1), get_base1(delay_sd_sd, s, "delay_sd_sd", 1)) * weight));
+        current_statement_begin__ = 119;
+        int mean_delays(0);
+        (void) mean_delays;  // dummy to suppress unused var warning
+        stan::math::fill(mean_delays, std::numeric_limits<int>::min());
+        stan::math::assign(mean_delays,num_elements(delay_mean));
+        current_statement_begin__ = 120;
+        int sd_delays(0);
+        (void) sd_delays;  // dummy to suppress unused var warning
+        stan::math::fill(sd_delays, std::numeric_limits<int>::min());
+        stan::math::assign(sd_delays,num_elements(delay_sd));
+        current_statement_begin__ = 121;
+        if (as_bool(mean_delays)) {
+            current_statement_begin__ = 122;
+            for (int s = 1; s <= mean_delays; ++s) {
+                current_statement_begin__ = 123;
+                if (as_bool(logical_gt(get_base1(delay_mean_sd, s, "delay_mean_sd", 1), 0))) {
+                    current_statement_begin__ = 125;
+                    lp_accum__.add((normal_log(get_base1(delay_mean, s, "delay_mean", 1), get_base1(delay_mean_mean, s, "delay_mean_mean", 1), get_base1(delay_mean_sd, s, "delay_mean_sd", 1)) * weight));
+                    current_statement_begin__ = 127;
+                    if (as_bool(get_base1(delay_dist, s, "delay_dist", 1))) {
+                        current_statement_begin__ = 128;
+                        lp_accum__.add((-(normal_ccdf_log(0, get_base1(delay_mean_mean, s, "delay_mean_mean", 1), get_base1(delay_mean_sd, s, "delay_mean_sd", 1))) * weight));
+                    }
+                }
+            }
+        }
+        current_statement_begin__ = 133;
+        if (as_bool(sd_delays)) {
+            current_statement_begin__ = 134;
+            for (int s = 1; s <= sd_delays; ++s) {
+                current_statement_begin__ = 135;
+                if (as_bool(logical_gt(get_base1(delay_sd_sd, s, "delay_sd_sd", 1), 0))) {
+                    current_statement_begin__ = 137;
+                    lp_accum__.add((normal_log(get_base1(delay_sd, s, "delay_sd", 1), get_base1(delay_sd_mean, s, "delay_sd_mean", 1), get_base1(delay_sd_sd, s, "delay_sd_sd", 1)) * weight));
+                    current_statement_begin__ = 138;
+                    lp_accum__.add((-(normal_ccdf_log(0, get_base1(delay_sd_mean, s, "delay_sd_mean", 1), get_base1(delay_sd_sd, s, "delay_sd_sd", 1))) * weight));
+                }
             }
         }
         }
@@ -511,8 +549,9 @@ struct delays_lp_functor__ {
               const std::vector<T3__>& delay_sd,
               const std::vector<T4__>& delay_sd_mean,
               const std::vector<T5__>& delay_sd_sd,
+              const std::vector<int>& delay_dist,
               const int& weight, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) const {
-        return delays_lp(delay_mean, delay_mean_mean, delay_mean_sd, delay_sd, delay_sd_mean, delay_sd_sd, weight, lp__, lp_accum__, pstream__);
+        return delays_lp(delay_mean, delay_mean_mean, delay_mean_sd, delay_sd, delay_sd_mean, delay_sd_sd, delay_dist, weight, lp__, lp_accum__, pstream__);
     }
 };
 template <typename T0__, typename T2__>
@@ -529,31 +568,36 @@ day_of_week_effect(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 109;
+        current_statement_begin__ = 145;
         int t(0);
         (void) t;  // dummy to suppress unused var warning
         stan::math::fill(t, std::numeric_limits<int>::min());
         stan::math::assign(t,num_elements(reports));
-        current_statement_begin__ = 111;
-        validate_non_negative_index("scaled_effect", "7", 7);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> scaled_effect(7);
+        current_statement_begin__ = 146;
+        int wl(0);
+        (void) wl;  // dummy to suppress unused var warning
+        stan::math::fill(wl, std::numeric_limits<int>::min());
+        stan::math::assign(wl,num_elements(effect));
+        current_statement_begin__ = 148;
+        validate_non_negative_index("scaled_effect", "wl", wl);
+        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> scaled_effect(wl);
         stan::math::initialize(scaled_effect, DUMMY_VAR__);
         stan::math::fill(scaled_effect, DUMMY_VAR__);
-        stan::math::assign(scaled_effect,multiply(7, effect));
-        current_statement_begin__ = 112;
+        stan::math::assign(scaled_effect,multiply(wl, effect));
+        current_statement_begin__ = 149;
         validate_non_negative_index("scaled_reports", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> scaled_reports(t);
         stan::math::initialize(scaled_reports, DUMMY_VAR__);
         stan::math::fill(scaled_reports, DUMMY_VAR__);
-        current_statement_begin__ = 113;
+        current_statement_begin__ = 150;
         for (int s = 1; s <= t; ++s) {
-            current_statement_begin__ = 115;
+            current_statement_begin__ = 152;
             stan::model::assign(scaled_reports, 
                         stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
                         (get_base1(reports, s, "reports", 1) * get_base1(scaled_effect, get_base1(day_of_week, s, "day_of_week", 1), "scaled_effect", 1)), 
                         "assigning variable scaled_reports");
         }
-        current_statement_begin__ = 117;
+        current_statement_begin__ = 154;
         return stan::math::promote_scalar<fun_return_scalar_t__>(scaled_reports);
         }
     } catch (const std::exception& e) {
@@ -584,19 +628,19 @@ scale_obs(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 122;
+        current_statement_begin__ = 159;
         int t(0);
         (void) t;  // dummy to suppress unused var warning
         stan::math::fill(t, std::numeric_limits<int>::min());
         stan::math::assign(t,num_elements(reports));
-        current_statement_begin__ = 123;
+        current_statement_begin__ = 160;
         validate_non_negative_index("scaled_reports", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> scaled_reports(t);
         stan::math::initialize(scaled_reports, DUMMY_VAR__);
         stan::math::fill(scaled_reports, DUMMY_VAR__);
-        current_statement_begin__ = 124;
+        current_statement_begin__ = 161;
         stan::math::assign(scaled_reports, multiply(reports, frac_obs));
-        current_statement_begin__ = 125;
+        current_statement_begin__ = 162;
         return stan::math::promote_scalar<fun_return_scalar_t__>(scaled_reports);
         }
     } catch (const std::exception& e) {
@@ -615,9 +659,9 @@ struct scale_obs_functor__ {
 };
 template <typename T0__, typename T1__>
 Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
-truncation_cmf(const T0__& trunc_mean,
-                   const T1__& trunc_sd,
-                   const int& trunc_max, std::ostream* pstream__) {
+truncate(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
+             const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& trunc_rev_cmf,
+             const int& reconstruct, std::ostream* pstream__) {
     typedef typename boost::math::tools::promote_args<T0__, T1__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
@@ -627,125 +671,42 @@ truncation_cmf(const T0__& trunc_mean,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 129;
-        validate_non_negative_index("trunc_indexes", "trunc_max", trunc_max);
-        std::vector<int  > trunc_indexes(trunc_max, int(0));
-        stan::math::fill(trunc_indexes, std::numeric_limits<int>::min());
-        current_statement_begin__ = 130;
-        validate_non_negative_index("cmf", "trunc_max", trunc_max);
-        Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> cmf(trunc_max);
-        stan::math::initialize(cmf, DUMMY_VAR__);
-        stan::math::fill(cmf, DUMMY_VAR__);
-        current_statement_begin__ = 131;
-        for (int i = 1; i <= trunc_max; ++i) {
-            current_statement_begin__ = 132;
-            stan::model::assign(trunc_indexes, 
-                        stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                        (i - 1), 
-                        "assigning variable trunc_indexes");
-        }
-        current_statement_begin__ = 134;
-        stan::math::assign(cmf, discretised_lognormal_pmf(trunc_indexes, trunc_mean, trunc_sd, trunc_max, pstream__));
-        current_statement_begin__ = 135;
-        stan::model::assign(cmf, 
-                    stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list()), 
-                    (get_base1(cmf, 1, "cmf", 1) + 1e-8), 
-                    "assigning variable cmf");
-        current_statement_begin__ = 136;
-        stan::math::assign(cmf, cumulative_sum(cmf));
-        current_statement_begin__ = 137;
-        stan::math::assign(cmf, reverse_mf(cmf, trunc_max, pstream__));
-        current_statement_begin__ = 138;
-        return stan::math::promote_scalar<fun_return_scalar_t__>(cmf);
-        }
-    } catch (const std::exception& e) {
-        stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
-        // Next line prevents compiler griping about no return
-        throw std::runtime_error("*** IF YOU SEE THIS, PLEASE REPORT A BUG ***");
-    }
-}
-struct truncation_cmf_functor__ {
-    template <typename T0__, typename T1__>
-        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
-    operator()(const T0__& trunc_mean,
-                   const T1__& trunc_sd,
-                   const int& trunc_max, std::ostream* pstream__) const {
-        return truncation_cmf(trunc_mean, trunc_sd, trunc_max, pstream__);
-    }
-};
-template <typename T0__, typename T1__, typename T2__>
-Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__, T2__>::type, Eigen::Dynamic, 1>
-truncate(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
-             const std::vector<T1__>& truncation_mean,
-             const std::vector<T2__>& truncation_sd,
-             const std::vector<int>& truncation_max,
-             const int& reconstruct, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T0__, T1__, T2__>::type local_scalar_t__;
-    typedef local_scalar_t__ fun_return_scalar_t__;
-    const static bool propto__ = true;
-    (void) propto__;
-        local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
-        (void) DUMMY_VAR__;  // suppress unused var warning
-    int current_statement_begin__ = -1;
-    try {
-        {
-        current_statement_begin__ = 143;
+        current_statement_begin__ = 166;
         int t(0);
         (void) t;  // dummy to suppress unused var warning
         stan::math::fill(t, std::numeric_limits<int>::min());
         stan::math::assign(t,num_elements(reports));
-        current_statement_begin__ = 144;
-        int truncation(0);
-        (void) truncation;  // dummy to suppress unused var warning
-        stan::math::fill(truncation, std::numeric_limits<int>::min());
-        stan::math::assign(truncation,num_elements(truncation_mean));
-        current_statement_begin__ = 145;
+        current_statement_begin__ = 167;
         validate_non_negative_index("trunc_reports", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> trunc_reports(t);
         stan::math::initialize(trunc_reports, DUMMY_VAR__);
         stan::math::fill(trunc_reports, DUMMY_VAR__);
         stan::math::assign(trunc_reports,reports);
-        current_statement_begin__ = 146;
-        if (as_bool(truncation)) {
-            {
-            current_statement_begin__ = 148;
-            int trunc_max(0);
-            (void) trunc_max;  // dummy to suppress unused var warning
-            stan::math::fill(trunc_max, std::numeric_limits<int>::min());
-            stan::math::assign(trunc_max,(logical_gt(get_base1(truncation_max, 1, "truncation_max", 1), t) ? t : get_base1(truncation_max, 1, "truncation_max", 1) ));
-            current_statement_begin__ = 149;
-            validate_non_negative_index("trunc_indexes", "trunc_max", trunc_max);
-            std::vector<int  > trunc_indexes(trunc_max, int(0));
-            stan::math::fill(trunc_indexes, std::numeric_limits<int>::min());
-            current_statement_begin__ = 150;
-            validate_non_negative_index("cmf", "trunc_max", trunc_max);
-            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> cmf(trunc_max);
-            stan::math::initialize(cmf, DUMMY_VAR__);
-            stan::math::fill(cmf, DUMMY_VAR__);
-            current_statement_begin__ = 151;
-            int first_t(0);
-            (void) first_t;  // dummy to suppress unused var warning
-            stan::math::fill(first_t, std::numeric_limits<int>::min());
-            stan::math::assign(first_t,((t - trunc_max) + 1));
-            current_statement_begin__ = 152;
-            stan::math::assign(cmf, truncation_cmf(get_base1(truncation_mean, 1, "truncation_mean", 1), get_base1(truncation_sd, 1, "truncation_sd", 1), trunc_max, pstream__));
-            current_statement_begin__ = 154;
-            if (as_bool(reconstruct)) {
-                current_statement_begin__ = 155;
-                stan::model::assign(trunc_reports, 
-                            stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), 
-                            stan::model::deep_copy(elt_divide(stan::model::rvalue(trunc_reports, stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), "trunc_reports"), cmf)), 
-                            "assigning variable trunc_reports");
-            } else {
-                current_statement_begin__ = 157;
-                stan::model::assign(trunc_reports, 
-                            stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), 
-                            stan::model::deep_copy(elt_multiply(stan::model::rvalue(trunc_reports, stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), "trunc_reports"), cmf)), 
-                            "assigning variable trunc_reports");
-            }
-            }
+        current_statement_begin__ = 169;
+        int trunc_max(0);
+        (void) trunc_max;  // dummy to suppress unused var warning
+        stan::math::fill(trunc_max, std::numeric_limits<int>::min());
+        stan::math::assign(trunc_max,num_elements(trunc_rev_cmf));
+        current_statement_begin__ = 170;
+        int first_t(0);
+        (void) first_t;  // dummy to suppress unused var warning
+        stan::math::fill(first_t, std::numeric_limits<int>::min());
+        stan::math::assign(first_t,((t - trunc_max) + 1));
+        current_statement_begin__ = 172;
+        if (as_bool(reconstruct)) {
+            current_statement_begin__ = 173;
+            stan::model::assign(trunc_reports, 
+                        stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), 
+                        stan::model::deep_copy(elt_divide(stan::model::rvalue(trunc_reports, stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), "trunc_reports"), trunc_rev_cmf)), 
+                        "assigning variable trunc_reports");
+        } else {
+            current_statement_begin__ = 175;
+            stan::model::assign(trunc_reports, 
+                        stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), 
+                        stan::model::deep_copy(elt_multiply(stan::model::rvalue(trunc_reports, stan::model::cons_list(stan::model::index_min_max(first_t, t), stan::model::nil_index_list()), "trunc_reports"), trunc_rev_cmf)), 
+                        "assigning variable trunc_reports");
         }
-        current_statement_begin__ = 160;
+        current_statement_begin__ = 177;
         return stan::math::promote_scalar<fun_return_scalar_t__>(trunc_reports);
         }
     } catch (const std::exception& e) {
@@ -755,14 +716,12 @@ truncate(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
     }
 }
 struct truncate_functor__ {
-    template <typename T0__, typename T1__, typename T2__>
-        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__, T2__>::type, Eigen::Dynamic, 1>
+    template <typename T0__, typename T1__>
+        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T1__>::type, Eigen::Dynamic, 1>
     operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
-             const std::vector<T1__>& truncation_mean,
-             const std::vector<T2__>& truncation_sd,
-             const std::vector<int>& truncation_max,
+             const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& trunc_rev_cmf,
              const int& reconstruct, std::ostream* pstream__) const {
-        return truncate(reports, truncation_mean, truncation_sd, truncation_max, reconstruct, pstream__);
+        return truncate(reports, trunc_rev_cmf, reconstruct, pstream__);
     }
 };
 template <typename T0__, typename T1__, typename T2__, typename T3__, typename T4__, typename T5__, typename T_lp__, typename T_lp_accum__>
@@ -782,17 +741,23 @@ truncation_lp(const std::vector<T0__>& truncation_mean,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 166;
+        current_statement_begin__ = 183;
         int truncation(0);
         (void) truncation;  // dummy to suppress unused var warning
         stan::math::fill(truncation, std::numeric_limits<int>::min());
         stan::math::assign(truncation,num_elements(truncation_mean));
-        current_statement_begin__ = 167;
+        current_statement_begin__ = 184;
         if (as_bool(truncation)) {
-            current_statement_begin__ = 168;
-            lp_accum__.add(normal_log<propto__>(truncation_mean, trunc_mean_mean, trunc_mean_sd));
-            current_statement_begin__ = 169;
-            lp_accum__.add(normal_log<propto__>(truncation_sd, trunc_sd_mean, trunc_sd_sd));
+            current_statement_begin__ = 185;
+            if (as_bool(logical_gt(get_base1(trunc_mean_sd, 1, "trunc_mean_sd", 1), 0))) {
+                current_statement_begin__ = 187;
+                lp_accum__.add(normal_log<propto__>(truncation_mean, trunc_mean_mean, trunc_mean_sd));
+            }
+            current_statement_begin__ = 189;
+            if (as_bool(logical_gt(get_base1(trunc_sd_sd, 1, "trunc_sd_sd", 1), 0))) {
+                current_statement_begin__ = 191;
+                lp_accum__.add(normal_log<propto__>(truncation_sd, trunc_sd_mean, trunc_sd_sd));
+            }
         }
         }
     } catch (const std::exception& e) {
@@ -813,15 +778,16 @@ struct truncation_lp_functor__ {
         return truncation_lp(truncation_mean, truncation_sd, trunc_mean_mean, trunc_mean_sd, trunc_sd_mean, trunc_sd_sd, lp__, lp_accum__, pstream__);
     }
 };
-template <typename T1__, typename T2__, typename T5__, typename T_lp__, typename T_lp_accum__>
+template <typename T1__, typename T2__, typename T3__, typename T4__, typename T6__, typename T_lp__, typename T_lp_accum__>
 void
 report_lp(const std::vector<int>& cases,
               const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& reports,
               const std::vector<T2__>& rep_phi,
-              const int& phi_prior,
+              const T3__& phi_mean,
+              const T4__& phi_sd,
               const int& model_type,
-              const T5__& weight, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T1__, T2__, T5__, T_lp__>::type local_scalar_t__;
+              const T6__& weight, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) {
+    typedef typename boost::math::tools::promote_args<T1__, T2__, T3__, T4__, typename boost::math::tools::promote_args<T6__, T_lp__>::type>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
     (void) propto__;
@@ -830,30 +796,40 @@ report_lp(const std::vector<int>& cases,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 176;
+        current_statement_begin__ = 199;
         local_scalar_t__ sqrt_phi(DUMMY_VAR__);
         (void) sqrt_phi;  // dummy to suppress unused var warning
         stan::math::initialize(sqrt_phi, DUMMY_VAR__);
         stan::math::fill(sqrt_phi, DUMMY_VAR__);
-        current_statement_begin__ = 177;
+        stan::math::assign(sqrt_phi,1e5);
+        current_statement_begin__ = 200;
         if (as_bool(model_type)) {
-            current_statement_begin__ = 179;
-            lp_accum__.add(normal_log<propto__>(get_base1(rep_phi, model_type, "rep_phi", 1), 0, phi_prior));
+            current_statement_begin__ = 202;
+            lp_accum__.add(normal_log<propto__>(get_base1(rep_phi, model_type, "rep_phi", 1), phi_mean, phi_sd));
             if (get_base1(rep_phi, model_type, "rep_phi", 1) < 0) lp_accum__.add(-std::numeric_limits<double>::infinity());
-            else lp_accum__.add(-normal_ccdf_log(0, 0, phi_prior));
-            current_statement_begin__ = 180;
+            else lp_accum__.add(-normal_ccdf_log(0, phi_mean, phi_sd));
+            current_statement_begin__ = 203;
             stan::math::assign(sqrt_phi, (1 / stan::math::sqrt(get_base1(rep_phi, model_type, "rep_phi", 1))));
-            current_statement_begin__ = 182;
-            if (as_bool(logical_gt(sqrt_phi, 1e4))) {
-                current_statement_begin__ = 183;
-                lp_accum__.add((poisson_log(cases, reports) * weight));
+        }
+        current_statement_begin__ = 207;
+        if (as_bool(logical_gt(sqrt_phi, 1e4))) {
+            current_statement_begin__ = 208;
+            if (as_bool(logical_eq(weight, 1))) {
+                current_statement_begin__ = 209;
+                lp_accum__.add(poisson_log<propto__>(cases, reports));
             } else {
-                current_statement_begin__ = 185;
-                lp_accum__.add((neg_binomial_2_log(cases, reports, sqrt_phi) * weight));
+                current_statement_begin__ = 211;
+                lp_accum__.add((poisson_log(cases, reports) * weight));
             }
         } else {
-            current_statement_begin__ = 188;
-            lp_accum__.add((poisson_log(cases, reports) * weight));
+            current_statement_begin__ = 214;
+            if (as_bool(logical_eq(weight, 1))) {
+                current_statement_begin__ = 215;
+                lp_accum__.add(neg_binomial_2_log<propto__>(cases, reports, sqrt_phi));
+            } else {
+                current_statement_begin__ = 217;
+                lp_accum__.add(neg_binomial_2_log(cases, reports, sqrt_phi));
+            }
         }
         }
     } catch (const std::exception& e) {
@@ -863,15 +839,16 @@ report_lp(const std::vector<int>& cases,
     }
 }
 struct report_lp_functor__ {
-    template <typename T1__, typename T2__, typename T5__, typename T_lp__, typename T_lp_accum__>
+    template <typename T1__, typename T2__, typename T3__, typename T4__, typename T6__, typename T_lp__, typename T_lp_accum__>
         void
     operator()(const std::vector<int>& cases,
               const Eigen::Matrix<T1__, Eigen::Dynamic, 1>& reports,
               const std::vector<T2__>& rep_phi,
-              const int& phi_prior,
+              const T3__& phi_mean,
+              const T4__& phi_sd,
               const int& model_type,
-              const T5__& weight, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) const {
-        return report_lp(cases, reports, rep_phi, phi_prior, model_type, weight, lp__, lp_accum__, pstream__);
+              const T6__& weight, T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__) const {
+        return report_lp(cases, reports, rep_phi, phi_mean, phi_sd, model_type, weight, lp__, lp_accum__, pstream__);
     }
 };
 template <typename T1__, typename T2__, typename T4__>
@@ -890,57 +867,48 @@ report_log_lik(const std::vector<int>& cases,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 194;
+        current_statement_begin__ = 225;
         int t(0);
         (void) t;  // dummy to suppress unused var warning
         stan::math::fill(t, std::numeric_limits<int>::min());
         stan::math::assign(t,num_elements(reports));
-        current_statement_begin__ = 195;
+        current_statement_begin__ = 226;
         validate_non_negative_index("log_lik", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> log_lik(t);
         stan::math::initialize(log_lik, DUMMY_VAR__);
         stan::math::fill(log_lik, DUMMY_VAR__);
-        current_statement_begin__ = 196;
+        current_statement_begin__ = 227;
+        local_scalar_t__ sqrt_phi(DUMMY_VAR__);
+        (void) sqrt_phi;  // dummy to suppress unused var warning
+        stan::math::initialize(sqrt_phi, DUMMY_VAR__);
+        stan::math::fill(sqrt_phi, DUMMY_VAR__);
+        stan::math::assign(sqrt_phi,1e5);
+        current_statement_begin__ = 228;
         if (as_bool(model_type)) {
-            {
-            current_statement_begin__ = 198;
-            local_scalar_t__ sqrt_phi(DUMMY_VAR__);
-            (void) sqrt_phi;  // dummy to suppress unused var warning
-            stan::math::initialize(sqrt_phi, DUMMY_VAR__);
-            stan::math::fill(sqrt_phi, DUMMY_VAR__);
-            stan::math::assign(sqrt_phi,(1 / stan::math::sqrt(get_base1(rep_phi, model_type, "rep_phi", 1))));
-            current_statement_begin__ = 200;
-            if (as_bool(logical_gt(sqrt_phi, 1e4))) {
-                current_statement_begin__ = 201;
-                for (int i = 1; i <= t; ++i) {
-                    current_statement_begin__ = 202;
-                    stan::model::assign(log_lik, 
-                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (poisson_log(get_base1(cases, i, "cases", 1), get_base1(reports, i, "reports", 1)) * weight), 
-                                "assigning variable log_lik");
-                }
-            } else {
-                current_statement_begin__ = 205;
-                for (int i = 1; i <= t; ++i) {
-                    current_statement_begin__ = 206;
-                    stan::model::assign(log_lik, 
-                                stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                                (neg_binomial_2_log(get_base1(cases, i, "cases", 1), get_base1(reports, i, "reports", 1), sqrt_phi) * weight), 
-                                "assigning variable log_lik");
-                }
-            }
-            }
-        } else {
-            current_statement_begin__ = 210;
+            current_statement_begin__ = 230;
+            stan::math::assign(sqrt_phi, (1 / stan::math::sqrt(get_base1(rep_phi, model_type, "rep_phi", 1))));
+        }
+        current_statement_begin__ = 234;
+        if (as_bool(logical_gt(sqrt_phi, 1e4))) {
+            current_statement_begin__ = 235;
             for (int i = 1; i <= t; ++i) {
-                current_statement_begin__ = 211;
+                current_statement_begin__ = 236;
                 stan::model::assign(log_lik, 
                             stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                             (poisson_log(get_base1(cases, i, "cases", 1), get_base1(reports, i, "reports", 1)) * weight), 
                             "assigning variable log_lik");
             }
+        } else {
+            current_statement_begin__ = 239;
+            for (int i = 1; i <= t; ++i) {
+                current_statement_begin__ = 240;
+                stan::model::assign(log_lik, 
+                            stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
+                            (neg_binomial_2_log(get_base1(cases, i, "cases", 1), get_base1(reports, i, "reports", 1), sqrt_phi) * weight), 
+                            "assigning variable log_lik");
+            }
         }
-        current_statement_begin__ = 214;
+        current_statement_begin__ = 243;
         return stan::math::promote_scalar<fun_return_scalar_t__>(log_lik);
         }
     } catch (const std::exception& e) {
@@ -974,52 +942,44 @@ report_rng(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 218;
+        current_statement_begin__ = 247;
         int t(0);
         (void) t;  // dummy to suppress unused var warning
         stan::math::fill(t, std::numeric_limits<int>::min());
         stan::math::assign(t,num_elements(reports));
-        current_statement_begin__ = 219;
+        current_statement_begin__ = 248;
         validate_non_negative_index("sampled_reports", "t", t);
         std::vector<int  > sampled_reports(t, int(0));
         stan::math::fill(sampled_reports, std::numeric_limits<int>::min());
-        current_statement_begin__ = 220;
+        current_statement_begin__ = 249;
         local_scalar_t__ sqrt_phi(DUMMY_VAR__);
         (void) sqrt_phi;  // dummy to suppress unused var warning
         stan::math::initialize(sqrt_phi, DUMMY_VAR__);
         stan::math::fill(sqrt_phi, DUMMY_VAR__);
-        current_statement_begin__ = 221;
+        stan::math::assign(sqrt_phi,1e5);
+        current_statement_begin__ = 250;
         if (as_bool(model_type)) {
-            current_statement_begin__ = 222;
+            current_statement_begin__ = 251;
             stan::math::assign(sqrt_phi, (1 / stan::math::sqrt(get_base1(rep_phi, model_type, "rep_phi", 1))));
-            current_statement_begin__ = 223;
-            for (int s = 1; s <= t; ++s) {
-                current_statement_begin__ = 225;
-                if (as_bool(logical_gt(sqrt_phi, 1e4))) {
-                    current_statement_begin__ = 226;
-                    stan::model::assign(sampled_reports, 
-                                stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
-                                poisson_rng((logical_gt(get_base1(reports, s, "reports", 1), 1e8) ? 1e8 : get_base1(reports, s, "reports", 1) ), base_rng__), 
-                                "assigning variable sampled_reports");
-                } else {
-                    current_statement_begin__ = 228;
-                    stan::model::assign(sampled_reports, 
-                                stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
-                                neg_binomial_2_rng((logical_gt(get_base1(reports, s, "reports", 1), 1e8) ? 1e8 : get_base1(reports, s, "reports", 1) ), sqrt_phi, base_rng__), 
-                                "assigning variable sampled_reports");
-                }
-            }
-        } else {
-            current_statement_begin__ = 232;
-            for (int s = 1; s <= t; ++s) {
-                current_statement_begin__ = 233;
+        }
+        current_statement_begin__ = 254;
+        for (int s = 1; s <= t; ++s) {
+            current_statement_begin__ = 256;
+            if (as_bool(logical_gt(sqrt_phi, 1e4))) {
+                current_statement_begin__ = 257;
                 stan::model::assign(sampled_reports, 
                             stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
                             poisson_rng((logical_gt(get_base1(reports, s, "reports", 1), 1e8) ? 1e8 : get_base1(reports, s, "reports", 1) ), base_rng__), 
                             "assigning variable sampled_reports");
+            } else {
+                current_statement_begin__ = 259;
+                stan::model::assign(sampled_reports, 
+                            stan::model::cons_list(stan::model::index_uni(s), stan::model::nil_index_list()), 
+                            neg_binomial_2_rng((logical_gt(get_base1(reports, s, "reports", 1), 1e8) ? 1e8 : get_base1(reports, s, "reports", 1) ), sqrt_phi, base_rng__), 
+                            "assigning variable sampled_reports");
             }
         }
-        current_statement_begin__ = 236;
+        current_statement_begin__ = 262;
         return stan::math::promote_scalar<fun_return_scalar_t__>(sampled_reports);
         }
     } catch (const std::exception& e) {
@@ -1037,21 +997,19 @@ struct report_rng_functor__ {
         return report_rng(reports, rep_phi, model_type, base_rng__, pstream__);
     }
 };
-template <typename T0__, typename T2__, typename T3__, typename T4__>
-Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T2__, T3__, T4__>::type, Eigen::Dynamic, 1>
+template <typename T0__, typename T2__, typename T3__>
+Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T2__, T3__>::type, Eigen::Dynamic, 1>
 calculate_secondary(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
                         const std::vector<int>& obs,
                         const std::vector<T2__>& frac_obs,
-                        const std::vector<T3__>& delay_mean,
-                        const std::vector<T4__>& delay_sd,
-                        const std::vector<int>& max_delay,
+                        const Eigen::Matrix<T3__, Eigen::Dynamic, 1>& delay_rev_pmf,
                         const int& cumulative,
                         const int& historic,
                         const int& primary_hist_additive,
                         const int& current,
                         const int& primary_current_additive,
                         const int& predict, std::ostream* pstream__) {
-    typedef typename boost::math::tools::promote_args<T0__, T2__, T3__, T4__>::type local_scalar_t__;
+    typedef typename boost::math::tools::promote_args<T0__, T2__, T3__>::type local_scalar_t__;
     typedef local_scalar_t__ fun_return_scalar_t__;
     const static bool propto__ = true;
     (void) propto__;
@@ -1060,111 +1018,111 @@ calculate_secondary(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 246;
+        current_statement_begin__ = 269;
         int t(0);
         (void) t;  // dummy to suppress unused var warning
         stan::math::fill(t, std::numeric_limits<int>::min());
         stan::math::assign(t,num_elements(reports));
-        current_statement_begin__ = 247;
+        current_statement_begin__ = 270;
         int obs_scale(0);
         (void) obs_scale;  // dummy to suppress unused var warning
         stan::math::fill(obs_scale, std::numeric_limits<int>::min());
         stan::math::assign(obs_scale,num_elements(frac_obs));
-        current_statement_begin__ = 248;
+        current_statement_begin__ = 271;
         validate_non_negative_index("scaled_reports", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> scaled_reports(t);
         stan::math::initialize(scaled_reports, DUMMY_VAR__);
         stan::math::fill(scaled_reports, DUMMY_VAR__);
-        current_statement_begin__ = 249;
+        current_statement_begin__ = 272;
         validate_non_negative_index("conv_reports", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> conv_reports(t);
         stan::math::initialize(conv_reports, DUMMY_VAR__);
         stan::math::fill(conv_reports, DUMMY_VAR__);
         stan::math::assign(conv_reports,rep_vector(1e-5, t));
-        current_statement_begin__ = 250;
+        current_statement_begin__ = 273;
         validate_non_negative_index("secondary_reports", "t", t);
         Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> secondary_reports(t);
         stan::math::initialize(secondary_reports, DUMMY_VAR__);
         stan::math::fill(secondary_reports, DUMMY_VAR__);
         stan::math::assign(secondary_reports,rep_vector(0.0, t));
-        current_statement_begin__ = 252;
+        current_statement_begin__ = 275;
         if (as_bool(obs_scale)) {
-            current_statement_begin__ = 253;
+            current_statement_begin__ = 276;
             stan::math::assign(scaled_reports, scale_obs(reports, get_base1(frac_obs, 1, "frac_obs", 1), pstream__));
         } else {
-            current_statement_begin__ = 255;
+            current_statement_begin__ = 278;
             stan::math::assign(scaled_reports, reports);
         }
-        current_statement_begin__ = 258;
-        stan::math::assign(conv_reports, add(conv_reports, convolve_to_report(scaled_reports, delay_mean, delay_sd, max_delay, 0, pstream__)));
-        current_statement_begin__ = 262;
+        current_statement_begin__ = 281;
+        stan::math::assign(conv_reports, add(conv_reports, convolve_to_report(scaled_reports, delay_rev_pmf, 0, pstream__)));
+        current_statement_begin__ = 285;
         for (int i = 1; i <= t; ++i) {
-            current_statement_begin__ = 264;
+            current_statement_begin__ = 287;
             if (as_bool((primitive_value(cumulative) && primitive_value(logical_gt(i, 1))))) {
-                current_statement_begin__ = 265;
+                current_statement_begin__ = 288;
                 if (as_bool(logical_gt(i, predict))) {
-                    current_statement_begin__ = 266;
+                    current_statement_begin__ = 289;
                     stan::model::assign(secondary_reports, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 get_base1(secondary_reports, (i - 1), "secondary_reports", 1), 
                                 "assigning variable secondary_reports");
                 } else {
-                    current_statement_begin__ = 268;
+                    current_statement_begin__ = 291;
                     stan::model::assign(secondary_reports, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 get_base1(obs, (i - 1), "obs", 1), 
                                 "assigning variable secondary_reports");
                 }
             }
-            current_statement_begin__ = 272;
+            current_statement_begin__ = 295;
             if (as_bool(historic)) {
-                current_statement_begin__ = 273;
+                current_statement_begin__ = 296;
                 if (as_bool(primary_hist_additive)) {
-                    current_statement_begin__ = 274;
+                    current_statement_begin__ = 297;
                     stan::model::assign(secondary_reports, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 (stan::model::rvalue(secondary_reports, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "secondary_reports") + get_base1(conv_reports, i, "conv_reports", 1)), 
                                 "assigning variable secondary_reports");
                 } else {
-                    current_statement_begin__ = 276;
+                    current_statement_begin__ = 299;
                     if (as_bool(logical_gt(get_base1(conv_reports, i, "conv_reports", 1), get_base1(secondary_reports, i, "secondary_reports", 1)))) {
-                        current_statement_begin__ = 277;
+                        current_statement_begin__ = 300;
                         stan::model::assign(conv_reports, 
                                     stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                     get_base1(secondary_reports, i, "secondary_reports", 1), 
                                     "assigning variable conv_reports");
                     }
-                    current_statement_begin__ = 279;
+                    current_statement_begin__ = 302;
                     stan::model::assign(secondary_reports, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 (stan::model::rvalue(secondary_reports, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "secondary_reports") - get_base1(conv_reports, i, "conv_reports", 1)), 
                                 "assigning variable secondary_reports");
                 }
             }
-            current_statement_begin__ = 283;
+            current_statement_begin__ = 306;
             if (as_bool(current)) {
-                current_statement_begin__ = 284;
+                current_statement_begin__ = 307;
                 if (as_bool(primary_current_additive)) {
-                    current_statement_begin__ = 285;
+                    current_statement_begin__ = 308;
                     stan::model::assign(secondary_reports, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 (stan::model::rvalue(secondary_reports, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "secondary_reports") + get_base1(scaled_reports, i, "scaled_reports", 1)), 
                                 "assigning variable secondary_reports");
                 } else {
-                    current_statement_begin__ = 287;
+                    current_statement_begin__ = 310;
                     stan::model::assign(secondary_reports, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
                                 (stan::model::rvalue(secondary_reports, stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), "secondary_reports") - get_base1(scaled_reports, i, "scaled_reports", 1)), 
                                 "assigning variable secondary_reports");
                 }
             }
-            current_statement_begin__ = 290;
+            current_statement_begin__ = 313;
             stan::model::assign(secondary_reports, 
                         stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list()), 
-                        (logical_lte(get_base1(secondary_reports, i, "secondary_reports", 1), 0) ? stan::math::promote_scalar<local_scalar_t__>(1e-5) : stan::math::promote_scalar<local_scalar_t__>(get_base1(secondary_reports, i, "secondary_reports", 1)) ), 
+                        (1e-6 + get_base1(secondary_reports, i, "secondary_reports", 1)), 
                         "assigning variable secondary_reports");
         }
-        current_statement_begin__ = 292;
+        current_statement_begin__ = 315;
         return stan::math::promote_scalar<fun_return_scalar_t__>(secondary_reports);
         }
     } catch (const std::exception& e) {
@@ -1174,21 +1132,19 @@ calculate_secondary(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
     }
 }
 struct calculate_secondary_functor__ {
-    template <typename T0__, typename T2__, typename T3__, typename T4__>
-        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T2__, T3__, T4__>::type, Eigen::Dynamic, 1>
+    template <typename T0__, typename T2__, typename T3__>
+        Eigen::Matrix<typename boost::math::tools::promote_args<T0__, T2__, T3__>::type, Eigen::Dynamic, 1>
     operator()(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& reports,
                         const std::vector<int>& obs,
                         const std::vector<T2__>& frac_obs,
-                        const std::vector<T3__>& delay_mean,
-                        const std::vector<T4__>& delay_sd,
-                        const std::vector<int>& max_delay,
+                        const Eigen::Matrix<T3__, Eigen::Dynamic, 1>& delay_rev_pmf,
                         const int& cumulative,
                         const int& historic,
                         const int& primary_hist_additive,
                         const int& current,
                         const int& primary_current_additive,
                         const int& predict, std::ostream* pstream__) const {
-        return calculate_secondary(reports, obs, frac_obs, delay_mean, delay_sd, max_delay, cumulative, historic, primary_hist_additive, current, primary_current_additive, predict, pstream__);
+        return calculate_secondary(reports, obs, frac_obs, delay_rev_pmf, cumulative, historic, primary_hist_additive, current, primary_current_additive, predict, pstream__);
     }
 };
 #include <stan_meta_header.hpp>
@@ -1206,24 +1162,41 @@ private:
         int current;
         int primary_current_additive;
         int delays;
+        int n_uncertain_mean_delays;
+        int n_uncertain_sd_delays;
+        int n_fixed_delays;
+        std::vector<int> uncertain_mean_delays;
+        std::vector<int> uncertain_sd_delays;
+        std::vector<int> fixed_delays;
         std::vector<double> delay_mean_sd;
         std::vector<double> delay_mean_mean;
         std::vector<double> delay_sd_mean;
         std::vector<double> delay_sd_sd;
-        std::vector<int> max_delay;
+        std::vector<int> delay_max;
+        std::vector<int> delay_dist;
         std::vector<int> day_of_week;
         int model_type;
+        double phi_mean;
+        double phi_sd;
         int week_effect;
         int truncation;
         std::vector<double> trunc_mean_mean;
         std::vector<double> trunc_mean_sd;
         std::vector<double> trunc_sd_mean;
         std::vector<double> trunc_sd_sd;
-        std::vector<int> max_truncation;
+        std::vector<int> trunc_max;
+        std::vector<int> trunc_fixed;
+        std::vector<int> trunc_dist;
         int obs_scale;
         double obs_scale_mean;
         double obs_scale_sd;
         double obs_weight;
+        int likelihood;
+        int return_likelihood;
+        int delay_max_fixed;
+        int delay_max_total;
+        vector_d trunc_fixed_pmf;
+        vector_d delays_fixed_pmf;
 public:
     model_estimate_secondary(stan::io::var_context& context__,
         std::ostream* pstream__ = 0)
@@ -1254,13 +1227,13 @@ public:
         (void) DUMMY_VAR__;  // suppress unused var warning
         try {
             // initialize data block variables from context__
-            current_statement_begin__ = 297;
+            current_statement_begin__ = 320;
             context__.validate_dims("data initialization", "t", "int", context__.to_vec());
             t = int(0);
             vals_i__ = context__.vals_i("t");
             pos__ = 0;
             t = vals_i__[pos__++];
-            current_statement_begin__ = 298;
+            current_statement_begin__ = 321;
             validate_non_negative_index("obs", "t", t);
             context__.validate_dims("data initialization", "obs", "int", context__.to_vec(t));
             obs = std::vector<int>(t, int(0));
@@ -1274,7 +1247,7 @@ public:
             for (size_t i_0__ = 0; i_0__ < obs_i_0_max__; ++i_0__) {
                 check_greater_or_equal(function__, "obs[i_0__]", obs[i_0__], 0);
             }
-            current_statement_begin__ = 299;
+            current_statement_begin__ = 322;
             validate_non_negative_index("primary", "t", t);
             context__.validate_dims("data initialization", "primary", "vector_d", context__.to_vec(t));
             primary = Eigen::Matrix<double, Eigen::Dynamic, 1>(t);
@@ -1284,55 +1257,118 @@ public:
             for (size_t j_1__ = 0; j_1__ < primary_j_1_max__; ++j_1__) {
                 primary(j_1__) = vals_r__[pos__++];
             }
-            current_statement_begin__ = 300;
+            current_statement_begin__ = 323;
             context__.validate_dims("data initialization", "burn_in", "int", context__.to_vec());
             burn_in = int(0);
             vals_i__ = context__.vals_i("burn_in");
             pos__ = 0;
             burn_in = vals_i__[pos__++];
-            current_statement_begin__ = 301;
+            current_statement_begin__ = 324;
             context__.validate_dims("data initialization", "seeding_time", "int", context__.to_vec());
             seeding_time = int(0);
             vals_i__ = context__.vals_i("seeding_time");
             pos__ = 0;
             seeding_time = vals_i__[pos__++];
-            current_statement_begin__ = 302;
+            current_statement_begin__ = 325;
             context__.validate_dims("data initialization", "cumulative", "int", context__.to_vec());
             cumulative = int(0);
             vals_i__ = context__.vals_i("cumulative");
             pos__ = 0;
             cumulative = vals_i__[pos__++];
-            current_statement_begin__ = 303;
+            current_statement_begin__ = 326;
             context__.validate_dims("data initialization", "historic", "int", context__.to_vec());
             historic = int(0);
             vals_i__ = context__.vals_i("historic");
             pos__ = 0;
             historic = vals_i__[pos__++];
-            current_statement_begin__ = 304;
+            current_statement_begin__ = 327;
             context__.validate_dims("data initialization", "primary_hist_additive", "int", context__.to_vec());
             primary_hist_additive = int(0);
             vals_i__ = context__.vals_i("primary_hist_additive");
             pos__ = 0;
             primary_hist_additive = vals_i__[pos__++];
-            current_statement_begin__ = 305;
+            current_statement_begin__ = 328;
             context__.validate_dims("data initialization", "current", "int", context__.to_vec());
             current = int(0);
             vals_i__ = context__.vals_i("current");
             pos__ = 0;
             current = vals_i__[pos__++];
-            current_statement_begin__ = 306;
+            current_statement_begin__ = 329;
             context__.validate_dims("data initialization", "primary_current_additive", "int", context__.to_vec());
             primary_current_additive = int(0);
             vals_i__ = context__.vals_i("primary_current_additive");
             pos__ = 0;
             primary_current_additive = vals_i__[pos__++];
-            current_statement_begin__ = 307;
+            current_statement_begin__ = 330;
             context__.validate_dims("data initialization", "delays", "int", context__.to_vec());
             delays = int(0);
             vals_i__ = context__.vals_i("delays");
             pos__ = 0;
             delays = vals_i__[pos__++];
-            current_statement_begin__ = 308;
+            current_statement_begin__ = 331;
+            context__.validate_dims("data initialization", "n_uncertain_mean_delays", "int", context__.to_vec());
+            n_uncertain_mean_delays = int(0);
+            vals_i__ = context__.vals_i("n_uncertain_mean_delays");
+            pos__ = 0;
+            n_uncertain_mean_delays = vals_i__[pos__++];
+            current_statement_begin__ = 332;
+            context__.validate_dims("data initialization", "n_uncertain_sd_delays", "int", context__.to_vec());
+            n_uncertain_sd_delays = int(0);
+            vals_i__ = context__.vals_i("n_uncertain_sd_delays");
+            pos__ = 0;
+            n_uncertain_sd_delays = vals_i__[pos__++];
+            current_statement_begin__ = 333;
+            context__.validate_dims("data initialization", "n_fixed_delays", "int", context__.to_vec());
+            n_fixed_delays = int(0);
+            vals_i__ = context__.vals_i("n_fixed_delays");
+            pos__ = 0;
+            n_fixed_delays = vals_i__[pos__++];
+            current_statement_begin__ = 335;
+            validate_non_negative_index("uncertain_mean_delays", "n_uncertain_mean_delays", n_uncertain_mean_delays);
+            context__.validate_dims("data initialization", "uncertain_mean_delays", "int", context__.to_vec(n_uncertain_mean_delays));
+            uncertain_mean_delays = std::vector<int>(n_uncertain_mean_delays, int(0));
+            vals_i__ = context__.vals_i("uncertain_mean_delays");
+            pos__ = 0;
+            size_t uncertain_mean_delays_k_0_max__ = n_uncertain_mean_delays;
+            for (size_t k_0__ = 0; k_0__ < uncertain_mean_delays_k_0_max__; ++k_0__) {
+                uncertain_mean_delays[k_0__] = vals_i__[pos__++];
+            }
+            size_t uncertain_mean_delays_i_0_max__ = n_uncertain_mean_delays;
+            for (size_t i_0__ = 0; i_0__ < uncertain_mean_delays_i_0_max__; ++i_0__) {
+                check_greater_or_equal(function__, "uncertain_mean_delays[i_0__]", uncertain_mean_delays[i_0__], 1);
+                check_less_or_equal(function__, "uncertain_mean_delays[i_0__]", uncertain_mean_delays[i_0__], delays);
+            }
+            current_statement_begin__ = 336;
+            validate_non_negative_index("uncertain_sd_delays", "n_uncertain_sd_delays", n_uncertain_sd_delays);
+            context__.validate_dims("data initialization", "uncertain_sd_delays", "int", context__.to_vec(n_uncertain_sd_delays));
+            uncertain_sd_delays = std::vector<int>(n_uncertain_sd_delays, int(0));
+            vals_i__ = context__.vals_i("uncertain_sd_delays");
+            pos__ = 0;
+            size_t uncertain_sd_delays_k_0_max__ = n_uncertain_sd_delays;
+            for (size_t k_0__ = 0; k_0__ < uncertain_sd_delays_k_0_max__; ++k_0__) {
+                uncertain_sd_delays[k_0__] = vals_i__[pos__++];
+            }
+            size_t uncertain_sd_delays_i_0_max__ = n_uncertain_sd_delays;
+            for (size_t i_0__ = 0; i_0__ < uncertain_sd_delays_i_0_max__; ++i_0__) {
+                check_greater_or_equal(function__, "uncertain_sd_delays[i_0__]", uncertain_sd_delays[i_0__], 1);
+                check_less_or_equal(function__, "uncertain_sd_delays[i_0__]", uncertain_sd_delays[i_0__], delays);
+            }
+            current_statement_begin__ = 337;
+            validate_non_negative_index("fixed_delays", "n_fixed_delays", n_fixed_delays);
+            context__.validate_dims("data initialization", "fixed_delays", "int", context__.to_vec(n_fixed_delays));
+            fixed_delays = std::vector<int>(n_fixed_delays, int(0));
+            vals_i__ = context__.vals_i("fixed_delays");
+            pos__ = 0;
+            size_t fixed_delays_k_0_max__ = n_fixed_delays;
+            for (size_t k_0__ = 0; k_0__ < fixed_delays_k_0_max__; ++k_0__) {
+                fixed_delays[k_0__] = vals_i__[pos__++];
+            }
+            size_t fixed_delays_i_0_max__ = n_fixed_delays;
+            for (size_t i_0__ = 0; i_0__ < fixed_delays_i_0_max__; ++i_0__) {
+                check_greater_or_equal(function__, "fixed_delays[i_0__]", fixed_delays[i_0__], 1);
+                check_less_or_equal(function__, "fixed_delays[i_0__]", fixed_delays[i_0__], delays);
+            }
+            current_statement_begin__ = 338;
             validate_non_negative_index("delay_mean_sd", "delays", delays);
             context__.validate_dims("data initialization", "delay_mean_sd", "double", context__.to_vec(delays));
             delay_mean_sd = std::vector<double>(delays, double(0));
@@ -1342,7 +1378,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < delay_mean_sd_k_0_max__; ++k_0__) {
                 delay_mean_sd[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 309;
+            current_statement_begin__ = 339;
             validate_non_negative_index("delay_mean_mean", "delays", delays);
             context__.validate_dims("data initialization", "delay_mean_mean", "double", context__.to_vec(delays));
             delay_mean_mean = std::vector<double>(delays, double(0));
@@ -1352,7 +1388,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < delay_mean_mean_k_0_max__; ++k_0__) {
                 delay_mean_mean[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 310;
+            current_statement_begin__ = 340;
             validate_non_negative_index("delay_sd_mean", "delays", delays);
             context__.validate_dims("data initialization", "delay_sd_mean", "double", context__.to_vec(delays));
             delay_sd_mean = std::vector<double>(delays, double(0));
@@ -1362,7 +1398,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < delay_sd_mean_k_0_max__; ++k_0__) {
                 delay_sd_mean[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 311;
+            current_statement_begin__ = 341;
             validate_non_negative_index("delay_sd_sd", "delays", delays);
             context__.validate_dims("data initialization", "delay_sd_sd", "double", context__.to_vec(delays));
             delay_sd_sd = std::vector<double>(delays, double(0));
@@ -1372,17 +1408,31 @@ public:
             for (size_t k_0__ = 0; k_0__ < delay_sd_sd_k_0_max__; ++k_0__) {
                 delay_sd_sd[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 312;
-            validate_non_negative_index("max_delay", "delays", delays);
-            context__.validate_dims("data initialization", "max_delay", "int", context__.to_vec(delays));
-            max_delay = std::vector<int>(delays, int(0));
-            vals_i__ = context__.vals_i("max_delay");
+            current_statement_begin__ = 342;
+            validate_non_negative_index("delay_max", "delays", delays);
+            context__.validate_dims("data initialization", "delay_max", "int", context__.to_vec(delays));
+            delay_max = std::vector<int>(delays, int(0));
+            vals_i__ = context__.vals_i("delay_max");
             pos__ = 0;
-            size_t max_delay_k_0_max__ = delays;
-            for (size_t k_0__ = 0; k_0__ < max_delay_k_0_max__; ++k_0__) {
-                max_delay[k_0__] = vals_i__[pos__++];
+            size_t delay_max_k_0_max__ = delays;
+            for (size_t k_0__ = 0; k_0__ < delay_max_k_0_max__; ++k_0__) {
+                delay_max[k_0__] = vals_i__[pos__++];
             }
-            current_statement_begin__ = 313;
+            size_t delay_max_i_0_max__ = delays;
+            for (size_t i_0__ = 0; i_0__ < delay_max_i_0_max__; ++i_0__) {
+                check_greater_or_equal(function__, "delay_max[i_0__]", delay_max[i_0__], 1);
+            }
+            current_statement_begin__ = 343;
+            validate_non_negative_index("delay_dist", "delays", delays);
+            context__.validate_dims("data initialization", "delay_dist", "int", context__.to_vec(delays));
+            delay_dist = std::vector<int>(delays, int(0));
+            vals_i__ = context__.vals_i("delay_dist");
+            pos__ = 0;
+            size_t delay_dist_k_0_max__ = delays;
+            for (size_t k_0__ = 0; k_0__ < delay_dist_k_0_max__; ++k_0__) {
+                delay_dist[k_0__] = vals_i__[pos__++];
+            }
+            current_statement_begin__ = 344;
             validate_non_negative_index("day_of_week", "(t - seeding_time)", (t - seeding_time));
             context__.validate_dims("data initialization", "day_of_week", "int", context__.to_vec((t - seeding_time)));
             day_of_week = std::vector<int>((t - seeding_time), int(0));
@@ -1392,25 +1442,37 @@ public:
             for (size_t k_0__ = 0; k_0__ < day_of_week_k_0_max__; ++k_0__) {
                 day_of_week[k_0__] = vals_i__[pos__++];
             }
-            current_statement_begin__ = 314;
+            current_statement_begin__ = 345;
             context__.validate_dims("data initialization", "model_type", "int", context__.to_vec());
             model_type = int(0);
             vals_i__ = context__.vals_i("model_type");
             pos__ = 0;
             model_type = vals_i__[pos__++];
-            current_statement_begin__ = 315;
+            current_statement_begin__ = 346;
+            context__.validate_dims("data initialization", "phi_mean", "double", context__.to_vec());
+            phi_mean = double(0);
+            vals_r__ = context__.vals_r("phi_mean");
+            pos__ = 0;
+            phi_mean = vals_r__[pos__++];
+            current_statement_begin__ = 347;
+            context__.validate_dims("data initialization", "phi_sd", "double", context__.to_vec());
+            phi_sd = double(0);
+            vals_r__ = context__.vals_r("phi_sd");
+            pos__ = 0;
+            phi_sd = vals_r__[pos__++];
+            current_statement_begin__ = 348;
             context__.validate_dims("data initialization", "week_effect", "int", context__.to_vec());
             week_effect = int(0);
             vals_i__ = context__.vals_i("week_effect");
             pos__ = 0;
             week_effect = vals_i__[pos__++];
-            current_statement_begin__ = 316;
+            current_statement_begin__ = 349;
             context__.validate_dims("data initialization", "truncation", "int", context__.to_vec());
             truncation = int(0);
             vals_i__ = context__.vals_i("truncation");
             pos__ = 0;
             truncation = vals_i__[pos__++];
-            current_statement_begin__ = 317;
+            current_statement_begin__ = 350;
             validate_non_negative_index("trunc_mean_mean", "truncation", truncation);
             context__.validate_dims("data initialization", "trunc_mean_mean", "double", context__.to_vec(truncation));
             trunc_mean_mean = std::vector<double>(truncation, double(0));
@@ -1420,7 +1482,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < trunc_mean_mean_k_0_max__; ++k_0__) {
                 trunc_mean_mean[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 318;
+            current_statement_begin__ = 351;
             validate_non_negative_index("trunc_mean_sd", "truncation", truncation);
             context__.validate_dims("data initialization", "trunc_mean_sd", "double", context__.to_vec(truncation));
             trunc_mean_sd = std::vector<double>(truncation, double(0));
@@ -1430,7 +1492,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < trunc_mean_sd_k_0_max__; ++k_0__) {
                 trunc_mean_sd[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 319;
+            current_statement_begin__ = 352;
             validate_non_negative_index("trunc_sd_mean", "truncation", truncation);
             context__.validate_dims("data initialization", "trunc_sd_mean", "double", context__.to_vec(truncation));
             trunc_sd_mean = std::vector<double>(truncation, double(0));
@@ -1440,7 +1502,7 @@ public:
             for (size_t k_0__ = 0; k_0__ < trunc_sd_mean_k_0_max__; ++k_0__) {
                 trunc_sd_mean[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 320;
+            current_statement_begin__ = 353;
             validate_non_negative_index("trunc_sd_sd", "truncation", truncation);
             context__.validate_dims("data initialization", "trunc_sd_sd", "double", context__.to_vec(truncation));
             trunc_sd_sd = std::vector<double>(truncation, double(0));
@@ -1450,65 +1512,127 @@ public:
             for (size_t k_0__ = 0; k_0__ < trunc_sd_sd_k_0_max__; ++k_0__) {
                 trunc_sd_sd[k_0__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 321;
-            validate_non_negative_index("max_truncation", "truncation", truncation);
-            context__.validate_dims("data initialization", "max_truncation", "int", context__.to_vec(truncation));
-            max_truncation = std::vector<int>(truncation, int(0));
-            vals_i__ = context__.vals_i("max_truncation");
+            current_statement_begin__ = 354;
+            validate_non_negative_index("trunc_max", "truncation", truncation);
+            context__.validate_dims("data initialization", "trunc_max", "int", context__.to_vec(truncation));
+            trunc_max = std::vector<int>(truncation, int(0));
+            vals_i__ = context__.vals_i("trunc_max");
             pos__ = 0;
-            size_t max_truncation_k_0_max__ = truncation;
-            for (size_t k_0__ = 0; k_0__ < max_truncation_k_0_max__; ++k_0__) {
-                max_truncation[k_0__] = vals_i__[pos__++];
+            size_t trunc_max_k_0_max__ = truncation;
+            for (size_t k_0__ = 0; k_0__ < trunc_max_k_0_max__; ++k_0__) {
+                trunc_max[k_0__] = vals_i__[pos__++];
             }
-            current_statement_begin__ = 322;
+            size_t trunc_max_i_0_max__ = truncation;
+            for (size_t i_0__ = 0; i_0__ < trunc_max_i_0_max__; ++i_0__) {
+                check_greater_or_equal(function__, "trunc_max[i_0__]", trunc_max[i_0__], 1);
+            }
+            current_statement_begin__ = 355;
+            validate_non_negative_index("trunc_fixed", "truncation", truncation);
+            context__.validate_dims("data initialization", "trunc_fixed", "int", context__.to_vec(truncation));
+            trunc_fixed = std::vector<int>(truncation, int(0));
+            vals_i__ = context__.vals_i("trunc_fixed");
+            pos__ = 0;
+            size_t trunc_fixed_k_0_max__ = truncation;
+            for (size_t k_0__ = 0; k_0__ < trunc_fixed_k_0_max__; ++k_0__) {
+                trunc_fixed[k_0__] = vals_i__[pos__++];
+            }
+            current_statement_begin__ = 356;
+            validate_non_negative_index("trunc_dist", "truncation", truncation);
+            context__.validate_dims("data initialization", "trunc_dist", "int", context__.to_vec(truncation));
+            trunc_dist = std::vector<int>(truncation, int(0));
+            vals_i__ = context__.vals_i("trunc_dist");
+            pos__ = 0;
+            size_t trunc_dist_k_0_max__ = truncation;
+            for (size_t k_0__ = 0; k_0__ < trunc_dist_k_0_max__; ++k_0__) {
+                trunc_dist[k_0__] = vals_i__[pos__++];
+            }
+            current_statement_begin__ = 357;
             context__.validate_dims("data initialization", "obs_scale", "int", context__.to_vec());
             obs_scale = int(0);
             vals_i__ = context__.vals_i("obs_scale");
             pos__ = 0;
             obs_scale = vals_i__[pos__++];
-            current_statement_begin__ = 323;
+            current_statement_begin__ = 358;
             context__.validate_dims("data initialization", "obs_scale_mean", "double", context__.to_vec());
             obs_scale_mean = double(0);
             vals_r__ = context__.vals_r("obs_scale_mean");
             pos__ = 0;
             obs_scale_mean = vals_r__[pos__++];
-            current_statement_begin__ = 324;
+            current_statement_begin__ = 359;
             context__.validate_dims("data initialization", "obs_scale_sd", "double", context__.to_vec());
             obs_scale_sd = double(0);
             vals_r__ = context__.vals_r("obs_scale_sd");
             pos__ = 0;
             obs_scale_sd = vals_r__[pos__++];
-            current_statement_begin__ = 325;
+            current_statement_begin__ = 360;
             context__.validate_dims("data initialization", "obs_weight", "double", context__.to_vec());
             obs_weight = double(0);
             vals_r__ = context__.vals_r("obs_weight");
             pos__ = 0;
             obs_weight = vals_r__[pos__++];
+            current_statement_begin__ = 361;
+            context__.validate_dims("data initialization", "likelihood", "int", context__.to_vec());
+            likelihood = int(0);
+            vals_i__ = context__.vals_i("likelihood");
+            pos__ = 0;
+            likelihood = vals_i__[pos__++];
+            current_statement_begin__ = 362;
+            context__.validate_dims("data initialization", "return_likelihood", "int", context__.to_vec());
+            return_likelihood = int(0);
+            vals_i__ = context__.vals_i("return_likelihood");
+            pos__ = 0;
+            return_likelihood = vals_i__[pos__++];
             // initialize transformed data variables
+            current_statement_begin__ = 366;
+            delay_max_fixed = int(0);
+            stan::math::fill(delay_max_fixed, std::numeric_limits<int>::min());
+            stan::math::assign(delay_max_fixed,(logical_eq(n_fixed_delays, 0) ? 0 : ((sum(stan::model::rvalue(delay_max, stan::model::cons_list(stan::model::index_multi(fixed_delays), stan::model::nil_index_list()), "delay_max")) - num_elements(fixed_delays)) + 1) ));
+            current_statement_begin__ = 368;
+            delay_max_total = int(0);
+            stan::math::fill(delay_max_total, std::numeric_limits<int>::min());
+            stan::math::assign(delay_max_total,(logical_eq(delays, 0) ? 0 : ((sum(delay_max) - num_elements(delay_max)) + 1) ));
+            current_statement_begin__ = 370;
+            validate_non_negative_index("trunc_fixed_pmf", "((primitive_value(truncation) && primitive_value(get_base1(trunc_fixed, 1, \"trunc_fixed\", 1))) ? get_base1(trunc_max, 1, \"trunc_max\", 1) : 0 )", ((primitive_value(truncation) && primitive_value(get_base1(trunc_fixed, 1, "trunc_fixed", 1))) ? get_base1(trunc_max, 1, "trunc_max", 1) : 0 ));
+            trunc_fixed_pmf = Eigen::Matrix<double, Eigen::Dynamic, 1>(((primitive_value(truncation) && primitive_value(get_base1(trunc_fixed, 1, "trunc_fixed", 1))) ? get_base1(trunc_max, 1, "trunc_max", 1) : 0 ));
+            stan::math::fill(trunc_fixed_pmf, DUMMY_VAR__);
+            current_statement_begin__ = 371;
+            validate_non_negative_index("delays_fixed_pmf", "delay_max_fixed", delay_max_fixed);
+            delays_fixed_pmf = Eigen::Matrix<double, Eigen::Dynamic, 1>(delay_max_fixed);
+            stan::math::fill(delays_fixed_pmf, DUMMY_VAR__);
             // execute transformed data statements
+            current_statement_begin__ = 373;
+            if (as_bool((primitive_value(truncation) && primitive_value(get_base1(trunc_fixed, 1, "trunc_fixed", 1))))) {
+                current_statement_begin__ = 374;
+                stan::math::assign(trunc_fixed_pmf, discretised_pmf(get_base1(trunc_mean_mean, 1, "trunc_mean_mean", 1), get_base1(trunc_sd_mean, 1, "trunc_sd_mean", 1), get_base1(trunc_max, 1, "trunc_max", 1), get_base1(trunc_dist, 1, "trunc_dist", 1), 0, pstream__));
+            }
+            current_statement_begin__ = 378;
+            if (as_bool(n_fixed_delays)) {
+                current_statement_begin__ = 379;
+                stan::math::assign(delays_fixed_pmf, combine_pmfs(to_vector(stan::math::to_row_vector(stan::math::array_builder<double >().add(1).array())), stan::model::rvalue(delay_mean_mean, stan::model::cons_list(stan::model::index_multi(fixed_delays), stan::model::nil_index_list()), "delay_mean_mean"), stan::model::rvalue(delay_sd_mean, stan::model::cons_list(stan::model::index_multi(fixed_delays), stan::model::nil_index_list()), "delay_sd_mean"), stan::model::rvalue(delay_max, stan::model::cons_list(stan::model::index_multi(fixed_delays), stan::model::nil_index_list()), "delay_max"), stan::model::rvalue(delay_dist, stan::model::cons_list(stan::model::index_multi(fixed_delays), stan::model::nil_index_list()), "delay_dist"), delay_max_fixed, 0, 0, pstream__));
+            }
             // validate transformed data
             // validate, set parameter ranges
             num_params_r__ = 0U;
             param_ranges_i__.clear();
-            current_statement_begin__ = 330;
-            validate_non_negative_index("delay_mean", "delays", delays);
-            num_params_r__ += (1 * delays);
-            current_statement_begin__ = 331;
-            validate_non_negative_index("delay_sd", "delays", delays);
-            num_params_r__ += (1 * delays);
-            current_statement_begin__ = 332;
-            validate_non_negative_index("day_of_week_simplex", "(week_effect ? 7 : 1 )", (week_effect ? 7 : 1 ));
-            num_params_r__ += ((week_effect ? 7 : 1 ) - 1);
-            current_statement_begin__ = 333;
+            current_statement_begin__ = 389;
+            validate_non_negative_index("delay_mean", "n_uncertain_mean_delays", n_uncertain_mean_delays);
+            num_params_r__ += (1 * n_uncertain_mean_delays);
+            current_statement_begin__ = 390;
+            validate_non_negative_index("delay_sd", "n_uncertain_sd_delays", n_uncertain_sd_delays);
+            num_params_r__ += (1 * n_uncertain_sd_delays);
+            current_statement_begin__ = 391;
+            validate_non_negative_index("day_of_week_simplex", "week_effect", week_effect);
+            num_params_r__ += (week_effect - 1);
+            current_statement_begin__ = 392;
             validate_non_negative_index("frac_obs", "obs_scale", obs_scale);
             num_params_r__ += (1 * obs_scale);
-            current_statement_begin__ = 334;
-            validate_non_negative_index("truncation_mean", "truncation", truncation);
-            num_params_r__ += (1 * truncation);
-            current_statement_begin__ = 335;
-            validate_non_negative_index("truncation_sd", "truncation", truncation);
-            num_params_r__ += (1 * truncation);
-            current_statement_begin__ = 336;
+            current_statement_begin__ = 393;
+            validate_non_negative_index("trunc_mean", "(primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, \"trunc_fixed\", 1))))", (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
+            num_params_r__ += (1 * (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
+            current_statement_begin__ = 394;
+            validate_non_negative_index("trunc_sd", "(primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, \"trunc_fixed\", 1))))", (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
+            num_params_r__ += (1 * (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
+            current_statement_begin__ = 395;
             validate_non_negative_index("rep_phi", "model_type", model_type);
             num_params_r__ += (1 * model_type);
         } catch (const std::exception& e) {
@@ -1528,19 +1652,19 @@ public:
         (void) pos__; // dummy call to supress warning
         std::vector<double> vals_r__;
         std::vector<int> vals_i__;
-        current_statement_begin__ = 330;
+        current_statement_begin__ = 389;
         if (!(context__.contains_r("delay_mean")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable delay_mean missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("delay_mean");
         pos__ = 0U;
-        validate_non_negative_index("delay_mean", "delays", delays);
-        context__.validate_dims("parameter initialization", "delay_mean", "double", context__.to_vec(delays));
-        std::vector<double> delay_mean(delays, double(0));
-        size_t delay_mean_k_0_max__ = delays;
+        validate_non_negative_index("delay_mean", "n_uncertain_mean_delays", n_uncertain_mean_delays);
+        context__.validate_dims("parameter initialization", "delay_mean", "double", context__.to_vec(n_uncertain_mean_delays));
+        std::vector<double> delay_mean(n_uncertain_mean_delays, double(0));
+        size_t delay_mean_k_0_max__ = n_uncertain_mean_delays;
         for (size_t k_0__ = 0; k_0__ < delay_mean_k_0_max__; ++k_0__) {
             delay_mean[k_0__] = vals_r__[pos__++];
         }
-        size_t delay_mean_i_0_max__ = delays;
+        size_t delay_mean_i_0_max__ = n_uncertain_mean_delays;
         for (size_t i_0__ = 0; i_0__ < delay_mean_i_0_max__; ++i_0__) {
             try {
                 writer__.scalar_unconstrain(delay_mean[i_0__]);
@@ -1548,19 +1672,19 @@ public:
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable delay_mean: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 331;
+        current_statement_begin__ = 390;
         if (!(context__.contains_r("delay_sd")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable delay_sd missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("delay_sd");
         pos__ = 0U;
-        validate_non_negative_index("delay_sd", "delays", delays);
-        context__.validate_dims("parameter initialization", "delay_sd", "double", context__.to_vec(delays));
-        std::vector<double> delay_sd(delays, double(0));
-        size_t delay_sd_k_0_max__ = delays;
+        validate_non_negative_index("delay_sd", "n_uncertain_sd_delays", n_uncertain_sd_delays);
+        context__.validate_dims("parameter initialization", "delay_sd", "double", context__.to_vec(n_uncertain_sd_delays));
+        std::vector<double> delay_sd(n_uncertain_sd_delays, double(0));
+        size_t delay_sd_k_0_max__ = n_uncertain_sd_delays;
         for (size_t k_0__ = 0; k_0__ < delay_sd_k_0_max__; ++k_0__) {
             delay_sd[k_0__] = vals_r__[pos__++];
         }
-        size_t delay_sd_i_0_max__ = delays;
+        size_t delay_sd_i_0_max__ = n_uncertain_sd_delays;
         for (size_t i_0__ = 0; i_0__ < delay_sd_i_0_max__; ++i_0__) {
             try {
                 writer__.scalar_lb_unconstrain(0, delay_sd[i_0__]);
@@ -1568,15 +1692,15 @@ public:
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable delay_sd: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 332;
+        current_statement_begin__ = 391;
         if (!(context__.contains_r("day_of_week_simplex")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable day_of_week_simplex missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("day_of_week_simplex");
         pos__ = 0U;
-        validate_non_negative_index("day_of_week_simplex", "(week_effect ? 7 : 1 )", (week_effect ? 7 : 1 ));
-        context__.validate_dims("parameter initialization", "day_of_week_simplex", "vector_d", context__.to_vec((week_effect ? 7 : 1 )));
-        Eigen::Matrix<double, Eigen::Dynamic, 1> day_of_week_simplex((week_effect ? 7 : 1 ));
-        size_t day_of_week_simplex_j_1_max__ = (week_effect ? 7 : 1 );
+        validate_non_negative_index("day_of_week_simplex", "week_effect", week_effect);
+        context__.validate_dims("parameter initialization", "day_of_week_simplex", "vector_d", context__.to_vec(week_effect));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> day_of_week_simplex(week_effect);
+        size_t day_of_week_simplex_j_1_max__ = week_effect;
         for (size_t j_1__ = 0; j_1__ < day_of_week_simplex_j_1_max__; ++j_1__) {
             day_of_week_simplex(j_1__) = vals_r__[pos__++];
         }
@@ -1585,7 +1709,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable day_of_week_simplex: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 333;
+        current_statement_begin__ = 392;
         if (!(context__.contains_r("frac_obs")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable frac_obs missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("frac_obs");
@@ -1600,52 +1724,52 @@ public:
         size_t frac_obs_i_0_max__ = obs_scale;
         for (size_t i_0__ = 0; i_0__ < frac_obs_i_0_max__; ++i_0__) {
             try {
-                writer__.scalar_lb_unconstrain(0, frac_obs[i_0__]);
+                writer__.scalar_lub_unconstrain(0, 1, frac_obs[i_0__]);
             } catch (const std::exception& e) {
                 stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable frac_obs: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 334;
-        if (!(context__.contains_r("truncation_mean")))
-            stan::lang::rethrow_located(std::runtime_error(std::string("Variable truncation_mean missing")), current_statement_begin__, prog_reader__());
-        vals_r__ = context__.vals_r("truncation_mean");
+        current_statement_begin__ = 393;
+        if (!(context__.contains_r("trunc_mean")))
+            stan::lang::rethrow_located(std::runtime_error(std::string("Variable trunc_mean missing")), current_statement_begin__, prog_reader__());
+        vals_r__ = context__.vals_r("trunc_mean");
         pos__ = 0U;
-        validate_non_negative_index("truncation_mean", "truncation", truncation);
-        context__.validate_dims("parameter initialization", "truncation_mean", "double", context__.to_vec(truncation));
-        std::vector<double> truncation_mean(truncation, double(0));
-        size_t truncation_mean_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_mean_k_0_max__; ++k_0__) {
-            truncation_mean[k_0__] = vals_r__[pos__++];
+        validate_non_negative_index("trunc_mean", "(primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, \"trunc_fixed\", 1))))", (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
+        context__.validate_dims("parameter initialization", "trunc_mean", "double", context__.to_vec((primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))))));
+        std::vector<double> trunc_mean((primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))), double(0));
+        size_t trunc_mean_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_mean_k_0_max__; ++k_0__) {
+            trunc_mean[k_0__] = vals_r__[pos__++];
         }
-        size_t truncation_mean_i_0_max__ = truncation;
-        for (size_t i_0__ = 0; i_0__ < truncation_mean_i_0_max__; ++i_0__) {
+        size_t trunc_mean_i_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t i_0__ = 0; i_0__ < trunc_mean_i_0_max__; ++i_0__) {
             try {
-                writer__.scalar_unconstrain(truncation_mean[i_0__]);
+                writer__.scalar_unconstrain(trunc_mean[i_0__]);
             } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable truncation_mean: ") + e.what()), current_statement_begin__, prog_reader__());
+                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable trunc_mean: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 335;
-        if (!(context__.contains_r("truncation_sd")))
-            stan::lang::rethrow_located(std::runtime_error(std::string("Variable truncation_sd missing")), current_statement_begin__, prog_reader__());
-        vals_r__ = context__.vals_r("truncation_sd");
+        current_statement_begin__ = 394;
+        if (!(context__.contains_r("trunc_sd")))
+            stan::lang::rethrow_located(std::runtime_error(std::string("Variable trunc_sd missing")), current_statement_begin__, prog_reader__());
+        vals_r__ = context__.vals_r("trunc_sd");
         pos__ = 0U;
-        validate_non_negative_index("truncation_sd", "truncation", truncation);
-        context__.validate_dims("parameter initialization", "truncation_sd", "double", context__.to_vec(truncation));
-        std::vector<double> truncation_sd(truncation, double(0));
-        size_t truncation_sd_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_sd_k_0_max__; ++k_0__) {
-            truncation_sd[k_0__] = vals_r__[pos__++];
+        validate_non_negative_index("trunc_sd", "(primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, \"trunc_fixed\", 1))))", (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
+        context__.validate_dims("parameter initialization", "trunc_sd", "double", context__.to_vec((primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))))));
+        std::vector<double> trunc_sd((primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))), double(0));
+        size_t trunc_sd_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_sd_k_0_max__; ++k_0__) {
+            trunc_sd[k_0__] = vals_r__[pos__++];
         }
-        size_t truncation_sd_i_0_max__ = truncation;
-        for (size_t i_0__ = 0; i_0__ < truncation_sd_i_0_max__; ++i_0__) {
+        size_t trunc_sd_i_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t i_0__ = 0; i_0__ < trunc_sd_i_0_max__; ++i_0__) {
             try {
-                writer__.scalar_unconstrain(truncation_sd[i_0__]);
+                writer__.scalar_unconstrain(trunc_sd[i_0__]);
             } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable truncation_sd: ") + e.what()), current_statement_begin__, prog_reader__());
+                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable trunc_sd: ") + e.what()), current_statement_begin__, prog_reader__());
             }
         }
-        current_statement_begin__ = 336;
+        current_statement_begin__ = 395;
         if (!(context__.contains_r("rep_phi")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable rep_phi missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("rep_phi");
@@ -1690,9 +1814,9 @@ public:
         try {
             stan::io::reader<local_scalar_t__> in__(params_r__, params_i__);
             // model parameters
-            current_statement_begin__ = 330;
+            current_statement_begin__ = 389;
             std::vector<local_scalar_t__> delay_mean;
-            size_t delay_mean_d_0_max__ = delays;
+            size_t delay_mean_d_0_max__ = n_uncertain_mean_delays;
             delay_mean.reserve(delay_mean_d_0_max__);
             for (size_t d_0__ = 0; d_0__ < delay_mean_d_0_max__; ++d_0__) {
                 if (jacobian__)
@@ -1700,9 +1824,9 @@ public:
                 else
                     delay_mean.push_back(in__.scalar_constrain());
             }
-            current_statement_begin__ = 331;
+            current_statement_begin__ = 390;
             std::vector<local_scalar_t__> delay_sd;
-            size_t delay_sd_d_0_max__ = delays;
+            size_t delay_sd_d_0_max__ = n_uncertain_sd_delays;
             delay_sd.reserve(delay_sd_d_0_max__);
             for (size_t d_0__ = 0; d_0__ < delay_sd_d_0_max__; ++d_0__) {
                 if (jacobian__)
@@ -1710,44 +1834,44 @@ public:
                 else
                     delay_sd.push_back(in__.scalar_lb_constrain(0));
             }
-            current_statement_begin__ = 332;
+            current_statement_begin__ = 391;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> day_of_week_simplex;
             (void) day_of_week_simplex;  // dummy to suppress unused var warning
             if (jacobian__)
-                day_of_week_simplex = in__.simplex_constrain((week_effect ? 7 : 1 ), lp__);
+                day_of_week_simplex = in__.simplex_constrain(week_effect, lp__);
             else
-                day_of_week_simplex = in__.simplex_constrain((week_effect ? 7 : 1 ));
-            current_statement_begin__ = 333;
+                day_of_week_simplex = in__.simplex_constrain(week_effect);
+            current_statement_begin__ = 392;
             std::vector<local_scalar_t__> frac_obs;
             size_t frac_obs_d_0_max__ = obs_scale;
             frac_obs.reserve(frac_obs_d_0_max__);
             for (size_t d_0__ = 0; d_0__ < frac_obs_d_0_max__; ++d_0__) {
                 if (jacobian__)
-                    frac_obs.push_back(in__.scalar_lb_constrain(0, lp__));
+                    frac_obs.push_back(in__.scalar_lub_constrain(0, 1, lp__));
                 else
-                    frac_obs.push_back(in__.scalar_lb_constrain(0));
+                    frac_obs.push_back(in__.scalar_lub_constrain(0, 1));
             }
-            current_statement_begin__ = 334;
-            std::vector<local_scalar_t__> truncation_mean;
-            size_t truncation_mean_d_0_max__ = truncation;
-            truncation_mean.reserve(truncation_mean_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < truncation_mean_d_0_max__; ++d_0__) {
+            current_statement_begin__ = 393;
+            std::vector<local_scalar_t__> trunc_mean;
+            size_t trunc_mean_d_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+            trunc_mean.reserve(trunc_mean_d_0_max__);
+            for (size_t d_0__ = 0; d_0__ < trunc_mean_d_0_max__; ++d_0__) {
                 if (jacobian__)
-                    truncation_mean.push_back(in__.scalar_constrain(lp__));
+                    trunc_mean.push_back(in__.scalar_constrain(lp__));
                 else
-                    truncation_mean.push_back(in__.scalar_constrain());
+                    trunc_mean.push_back(in__.scalar_constrain());
             }
-            current_statement_begin__ = 335;
-            std::vector<local_scalar_t__> truncation_sd;
-            size_t truncation_sd_d_0_max__ = truncation;
-            truncation_sd.reserve(truncation_sd_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < truncation_sd_d_0_max__; ++d_0__) {
+            current_statement_begin__ = 394;
+            std::vector<local_scalar_t__> trunc_sd;
+            size_t trunc_sd_d_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+            trunc_sd.reserve(trunc_sd_d_0_max__);
+            for (size_t d_0__ = 0; d_0__ < trunc_sd_d_0_max__; ++d_0__) {
                 if (jacobian__)
-                    truncation_sd.push_back(in__.scalar_constrain(lp__));
+                    trunc_sd.push_back(in__.scalar_constrain(lp__));
                 else
-                    truncation_sd.push_back(in__.scalar_constrain());
+                    trunc_sd.push_back(in__.scalar_constrain());
             }
-            current_statement_begin__ = 336;
+            current_statement_begin__ = 395;
             std::vector<local_scalar_t__> rep_phi;
             size_t rep_phi_d_0_max__ = model_type;
             rep_phi.reserve(rep_phi_d_0_max__);
@@ -1758,25 +1882,46 @@ public:
                     rep_phi.push_back(in__.scalar_lb_constrain(0));
             }
             // transformed parameters
-            current_statement_begin__ = 340;
+            current_statement_begin__ = 399;
             validate_non_negative_index("secondary", "t", t);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> secondary(t);
             stan::math::initialize(secondary, DUMMY_VAR__);
             stan::math::fill(secondary, DUMMY_VAR__);
             // transformed parameters block statements
-            current_statement_begin__ = 342;
-            stan::math::assign(secondary, calculate_secondary(primary, obs, frac_obs, delay_mean, delay_sd, max_delay, cumulative, historic, primary_hist_additive, current, primary_current_additive, t, pstream__));
-            current_statement_begin__ = 347;
-            if (as_bool(week_effect)) {
-                current_statement_begin__ = 348;
+            {
+            current_statement_begin__ = 403;
+            validate_non_negative_index("delay_rev_pmf", "delay_max_total", delay_max_total);
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> delay_rev_pmf(delay_max_total);
+            stan::math::initialize(delay_rev_pmf, DUMMY_VAR__);
+            stan::math::fill(delay_rev_pmf, DUMMY_VAR__);
+            current_statement_begin__ = 404;
+            stan::math::assign(delay_rev_pmf, combine_pmfs(delays_fixed_pmf, delay_mean, delay_sd, delay_max, delay_dist, delay_max_total, 0, 1, pstream__));
+            current_statement_begin__ = 407;
+            stan::math::assign(secondary, calculate_secondary(primary, obs, frac_obs, delay_rev_pmf, cumulative, historic, primary_hist_additive, current, primary_current_additive, t, pstream__));
+            }
+            current_statement_begin__ = 414;
+            if (as_bool(logical_gt(week_effect, 1))) {
+                current_statement_begin__ = 415;
                 stan::math::assign(secondary, day_of_week_effect(secondary, day_of_week, day_of_week_simplex, pstream__));
             }
-            current_statement_begin__ = 351;
-            stan::math::assign(secondary, truncate(secondary, truncation_mean, truncation_sd, max_truncation, 0, pstream__));
+            current_statement_begin__ = 418;
+            if (as_bool(truncation)) {
+                {
+                current_statement_begin__ = 419;
+                validate_non_negative_index("trunc_rev_cmf", "get_base1(trunc_max, 1, \"trunc_max\", 1)", get_base1(trunc_max, 1, "trunc_max", 1));
+                Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> trunc_rev_cmf(get_base1(trunc_max, 1, "trunc_max", 1));
+                stan::math::initialize(trunc_rev_cmf, DUMMY_VAR__);
+                stan::math::fill(trunc_rev_cmf, DUMMY_VAR__);
+                current_statement_begin__ = 420;
+                stan::math::assign(trunc_rev_cmf, reverse_mf(cumulative_sum(combine_pmfs(trunc_fixed_pmf, trunc_mean, trunc_sd, trunc_max, trunc_dist, get_base1(trunc_max, 1, "trunc_max", 1), 0, 0, pstream__)), pstream__));
+                current_statement_begin__ = 423;
+                stan::math::assign(secondary, truncate(secondary, trunc_rev_cmf, 0, pstream__));
+                }
+            }
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 340;
+            current_statement_begin__ = 399;
             size_t secondary_j_1_max__ = t;
             for (size_t j_1__ = 0; j_1__ < secondary_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(secondary(j_1__))) {
@@ -1787,19 +1932,23 @@ public:
             }
             check_greater_or_equal(function__, "secondary", secondary, 0);
             // model body
-            current_statement_begin__ = 356;
-            delays_lp(delay_mean, delay_mean_mean, delay_mean_sd, delay_sd, delay_sd_mean, delay_sd_sd, 1, lp__, lp_accum__, pstream__);
-            current_statement_begin__ = 358;
-            truncation_lp(truncation_mean, truncation_sd, trunc_mean_mean, trunc_mean_sd, trunc_sd_mean, trunc_sd_sd, lp__, lp_accum__, pstream__);
-            current_statement_begin__ = 361;
+            current_statement_begin__ = 429;
+            delays_lp(delay_mean, stan::model::rvalue(delay_mean_mean, stan::model::cons_list(stan::model::index_multi(uncertain_mean_delays), stan::model::nil_index_list()), "delay_mean_mean"), stan::model::rvalue(delay_mean_sd, stan::model::cons_list(stan::model::index_multi(uncertain_mean_delays), stan::model::nil_index_list()), "delay_mean_sd"), delay_sd, stan::model::rvalue(delay_sd_mean, stan::model::cons_list(stan::model::index_multi(uncertain_sd_delays), stan::model::nil_index_list()), "delay_sd_mean"), stan::model::rvalue(delay_sd_sd, stan::model::cons_list(stan::model::index_multi(uncertain_sd_delays), stan::model::nil_index_list()), "delay_sd_sd"), stan::model::rvalue(delay_dist, stan::model::cons_list(stan::model::index_multi(uncertain_mean_delays), stan::model::nil_index_list()), "delay_dist"), t, lp__, lp_accum__, pstream__);
+            current_statement_begin__ = 437;
+            delays_lp(trunc_mean, trunc_sd, trunc_mean_mean, trunc_mean_sd, trunc_sd_mean, trunc_sd_sd, trunc_dist, 1, lp__, lp_accum__, pstream__);
+            current_statement_begin__ = 440;
             if (as_bool(obs_scale)) {
-                current_statement_begin__ = 362;
+                current_statement_begin__ = 441;
                 lp_accum__.add(normal_log<propto__>(get_base1(frac_obs, 1, "frac_obs", 1), obs_scale_mean, obs_scale_sd));
                 if (get_base1(frac_obs, 1, "frac_obs", 1) < 0) lp_accum__.add(-std::numeric_limits<double>::infinity());
-                else lp_accum__.add(-normal_ccdf_log(0, obs_scale_mean, obs_scale_sd));
+                else if (get_base1(frac_obs, 1, "frac_obs", 1) > 1) lp_accum__.add(-std::numeric_limits<double>::infinity());
+                else lp_accum__.add(-log_diff_exp(normal_cdf_log(1, obs_scale_mean, obs_scale_sd), normal_cdf_log(0, obs_scale_mean, obs_scale_sd)));
             }
-            current_statement_begin__ = 365;
-            report_lp(stan::model::rvalue(obs, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "obs"), stan::model::rvalue(secondary, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "secondary"), rep_phi, 1, model_type, 1, lp__, lp_accum__, pstream__);
+            current_statement_begin__ = 444;
+            if (as_bool(likelihood)) {
+                current_statement_begin__ = 445;
+                report_lp(stan::model::rvalue(obs, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "obs"), stan::model::rvalue(secondary, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "secondary"), rep_phi, phi_mean, phi_sd, model_type, 1, lp__, lp_accum__, pstream__);
+            }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -1824,8 +1973,8 @@ public:
         names__.push_back("delay_sd");
         names__.push_back("day_of_week_simplex");
         names__.push_back("frac_obs");
-        names__.push_back("truncation_mean");
-        names__.push_back("truncation_sd");
+        names__.push_back("trunc_mean");
+        names__.push_back("trunc_sd");
         names__.push_back("rep_phi");
         names__.push_back("secondary");
         names__.push_back("sim_secondary");
@@ -1835,22 +1984,22 @@ public:
         dimss__.resize(0);
         std::vector<size_t> dims__;
         dims__.resize(0);
-        dims__.push_back(delays);
+        dims__.push_back(n_uncertain_mean_delays);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back(delays);
+        dims__.push_back(n_uncertain_sd_delays);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back((week_effect ? 7 : 1 ));
+        dims__.push_back(week_effect);
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(obs_scale);
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back(truncation);
+        dims__.push_back((primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back(truncation);
+        dims__.push_back((primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1)))));
         dimss__.push_back(dims__);
         dims__.resize(0);
         dims__.push_back(model_type);
@@ -1862,7 +2011,7 @@ public:
         dims__.push_back((t - burn_in));
         dimss__.push_back(dims__);
         dims__.resize(0);
-        dims__.push_back((t - burn_in));
+        dims__.push_back((logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 ));
         dimss__.push_back(dims__);
     }
     template <typename RNG>
@@ -1880,27 +2029,27 @@ public:
         (void) function__;  // dummy to suppress unused var warning
         // read-transform, write parameters
         std::vector<double> delay_mean;
-        size_t delay_mean_d_0_max__ = delays;
+        size_t delay_mean_d_0_max__ = n_uncertain_mean_delays;
         delay_mean.reserve(delay_mean_d_0_max__);
         for (size_t d_0__ = 0; d_0__ < delay_mean_d_0_max__; ++d_0__) {
             delay_mean.push_back(in__.scalar_constrain());
         }
-        size_t delay_mean_k_0_max__ = delays;
+        size_t delay_mean_k_0_max__ = n_uncertain_mean_delays;
         for (size_t k_0__ = 0; k_0__ < delay_mean_k_0_max__; ++k_0__) {
             vars__.push_back(delay_mean[k_0__]);
         }
         std::vector<double> delay_sd;
-        size_t delay_sd_d_0_max__ = delays;
+        size_t delay_sd_d_0_max__ = n_uncertain_sd_delays;
         delay_sd.reserve(delay_sd_d_0_max__);
         for (size_t d_0__ = 0; d_0__ < delay_sd_d_0_max__; ++d_0__) {
             delay_sd.push_back(in__.scalar_lb_constrain(0));
         }
-        size_t delay_sd_k_0_max__ = delays;
+        size_t delay_sd_k_0_max__ = n_uncertain_sd_delays;
         for (size_t k_0__ = 0; k_0__ < delay_sd_k_0_max__; ++k_0__) {
             vars__.push_back(delay_sd[k_0__]);
         }
-        Eigen::Matrix<double, Eigen::Dynamic, 1> day_of_week_simplex = in__.simplex_constrain((week_effect ? 7 : 1 ));
-        size_t day_of_week_simplex_j_1_max__ = (week_effect ? 7 : 1 );
+        Eigen::Matrix<double, Eigen::Dynamic, 1> day_of_week_simplex = in__.simplex_constrain(week_effect);
+        size_t day_of_week_simplex_j_1_max__ = week_effect;
         for (size_t j_1__ = 0; j_1__ < day_of_week_simplex_j_1_max__; ++j_1__) {
             vars__.push_back(day_of_week_simplex(j_1__));
         }
@@ -1908,31 +2057,31 @@ public:
         size_t frac_obs_d_0_max__ = obs_scale;
         frac_obs.reserve(frac_obs_d_0_max__);
         for (size_t d_0__ = 0; d_0__ < frac_obs_d_0_max__; ++d_0__) {
-            frac_obs.push_back(in__.scalar_lb_constrain(0));
+            frac_obs.push_back(in__.scalar_lub_constrain(0, 1));
         }
         size_t frac_obs_k_0_max__ = obs_scale;
         for (size_t k_0__ = 0; k_0__ < frac_obs_k_0_max__; ++k_0__) {
             vars__.push_back(frac_obs[k_0__]);
         }
-        std::vector<double> truncation_mean;
-        size_t truncation_mean_d_0_max__ = truncation;
-        truncation_mean.reserve(truncation_mean_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < truncation_mean_d_0_max__; ++d_0__) {
-            truncation_mean.push_back(in__.scalar_constrain());
+        std::vector<double> trunc_mean;
+        size_t trunc_mean_d_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        trunc_mean.reserve(trunc_mean_d_0_max__);
+        for (size_t d_0__ = 0; d_0__ < trunc_mean_d_0_max__; ++d_0__) {
+            trunc_mean.push_back(in__.scalar_constrain());
         }
-        size_t truncation_mean_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_mean_k_0_max__; ++k_0__) {
-            vars__.push_back(truncation_mean[k_0__]);
+        size_t trunc_mean_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_mean_k_0_max__; ++k_0__) {
+            vars__.push_back(trunc_mean[k_0__]);
         }
-        std::vector<double> truncation_sd;
-        size_t truncation_sd_d_0_max__ = truncation;
-        truncation_sd.reserve(truncation_sd_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < truncation_sd_d_0_max__; ++d_0__) {
-            truncation_sd.push_back(in__.scalar_constrain());
+        std::vector<double> trunc_sd;
+        size_t trunc_sd_d_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        trunc_sd.reserve(trunc_sd_d_0_max__);
+        for (size_t d_0__ = 0; d_0__ < trunc_sd_d_0_max__; ++d_0__) {
+            trunc_sd.push_back(in__.scalar_constrain());
         }
-        size_t truncation_sd_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_sd_k_0_max__; ++k_0__) {
-            vars__.push_back(truncation_sd[k_0__]);
+        size_t trunc_sd_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_sd_k_0_max__; ++k_0__) {
+            vars__.push_back(trunc_sd[k_0__]);
         }
         std::vector<double> rep_phi;
         size_t rep_phi_d_0_max__ = model_type;
@@ -1952,26 +2101,47 @@ public:
         if (!include_tparams__ && !include_gqs__) return;
         try {
             // declare and define transformed parameters
-            current_statement_begin__ = 340;
+            current_statement_begin__ = 399;
             validate_non_negative_index("secondary", "t", t);
             Eigen::Matrix<double, Eigen::Dynamic, 1> secondary(t);
             stan::math::initialize(secondary, DUMMY_VAR__);
             stan::math::fill(secondary, DUMMY_VAR__);
             // do transformed parameters statements
-            current_statement_begin__ = 342;
-            stan::math::assign(secondary, calculate_secondary(primary, obs, frac_obs, delay_mean, delay_sd, max_delay, cumulative, historic, primary_hist_additive, current, primary_current_additive, t, pstream__));
-            current_statement_begin__ = 347;
-            if (as_bool(week_effect)) {
-                current_statement_begin__ = 348;
+            {
+            current_statement_begin__ = 403;
+            validate_non_negative_index("delay_rev_pmf", "delay_max_total", delay_max_total);
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> delay_rev_pmf(delay_max_total);
+            stan::math::initialize(delay_rev_pmf, DUMMY_VAR__);
+            stan::math::fill(delay_rev_pmf, DUMMY_VAR__);
+            current_statement_begin__ = 404;
+            stan::math::assign(delay_rev_pmf, combine_pmfs(delays_fixed_pmf, delay_mean, delay_sd, delay_max, delay_dist, delay_max_total, 0, 1, pstream__));
+            current_statement_begin__ = 407;
+            stan::math::assign(secondary, calculate_secondary(primary, obs, frac_obs, delay_rev_pmf, cumulative, historic, primary_hist_additive, current, primary_current_additive, t, pstream__));
+            }
+            current_statement_begin__ = 414;
+            if (as_bool(logical_gt(week_effect, 1))) {
+                current_statement_begin__ = 415;
                 stan::math::assign(secondary, day_of_week_effect(secondary, day_of_week, day_of_week_simplex, pstream__));
             }
-            current_statement_begin__ = 351;
-            stan::math::assign(secondary, truncate(secondary, truncation_mean, truncation_sd, max_truncation, 0, pstream__));
+            current_statement_begin__ = 418;
+            if (as_bool(truncation)) {
+                {
+                current_statement_begin__ = 419;
+                validate_non_negative_index("trunc_rev_cmf", "get_base1(trunc_max, 1, \"trunc_max\", 1)", get_base1(trunc_max, 1, "trunc_max", 1));
+                Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> trunc_rev_cmf(get_base1(trunc_max, 1, "trunc_max", 1));
+                stan::math::initialize(trunc_rev_cmf, DUMMY_VAR__);
+                stan::math::fill(trunc_rev_cmf, DUMMY_VAR__);
+                current_statement_begin__ = 420;
+                stan::math::assign(trunc_rev_cmf, reverse_mf(cumulative_sum(combine_pmfs(trunc_fixed_pmf, trunc_mean, trunc_sd, trunc_max, trunc_dist, get_base1(trunc_max, 1, "trunc_max", 1), 0, 0, pstream__)), pstream__));
+                current_statement_begin__ = 423;
+                stan::math::assign(secondary, truncate(secondary, trunc_rev_cmf, 0, pstream__));
+                }
+            }
             if (!include_gqs__ && !include_tparams__) return;
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 340;
+            current_statement_begin__ = 399;
             check_greater_or_equal(function__, "secondary", secondary, 0);
             // write transformed parameters
             if (include_tparams__) {
@@ -1982,28 +2152,31 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 369;
+            current_statement_begin__ = 451;
             validate_non_negative_index("sim_secondary", "(t - burn_in)", (t - burn_in));
             std::vector<int> sim_secondary((t - burn_in), int(0));
             stan::math::fill(sim_secondary, std::numeric_limits<int>::min());
-            current_statement_begin__ = 370;
-            validate_non_negative_index("log_lik", "(t - burn_in)", (t - burn_in));
-            Eigen::Matrix<double, Eigen::Dynamic, 1> log_lik((t - burn_in));
+            current_statement_begin__ = 452;
+            validate_non_negative_index("log_lik", "(logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 )", (logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 ));
+            Eigen::Matrix<double, Eigen::Dynamic, 1> log_lik((logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 ));
             stan::math::initialize(log_lik, DUMMY_VAR__);
             stan::math::fill(log_lik, DUMMY_VAR__);
             // generated quantities statements
-            current_statement_begin__ = 372;
+            current_statement_begin__ = 454;
             stan::math::assign(sim_secondary, report_rng(stan::model::rvalue(secondary, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "secondary"), rep_phi, model_type, base_rng__, pstream__));
-            current_statement_begin__ = 374;
-            stan::math::assign(log_lik, report_log_lik(stan::model::rvalue(obs, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "obs"), stan::model::rvalue(secondary, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "secondary"), rep_phi, model_type, obs_weight, pstream__));
+            current_statement_begin__ = 456;
+            if (as_bool(return_likelihood)) {
+                current_statement_begin__ = 457;
+                stan::math::assign(log_lik, report_log_lik(stan::model::rvalue(obs, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "obs"), stan::model::rvalue(secondary, stan::model::cons_list(stan::model::index_min_max((burn_in + 1), t), stan::model::nil_index_list()), "secondary"), rep_phi, model_type, obs_weight, pstream__));
+            }
             // validate, write generated quantities
-            current_statement_begin__ = 369;
+            current_statement_begin__ = 451;
             size_t sim_secondary_k_0_max__ = (t - burn_in);
             for (size_t k_0__ = 0; k_0__ < sim_secondary_k_0_max__; ++k_0__) {
                 vars__.push_back(sim_secondary[k_0__]);
             }
-            current_statement_begin__ = 370;
-            size_t log_lik_j_1_max__ = (t - burn_in);
+            current_statement_begin__ = 452;
+            size_t log_lik_j_1_max__ = (logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 );
             for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
                 vars__.push_back(log_lik(j_1__));
             }
@@ -2037,19 +2210,19 @@ public:
                                  bool include_tparams__ = true,
                                  bool include_gqs__ = true) const {
         std::stringstream param_name_stream__;
-        size_t delay_mean_k_0_max__ = delays;
+        size_t delay_mean_k_0_max__ = n_uncertain_mean_delays;
         for (size_t k_0__ = 0; k_0__ < delay_mean_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "delay_mean" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t delay_sd_k_0_max__ = delays;
+        size_t delay_sd_k_0_max__ = n_uncertain_sd_delays;
         for (size_t k_0__ = 0; k_0__ < delay_sd_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "delay_sd" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t day_of_week_simplex_j_1_max__ = (week_effect ? 7 : 1 );
+        size_t day_of_week_simplex_j_1_max__ = week_effect;
         for (size_t j_1__ = 0; j_1__ < day_of_week_simplex_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "day_of_week_simplex" << '.' << j_1__ + 1;
@@ -2061,16 +2234,16 @@ public:
             param_name_stream__ << "frac_obs" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t truncation_mean_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_mean_k_0_max__; ++k_0__) {
+        size_t trunc_mean_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_mean_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "truncation_mean" << '.' << k_0__ + 1;
+            param_name_stream__ << "trunc_mean" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t truncation_sd_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_sd_k_0_max__; ++k_0__) {
+        size_t trunc_sd_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_sd_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "truncation_sd" << '.' << k_0__ + 1;
+            param_name_stream__ << "trunc_sd" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
         size_t rep_phi_k_0_max__ = model_type;
@@ -2095,7 +2268,7 @@ public:
             param_name_stream__ << "sim_secondary" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t log_lik_j_1_max__ = (t - burn_in);
+        size_t log_lik_j_1_max__ = (logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 );
         for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "log_lik" << '.' << j_1__ + 1;
@@ -2106,19 +2279,19 @@ public:
                                    bool include_tparams__ = true,
                                    bool include_gqs__ = true) const {
         std::stringstream param_name_stream__;
-        size_t delay_mean_k_0_max__ = delays;
+        size_t delay_mean_k_0_max__ = n_uncertain_mean_delays;
         for (size_t k_0__ = 0; k_0__ < delay_mean_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "delay_mean" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t delay_sd_k_0_max__ = delays;
+        size_t delay_sd_k_0_max__ = n_uncertain_sd_delays;
         for (size_t k_0__ = 0; k_0__ < delay_sd_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "delay_sd" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t day_of_week_simplex_j_1_max__ = ((week_effect ? 7 : 1 ) - 1);
+        size_t day_of_week_simplex_j_1_max__ = (week_effect - 1);
         for (size_t j_1__ = 0; j_1__ < day_of_week_simplex_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "day_of_week_simplex" << '.' << j_1__ + 1;
@@ -2130,16 +2303,16 @@ public:
             param_name_stream__ << "frac_obs" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t truncation_mean_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_mean_k_0_max__; ++k_0__) {
+        size_t trunc_mean_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_mean_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "truncation_mean" << '.' << k_0__ + 1;
+            param_name_stream__ << "trunc_mean" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t truncation_sd_k_0_max__ = truncation;
-        for (size_t k_0__ = 0; k_0__ < truncation_sd_k_0_max__; ++k_0__) {
+        size_t trunc_sd_k_0_max__ = (primitive_value(truncation) && primitive_value(logical_negation(get_base1(trunc_fixed, 1, "trunc_fixed", 1))));
+        for (size_t k_0__ = 0; k_0__ < trunc_sd_k_0_max__; ++k_0__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "truncation_sd" << '.' << k_0__ + 1;
+            param_name_stream__ << "trunc_sd" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
         size_t rep_phi_k_0_max__ = model_type;
@@ -2164,7 +2337,7 @@ public:
             param_name_stream__ << "sim_secondary" << '.' << k_0__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t log_lik_j_1_max__ = (t - burn_in);
+        size_t log_lik_j_1_max__ = (logical_gt(return_likelihood, 1) ? (t - burn_in) : 0 );
         for (size_t j_1__ = 0; j_1__ < log_lik_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
             param_name_stream__ << "log_lik" << '.' << j_1__ + 1;

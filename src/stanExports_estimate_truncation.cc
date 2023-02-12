@@ -7,7 +7,7 @@ using namespace Rcpp ;
 RCPP_MODULE(stan_fit4estimate_truncation_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_estimate_truncation")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_estimate_truncation")
 
     .constructor<SEXP,SEXP,SEXP>()
 

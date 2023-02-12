@@ -21,10 +21,16 @@ save_estimate_infections(
 \item{return_fit}{Logical, defaults to TRUE. Should the fit stan object
 be returned.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Saves output from \code{estimate_infections} to a target directory.
 }
 \seealso{
 estimate_infections
+}
+\author{
+Sam Abbott
 }

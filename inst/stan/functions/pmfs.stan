@@ -1,54 +1,94 @@
-// discretised truncated gamma pmf
-vector discretised_gamma_pmf(int[] y, real mu, real sigma, int max_val) {
-  int n = num_elements(y);
+// Calculate the daily probability of reporting using parametric
+// distributions up to the maximum observed delay.
+// If sigma is 0 all the probability mass is put on n.
+// Adapted from https://github.com/epiforecasts/epinowcast
+// @author Sam Abbott
+// @author Adrian Lison
+vector discretised_pmf(real mu, real sigma, int n, int dist,
+                       int left_truncate) {
   vector[n] pmf;
-  real trunc_pmf;
-  // calculate alpha and beta for gamma distribution
-  real small = 1e-5;
-  real large = 1e8;
-  real c_sigma = sigma < small ? small : sigma;
-  real c_mu = mu < small ? small : mu;
-  real alpha = ((c_mu) / c_sigma)^2;
-  real beta = (c_mu) / (c_sigma^2);
-  // account for numerical issues
-  alpha = alpha < small ? small : alpha;
-  alpha = alpha > large ? large : alpha;
-  beta = beta < small ? small : beta;
-  beta = beta > large ? large : beta;
-  // calculate pmf
-  trunc_pmf = gamma_cdf(max_val + 1, alpha, beta) - gamma_cdf(1, alpha, beta);
-  for (i in 1:n){
-    pmf[i] = (gamma_cdf(y[i] + 1, alpha, beta) - gamma_cdf(y[i], alpha, beta)) / 
-    trunc_pmf;
-  }
-  return(pmf);
-}
-
-// discretised truncated lognormal pmf
-vector discretised_lognormal_pmf(int[] y, real mu, real sigma, int max_val) {
-  int n = num_elements(y);
-  vector[n] pmf;
-  real small = 1e-5;
-  real c_sigma = sigma < small ? small : sigma;
-  real c_mu = mu < small ? small : mu;
-  vector[n] adj_y = to_vector(y) + small;
-  vector[n] upper_y = (log(adj_y + 1) - c_mu) / c_sigma;
-  vector[n] lower_y = (log(adj_y) - c_mu) / c_sigma;
-  real max_cdf = normal_cdf((log(max_val + small) - c_mu) / c_sigma, 0.0, 1.0);
-  real min_cdf = normal_cdf((log(small) - c_mu) / c_sigma, 0.0, 1.0);
-  real trunc_cdf = max_cdf - min_cdf;
-  for (i in 1:n) {
-    pmf[i] = (normal_cdf(upper_y[i], 0.0, 1.0) - normal_cdf(lower_y[i], 0.0, 1.0)) /
-    trunc_cdf;
+  if (sigma > 0) {
+    vector[n + 1] upper_cdf;
+    if (dist == 0) {
+      for (i in 1:(n + 1)) {
+        upper_cdf[i] = lognormal_cdf(i - 1 + left_truncate, mu, sigma);
+      }
+    } else if (dist == 1) {
+      real alpha = mu^2 / sigma^2;
+      real beta = mu / sigma^2;
+      for (i in 1:(n + 1)) {
+        upper_cdf[i] = gamma_cdf(i - 1 + left_truncate, alpha, beta);
+      }
+    } else {
+      reject("Unknown distribution function provided.");
+    }
+    // discretise
+    pmf = upper_cdf[2:(n + 1)] - upper_cdf[1:n];
+    // normalize
+    pmf = pmf / (upper_cdf[n + 1] - upper_cdf[1]);
+  } else {
+    // delta function
+    pmf = rep_vector(0, n);
+    pmf[n] = 1;
   }
   return(pmf);
 }
 
 // reverse a mf
-vector reverse_mf(vector pmf, int max_pmf) {
+vector reverse_mf(vector pmf) {
+  int max_pmf = num_elements(pmf);
   vector[max_pmf] rev_pmf;
   for (d in 1:max_pmf) {
     rev_pmf[d] = pmf[max_pmf - d + 1];
   }
   return rev_pmf;
+}
+
+// combined fixed/variable pmfs
+vector combine_pmfs(vector fixed_pmf, real[] pmf_mu, real[] pmf_sigma, int[] pmf_n, int[] dist, int len, int left_truncate, int reverse_pmf) {
+  int n_fixed = num_elements(fixed_pmf);
+  int n_variable = num_elements(pmf_mu);
+  vector[len] pmf = rep_vector(0, len);
+  if (n_fixed > 0) {
+    pmf[1:n_fixed] = fixed_pmf;
+  } else if (n_variable > 0) {
+    pmf[1] = 1;
+  }
+  for (s in 1:n_variable) {
+    vector[pmf_n[s]] variable_pmf;
+    variable_pmf = discretised_pmf(pmf_mu[s], pmf_sigma[s], pmf_n[s], dist[s], left_truncate);
+    pmf = convolve(pmf, variable_pmf, len);
+  }
+  if (reverse_pmf) {
+    pmf = reverse_mf(pmf);
+  }
+  return(pmf);
+}
+
+void delays_lp(real[] delay_mean, real[] delay_mean_mean, real[] delay_mean_sd,
+               real[] delay_sd, real[] delay_sd_mean, real[] delay_sd_sd,
+               int[] delay_dist, int weight) {
+    int mean_delays = num_elements(delay_mean);
+    int sd_delays = num_elements(delay_sd);
+    if (mean_delays) {
+      for (s in 1:mean_delays) {
+        if (delay_mean_sd[s] > 0) {
+          // uncertain mean
+          target += normal_lpdf(delay_mean[s] | delay_mean_mean[s], delay_mean_sd[s]) * weight;
+          // if a distribution with postive support only truncate the prior
+          if (delay_dist[s]) {
+            target += -normal_lccdf(0 | delay_mean_mean[s], delay_mean_sd[s]) * weight;
+          }
+        }
+      }
+    }
+    if (sd_delays) {
+      for (s in 1:sd_delays) {
+        if (delay_sd_sd[s] > 0) {
+          // uncertain sd
+          target += normal_lpdf(delay_sd[s] | delay_sd_mean[s], delay_sd_sd[s]) * weight;
+          target += -normal_lccdf(0 | delay_sd_mean[s], delay_sd_sd[s]) * weight;
+        }
+     }
+  }
 }

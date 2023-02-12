@@ -26,22 +26,7 @@ of futile.logger for details. Supported options are "info" and "debug"}
 A logical vector of named output arguments
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Match user supplied arguments with supported options and return a logical list for
 internal usage
-}
-\examples{
-# select nothing
-EpiNow2:::match_output_arguments(supported_args = c("fit", "plots", "samples"))
-
-# select just plots
-EpiNow2:::match_output_arguments("plots", supported_args = c("fit", "plots", "samples"))
-
-# select plots and samples
-EpiNow2:::match_output_arguments(c("plots", "samples"),
-                       supported_args = c("fit", "plots", "samples"))
-
-# lazily select arguments
-EpiNow2:::match_output_arguments("p",
-                       supported_args = c("fit", "plots", "samples"))
 }

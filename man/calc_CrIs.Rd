@@ -18,7 +18,7 @@ A data.table containing the \code{summarise_by} variables and the specified lowe
 credible intervals
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Adds symmetric credible intervals based on quantiles.
 }
 \examples{
@@ -26,5 +26,5 @@ samples <- data.frame(value = 1:10, type = "car")
 # add credible intervals
 calc_CrIs(samples)
 # add 90\% credible interval grouped by type
-calc_CrIs(samples, summarise_by = "type") 
+calc_CrIs(samples, summarise_by = "type")
 }

@@ -16,18 +16,22 @@ be plot?}
 
 \item{to}{Date object indicating when to plot up to.}
 
-\item{new_obs}{A data.frame containing the columns \code{date} and \code{secondary} which replace
-the secondary observations stored in the \code{estimate_secondary} output.}
+\item{new_obs}{A data.frame containing the columns \code{date} and \code{secondary}
+which replace the secondary observations stored in the \code{estimate_secondary}
+output.}
 
 \item{...}{Pass additional arguments to plot function. Not currently in use.}
 }
 \value{
-\code{ggplot2} object
+A \code{ggplot} object.
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 \code{plot} method for class "estimate_secondary".
 }
 \seealso{
 plot estimate_secondary
+}
+\author{
+Sam Abbott
 }

@@ -4,24 +4,40 @@
 \alias{create_clean_reported_cases}
 \title{Create Clean Reported Cases}
 \usage{
-create_clean_reported_cases(reported_cases, horizon, zero_threshold = 50)
+create_clean_reported_cases(
+  reported_cases,
+  horizon,
+  filter_leading_zeros = TRUE,
+  zero_threshold = Inf
+)
 }
 \arguments{
-\item{reported_cases}{A data frame of confirmed cases (confirm) by date (date). confirm must be integer and date must be
-in date format.}
+\item{reported_cases}{A data frame of confirmed cases (confirm) by date
+(date). confirm must be integer and date must be in date format.}
 
-\item{horizon}{Numeric, defaults to 7. Number of days into the future to forecast.}
+\item{horizon}{Numeric, defaults to 7. Number of days into the future to
+forecast.}
 
-\item{zero_threshold}{Numeric defaults to 50. Indicates if detected zero cases are meaningful by
-using a threshold of 50 cases on average over the last 7 days. If the average is above this thresold
-then the zero is replaced with the}
+\item{filter_leading_zeros}{Logical, defaults to TRUE. Should zeros at the
+start of the time series be filtered out.}
+
+\item{zero_threshold}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} Numeric defaults
+to Inf. Indicates if detected zero cases are meaningful by using a threshold
+number of cases based on the 7 day average. If the average is above this
+threshold then the zero is replaced with the backwards looking rolling
+average. If set to infinity then no changes are made.}
 }
 \value{
 A cleaned data frame of reported cases
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Cleans a data frame of reported cases by replacing missing dates with 0 cases and applies an optional
 threshold at which point 0 cases are replaced with a moving average of observed cases. See \code{zero_threshold}
 for details.
+}
+\author{
+Sam Abbott
+
+Lloyd Chapman
 }

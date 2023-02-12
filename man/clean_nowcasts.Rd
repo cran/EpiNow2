@@ -12,8 +12,11 @@ clean_nowcasts(date = NULL, nowcast_dir = ".")
 \item{nowcast_dir}{Character string giving the filepath to the nowcast results directory. Defaults
 to the current directory.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 This function removes nowcasts in the format produced by \code{EpiNow2} from a target
 directory for the date supplied.
 }

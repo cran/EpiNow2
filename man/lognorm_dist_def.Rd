@@ -15,8 +15,8 @@ lognorm_dist_def(mean, mean_sd, sd, sd_sd, max_value, samples, to_log = FALSE)
 
 \item{sd_sd}{Numeric, standard deviation of the log sd parameter.}
 
-\item{max_value}{Numeric, the maximum value to allow. Defaults to 120. Samples outside
-of this range are resampled.}
+\item{max_value}{Numeric, the maximum value to allow. Defaults to 120.
+Samples outside of this range are resampled.}
 
 \item{samples}{Numeric, number of sample distributions to generate.}
 
@@ -26,21 +26,29 @@ of this range are resampled.}
 A data.table defining the distribution as used by \code{dist_skel}
 }
 \description{
-\ifelse{html}{\figure{lifecycle-soft-deprecated.svg}{options: alt='Soft-deprecated lifecycle'}}{\strong{Soft-deprecated}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#soft-deprecated}{\figure{lifecycle-soft-deprecated.svg}{options: alt='[Soft-deprecated]'}}}{\strong{[Soft-deprecated]}}
 Generates a distribution definition when only parameter estimates
-are available for log normal distributed parameters. See \code{rlnorm} for distribution information.
+are available for log normal distributed parameters. See \code{rlnorm} for
+distribution information.
 }
 \examples{
-def <- lognorm_dist_def(mean = 1.621, mean_sd = 0.0640,
-                        sd = 0.418, sd_sd = 0.0691,
-                        max_value = 20, samples = 10)
+def <- lognorm_dist_def(
+  mean = 1.621, mean_sd = 0.0640,
+  sd = 0.418, sd_sd = 0.0691,
+  max_value = 20, samples = 10
+)
 print(def)
 def$params[[1]]
 
-def <- lognorm_dist_def(mean = 5, mean_sd = 1,
-                        sd = 3, sd_sd = 1,
-                        max_value = 20, samples = 10,
-                        to_log = TRUE)
+def <- lognorm_dist_def(
+  mean = 5, mean_sd = 1,
+  sd = 3, sd_sd = 1,
+  max_value = 20, samples = 10,
+  to_log = TRUE
+)
 print(def)
 def$params[[1]]
+}
+\author{
+Sam Abbott
 }

@@ -6,7 +6,6 @@
 \usage{
 construct_output(
   estimates,
-  forecast = NULL,
   estimated_reported_cases,
   plots = NULL,
   summary = NULL,
@@ -16,14 +15,12 @@ construct_output(
 \arguments{
 \item{estimates}{List of data frames as output by \code{estimate_infections}}
 
-\item{forecast}{A list of data frames as output by \code{forecast_infections}}
-
 \item{estimated_reported_cases}{A list of dataframes as produced by
 \code{estimates_by_report_date}.}
 
-\item{plots}{A list of plots as produced by \code{report_plots}}
+\item{plots}{A list of plots as produced by \code{report_plots}.}
 
-\item{summary}{A list of summary output as produced by \code{report_summary}}
+\item{summary}{A list of summary output as produced by \code{report_summary}.}
 
 \item{samples}{Logical, defaults to TRUE. Should samples be saved}
 }
@@ -31,6 +28,9 @@ construct_output(
 A list of output as returned by \code{epinow}
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Combines the output produced internally by \code{epinow} into a single list.
+}
+\author{
+Sam Abbott
 }

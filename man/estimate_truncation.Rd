@@ -6,7 +6,9 @@
 \usage{
 estimate_truncation(
   obs,
-  max_truncation = 10,
+  max_truncation,
+  trunc_max = 10,
+  trunc_dist = c("lognormal"),
   model = NULL,
   CrIs = c(0.2, 0.5, 0.9),
   verbose = TRUE,
@@ -19,8 +21,13 @@ and a confirm (integer) variable. Each data set should be a snapshot
 of the reported data over time. All data sets must contain a complete vector
 of dates.}
 
-\item{max_truncation}{Integer, defaults to 10. Maximum number of
+\item{max_truncation}{Deprecated; use \code{trunc_max} instead.}
+
+\item{trunc_max}{Integer, defaults to 10. Maximum number of
 days to include in the truncation distribution.}
+
+\item{trunc_dist}{Character, defaults to "lognormal". The parametric
+distribution to be used for truncation.}
 
 \item{model}{A compiled stan model to override the default model. May be
 useful for package developers or those developing extensions.}
@@ -32,34 +39,41 @@ useful for package developers or those developing extensions.}
 \item{...}{Additional parameters to pass to \code{rstan::sampling}.}
 }
 \value{
-A list containing: the summary parameters of the truncation distribution
-(\code{dist}), the estimated CMF of the truncation distribution (\code{cmf}, can be used to adjusted
-new data), a data frame containing the observed truncated data, latest observed data
-and the adjusted for truncation observations (\code{obs}), a data frame containing the last
-observed data (\code{last_obs}, useful for plotting and validation), the data used for fitting
-(\code{data}) and the fit object (\code{fit}).
+A list containing: the summary parameters of the truncation
+distribution (\code{dist}), the estimated CMF of the truncation distribution
+(\code{cmf}, can be used to adjusted new data), a data frame containing the
+observed truncated data, latest observed data and the adjusted for
+truncation observations (\code{obs}), a data frame containing the last
+observed data (\code{last_obs}, useful for plotting and validation), the data
+used for fitting (\code{data}) and the fit object (\code{fit}).
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Estimates a truncation distribution from multiple snapshots of the same
-data source over time. This distribution can then be used in \code{regional_epinow},
-\code{epinow}, and \code{estimate_infections} to adjust for truncated data. See \href{https://gist.github.com/seabbs/176b0c7f83eab1a7192a25b28bbd116a}{here}
-for an example of using this approach on Covid-19 data in England.
+data source over time. This distribution can then be used in
+\code{regional_epinow}, \code{epinow}, and \code{estimate_infections} to adjust for
+truncated data. See
+\href{https://gist.github.com/seabbs/176b0c7f83eab1a7192a25b28bbd116a}{here}
+for an example of using this approach on Covid-19 data in England. The
+functionality offered by this function is now available in a more principled
+manner in the \href{https://package.epinowcast.org/}{\code{epinowcast} R package}.
 
 The model of truncation is as follows:
 \enumerate{
-\item The truncation distribution is assumed to be log normal with a mean and
-standard deviation that is informed by the data.
+\item The truncation distribution is assumed to be discretised log normal wit
+a mean and standard deviation that is informed by the data.
 \item The data set with the latest observations is adjusted for truncation using
 the truncation distribution.
 \item Earlier data sets are recreated by applying the truncation distribution to
-the adjusted latest observations in the time period of the earlier data set. These
-data sets are then compared to the earlier observations assuming a negative binomial
-observation model.
+the adjusted latest observations in the time period of the earlier data set.
+These data sets are then compared to the earlier observations assuming a
+negative binomial observation model with an additive noise term to deal with
+zero observations.
 }
 
 This model is then fit using \code{stan} with standard normal, or half normal,
-prior for the mean, standard deviation and 1 over the square root of the over dispersion.
+prior for the mean, standard deviation, 1 over the square root of the
+overdispersion and additive noise term.
 
 This approach assumes that:
 \itemize{
@@ -69,46 +83,61 @@ This approach assumes that:
 }
 }
 \examples{
-#set number of cores to use
+# set number of cores to use
+old_opts <- options()
 options(mc.cores = ifelse(interactive(), 4, 1))
+
 # get example case counts
 reported_cases <- example_confirmed[1:60]
 
 # define example truncation distribution (note not integer adjusted)
-trunc_dist <- list(mean = convert_to_logmean(3, 2),
-                   mean_sd = 0.1,
-                   sd = convert_to_logsd(3, 2),
-                   sd_sd = 0.1,
-                   max = 10)
+trunc <- list(
+  mean = convert_to_logmean(3, 2),
+  mean_sd = 0.1,
+  sd = convert_to_logsd(3, 2),
+  sd_sd = 0.1,
+  max = 10
+)
 
 # apply truncation to example data
 construct_truncation <- function(index, cases, dist) {
-set.seed(index)
+  set.seed(index)
   cmf <- cumsum(
-     dlnorm(1:(dist$max + 1), 
-            rnorm(1, dist$mean, dist$mean_sd),
-            rnorm(1, dist$sd, dist$sd_sd)))
+    dlnorm(
+      1:(dist$max + 1),
+      rnorm(1, dist$mean, dist$mean_sd),
+      rnorm(1, dist$sd, dist$sd_sd)
+    )
+  )
   cmf <- cmf / cmf[dist$max + 1]
   cmf <- rev(cmf)[-1]
   trunc_cases <- data.table::copy(cases)[1:(.N - index)]
   trunc_cases[(.N - length(cmf) + 1):.N, confirm := as.integer(confirm * cmf)]
   return(trunc_cases)
- }
-example_data <- purrr::map(c(20, 15, 10, 0), 
-                           construct_truncation,
-                           cases = reported_cases,
-                           dist = trunc_dist)
+}
+example_data <- purrr::map(c(20, 15, 10, 0),
+  construct_truncation,
+  cases = reported_cases,
+  dist = trunc
+)
 
 # fit model to example data
-est <- estimate_truncation(example_data, verbose = interactive(),
-                           chains = 2, iter = 2000)
-                           
+est <- estimate_truncation(example_data,
+  verbose = interactive(),
+  chains = 2, iter = 2000
+)
+
 # summary of the distribution
 est$dist
 # summary of the estimated truncation cmf (can be applied to new data)
 print(est$cmf)
 # observations linked to truncation adjusted estimates
-print(est$obs)    
+print(est$obs)
 # validation plot of observations vs estimates
 plot(est)
+
+options(old_opts)
+}
+\author{
+Sam Abbott
 }

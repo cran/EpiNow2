@@ -20,8 +20,8 @@ process_region(
 
 \item{timing}{Output from \code{Sys.time}}
 
-\item{return_output}{Logical, defaults to FALSE. Should output be returned, this automatically updates to TRUE
-if no directory for saving is specified.}
+\item{return_output}{Logical, defaults to FALSE. Should output be returned,
+this automatically updates to TRUE if no directory for saving is specified.}
 
 \item{return_timing}{Logical, should runtime be returned}
 
@@ -32,7 +32,7 @@ the completion of estimation to.}
 A list of processed output
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a>}}{\strong{Maturing}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 Internal function that removes output that is not required, and returns logging
 information.
 }

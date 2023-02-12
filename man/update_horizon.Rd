@@ -7,18 +7,22 @@
 update_horizon(horizon, target_date, reported_cases)
 }
 \arguments{
-\item{horizon}{Numeric, defaults to 7. Number of days into the future to forecast.}
+\item{horizon}{Numeric, defaults to 7. Number of days into the future to
+forecast.}
 
 \item{target_date}{Date, defaults to maximum found in the data if not specified.}
 
-\item{reported_cases}{A data frame of confirmed cases (confirm) by date (date). confirm must be integer and date must be
-in date format.}
+\item{reported_cases}{A data frame of confirmed cases (confirm) by date
+(date). confirm must be integer and date must be in date format.}
 }
 \value{
 Numeric forecast horizon adjusted for the users intention
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
-Makes sure that a forecast is returned for the user specified
-time period beyond the target date.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+Makes sure that a forecast is returned for the user specified time period
+beyond the target date.
+}
+\author{
+Sam Abbott
 }

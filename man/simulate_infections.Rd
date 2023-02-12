@@ -14,36 +14,44 @@ simulate_infections(
 )
 }
 \arguments{
-\item{estimates}{The \code{estimates} element of an \code{epinow} run that has been done with
-output = "fit", or the result of \code{estimate_infections} with \code{return_fit} set to TRUE.}
+\item{estimates}{The \code{estimates} element of an \code{epinow} run that
+has been done with output = "fit", or the result of
+\code{estimate_infections} with \code{return_fit} set to TRUE.}
 
-\item{R}{A numeric vector of reproduction numbers; these will overwrite the reproduction numbers
-contained in \code{estimates}, except elements set to NA. If it is longer than the time series
-of reproduction numbers contained in \code{estimates}, the values going beyond the length of
-estimated reproduction numbers are taken as forecast.}
+\item{R}{A numeric vector of reproduction numbers; these will overwrite the
+reproduction numbers contained in \code{estimates}, except elements set to
+NA. Alternatively accepts a data.frame containing at least \code{date} and \code{value}
+(integer) variables and optionally \code{sample}. More (or fewer) days than in
+the original fit can be simulated.}
 
 \item{model}{A compiled stan model as returned by \code{rstan::stan_model}.}
 
-\item{samples}{Numeric, number of posterior samples to simulate from. The default is to use all
-samples in the \code{estimates} input.}
+\item{samples}{Numeric, number of posterior samples to simulate from. The
+default is to use all samples in the \code{estimates} input.}
 
-\item{batch_size}{Numeric, defaults to 100. Size of batches in which to simulate. May decrease
-run times due to reduced IO costs but this is still being evaluated. If set to NULL then all
-simulations are done at once.}
+\item{batch_size}{Numeric, defaults to 10. Size of batches in which to
+simulate. May decrease run times due to reduced IO costs but this is still
+being evaluated. If set to NULL then al simulations are done at once.}
 
-\item{verbose}{Logical defaults to \code{interactive()}. Should a progress bar (from \code{progressr}) be
-shown.}
+\item{verbose}{Logical defaults to \code{interactive()}. Should a progress bar
+(from \code{progressr}) be shown.}
+}
+\value{
+A list of output as returned by \code{\link[=estimate_infections]{estimate_infections()}} but based on
+results from the specified scenario rather than fitting.
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 This function simulates infections using an existing fit to observed cases but with a modified
 time-varying reproduction number. This can be used to explore forecast models or past counterfactuals.
 Simulations can be run in parallel using \code{future::plan}.
 }
 \examples{
 \donttest{
-#set number of cores to use
+# set number of cores to use
+old_opts <- options()
 options(mc.cores = ifelse(interactive(), 4, 1))
+
 # get example case counts
 reported_cases <- example_confirmed[1:50]
 
@@ -51,20 +59,44 @@ reported_cases <- example_confirmed[1:50]
 generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 # set delays between infection and case report
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-reporting_delay <- list(mean = convert_to_logmean(3, 1), mean_sd = 0.1,
-                        sd = convert_to_logsd(3, 1), sd_sd = 0.1, max = 15)
-                        
+reporting_delay <- list(
+  mean = convert_to_logmean(2, 1), mean_sd = 0.1,
+  sd = convert_to_logsd(2, 1), sd_sd = 0.1, max = 15
+)
+
 # fit model to data to recover Rt estimates
-est <- estimate_infections(reported_cases, generation_time = generation_time,
-                           delays = delay_opts(incubation_period, reporting_delay),
-                           rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
-                           gp = gp_opts(ls_min = 10, boundary_scale = 1.5,,
-                                        basis_prop = 0.1),
-                           obs = obs_opts(scale = list(mean = 0.1, sd = 0.01)))
-                                  
+est <- estimate_infections(reported_cases,
+  generation_time = generation_time,
+  delays = delay_opts(incubation_period, reporting_delay),
+  rt = rt_opts(prior = list(mean = 2, sd = 0.1), rw = 7),
+  stan = stan_opts(control = list(adapt_delta = 0.9)),
+  obs = obs_opts(scale = list(mean = 0.1, sd = 0.01)),
+  gp = NULL, horizon = 0
+)
+
 # update Rt trajectory and simulate new infections using it
-R <- c(rep(NA_real_, 40), rep(0.5, 10), rep(0.8, 7))
+R <- c(rep(NA_real_, 26), rep(0.5, 10), rep(0.8, 7))
 sims <- simulate_infections(est, R)
 plot(sims)
+
+# with a data.frame input of samples
+R_dt <- data.frame(
+  date = seq(
+    min(summary(est, type = "parameters", param = "R")$date),
+    by = "day", length.out = length(R)
+  ),
+  value = R
+)
+sims <- simulate_infections(est, R_dt)
+plot(sims)
+
+#' # with a data.frame input of samples
+R_samples <- summary(est, type = "samples", param = "R")
+R_samples <- R_samples[, .(date, sample, value)][sample <= 1000][date <= "2020-04-10"]
+R_samples <- R_samples[date >= "2020-04-01", value := 1.1]
+sims <- simulate_infections(est, R_samples)
+plot(sims)
+
+options(old_opts)
 }
 }

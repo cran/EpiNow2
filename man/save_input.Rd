@@ -7,12 +7,18 @@
 save_input(reported_cases, target_folder)
 }
 \arguments{
-\item{reported_cases}{A data frame of confirmed cases (confirm) by date (date). confirm must be integer and date must be
-in date format.}
+\item{reported_cases}{A data frame of confirmed cases (confirm) by date
+(date). confirm must be integer and date must be in date format.}
 
 \item{target_folder}{Character string specifying where to save results (will create if not present).}
 }
+\value{
+No return value, called for side effects
+}
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Saves observed data to a target location if given.
+}
+\author{
+Sam Abbott
 }

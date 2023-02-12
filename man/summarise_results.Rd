@@ -21,7 +21,8 @@ summarise_results(
 \item{results_dir}{An optional character string indicating the location of the results directory to extract results
 from.}
 
-\item{target_date}{A character string indicating the target date to extract results for. All regions must have results
+\item{target_date}{A character string indicating the target date to extract
+results for. All regions must have results
 for this date.}
 
 \item{region_scale}{A character string indicating the name to give the regions being summarised.}
@@ -30,7 +31,7 @@ for this date.}
 A list of summary data
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#questioning'><img src='figures/lifecycle-questioning.svg' alt='Questioning lifecycle'></a>}}{\strong{Questioning}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#questioning}{\figure{lifecycle-questioning.svg}{options: alt='[Questioning]'}}}{\strong{[Questioning]}}
 Used internally by \code{regional_summary} to produce a summary table of results. May be streamlined in later
 releases.
 }

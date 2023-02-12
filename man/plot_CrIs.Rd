@@ -4,7 +4,7 @@
 \alias{plot_CrIs}
 \title{Plot EpiNow2 Credible Intervals}
 \usage{
-plot_CrIs(plot, CrIs, alpha, size)
+plot_CrIs(plot, CrIs, alpha, linewidth)
 }
 \arguments{
 \item{plot}{A \code{ggplot2} plot}
@@ -14,12 +14,12 @@ by \code{extract_CrIs}}
 
 \item{alpha}{Numeric, overall alpha of the target line range}
 
-\item{size}{Numeric, size of the default line range.}
+\item{linewidth}{Numeric, line width of the default line range.}
 }
 \value{
 A \code{ggplot2} plot.
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a>}}{\strong{Stable}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Adds lineranges for user specified credible intervals
 }

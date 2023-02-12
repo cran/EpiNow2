@@ -1,8 +1,7 @@
 // update a vector of Rts
-vector update_Rt(vector input_R, real log_R, vector noise, int[] bps,
+vector update_Rt(int t, real log_R, vector noise, int[] bps,
                  real[] bp_effects, int stationary) {
   // define control parameters
-  int t = num_elements(input_R);
   int bp_n = num_elements(bp_effects);
   int bp_c = 0;
   int gp_n = num_elements(noise);
@@ -41,7 +40,7 @@ vector update_Rt(vector input_R, real log_R, vector noise, int[] bps,
 // Rt priors
 void rt_lp(vector log_R, real[] initial_infections, real[] initial_growth,
            real[] bp_effects, real[] bp_sd, int bp_n, int seeding_time,
-           real r_logmean, real r_logsd, real prior_infections, 
+           real r_logmean, real r_logsd, real prior_infections,
            real prior_growth) {
   // prior on R
   log_R ~ normal(r_logmean, r_logsd);
