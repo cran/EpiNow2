@@ -10,7 +10,7 @@ options(mc.cores = ifelse(interactive(), 4, 1))
 reported_cases <- example_confirmed[1:60]
 
 # define example truncation distribution (note not integer adjusted)
-trunc_dist <- list(
+trunc_dist <- dist_spec(
   mean = convert_to_logmean(3, 2),
   mean_sd = 0.1,
   sd = convert_to_logsd(3, 2),
@@ -24,8 +24,8 @@ construct_truncation <- function(index, cases, dist) {
   cmf <- cumsum(
     dlnorm(
       1:(dist$max + 1),
-      rnorm(1, dist$mean, dist$mean_sd),
-      rnorm(1, dist$sd, dist$sd_sd)
+      rnorm(1, dist$mean_mean, dist$mean_sd),
+      rnorm(1, dist$sd_mean, dist$sd_sd)
     )
   )
   cmf <- cmf / cmf[dist$max + 1]
@@ -51,11 +51,24 @@ test_that("estimate_truncation can return values from simulated data and plot
     names(est),
     c("dist", "obs", "last_obs", "cmf", "data", "fit")
   )
-  expect_equal(
-    names(est$dist),
-    c("mean", "mean_sd", "sd", "sd_sd", "max")
-  )
+  expect_s3_class(est$dist, "dist_spec")
   expect_error(plot(est), NA)
+})
+
+test_that("deprecated arguments are recognised", {
+  options(warn = 2)
+  expect_error(estimate_truncation(example_data,
+    verbose = interactive(), refresh = 0,
+    trunc_max = 10
+  ), "deprecated")
+  expect_error(estimate_truncation(example_data,
+    verbose = interactive(), refresh = 0,
+    max_truncation = 10
+  ), "deprecated")
+  expect_error(estimate_truncation(example_data,
+    verbose = interactive(), refresh = 0,
+    trunc_dist = "lognormal"
+  ), "deprecated")
 })
 
 options(old_opts)

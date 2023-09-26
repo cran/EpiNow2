@@ -23,13 +23,13 @@ extract_parameter <- function(param, samples, dates) {
       )
     )
   )
-  param_df <- param_df[, time := 1:.N]
+  param_df <- param_df[, time := seq_len(.N)]
   param_df <- data.table::melt(param_df,
     id.vars = "time",
     variable.name = "var"
   )
 
-  param_df <- param_df[, var := NULL][, sample := 1:.N, by = .(time)]
+  param_df <- param_df[, var := NULL][, sample := seq_len(.N), by = .(time)]
   param_df <- param_df[, date := dates, by = .(sample)]
   param_df <- param_df[, .(
     parameter = param, time, date,
@@ -79,7 +79,8 @@ extract_static_parameter <- function(param, samples) {
 #' @author Sam Abbott
 #' @importFrom rstan extract
 #' @importFrom data.table data.table
-extract_parameter_samples <- function(stan_fit, data, reported_dates, reported_inf_dates,
+extract_parameter_samples <- function(stan_fit, data, reported_dates,
+                                      reported_inf_dates,
                                       drop_length_1 = FALSE, merge = FALSE) {
   # extract sample from stan object
   samples <- rstan::extract(stan_fit)
@@ -124,7 +125,9 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates, reported_i
         samples,
         1:data$bp_n
       )
-      out$breakpoints <- out$breakpoints[, strat := date][, c("time", "date") := NULL]
+      out$breakpoints <- out$breakpoints[,
+        strat := date][, c("time", "date") := NULL
+      ]
     }
   } else {
     out$R <- extract_parameter(
@@ -145,49 +148,36 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates, reported_i
       1:data$week_effect
     )
     out$day_of_week <- out$day_of_week[, value := value * data$week_effect]
-    out$day_of_week <- out$day_of_week[, strat := date][, c("time", "date") := NULL]
+    out$day_of_week <- out$day_of_week[, strat := date][,
+     c("time", "date") := NULL
+    ]
   }
-  if (data$n_uncertain_mean_delays > 0) {
-    out$delay_mean <- extract_parameter("delay_mean", samples, 1:data$n_uncertain_mean_delays)
+  if (data$delay_n_p > 0) {
+    out$delay_mean <- extract_parameter(
+      "delay_mean", samples, seq_len(data$delay_n_p)
+    )
     out$delay_mean <-
-      out$delay_mean[, strat := as.character(time)][, time := NULL][, date := NULL]
-  }
-  if (data$n_uncertain_sd_delays > 0) {
-    out$delay_sd <- extract_parameter("delay_sd", samples, 1:data$n_uncertain_sd_delays)
+      out$delay_mean[, strat := as.character(time)][, time := NULL][,
+        date := NULL
+      ]
+    out$delay_sd <- extract_parameter(
+      "delay_sd", samples, seq_len(data$delay_n_p)
+    )
     out$delay_sd <-
-      out$delay_sd[, strat := as.character(time)][, time := NULL][, date := NULL]
-  }
-  if (data$truncation > 0) {
-    if (data$trunc_mean_sd > 0) {
-      out$truncation_mean <- extract_parameter("trunc_mean", samples, 1)
-      out$truncation_mean <-
-        out$truncation_mean[, strat := as.character(time)][, time := NULL][, date := NULL]
-    }
-    if (data$trunc_sd_sd > 0) {
-      out$truncation_sd <- extract_parameter("trunc_sd", samples, 1)
-      out$truncation_sd <-
-        out$truncation_sd[, strat := as.character(time)][, time := NULL][, date := NULL]
-    }
-  }
-  if (data$estimate_r && data$gt_mean_sd > 0) {
-    out$gt_mean <- extract_static_parameter("gt_mean", samples)
-    out$gt_mean <- out$gt_mean[, value := value.V1][, value.V1 := NULL]
-  }
-  if (data$estimate_r && data$gt_sd_sd > 0) {
-    out$gt_sd <- extract_static_parameter("gt_sd", samples)
-    out$gt_sd <- out$gt_sd[, value := value.V1][, value.V1 := NULL]
+      out$delay_sd[, strat := as.character(time)][, time := NULL][,
+       date := NULL
+      ]
   }
   if (data$model_type == 1) {
     out$reporting_overdispersion <- extract_static_parameter("rep_phi", samples)
-    out$reporting_overdispersion <- out$reporting_overdispersion[, value := value.V1][
-      ,
+    out$reporting_overdispersion <- out$reporting_overdispersion[,
+     value := value.V1][,
       value.V1 := NULL
     ]
   }
   if (data$obs_scale == 1) {
     out$fraction_observed <- extract_static_parameter("frac_obs", samples)
-    out$fraction_observed <- out$fraction_observed[, value := value.V1][
-      ,
+    out$fraction_observed <- out$fraction_observed[, value := value.V1][,
       value.V1 := NULL
     ]
   }
@@ -222,9 +212,9 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates, reported_i
 extract_stan_param <- function(fit, params = NULL,
                                CrIs = c(0.2, 0.5, 0.9), var_names = FALSE) {
   # generate symmetric CrIs
-  CrIs <- CrIs[order(CrIs)]
+  CrIs <- sort(CrIs)
   sym_CrIs <- c(0.5, 0.5 - CrIs / 2, 0.5 + CrIs / 2)
-  sym_CrIs <- sym_CrIs[order(sym_CrIs)]
+  sym_CrIs <- sort(sym_CrIs)
   CrIs <- round(100 * CrIs, 0)
   CrIs <- c(paste0("lower_", rev(CrIs)), "median", paste0("upper_", CrIs))
   args <- list(object = fit, probs = sym_CrIs)
@@ -316,7 +306,7 @@ extract_inits <- function(fit, current_inits,
     return(res)
   }
   # extract samples
-  fit_inits <- purrr::map(1:samples, init_fun)
+  fit_inits <- purrr::map(1:samples, init_fun) # nolint
   # set up sampling function
   exclude_vars <- exclude_list
   old_init_fn <- current_inits

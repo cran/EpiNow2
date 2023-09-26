@@ -17,7 +17,7 @@ get_regions <- function(results_dir) {
 
   # put into alphabetical order
   regions <- regions[!(regions %in% "runtimes.csv")]
-  regions <- regions[order(regions)]
+  regions <- sort(regions)
   names(regions) <- regions
   return(regions)
 }
@@ -72,8 +72,12 @@ get_raw_result <- function(file, region, date,
 #' @examples
 #' \donttest{
 #' # construct example distributions
-#' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-#' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+#' generation_time <- get_generation_time(
+#'  disease = "SARS-CoV-2", source = "ganyani"
+#' )
+#' incubation_period <- get_incubation_period(
+#'  disease = "SARS-CoV-2", source = "lauer"
+#' )
 #' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
 #'
 #' # example case vector
@@ -88,8 +92,8 @@ get_raw_result <- function(file, region, date,
 #' # run multiregion estimates
 #' regional_out <- regional_epinow(
 #'   reported_cases = cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = rt_opts(rw = 7), gp = NULL,
 #'   output = c("regions", "latest"),
 #'   target_folder = dir,
@@ -119,7 +123,7 @@ get_regional_results <- function(regional_output,
     # find all regions
     regions <- get_regions(results_dir)
 
-    load_data <- purrr::safely(EpiNow2::get_raw_result)
+    load_data <- purrr::safely(EpiNow2::get_raw_result) # nolint
 
     # get estimates
     get_estimates_file <- function(samples_path, summarised_path) {
@@ -138,7 +142,9 @@ get_regional_results <- function(regional_output,
         result_dir = results_dir,
         date = date
       )[[1]])
-      summarised <- data.table::rbindlist(summarised, idcol = "region", fill = TRUE)
+      summarised <- data.table::rbindlist(
+        summarised, idcol = "region", fill = TRUE
+      )
       out$summarised <- summarised
       return(out)
     }
@@ -164,14 +170,17 @@ get_regional_results <- function(regional_output,
       }
       # get incidence values and combine
       summarised <- purrr::map(regional_output, ~ .[[data]]$summarised)
-      summarised <- data.table::rbindlist(summarised, idcol = "region", fill = TRUE)
+      summarised <- data.table::rbindlist(
+        summarised, idcol = "region", fill = TRUE
+      )
       out$summarised <- summarised
       return(out)
     }
     out <- list()
     out$estimates <- get_estimates_data("estimates")
     if (forecast) {
-      out$estimated_reported_cases <- get_estimates_data("estimated_reported_cases")
+      out$estimated_reported_cases <-
+        get_estimates_data("estimated_reported_cases")
     }
   }
   return(out)
@@ -200,7 +209,9 @@ get_regional_results <- function(regional_output,
 #' @author Sam Abbott
 #' @export
 #' @examples
-#' get_dist(EpiNow2::generation_times, disease = "SARS-CoV-2", source = "ganyani")
+#' get_dist(
+#'  EpiNow2::generation_times, disease = "SARS-CoV-2", source = "ganyani"
+#' )
 get_dist <- function(data, disease, source, max_value = 15, fixed = FALSE) {
   target_disease <- disease
   target_source <- source
@@ -210,7 +221,7 @@ get_dist <- function(data, disease, source, max_value = 15, fixed = FALSE) {
     dist$mean_sd <- 0
     dist$sd_sd <- 0
   }
-  return(dist)
+  return(do.call(dist_spec, dist))
 }
 #'  Get a Literature Distribution for the Generation Time
 #'
@@ -276,11 +287,42 @@ get_regions_with_most_reports <- function(reported_cases,
                                           no_regions = 6) {
   most_reports <- data.table::copy(reported_cases)
   most_reports <-
-    most_reports[, .SD[date >= (max(date, na.rm = TRUE) - lubridate::days(time_window))],
+    most_reports[,
+      .SD[date >= (max(date, na.rm = TRUE) - lubridate::days(time_window))
+    ],
       by = "region"
     ]
-  most_reports <- most_reports[, .(confirm = sum(confirm, na.rm = TRUE)), by = "region"]
-  most_reports <- data.table::setorderv(most_reports, cols = "confirm", order = -1)
+  most_reports <- most_reports[,
+   .(confirm = sum(confirm, na.rm = TRUE)), by = "region"
+  ]
+  most_reports <- data.table::setorderv(
+    most_reports, cols = "confirm", order = -1
+  )
   most_reports <- most_reports[1:no_regions][!is.na(region)]$region
   return(most_reports)
+}
+
+##' Estimate seeding time from delays and generation time
+##'
+##' The seeding time is set to the mean of the specified delays, constrained
+##' to be at least the maximum generation time
+##' @param delays Delays as specified using `dist_spec`
+##' @param generation_time Generation time as specified using `dist_spec`
+##' @return An integer seeding time
+##' @author Sebastian Funk
+get_seeding_time <- function(delays, generation_time) {
+  # Estimate the mean delay -----------------------------------------------
+  seeding_time <- sum(mean(delays))
+  if (seeding_time < 1) {
+    seeding_time <- 1
+  } else {
+    seeding_time <- as.integer(seeding_time)
+  }
+  ## make sure we have at least (length of total gt pmf - 1) seeding time
+  seeding_time <- max(
+    seeding_time,
+    sum(generation_time$max) + sum(generation_time$np_pmf_max) -
+      length(generation_time$max) - length(generation_time$np_pmf_max)
+  )
+  return(seeding_time)
 }

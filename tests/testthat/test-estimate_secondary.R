@@ -85,20 +85,30 @@ test_that("estimate_secondary can recover simulated parameters", {
     inc_posterior[, median], c(1.8, 0.5, 0.4),
     tolerance = 0.1
   )
-  # These tests currently fail indicating the model is not recovering the
-  # simulated parameters.
-  # expect_equal(
-  #   prev_posterior[, mean], c(1.6, 0.8, 0.3), tolerance = 0.1
-  # )
-  # expect_equal(
-  #   prev_posterior[, median], c(1.6, 0.8, 0.3), tolerance = 0.1
-  # )
+  expect_equal(
+    prev_posterior[, mean], c(1.6, 0.8, 0.3), tolerance = 0.2
+  )
+  expect_equal(
+    prev_posterior[, median], c(1.6, 0.8, 0.3), tolerance = 0.2
+  )
 })
 
 test_that("forecast_secondary can return values from simulated data and plot
            them", {
-  inc_preds <- forecast_secondary(inc, cases[61:.N][, value := primary])
+  inc_preds <- forecast_secondary(inc, cases[seq(61, .N)][, value := primary])
   expect_equal(names(inc_preds), c("samples", "forecast", "predictions"))
   # validation plot of observations vs estimates
   expect_error(plot(inc_preds, new_obs = cases, from = "2020-05-01"), NA)
+})
+
+test_that("estimate_secondary works with weigh_delay_priors = TRUE", {
+  delays <- dist_spec(
+    mean = 2.5, mean_sd = 0.5, sd = 0.47, sd_sd = 0.25, max = 30
+  )
+  inc_weigh <- estimate_secondary(
+    cases[1:60], delays = delays,
+    obs = obs_opts(scale = list(mean = 0.2, sd = 0.2), week_effect = FALSE),
+    weigh_delay_priors = TRUE, verbose = FALSE
+  )
+  expect_s3_class(inc_weigh, "estimate_secondary")
 })

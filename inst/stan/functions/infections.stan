@@ -6,11 +6,11 @@ real update_infectiousness(vector infections, vector gt_rev_pmf,
   // work out where to start the convolution of past infections with the
   // generation time distribution: (current_time - maximal generation time) if
   // that is >= 1, otherwise 1
-  int inf_start = max(1, (index + seeding_time - gt_max));
-  // work out where to end the convolution: (current_time - 1)
-  int inf_end = (index + seeding_time - 1);
+  int inf_start = max(1, (index + seeding_time - gt_max + 1));
+  // work out where to end the convolution: current_time
+  int inf_end = (index + seeding_time);
   // number of indices of the generation time to sum over (inf_end - inf_start + 1)
-  int pmf_accessed = min(gt_max, index + seeding_time - 1);
+  int pmf_accessed = min(gt_max, index + seeding_time);
   // calculate the elements of the convolution
   real new_inf = dot_product(
     infections[inf_start:inf_end], tail(gt_rev_pmf, pmf_accessed)
@@ -19,7 +19,7 @@ real update_infectiousness(vector infections, vector gt_rev_pmf,
 }
 // generate infections by using Rt = Rt-1 * sum(reversed generation time pmf * infections)
 vector generate_infections(vector oR, int uot, vector gt_rev_pmf,
-                           real[] initial_infections, real[] initial_growth,
+                           array[] real initial_infections, array[] real initial_growth,
                            int pop, int ht) {
   // time indices and storage
   int ot = num_elements(oR);
@@ -27,14 +27,15 @@ vector generate_infections(vector oR, int uot, vector gt_rev_pmf,
   int t = ot + uot;
   vector[ot] R = oR;
   real exp_adj_Rt;
-  vector[t] infections = rep_vector(1e-5, t);
-  vector[ot] cum_infections = rep_vector(0, ot);
-  vector[ot] infectiousness = rep_vector(1e-5, ot);
+  vector[t] infections = rep_vector(0, t);
+  vector[ot] cum_infections;
+  vector[ot] infectiousness;
   // Initialise infections using daily growth
   infections[1] = exp(initial_infections[1]);
   if (uot > 1) {
+    real growth = exp(initial_growth[1]);
     for (s in 2:uot) {
-      infections[s] = exp(initial_infections[1] + initial_growth[1] * (s - 1));
+      infections[s] = infections[s - 1] * growth;
     }
   }
   // calculate cumulative infections
@@ -43,13 +44,13 @@ vector generate_infections(vector oR, int uot, vector gt_rev_pmf,
   }
   // iteratively update infections
   for (s in 1:ot) {
-    infectiousness[s] += update_infectiousness(infections, gt_rev_pmf, uot, s);
+    infectiousness[s] = update_infectiousness(infections, gt_rev_pmf, uot, s);
     if (pop && s > nht) {
       exp_adj_Rt = exp(-R[s] * infectiousness[s] / (pop - cum_infections[nht]));
       exp_adj_Rt = exp_adj_Rt > 1 ? 1 : exp_adj_Rt;
       infections[s + uot] = (pop - cum_infections[s]) * (1 - exp_adj_Rt);
     }else{
-      infections[s + uot] += R[s] * infectiousness[s];
+      infections[s + uot] = R[s] * infectiousness[s];
     }
     if (pop && s < ot) {
       cum_infections[s + 1] = cum_infections[s] + infections[s + uot];

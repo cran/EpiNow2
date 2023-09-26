@@ -39,8 +39,12 @@ examples for details.
 \examples{
 \donttest{
 # construct example distributions
-generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+generation_time <- get_generation_time(
+ disease = "SARS-CoV-2", source = "ganyani"
+)
+incubation_period <- get_incubation_period(
+ disease = "SARS-CoV-2", source = "lauer"
+)
 reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
 
 # example case vector
@@ -55,8 +59,8 @@ dir <- file.path(tempdir(check = TRUE), "results")
 # run multiregion estimates
 regional_out <- regional_epinow(
   reported_cases = cases,
-  generation_time = generation_time,
-  delays = delay_opts(incubation_period, reporting_delay),
+  generation_time = generation_time_opts(generation_time),
+  delays = delay_opts(incubation_period + reporting_delay),
   rt = rt_opts(rw = 7), gp = NULL,
   output = c("regions", "latest"),
   target_folder = dir,

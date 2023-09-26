@@ -2,7 +2,8 @@
 % Please edit documentation in R/dist.R
 \name{bootstrapped_dist_fit}
 \alias{bootstrapped_dist_fit}
-\title{Fit a Subsampled Bootstrap to Integer Values and Summarise Distribution Parameters}
+\title{Fit a Subsampled Bootstrap to Integer Values and Summarise Distribution
+Parameters}
 \usage{
 bootstrapped_dist_fit(
   values,
@@ -37,7 +38,7 @@ data. Maximum delay to  allow (added to output but does impact fitting).}
 printed.}
 }
 \value{
-A list summarising the bootstrapped distribution
+A \code{dist_spec} object summarising the bootstrapped distribution
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}

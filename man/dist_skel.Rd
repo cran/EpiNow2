@@ -4,10 +4,19 @@
 \alias{dist_skel}
 \title{Distribution Skeleton}
 \usage{
-dist_skel(n, dist = FALSE, cum = TRUE, model, params, max_value = 120)
+dist_skel(
+  n,
+  dist = FALSE,
+  cum = TRUE,
+  model,
+  discrete = FALSE,
+  params,
+  max_value = 120
+)
 }
 \arguments{
-\item{n}{Numeric vector, number of samples to take (or days for the probability density).}
+\item{n}{Numeric vector, number of samples to take (or days for the
+probability density).}
 
 \item{dist}{Logical, defaults to \code{FALSE}. Should the probability density be
 returned rather than a number of samples.}
@@ -16,7 +25,15 @@ returned rather than a number of samples.}
 distribution be cumulative.}
 
 \item{model}{Character string, defining the model to be used. Supported
-options are exponential ("exp"), gamma ("gamma"), and log normal ("lognorm")}
+options are exponential ("exp"), gamma ("gamma"), and log normal
+("lognormal")}
+
+\item{discrete}{Logical,  defaults to \code{FALSE}. Should the probability
+distribution be discretised. In this case each entry of the probability
+mass function corresponds to the 1-length interval ending at the entry,
+i.e. the probability mass function is a vector where the first entry
+corresponds to the integral over the (0,1] interval of the continuous
+distribution, the second entry corresponds to the (1,2] interval etc.}
 
 \item{params}{A list of parameters values (by name) required for each model.
 For the exponential model this is a rate parameter and for the gamma model
@@ -31,8 +48,8 @@ A vector of samples or a probability distribution.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#questioning}{\figure{lifecycle-questioning.svg}{options: alt='[Questioning]'}}}{\strong{[Questioning]}}
 This function acts as a skeleton for a truncated distribution defined by
-model type, maximum value and model parameters. It is designed to be used with the
-output from \code{get_dist}.
+model type, maximum value and model parameters. It is designed to be used
+with the output from \code{get_dist}.
 }
 \examples{
 
@@ -51,36 +68,38 @@ dist_skel(1:10,
 
 ## Gamma model
 # sample
-dist_skel(10, model = "gamma", params = list(alpha = 1, beta = 2))
+dist_skel(10, model = "gamma", params = list(shape = 1, scale = 2))
 
 # cumulative prob density
 dist_skel(0:10,
   model = "gamma", dist = TRUE,
-  params = list(alpha = 1, beta = 2)
+  params = list(shape = 1, scale = 2)
 )
 
 # probability density
 dist_skel(0:10,
   model = "gamma", dist = TRUE,
-  cum = FALSE, params = list(alpha = 2, beta = 2)
+  cum = FALSE, params = list(shape = 2, scale = 2)
 )
 
 ## Log normal model
 # sample
-dist_skel(10, model = "lognorm", params = list(mean = log(5), sd = log(2)))
+dist_skel(10, model = "lognormal", params = list(mean = log(5), sd = log(2)))
 
 # cumulative prob density
 dist_skel(0:10,
-  model = "lognorm", dist = TRUE,
+  model = "lognormal", dist = TRUE,
   params = list(mean = log(5), sd = log(2))
 )
 
 # probability density
 dist_skel(0:10,
-  model = "lognorm", dist = TRUE, cum = FALSE,
+  model = "lognormal", dist = TRUE, cum = FALSE,
   params = list(mean = log(5), sd = log(2))
 )
 }
 \author{
 Sam Abbott
+
+Sebastian Funk
 }

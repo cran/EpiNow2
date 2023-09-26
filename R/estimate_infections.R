@@ -28,8 +28,18 @@
 #' options. See the documentation of `delay_opts()` and the examples below for
 #' details.
 #'
+#' @param truncation A call to `trunc_opts()` defining the truncation of
+#'   observed data.  Defaults to `trunc_opts()`. See `estimate_truncation()` for
+#'   an approach to estimating truncation from data.
+#'
 #' @param horizon Numeric, defaults to 7. Number of days into the future to
 #' forecast.
+#'
+#' @param weigh_delay_priors Logical. If TRUE (default), all delay distribution
+#' priors will be weighted by the number of observation data points, in doing so
+#' approximately placing an independent prior at each time step and usually
+#' preventing the posteriors from shifting. If FALSE, no weight will be applied,
+#' i.e. delay distributions will be treated as a single parameters.
 #'
 #' @param verbose Logical, defaults to `TRUE` when used interactively and
 #' otherwise `FALSE`. Should verbose debug progress messages be printed.
@@ -44,11 +54,13 @@
 #' @seealso epinow regional_epinow forecast_infections simulate_infections
 #' @inheritParams create_stan_args
 #' @inheritParams create_stan_data
+#' @inheritParams create_stan_data
 #' @inheritParams create_gp_data
 #' @inheritParams fit_model_with_nuts
 #' @inheritParams create_clean_reported_cases
 #' @inheritParams calc_CrIs
-#' @importFrom data.table data.table copy merge.data.table as.data.table setorder rbindlist melt .N setDT
+#' @importFrom data.table data.table copy merge.data.table as.data.table
+#' @importFrom data.table setorder rbindlist melt .N setDT
 #' @importFrom purrr transpose
 #' @importFrom lubridate days
 #' @importFrom purrr transpose
@@ -63,22 +75,26 @@
 #' reported_cases <- example_confirmed[1:60]
 #'
 #' # set up example generation time
-#' generation_time <- generation_time_opts(
+#' generation_time <- get_generation_time(
 #'   disease = "SARS-CoV-2", source = "ganyani", fixed = TRUE
 #' )
 #' # set delays between infection and case report
 #' incubation_period <- get_incubation_period(
+#'   disease = "SARS-CoV-2", source = "lauer", fixed = TRUE
+#' )
+#' # delays between infection and case report, with uncertainty
+#' incubation_period_uncertain <- get_incubation_period(
 #'   disease = "SARS-CoV-2", source = "lauer"
 #' )
-#' reporting_delay <- list(
+#' reporting_delay <- dist_spec(
 #'   mean = convert_to_logmean(2, 1), mean_sd = 0,
 #'   sd = convert_to_logsd(2, 1), sd_sd = 0, max = 10
 #' )
 #'
 #' # default settings but assuming that delays are fixed rather than uncertain
 #' def <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
 #'   stan = stan_opts(control = list(adapt_delta = 0.95))
 #' )
@@ -87,11 +103,12 @@
 #' # summary plot
 #' plot(def)
 #'
-#' # decreasing the accuracy of the approximate Gaussian to speed up computation.
+#' # decreasing the accuracy of the approximate Gaussian to speed up
+#' #computation.
 #' # These settings are an area of active research. See ?gp_opts for details.
 #' agp <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
 #'   gp = gp_opts(ls_min = 10, basis_prop = 0.1),
 #'   stan = stan_opts(control = list(adapt_delta = 0.95))
@@ -101,8 +118,8 @@
 #'
 #' # Adjusting for future susceptible depletion
 #' dep <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = rt_opts(
 #'     prior = list(mean = 2, sd = 0.1),
 #'     pop = 1000000, future = "latest"
@@ -114,15 +131,15 @@
 #'
 #' # Adjusting for truncation of the most recent data
 #' # See estimate_truncation for an approach to estimating this from data
-#' trunc_dist <- trunc_opts(dist = list(
+#' trunc_dist <- dist_spec(
 #'   mean = convert_to_logmean(0.5, 0.5), mean_sd = 0.1,
 #'   sd = convert_to_logsd(0.5, 0.5), sd_sd = 0.1,
 #'   max = 3
-#' ))
+#' )
 #' trunc <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
-#'   truncation = trunc_dist,
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
+#'   truncation = trunc_opts(trunc_dist),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
 #'   gp = gp_opts(ls_min = 10, basis_prop = 0.1),
 #'   stan = stan_opts(control = list(adapt_delta = 0.95))
@@ -138,8 +155,8 @@
 #' # can be optionally switched off using backcalc_opts(prior = "none"),
 #' # see ?backcalc_opts for other options
 #' backcalc <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = NULL, backcalc = backcalc_opts(),
 #'   obs = obs_opts(scale = list(mean = 0.4, sd = 0.05)),
 #'   horizon = 0
@@ -148,8 +165,8 @@
 #'
 #' # Rt projected into the future using the Gaussian process
 #' project_rt <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = rt_opts(
 #'     prior = list(mean = 2, sd = 0.1),
 #'     future = "project"
@@ -160,8 +177,8 @@
 #' # default settings on a later snapshot of data
 #' snapshot_cases <- example_confirmed[80:130]
 #' snapshot <- estimate_infections(snapshot_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay, fixed = TRUE),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period + reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 1, sd = 0.1))
 #' )
 #' plot(snapshot)
@@ -169,8 +186,8 @@
 #' # stationary Rt assumption (likely to provide biased real-time estimates)
 #' # with uncertain reporting delays
 #' stat <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period_uncertain + reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1), gp_on = "R0")
 #' )
 #' plot(stat)
@@ -178,23 +195,28 @@
 #' # no gaussian process (i.e fixed Rt assuming no breakpoints)
 #' # with uncertain reporting delays
 #' fixed <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period_uncertain + reporting_delay),
 #'   gp = NULL
 #' )
 #' plot(fixed)
 #'
 #' # no delays
-#' no_delay <- estimate_infections(reported_cases, generation_time = generation_time)
+#' no_delay <- estimate_infections(
+#'   reported_cases,
+#'   generation_time = generation_time_opts(generation_time)
+#' )
 #' plot(no_delay)
 #'
 #' # break point but otherwise static Rt
 #' # with uncertain reporting delays
 #' bp_cases <- data.table::copy(reported_cases)
-#' bp_cases <- bp_cases[, breakpoint := ifelse(date == as.Date("2020-03-16"), 1, 0)]
+#' bp_cases <- bp_cases[,
+#'  breakpoint := ifelse(date == as.Date("2020-03-16"), 1, 0)
+#' ]
 #' bkp <- estimate_infections(bp_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period_uncertain + reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
 #'   gp = NULL
 #' )
@@ -205,8 +227,8 @@
 #' # weekly random walk
 #' # with uncertain reporting delays
 #' rw <- estimate_infections(reported_cases,
-#'   generation_time = generation_time,
-#'   delays = delay_opts(incubation_period, reporting_delay),
+#'   generation_time = generation_time_opts(generation_time),
+#'   delays = delay_opts(incubation_period_uncertain + reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1), rw = 7),
 #'   gp = NULL
 #' )
@@ -230,6 +252,7 @@ estimate_infections <- function(reported_cases,
                                 CrIs = c(0.2, 0.5, 0.9),
                                 filter_leading_zeros = TRUE,
                                 zero_threshold = Inf,
+                                weigh_delay_priors = TRUE,
                                 id = "estimate_infections",
                                 verbose = interactive()) {
   set_dt_single_thread()
@@ -247,9 +270,6 @@ estimate_infections <- function(reported_cases,
       name = "EpiNow2.epinow.estimate_infections"
     )
   }
-  if (is.null(delays$delays)) {
-    stop("A call to delay_opts must be passed to delays")
-  }
   # Make sure there are no missing dates and order cases
   reported_cases <- create_clean_reported_cases(
     reported_cases, horizon,
@@ -260,10 +280,13 @@ estimate_infections <- function(reported_cases,
   # Record earliest date with data
   start_date <- min(reported_cases$date, na.rm = TRUE)
 
+  seeding_time <- get_seeding_time(delays, generation_time)
+
   # Create mean shifted reported cases as prior
   reported_cases <- data.table::rbindlist(list(
     data.table::data.table(
-      date = seq(min(reported_cases$date) - delays$seeding_time - backcalc$prior_window,
+      date = seq(
+        min(reported_cases$date) - seeding_time - backcalc$prior_window,
         min(reported_cases$date) - 1,
         by = "days"
       ),
@@ -274,7 +297,7 @@ estimate_infections <- function(reported_cases,
 
   shifted_cases <- create_shifted_cases(
     reported_cases,
-    delays$seeding_time,
+    seeding_time,
     backcalc$prior_window,
     horizon
   )
@@ -283,9 +306,7 @@ estimate_infections <- function(reported_cases,
   # Define stan model parameters
   data <- create_stan_data(
     reported_cases = reported_cases,
-    generation_time = generation_time,
-    delays = delays,
-    truncation = truncation,
+    seeding_time = seeding_time,
     rt = rt,
     gp = gp,
     obs = obs,
@@ -293,6 +314,15 @@ estimate_infections <- function(reported_cases,
     shifted_cases = shifted_cases$confirm,
     horizon = horizon
   )
+
+  data <- c(data, create_stan_delays(
+    gt = generation_time,
+    delay = delays,
+    trunc = truncation,
+    weight = ifelse(
+      weigh_delay_priors, data$t - data$seeding_time - data$horizon, 1
+    )
+  ))
 
   # Set up default settings
   args <- create_stan_args(
@@ -304,13 +334,12 @@ estimate_infections <- function(reported_cases,
 
   # Initialise fitting by using a previous fit or fitting to cumulative cases
   if (!is.null(args$init_fit)) {
-    if (!("stanfit" %in% class(args$init_fit))) {
-      if (args$init_fit %in% "cumulative") {
-        args$init_fit <- init_cumulative_fit(args,
-          warmup = 50, samples = 50,
-          id = id, verbose = FALSE
-        )
-      }
+    if (!inherits(args$init_fit, "stanfit") &&
+          args$init_fit %in% "cumulative") {
+      args$init_fit <- init_cumulative_fit(args,
+        warmup = 50, samples = 50,
+        id = id, verbose = FALSE
+      )
     }
     args$init <- extract_inits(args$init_fit,
       current_inits = args$init,
@@ -335,11 +364,11 @@ estimate_infections <- function(reported_cases,
   )
 
   ## Add prior infections
-  if (delays$delays > 0) {
+  if (delays$n > 0) {
     out$prior_infections <- shifted_cases[
       ,
       .(
-        parameter = "prior_infections", time = 1:.N,
+        parameter = "prior_infections", time = seq_len(.N),
         date, value = confirm, sample = 1
       )
     ]
@@ -395,10 +424,12 @@ estimate_infections <- function(reported_cases,
 #' @author Sam Abbott
 init_cumulative_fit <- function(args, samples = 50, warmup = 50,
                                 id = "init", verbose = FALSE) {
-  futile.logger::flog.debug("%s: Fitting to cumulative data to initialise chains", id,
+  futile.logger::flog.debug(
+    "%s: Fitting to cumulative data to initialise chains", id,
     name = "EpiNow2.epinow.estimate_infections.fit"
   )
-  # copy main run settings and override to use only 100 iterations and a single chain
+  # copy main run settings and override to use only 100 iterations and a single
+  # chain
   initial_args <- list(
     object = args$object,
     data = args$data,
@@ -412,8 +443,8 @@ init_cumulative_fit <- function(args, samples = 50, warmup = 50,
     control = list(adapt_delta = 0.9, max_treedepth = 13),
     refresh = ifelse(verbose, 50, -1)
   )
-  # change observations to be cumulative in order to protect against noise and give
-  # an approximate fit (though for Rt constrained to be > 1)
+  # change observations to be cumulative in order to protect against noise and
+  # give an approximate fit (though for Rt constrained to be > 1)
   initial_args$data$cases <- cumsum(initial_args$data$cases)
   initial_args$data$shifted_cases <- cumsum(initial_args$data$shifted_cases)
 
@@ -462,7 +493,8 @@ init_cumulative_fit <- function(args, samples = 50, warmup = 50,
 #' @importFrom rlang abort cnd_muffle
 #' @return A stan model object
 #' @author Sam Abbott
-fit_model_with_nuts <- function(args, future = FALSE, max_execution_time = Inf, id = "stan") {
+fit_model_with_nuts <- function(args, future = FALSE, max_execution_time = Inf,
+                                id = "stan") {
   args$method <- NULL
   args$max_execution_time <- NULL
   args$future <- NULL
@@ -496,14 +528,17 @@ fit_model_with_nuts <- function(args, future = FALSE, max_execution_time = Inf, 
             onTimeout = "silent"
           ),
           warning = function(w) {
-            futile.logger::flog.warn("%s (chain: %s): %s - %s", id, chain, w$message, toString(w$call),
+            futile.logger::flog.warn(
+              "%s (chain: %s): %s - %s", id, chain, w$message, toString(w$call),
               name = "EpiNow2.epinow.estimate_infections.fit"
             )
             rlang::cnd_muffle(w)
           }
         ),
         error = function(e) {
-          error_text <- sprintf("%s (chain: %s): %s - %s", id, chain, e$message, toString(e$call))
+          error_text <- sprintf(
+            "%s (chain: %s): %s - %s", id, chain, e$message, toString(e$call)
+          )
           futile.logger::flog.error(error_text,
             name = "EpiNow2.epinow.estimate_infections.fit"
           )
@@ -517,7 +552,7 @@ fit_model_with_nuts <- function(args, future = FALSE, max_execution_time = Inf, 
       )
     }
 
-    if (is.null(fit) || length(names(fit)) == 0) {
+    if (is.null(fit) || !is.array(fit)) {
       return(NULL)
     } else {
       return(fit)
@@ -552,17 +587,22 @@ fit_model_with_nuts <- function(args, future = FALSE, max_execution_time = Inf, 
     if (length(fit) == 0) {
       fit <- NULL
       if (is.null(fit)) {
-        rlang::abort("all chains failed - try inspecting the output for errors or increasing the max_execution_time")
+        rlang::abort(
+          "all chains failed - try inspecting the output for errors or",
+          " increasing the max_execution_time"
+        )
       }
     } else {
       failed_chains <- chains - length(fit)
       if (failed_chains > 0) {
-        futile.logger::flog.warn("%s: %s chains failed or were timed out.", id, failed_chains,
+        futile.logger::flog.warn(
+          "%s: %s chains failed or were timed out.", id, failed_chains,
           name = "EpiNow2.epinow.estimate_infections.fit"
         )
         if ((chains - failed_chains) < 2) {
           rlang::abort(
-            "model fitting failed as too few chains were returned to assess convergence (2 or more required)"
+            "model fitting failed as too few chains were returned to assess",
+             " convergence (2 or more required)"
           )
         }
       }
@@ -588,8 +628,10 @@ fit_model_with_vb <- function(args, future = FALSE, id = "stan") {
   args$method <- NULL
   futile.logger::flog.debug(
     paste0(
-      "%s: Running in approximate mode for ", args$iter, " iterations (with ", args$trials, " attempts). Extracting ",
-      args$output_samples, " approximate posterior samples for ", args$data$t, " time steps of which ",
+      "%s: Running in approximate mode for ", args$iter,
+      " iterations (with ", args$trials, " attempts). Extracting ",
+      args$output_samples, " approximate posterior samples for ",
+      args$data$t, " time steps of which ",
       args$data$horizon, " are a forecast"
     ),
     id,
@@ -613,11 +655,11 @@ fit_model_with_vb <- function(args, future = FALSE, id = "stan") {
     }
     return(fit)
   }
-  safe_vb <- purrr::safely(fit_vb)
+  safe_vb <- purrr::safely(fit_vb) # nolint
   fit <- NULL
   current_trials <- 0
 
-  while (current_trials <= trials & is.null(fit)) {
+  while (current_trials <= trials && is.null(fit)) {
     fit <- safe_vb(args)
 
     error <- fit[[2]]
@@ -626,13 +668,13 @@ fit_model_with_vb <- function(args, future = FALSE, id = "stan") {
   }
 
   if (is.null(fit)) {
-    if (is.null(fit)) {
-      futile.logger::flog.error("%s: Fitting failed - try increasing stan_args$trials or inspecting the model input",
-        id,
-        name = "EpiNow2.epinow.estimate_infections.fit"
-      )
-      rlang::abort("Variational Inference failed due to: ", error)
-    }
+    futile.logger::flog.error(
+      "%s: Fitting failed - try increasing stan_args$trials or inspecting",
+      " the model input",
+      id,
+      name = "EpiNow2.epinow.estimate_infections.fit"
+    )
+    rlang::abort("Variational Inference failed due to: ", error)
   }
   return(fit)
 }
@@ -655,7 +697,7 @@ fit_model_with_vb <- function(args, future = FALSE, id = "stan") {
 #' @param start_date Date, earliest date with data.
 #'
 #' @inheritParams calc_summary_measures
-#' @importFrom data.table fifelse rbindlist
+#' @importFrom data.table fcase rbindlist
 #' @importFrom lubridate days
 #' @importFrom futile.logger flog.info
 #' @return A list of samples and summarised posterior parameter estimates.
@@ -664,7 +706,9 @@ format_fit <- function(posterior_samples, horizon, shift, burn_in, start_date,
                        CrIs) {
   format_out <- list()
   # bind all samples together
-  format_out$samples <- data.table::rbindlist(posterior_samples, fill = TRUE, idcol = "variable")
+  format_out$samples <- data.table::rbindlist(
+    posterior_samples, fill = TRUE, idcol = "variable"
+  )
 
   if (is.null(format_out$samples$strat)) {
     format_out$samples <- format_out$samples[, strat := NA]
@@ -672,25 +716,26 @@ format_fit <- function(posterior_samples, horizon, shift, burn_in, start_date,
   # add type based on horizon
   format_out$samples <- format_out$samples[
     ,
-    type := data.table::fifelse(
+    type := data.table::fcase(
       date > (max(date, na.rm = TRUE) - horizon),
       "forecast",
-      data.table::fifelse(
-        date > (max(date, na.rm = TRUE) - horizon - shift),
-        "estimate based on partial data",
-        "estimate"
+      date > (max(date, na.rm = TRUE) - horizon - shift),
+      "estimate based on partial data",
+      is.na(date), NA_character_,
+      default = "estimate"
       )
-    )
   ]
+
 
   # remove burn in period if specified
   if (burn_in > 0) {
-    futile.logger::flog.info("burn_in is depreciated as of EpiNow2 1.3.0 - if using
-                             this feature please contact the developers",
+    futile.logger::flog.info(
+      "burn_in is depreciated as of EpiNow2 1.3.0 - if using this feature",
+      " please contact the developers",
       name = "EpiNow2.epinow.estimate_infections"
     )
-    format_out$samples <- 
-      format_out$samples[is.na(date) | 
+    format_out$samples <-
+      format_out$samples[is.na(date) ||
         date >= (start_date + lubridate::days(burn_in))]
   }
 

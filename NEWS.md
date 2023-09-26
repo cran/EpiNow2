@@ -1,3 +1,40 @@
+# EpiNow2 1.4.0
+
+This package contains some bug fixes, minor new features, and the initial stages of some broader improvement to future handling of delay distributions.
+
+## Breaking changes
+
+- The external distribution interface has been updated to use the `dist_spec()` function. This comes with a range of benefits, including optimising model fitting when static delays are used (by convolving when first defined vs in stan), easy printing (using `print()`), and easy plotting (using `plot()`). It also makes it possible to use all supported distributions everywhere (i.e, as a generation time or reporting delay). However, while for now backwards compatibility has been ensured this update will break most users' code eventually as the interface has changed. See the documentation for `dist_spec()` for more details. By @sbfnk in #363 and reviewed by @seabbs.
+
+## Package
+
+* Model description has been expanded to include more detail. By @sbfnk in #373 and reviewed by @seabbs.
+* Moved to a GitHub Action to only lint changed files. By @seabbs in #378.
+* Linted the package with a wider range of default linters. By @seabbs in #378.
+* Added a GitHub Action to build the README when it is altered. By @seabbs.
+* Added handling of edge case where we sample from the negative binomial with mean close or equal to 0. By @sbfnk in #366 and reviewed by @seabbs.
+* Replaced use of nested `ifelse()` and `data.table::fifelse()` in the code base with `data.table::fcase()`. By @jamesmbaazam in #383 and reviewed by @seabbs.
+* Reviewed the example in `calc_backcalc_data()` to call `calc_backcalc_data()` instead of `create_gp_data()`. By @jamesmbaazam in #388 and reviewed by @seabbs.
+* Improved compilation times by reducing the number of distinct stan models and deprecated `tune_inv_gamma()`. By @sbfnk in #394 and reviewed by @seabbs.
+* Changed touchstone settings so that benchmarks are only performed if the stan model is changed. By @sbfnk in #400 and reviewed by @seabbs.
+* [pak](https://pak.r-lib.org/) is now suggested for installing the developmental version of the package. By @jamesmbaazam in #407 and reviewed by @seabbs. This has been successfully tested on MacOS Ventura, Ubuntu 20.04, and Windows 10. Users are advised to use `remotes::install_github("epiforecasts/EpiNow2")` if `pak` fails and if both fail, raise an issue.
+* `dist_fit()`'s `samples` argument now takes a default value of 1000 instead of NULL. If a supplied `samples` is less than 1000, it is changed to 1000 and a warning is thrown to indicate the change. By @jamesmbazam in #389 and reviewed by @seabbs.
+* The internal distribution interface has been streamlined to reduce code duplication. By @sbfnk in #363 and reviewed by @seabbs.
+* A small bug has been fixed where the seeding time was too long. When a single delay is used this shortens the seeding time by one day and when more delays are used it shortens the seeding time by n days where n is the number of delays used e.g. for two parametric delays it's two days. By @sbfnk in #413 and reviewed by @seabbs.
+* Some tuning was done to speed up the renewal model. By @sbfnk in #416 and reviewed by @seabbs.
+* An approximation of the negative binomial by the Poisson at low levels of overdispersion was disabled as it led to parameter identification issues. By @sbfnk in #432 and reviewed by @seabbs.
+* Reduced verbosity of tests. By @sbfnk in #433 and reviewed by @seabbs.
+* Updated code style in response to lintr warnings. By @sbfnk in #437 and reviewed by @seabbs.
+* Fixed an edge case breaking summary output. Reported by @jrcpulliam, fixed by @sbfnk in #436 and reviewed by @seabbs.
+* Added content to the vignette for the estimate_truncation model. By @sbfnk in #439 and reviewed by @seabbs.
+* Added a feature to the `estimate_truncation` to allow it to be applied to time series that are shorter than the truncation max. By @sbfnk in #438 and reviewed by @seabbs.
+* Changed the `estimate_truncation` to use the `dist_spec` interface, deprecating existing options `max_trunc` and `trunc_dist`. By @sbfnk in #448 and #452 and reviewed by @seabbs.
+* Added a `weigh_delay_priors` argument to the main functions, allowing the users to choose whether to weigh delay priors by the number of data points or not. By @sbfnk in #450 and reviewed by @seabbs.
+
+## Documentation
+
+- Added a link to the recent CSTE workshop on using `EpiNow2` to the case studies vignette. By @seabbs in #441 and reviewed by @sbfnk.
+
 # EpiNow2 1.3.5
 
 This is a minor release to resolve issues with the recent CRAN requirement to make use of a C++ 17 compiler which has been causing [issues with the `rstantools` package](https://github.com/stan-dev/rstantools/pull/100).

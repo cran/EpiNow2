@@ -1,13 +1,14 @@
 functions {
 #include functions/convolve.stan
 #include functions/pmfs.stan
+#include functions/delays.stan
 #include functions/observation_model.stan
 #include functions/secondary.stan
 }
 
 data {
   int t;                             // time of observations
-  int<lower = 0> obs[t];             // observed secondary data
+  array[t] int<lower = 0> obs;             // observed secondary data
   vector[t] primary;                 // observed primary data
   int burn_in;                       // time period to not use for fitting
 #include data/secondary.stan
@@ -15,37 +16,20 @@ data {
 #include data/observation_model.stan
 }
 
-transformed data {
-  int delay_max_fixed = (n_fixed_delays == 0 ? 0 :
-    sum(delay_max[fixed_delays]) - num_elements(fixed_delays) + 1);
-  int delay_max_total = (delays == 0 ? 0 :
-    sum(delay_max) - num_elements(delay_max) + 1);
-  vector[truncation && trunc_fixed[1] ? trunc_max[1] : 0] trunc_fixed_pmf;
-  vector[delay_max_fixed] delays_fixed_pmf;
-
-  if (truncation && trunc_fixed[1]) {
-    trunc_fixed_pmf = discretised_pmf(
-      trunc_mean_mean[1], trunc_sd_mean[1], trunc_max[1], trunc_dist[1], 0
-    );
-  }
-  if (n_fixed_delays) {
-    delays_fixed_pmf = combine_pmfs(
-      to_vector([ 1 ]), delay_mean_mean[fixed_delays], 
-      delay_sd_mean[fixed_delays], delay_max[fixed_delays],
-      delay_dist[fixed_delays], delay_max_fixed, 0, 0
-    );
-  }
+transformed data{
+  array[delay_types] int delay_type_max = get_delay_type_max(
+    delay_types, delay_types_p, delay_types_id,
+    delay_types_groups, delay_max, delay_np_pmf_groups
+  );
 }
 
 parameters{
   // observation model
-  real delay_mean[n_uncertain_mean_delays];
-  real<lower = 0> delay_sd[n_uncertain_sd_delays];      // sd of delays
+  array[delay_n_p] real delay_mean;
+  array[delay_n_p] real<lower = 0> delay_sd;      // sd of delays
   simplex[week_effect] day_of_week_simplex;  // day of week reporting effect
-  real<lower = 0, upper = 1> frac_obs[obs_scale];   // fraction of cases that are ultimately observed
-  real trunc_mean[truncation && !trunc_fixed[1]];      // mean of truncation
-  real trunc_sd[truncation && !trunc_fixed[1]];        // sd of truncation
-  real<lower = 0> rep_phi[model_type];   // overdispersion of the reporting process
+  array[obs_scale] real<lower = 0, upper = 1> frac_obs;   // fraction of cases that are ultimately observed
+  array[model_type] real<lower = 0> rep_phi;   // overdispersion of the reporting process
 }
 
 transformed parameters {
@@ -53,10 +37,17 @@ transformed parameters {
   // calculate secondary reports from primary
 
   {
-    vector[delay_max_total] delay_rev_pmf;
-    delay_rev_pmf = combine_pmfs(
-      delays_fixed_pmf, delay_mean, delay_sd, delay_max, delay_dist, delay_max_total, 0, 1
-    );
+    vector[delay_type_max[delay_id]] delay_rev_pmf;
+    if (delay_id) {
+      delay_rev_pmf = get_delay_rev_pmf(
+        delay_id, delay_type_max[delay_id], delay_types_p, delay_types_id,
+        delay_types_groups, delay_max, delay_np_pmf,
+        delay_np_pmf_groups, delay_mean, delay_sd, delay_dist,
+        0, 1, 0
+      );
+    } else {
+      delay_rev_pmf = to_vector({ 1 });
+    }
     secondary = calculate_secondary(
       primary, obs, frac_obs, delay_rev_pmf, cumulative, historic,
       primary_hist_additive, current, primary_current_additive, t
@@ -68,27 +59,24 @@ transformed parameters {
    secondary = day_of_week_effect(secondary, day_of_week, day_of_week_simplex);
  }
  // truncate near time cases to observed reports
- if (truncation) {
-   vector[trunc_max[1]] trunc_rev_cmf;
-   trunc_rev_cmf = reverse_mf(cumulative_sum(combine_pmfs(
-     trunc_fixed_pmf, trunc_mean, trunc_sd, trunc_max, trunc_dist, trunc_max[1], 0, 0
-   )));
-   secondary = truncate(secondary, trunc_rev_cmf, 0);
+ if (trunc_id) {
+    vector[delay_type_max[trunc_id]] trunc_rev_cmf = get_delay_rev_pmf(
+      trunc_id, delay_type_max[trunc_id], delay_types_p, delay_types_id,
+      delay_types_groups, delay_max, delay_np_pmf,
+      delay_np_pmf_groups, delay_mean, delay_sd, delay_dist,
+      0, 1, 1
+    );
+    secondary = truncate(secondary, trunc_rev_cmf, 0);
  }
 }
 
 model {
   // penalised priors for delay distributions
   delays_lp(
-    delay_mean, delay_mean_mean[uncertain_mean_delays],
-    delay_mean_sd[uncertain_mean_delays],
-    delay_sd, delay_sd_mean[uncertain_sd_delays],
-    delay_sd_sd[uncertain_sd_delays], delay_dist[uncertain_mean_delays], t
+    delay_mean, delay_mean_mean, delay_mean_sd, delay_sd, delay_sd_mean,
+    delay_sd_sd, delay_dist, delay_weight
   );
   
-  // priors for truncation
-  delays_lp(trunc_mean, trunc_sd, trunc_mean_mean, trunc_mean_sd,
-            trunc_sd_mean, trunc_sd_sd, trunc_dist, 1);
   // prior primary report scaling
   if (obs_scale) {
     frac_obs[1] ~ normal(obs_scale_mean, obs_scale_sd) T[0, 1];
@@ -101,7 +89,7 @@ model {
 }
 
 generated quantities {
-  int sim_secondary[t - burn_in];
+  array[t - burn_in] int sim_secondary;
   vector[return_likelihood > 1 ? t - burn_in : 0] log_lik;
   // simulate secondary reports
   sim_secondary = report_rng(secondary[(burn_in + 1):t], rep_phi, model_type);

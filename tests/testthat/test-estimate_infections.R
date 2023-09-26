@@ -5,7 +5,7 @@ futile.logger::flog.threshold("FATAL")
 reported_cases <- EpiNow2::example_confirmed[1:30]
 generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani", max_value = 10)
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer", max_value = 10)
-reporting_delay <- list(
+reporting_delay <- dist_spec(
   mean = convert_to_logmean(2, 1), mean_sd = 0.1,
   sd = convert_to_logsd(2, 1), sd_sd = 0.1, max = 10
 )
@@ -21,7 +21,7 @@ default_estimate_infections <- function(..., add_stan = list(), delay = TRUE) {
   stan_args <- c(stan_args, add_stan)
 
   suppressWarnings(estimate_infections(...,
-    generation_time = generation_time,
+    generation_time = generation_time_opts(generation_time),
     delays = ifelse(delay, list(delay_opts(reporting_delay)), list(delay_opts()))[[1]],
     stan = stan_args, verbose = FALSE
   ))
@@ -81,8 +81,16 @@ test_that("estimate_infections successfully returns estimates using a random wal
 
 test_that("estimate_infections fails as expected when given a very short timeout", {
   skip_on_cran()
-  expect_error(default_estimate_infections(reported_cases, add_stan = list(future = TRUE, max_execution_time = 1)))
-  expect_error(default_estimate_infections(reported_cases, add_stan = list(future = FALSE, max_execution_time = 1)))
+  expect_error(output <- capture.output(suppressMessages(
+    out <- default_estimate_infections(
+      reported_cases,
+      add_stan = list(future = TRUE, max_execution_time = 1)
+  ))), "all chains failed")
+  expect_error(output <- capture.output(suppressMessages(
+    out <- default_estimate_infections(
+      reported_cases,
+      add_stan = list(future = FALSE, max_execution_time = 1)
+  ))), "timed out")
 })
 
 

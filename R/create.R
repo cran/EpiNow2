@@ -1,15 +1,18 @@
 #' Create Clean Reported Cases
 #' @description `r lifecycle::badge("stable")`
-#' Cleans a data frame of reported cases by replacing missing dates with 0 cases and applies an optional
-#' threshold at which point 0 cases are replaced with a moving average of observed cases. See `zero_threshold`
-#' for details.
+#' Cleans a data frame of reported cases by replacing missing dates with 0
+#' cases and applies an optional threshold at which point 0 cases are replaced
+#' with a moving average of observed cases. See `zero_threshold` for details.
+#'
 #' @param filter_leading_zeros Logical, defaults to TRUE. Should zeros at the
 #' start of the time series be filtered out.
+#'
 #' @param zero_threshold `r lifecycle::badge("experimental")` Numeric defaults
 #' to Inf. Indicates if detected zero cases are meaningful by using a threshold
 #' number of cases based on the 7 day average. If the average is above this
 #' threshold then the zero is replaced with the backwards looking rolling
 #' average. If set to infinity then no changes are made.
+#'
 #' @inheritParams estimate_infections
 #' @importFrom data.table copy merge.data.table setorder setDT frollsum
 #' @return A cleaned data frame of reported cases
@@ -20,17 +23,21 @@ create_clean_reported_cases <- function(reported_cases, horizon,
                                         filter_leading_zeros = TRUE,
                                         zero_threshold = Inf) {
   reported_cases <- data.table::setDT(reported_cases)
-  reported_cases_grid <- data.table::copy(reported_cases)[, .(date = seq(min(date), max(date) + horizon, by = "days"))]
+  reported_cases_grid <- data.table::copy(reported_cases)[,
+   .(date = seq(min(date), max(date) + horizon, by = "days"))
+  ]
 
   reported_cases <- data.table::merge.data.table(
     reported_cases, reported_cases_grid,
-    by = c("date"), all.y = TRUE
+    by = "date", all.y = TRUE
   )
 
   if (is.null(reported_cases$breakpoint)) {
     reported_cases$breakpoint <- 0
   }
-  reported_cases <- reported_cases[is.na(confirm), confirm := 0][, .(date = date, confirm, breakpoint)]
+  reported_cases <- reported_cases[
+    is.na(confirm), confirm := 0][, .(date = date, confirm, breakpoint)
+  ]
   reported_cases <- reported_cases[is.na(breakpoint), breakpoint := 0]
   reported_cases <- data.table::setorder(reported_cases, date)
   ## Filter out 0 reported cases from the beginning of the data
@@ -54,7 +61,7 @@ create_clean_reported_cases <- function(reported_cases, horizon,
       confirm := as.integer(average_7)
     ][
       ,
-      c("average_7") := NULL
+      "average_7" := NULL
     ]
   }
   return(reported_cases)
@@ -63,13 +70,18 @@ create_clean_reported_cases <- function(reported_cases, horizon,
 #' Create Delay Shifted Cases
 #'
 #' @description `r lifecycle::badge("stable")`
-#' This functions creates a data frame of reported cases that has been smoothed using
-#' a centred partial rolling average (with a period set by `smoothing_window`) and shifted back in time
-#' by some delay. It is used by `estimate_infections` to generate the mean shifted prior
-#' on which the back calculation method (see `backcalc_opts()`) is based.
+#'
+#' This functions creates a data frame of reported cases that has been smoothed
+#' using a centred partial rolling average (with a period set by
+#' `smoothing_window`) and shifted back in time by some delay. It is used by
+#' `estimate_infections` to generate the mean shifted prior on which the back
+#' calculation method (see `backcalc_opts()`) is based.
+#'
 #' @param smoothing_window Numeric, the rolling average smoothing window
 #' to apply. Must be odd in order to be defined as a centred average.
+#'
 #' @param shift Numeric, mean delay shift to apply.
+#'
 #' @inheritParams estimate_infections
 #' @inheritParams create_stan_data
 #' @importFrom data.table copy shift frollmean fifelse .N
@@ -90,22 +102,25 @@ create_shifted_cases <- function(reported_cases, shift,
     )
   ][
     ,
-    confirm := runner::mean_run(confirm, k = smoothing_window, lag = -floor(smoothing_window / 2))
+    confirm := runner::mean_run(
+      confirm, k = smoothing_window, lag = -floor(smoothing_window / 2)
+    )
   ][
     ,
-    confirm := data.table::fifelse(confirm == 0, 1, confirm)
+    confirm := data.table::fifelse(confirm == 0, 1, confirm) # nolint
   ]
 
   ## Forecast trend on reported cases using the last week of data
-  final_week <- data.table::data.table(confirm = shifted_reported_cases[1:(.N - horizon - shift)][max(1, .N - 6):.N]$confirm)[
-    ,
-    t := 1:.N
+  final_week <- data.table::data.table(
+  confirm = shifted_reported_cases[1:(.N - horizon - shift)][
+      max(1, .N - 6):.N]$confirm)[,
+    t := seq_len(.N)
   ]
   lm_model <- stats::lm(log(confirm) ~ t, data = final_week)
   ## Estimate unreported future infections using a log linear model
   shifted_reported_cases <- shifted_reported_cases[
     ,
-    t := 1:.N
+    t := seq_len(.N)
   ][
     ,
     t := t - (.N - horizon - shift - 6)
@@ -119,7 +134,9 @@ create_shifted_cases <- function(reported_cases, shift,
   ][, t := NULL]
 
   ## Drop median generation interval initial values
-  shifted_reported_cases <- shifted_reported_cases[, confirm := ceiling(confirm)]
+  shifted_reported_cases <- shifted_reported_cases[,
+   confirm := ceiling(confirm)
+  ]
   shifted_reported_cases <- shifted_reported_cases[-(1:smoothing_window)]
   return(shifted_reported_cases)
 }
@@ -127,12 +144,19 @@ create_shifted_cases <- function(reported_cases, shift,
 #' Construct the Required Future Rt assumption
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Converts the `future` argument from `rt_opts()` into arguments that can be passed to `stan`.
-#' @param future A character string or integer. This argument indicates how to set future Rt values. Supported
-#' options are to project using the Rt model ("project"), to use the latest estimate based on partial data ("latest"),
-#' to use the latest estimate based on data that is over 50% complete ("estimate"). If an integer is supplied then the Rt estimate
-#' from this many days into the future (or past if negative) past will be used forwards in time.
+#' Converts the `future` argument from `rt_opts()` into arguments that can be
+#' passed to `stan`.
+#'
+#' @param future A character string or integer. This argument indicates how to
+#' set future Rt values. Supported options are to project using the Rt model
+#' ("project"), to use the latest estimate based on partial data ("latest"),
+#' to use the latest estimate based on data that is over 50% complete
+#' ("estimate"). If an integer is supplied then the Rt estimate from this many
+#' days into the future (or past if negative) past will be used forwards in
+#' time.
+#'
 #' @param delay Numeric mean delay
+#'
 #' @return A list containing a logical called fixed and an integer called from
 #' @author Sam Abbott
 create_future_rt <- function(future = "latest", delay = 0) {
@@ -162,11 +186,15 @@ create_future_rt <- function(future = "latest", delay = 0) {
 #' @description `r lifecycle::badge("stable")`
 #' Takes the output from `rt_opts()` and converts it into a list understood by
 #' `stan`.
-#' @param rt A list of options as generated by `rt_opts()` defining Rt estimation.
-#' Defaults to `rt_opts()`. Set to `NULL` to switch to using  back calculation
-#' rather than generating infections using Rt.
-#' @param breakpoints An integer vector (binary) indicating the location of breakpoints.
+#' @param rt A list of options as generated by `rt_opts()` defining Rt
+#' estimation. Defaults to `rt_opts()`. Set to `NULL` to switch to using back
+#' calculation rather than generating infections using Rt.
+#'
+#' @param breakpoints An integer vector (binary) indicating the location of
+#' breakpoints.
+#'
 #' @param horizon Numeric, forecast horizon.
+#'
 #' @seealso rt_settings
 #' @return A list of settings defining the time-varying reproduction number
 #' @inheritParams create_future_rt
@@ -207,20 +235,20 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
     }
   }
   # check breakpoints
-  if (is.null(breakpoints) | sum(breakpoints) == 0) {
+  if (is.null(breakpoints) || sum(breakpoints) == 0) {
     rt$use_breakpoints <- FALSE
   }
   # map settings to underlying gp stan requirements
   rt_data <- list(
     r_mean = rt$prior$mean,
     r_sd = rt$prior$sd,
-    estimate_r = ifelse(rt$use_rt, 1, 0),
+    estimate_r = as.numeric(rt$use_rt),
     bp_n = ifelse(rt$use_breakpoints, sum(breakpoints, na.rm = TRUE), 0),
     breakpoints = breakpoints,
-    future_fixed = ifelse(future_rt$fixed, 1, 0),
+    future_fixed =  as.numeric(future_rt$fixed),
     fixed_from = future_rt$from,
     pop = rt$pop,
-    stationary = ifelse(rt$gp_on %in% "R0", 1, 0),
+    stationary =  as.numeric(rt$gp_on %in% "R0"),
     future_time = horizon - future_rt$from
   )
   return(rt_data)
@@ -228,49 +256,42 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
 #' Create Back Calculation Data
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Takes the output of `backcalc_opts()` and converts it into a list understood by `stan`.
-#' @param backcalc A list of options as generated by `backcalc_opts()` to define the
-#' back calculation. Defaults to `backcalc_opts()`.
+#' Takes the output of `backcalc_opts()` and converts it into a list understood
+#' by `stan`.
+#'
+#' @param backcalc A list of options as generated by `backcalc_opts()` to
+#' define the back calculation. Defaults to `backcalc_opts()`.
+#'
 #' @seealso backcalc_opts
+#' @importFrom data.table fcase
 #' @return A list of settings defining the Gaussian process
 #' @export
 #' @author Sam Abbott
 #' @examples
-#' # define input data required
-#' data <- list(
-#'   t = 30,
-#'   seeding_time = 7,
-#'   horizon = 7
-#' )
-#'
-#' # default gaussian process data
-#' create_gp_data(data = data)
-#'
-#' # settings when no gaussian process is desired
-#' create_gp_data(NULL, data)
-#'
-#' # custom lengthscale
-#' create_gp_data(gp_opts(ls_mean = 14), data)
-create_backcalc_data <- function(backcalc = backcalc_opts) {
+#' create_backcalc_data(backcalc = backcalc_opts())
+create_backcalc_data <- function(backcalc = backcalc_opts()) {
   data <- list(
-    rt_half_window = as.integer((backcalc$rt_window - 1) / 2),
-    backcalc_prior = ifelse(backcalc$prior == "none", 0,
-      ifelse(backcalc$prior == "reports", 1,
-        ifelse(backcalc$prior == "infections", 2, 0)
-      )
-    )
-  )
-  return(data)
+   rt_half_window = as.integer((backcalc$rt_window - 1) / 2),
+   backcalc_prior = data.table::fcase(
+     backcalc$prior == "none", 0,
+     backcalc$prior == "reports", 1,
+     backcalc$prior == "infections", 2,
+     default = 0
+   )
+ )
+ return(data)
 }
 #' Create Gaussian Process Data
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Takes the output of `gp_opts()` and converts it into a list understood by `stan`.
+#' Takes the output of `gp_opts()` and converts it into a list understood by
+#' `stan`.
 #' @param gp A list of options as generated by `gp_opts()` to define the
 #' Gaussian process. Defaults to `gp_opts()`.Set to NULL to disable the
 #' Gaussian process.
-#' @param data A list containing the following numeric values: `t`, `seeding_time`,
-#' `horizon`.
+#' @param data A list containing the following numeric values:
+#' `t`, `seeding_time`, `horizon`.
+#' @importFrom data.table fcase
 #' @seealso gp_opts
 #' @return A list of settings defining the Gaussian process
 #' @export
@@ -313,7 +334,7 @@ create_gp_data <- function(gp = gp_opts(), data) {
 
   # map settings to underlying gp stan requirements
   gp_data <- list(
-    fixed = ifelse(fixed, 1, 0),
+    fixed = as.numeric(fixed),
     M = M,
     L = gp$boundary_scale,
     ls_meanlog = convert_to_logmean(gp$ls_mean, gp$ls_sd),
@@ -321,8 +342,10 @@ create_gp_data <- function(gp = gp_opts(), data) {
     ls_min = gp$ls_min,
     ls_max = data$t - data$seeding_time - data$horizon,
     alpha_sd = gp$alpha_sd,
-    gp_type = ifelse(gp$kernel == "se", 0,
-      ifelse(gp$kernel == "matern", 1, 0)
+    gp_type = data.table::fcase(
+    gp$kernel == "se", 0,
+    gp$kernel == "matern", 1,
+    default = 0
     )
   )
 
@@ -333,7 +356,8 @@ create_gp_data <- function(gp = gp_opts(), data) {
 #' Create Observation Model Settings
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Takes the output of `obs_opts()` and converts it into a list understood by `stan`.
+#' Takes the output of `obs_opts()` and converts it into a list understood
+#' by `stan`.
 #' @param obs A list of options as generated by `obs_opts()` defining the
 #' observation model. Defaults to `obs_opts()`.
 #' @param dates A vector of dates used to calculate the day of the week.
@@ -351,18 +375,20 @@ create_gp_data <- function(gp = gp_opts(), data) {
 #' create_obs_model(obs_opts(family = "poisson"), dates = dates)
 #'
 #' # Applying a observation scaling to the data
-#' create_obs_model(obs_opts(scale = list(mean = 0.4, sd = 0.01)), dates = dates)
+#' create_obs_model(
+#'  obs_opts(scale = list(mean = 0.4, sd = 0.01)), dates = dates
+#' )
 #'
 #' # Apply a custom week week length
 #' create_obs_model(obs_opts(week_length = 3), dates = dates)
 create_obs_model <- function(obs = obs_opts(), dates) {
   data <- list(
-    model_type = ifelse(obs$family %in% "poisson", 0, 1),
+    model_type = as.numeric(obs$family %in% "negbin"),
     phi_mean = obs$phi[1],
     phi_sd = obs$phi[2],
     week_effect = ifelse(obs$week_effect, obs$week_length, 1),
     obs_weight = obs$weight,
-    obs_scale = ifelse(length(obs$scale) != 0, 1, 0),
+    obs_scale = as.numeric(length(obs$scale) != 0),
     likelihood = as.numeric(obs$likelihood),
     return_likelihood = as.numeric(obs$return_likelihood)
   )
@@ -388,10 +414,8 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 #'
 #' @param shifted_cases A dataframe of delay shifted cases
 #'
-#' @param truncation `r lifecycle::badge("experimental")` A list of options as
-#' generated by `trunc_opts()` defining the truncation of observed data.
-#' Defaults to `trunc_opts()`. See `estimate_truncation()` for an approach to
-#' estimating truncation from data.
+#' @param seeding_time Integer; seeding time, usually obtained using
+#' `get_seeding_time()`
 #'
 #' @inheritParams create_gp_data
 #' @inheritParams create_obs_model
@@ -404,34 +428,20 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 #' @author Sam Abbott
 #' @author Sebastian Funk
 #' @export
-create_stan_data <- function(reported_cases, generation_time,
-                             rt, gp, obs, delays, horizon,
-                             backcalc, shifted_cases,
-                             truncation) {
-  ## make sure we have at least gt_max seeding time
-  delays$seeding_time <- max(delays$seeding_time, generation_time$max)
+create_stan_data <- function(reported_cases, seeding_time,
+                             rt, gp, obs, horizon,
+                             backcalc, shifted_cases) {
 
-  ## for backwards compatibility call generation_time_opts internally
-  if (is.list(generation_time) &&
-    all(c("mean", "mean_sd", "sd", "sd_sd") %in% names(generation_time))) {
-    generation_time <- do.call(generation_time_opts, generation_time)
-  }
-
-  cases <- reported_cases[(delays$seeding_time + 1):(.N - horizon)]$confirm
+  cases <- reported_cases[(seeding_time + 1):(.N - horizon)]$confirm
 
   data <- list(
     cases = cases,
     shifted_cases = shifted_cases,
     t = length(reported_cases$date),
     horizon = horizon,
-    burn_in = 0
+    burn_in = 0,
+    seeding_time = seeding_time
   )
-  # add gt data
-  data <- c(data, generation_time)
-  # add delay data
-  data <- c(data, delays)
-  # add truncation data
-  data <- c(data, truncation)
   # add Rt data
   data <- c(
     data,
@@ -442,17 +452,14 @@ create_stan_data <- function(reported_cases, generation_time,
   )
   # initial estimate of growth
   first_week <- data.table::data.table(
-    confirm = cases[1:min(7, length(cases))],
-    t = 1:min(7, length(cases))
+    confirm = cases[seq_len(min(7, length(cases)))],
+    t = seq_len(min(7, length(cases)))
   )
   data$prior_infections <- log(mean(first_week$confirm, na.rm = TRUE))
-  data$prior_infections <- ifelse(is.na(data$prior_infections) | is.null(data$prior_infections),
+  data$prior_infections <- ifelse(
+    is.na(data$prior_infections) || is.null(data$prior_infections),
     0, data$prior_infections
   )
-  if (is.null(data$gt_weight)) {
-    ## default: weigh by number of data points
-    data$gt_weight <- data$t - data$seeding_time - data$horizon
-  }
   if (data$seeding_time > 1) {
     safe_lm <- purrr::safely(stats::lm)
     data$prior_growth <- safe_lm(log(confirm) ~ t, data = first_week)[[1]]
@@ -477,72 +484,68 @@ create_stan_data <- function(reported_cases, generation_time,
     )
   )
 
-  # rescale mean shifted prior for back calculation if observation scaling is used
+  # rescale mean shifted prior for back calculation if observation scaling is
+  # used
   if (data$obs_scale == 1) {
     data$shifted_cases <- data$shifted_cases / data$obs_scale_mean
-    data$prior_infections <- log(exp(data$prior_infections) / data$obs_scale_mean)
+    data$prior_infections <- log(
+      exp(data$prior_infections) / data$obs_scale_mean
+    )
   }
   return(data)
 }
 
 #' Create Initial Conditions Generating Function
 #' @description `r lifecycle::badge("stable")`
-#' Uses the output of `create_stan_data` to create a function which can be used to
-#' sample from the prior distributions (or as close as possible) for parameters. Used
-#' in order to initialise each `stan` chain within a range of plausible values.
+#' Uses the output of `create_stan_data` to create a function which can be used
+#' to sample from the prior distributions (or as close as possible) for
+#' parameters. Used in order to initialise each `stan` chain within a range of
+#' plausible values.
 #' @param data A list of data as produced by `create_stan_data.`
 #' @return An initial condition generating function
 #' @importFrom purrr map2_dbl
 #' @importFrom truncnorm rtruncnorm
+#' @importFrom data.table fcase
 #' @export
 #  @author Sam Abbott
 #  @author Sebastian Funk
 create_initial_conditions <- function(data) {
   init_fun <- function() {
     out <- list()
-    if (data$n_uncertain_mean_delays > 0) {
-      out$delay_mean <- array(purrr::map2_dbl(
-        data$delay_mean_mean[data$uncertain_mean_delays],
-        data$delay_mean_sd[data$uncertain_mean_delays] * 0.1,
-        ~ rnorm(1, mean = .x, sd = .y)
+    if (data$delay_n_p > 0) {
+      out$delay_mean <- array(truncnorm::rtruncnorm(
+        n = data$delay_n_p, a = 0,
+        mean = data$delay_mean_mean, sd = data$delay_mean_sd * 0.1
       ))
-    }
-    if (data$n_uncertain_sd_delays > 0) {
-      out$delay_sd <- array(purrr::map2_dbl(
-        data$delay_sd_mean[data$uncertain_sd_delays],
-        data$delay_sd_sd[data$uncertain_sd_delays] * 0.1,
-        ~ rnorm(1, mean = .x, sd = .y)
+      out$delay_sd <- array(truncnorm::rtruncnorm(
+        n = data$delay_n_p, a = 0,
+        mean = data$delay_sd_mean, sd = data$delay_sd_sd * 0.1
       ))
+    } else {
+      out$delay_mean <- array(numeric(0))
+      out$delay_sd <- array(numeric(0))
     }
-    if (data$truncation > 0) {
-      if (data$trunc_mean_sd > 0) {
-        out$truncation_mean <- array(rnorm(1,
-          mean = data$trunc_mean_mean,
-          sd = data$trunc_mean_sd * 0.1
-        ))
-      }
-      if (data$trunc_sd_sd > 0) {
-        out$truncation_sd <- array(
-          truncnorm::rtruncnorm(1,
-            a = 0,
-            mean = data$trunc_sd_mean,
-            sd = data$trunc_sd_sd * 0.1
-          )
-        )
-      }
-    }
+
     if (data$fixed == 0) {
       out$eta <- array(rnorm(data$M, mean = 0, sd = 0.1))
       out$rho <- array(rlnorm(1,
         meanlog = data$ls_meanlog,
         sdlog = ifelse(data$ls_sdlog > 0, data$ls_sdlog * 0.1, 0.01)
       ))
-      out$rho <- ifelse(out$rho > data$ls_max, data$ls_max - 0.001,
-        ifelse(out$rho < data$ls_min, data$ls_min + 0.001,
-          out$rho
-        )
+
+      out$rho <- array(data.table::fcase(
+        out$rho > data$ls_max, data$ls_max - 0.001,
+        out$rho < data$ls_min, data$ls_min + 0.001,
+        default = out$rho
+        ))
+
+      out$alpha <- array(
+        truncnorm::rtruncnorm(1, a = 0, mean = 0, sd = data$alpha_sd)
       )
-      out$alpha <- array(truncnorm::rtruncnorm(1, a = 0, mean = 0, sd = data$alpha_sd))
+    } else {
+      out$eta <- array(numeric(0))
+      out$rho <- array(numeric(0))
+      out$alpha <- array(numeric(0))
     }
     if (data$model_type == 1) {
       out$rep_phi <- array(
@@ -561,23 +564,14 @@ create_initial_conditions <- function(data) {
         n = 1, mean = convert_to_logmean(data$r_mean, data$r_sd),
         sd = convert_to_logsd(data$r_mean, data$r_sd) * 0.1
       ))
-      if (data$gt_mean_sd > 0) {
-        out$gt_mean <- array(truncnorm::rtruncnorm(1,
-          a = 0, mean = data$gt_mean_mean,
-          sd = data$gt_mean_sd * 0.1
-        ))
-      }
-      if (data$gt_sd_sd > 0) {
-        out$gt_sd <- array(truncnorm::rtruncnorm(1,
-          a = 0, mean = data$gt_sd_mean,
-          sd = data$gt_sd_sd * 0.1
-        ))
-      }
+    }
 
-      if (data$bp_n > 0) {
-        out$bp_sd <- array(truncnorm::rtruncnorm(1, a = 0, mean = 0, sd = 0.1))
-        out$bp_effects <- array(rnorm(data$bp_n, 0, 0.1))
-      }
+    if (data$bp_n > 0) {
+      out$bp_sd <- array(truncnorm::rtruncnorm(1, a = 0, mean = 0, sd = 0.1))
+      out$bp_effects <- array(rnorm(data$bp_n, 0, 0.1))
+    } else {
+      out$bp_sd <- array(numeric(0))
+      out$bp_effects <- array(numeric(0))
     }
     if (data$obs_scale == 1) {
       out$frac_obs <- array(truncnorm::rtruncnorm(1,
@@ -585,9 +579,13 @@ create_initial_conditions <- function(data) {
         mean = data$obs_scale_mean,
         sd = data$obs_scale_sd * 0.1
       ))
+    } else {
+      out$frac_obs <- array(numeric(0))
     }
     if (data$week_effect > 0) {
-      out$day_of_week_simplex <- array(rep(1 / data$week_effect, data$week_effect))
+      out$day_of_week_simplex <- array(
+        rep(1 / data$week_effect, data$week_effect)
+      )
     }
     return(out)
   }
@@ -597,15 +595,23 @@ create_initial_conditions <- function(data) {
 #' Create a List of Stan Arguments
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Generates a list of arguments as required by `rstan::sampling` or `rstan::vb` by combining the required options,
-#' with data, and type of initialisation. Initialisation defaults to random but it is expected that `create_initial_conditions`
-#' will be used.
-#' @param stan A list of stan options as generated by `stan_opts()`. Defaults to `stan_opts()`. Can be used to override
-#' `data`, `init`, and `verbose` settings if desired.
+#' Generates a list of arguments as required by `rstan::sampling` or
+#' `rstan::vb` by combining the required options, with data, and type of
+#' initialisation. Initialisation defaults to random but it is expected that
+#' `create_initial_conditions` will be used.
+#'
+#' @param stan A list of stan options as generated by `stan_opts()`. Defaults
+#' to `stan_opts()`. Can be used to override `data`, `init`, and `verbose`
+#' settings if desired.
+#'
 #' @param data A list of stan data as created by `create_stan_data`
-#' @param init Initial conditions passed to `rstan`. Defaults to "random" but can also be a function (
-#' as supplied by `create_intitial_conditions`).
-#' @param verbose Logical, defaults to `FALSE`. Should verbose progress messages be returned.
+#'
+#' @param init Initial conditions passed to `rstan`. Defaults to "random" but
+#' can also be a function (as supplied by `create_intitial_conditions`).
+#'
+#' @param verbose Logical, defaults to `FALSE`. Should verbose progress
+#' messages be returned.
+#'
 #' @return A list of stan arguments
 #' @author Sam Abbott
 #' @export
@@ -628,4 +634,51 @@ create_stan_args <- function(stan = stan_opts(),
   args <- update_list(args, stan)
   args$return_fit <- NULL
   return(args)
+}
+
+##' Create delay variables for stan
+##'
+##' @param ... Named delay distributions specified using `dist_spec()`.
+##' The names are assigned to IDs
+##' @param weight Numeric, weight associated with delay priors; default: 1
+##' @return A list of variables as expected by the stan model
+##' @importFrom purrr transpose map
+##' @author Sebastian Funk
+create_stan_delays <- function(..., weight = 1) {
+  dot_args <- list(...)
+  ## combine delays
+  combined_delays <- unclass(c(...))
+  ## number of different non-empty types
+  type_n <- unlist(purrr::transpose(dot_args)$n)
+  ## assign ID values to each type
+  ids <- rep(0L, length(type_n))
+  ids[type_n > 0] <- seq_len(sum(type_n > 0))
+  names(ids) <- paste(names(type_n), "id", sep = "_")
+
+  ## start consructing stan object
+  ret <- unclass(combined_delays)
+  ## construct additional variables
+  ret <- c(ret, list(
+    types = sum(type_n > 0),
+    types_p = array(1L - combined_delays$fixed)
+  ))
+  ## delay identifiers
+  ret$types_id <- integer(0)
+  ret$types_id[ret$types_p == 1] <- seq_len(ret$n_p)
+  ret$types_id[ret$types_p == 0] <- seq_len(ret$n_np)
+  ret$types_id <- array(ret$types_id)
+  ## map delays to identifiers
+  ret$types_groups <- array(c(0, cumsum(unname(type_n[type_n > 0]))) + 1)
+  ## map pmfs
+  ret$np_pmf_groups <- array(c(0, cumsum(combined_delays$np_pmf_length)) + 1)
+  ## assign prior weights
+  ret$weight <- array(rep(weight, ret$n_p))
+  ## remove auxiliary variables
+  ret$fixed <- NULL
+  ret$np_pmf_length <- NULL
+
+  names(ret) <- paste("delay", names(ret), sep = "_")
+  ret <- c(ret, ids)
+
+  return(ret)
 }

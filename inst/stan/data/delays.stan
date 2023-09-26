@@ -1,14 +1,18 @@
-  int delays;                  // no. of delay distributions
-  int n_uncertain_mean_delays;   // no. of delay distributions with uncertain mean
-  int n_uncertain_sd_delays;     // no. of delay distributions with uncertain sd
-  int n_fixed_delays;     // no. of delay distributions with uncertain sd
-  // indices of delay distributions with uncertainty
-  int<lower = 1, upper = delays> uncertain_mean_delays[n_uncertain_mean_delays];
-  int<lower = 1, upper = delays> uncertain_sd_delays[n_uncertain_sd_delays];
-  int<lower = 1, upper = delays> fixed_delays[n_fixed_delays];
-  real delay_mean_sd[delays];  // prior sd of mean incubation period
-  real delay_mean_mean[delays];// prior mean of mean incubation period
-  real delay_sd_mean[delays];  // prior sd of sd of incubation period
-  real delay_sd_sd[delays];    // prior sd of sd of incubation period
-  int<lower = 1> delay_max[delays];       // maximum incubation period
-  int delay_dist[delays];       // 0 = lognormal; 1 = gamma
+  int<lower = 0> delay_n;                     // number of delay distributions
+  int<lower = 0> delay_n_p;                   // number of parametric delay distributions
+  int<lower = 0> delay_n_np;                  // number of nonparametric delay distributions
+  array[delay_n_p] real delay_mean_mean;            // prior mean of mean delay distribution
+  array[delay_n_p] real<lower = 0> delay_mean_sd;   // prior sd of mean delay distribution
+  array[delay_n_p] real<lower = 0> delay_sd_mean;   // prior sd of sd of delay distribution
+  array[delay_n_p] real<lower = 0> delay_sd_sd;     // prior sd of sd of delay distribution
+  array[delay_n_p] int<lower = 1> delay_max;        // maximum delay distribution
+  array[delay_n_p] int<lower = 0> delay_dist;       // 0 = lognormal; 1 = gamma
+  int<lower = 0> delay_np_pmf_max;            // number of nonparametric pmf elements
+  vector<lower = 0, upper = 1>[delay_np_pmf_max] delay_np_pmf; // ragged array of fixed PMFs
+  array[delay_n_np + 1] int<lower = 1> delay_np_pmf_groups;              // links to ragged array
+  array[delay_n_p] int<lower = 0> delay_weight;
+
+  int<lower = 0> delay_types;                     // number of delay types
+  array[delay_n] int<lower = 0> delay_types_p;          // whether delay types are parametric
+  array[delay_n] int<lower = 0> delay_types_id;          // whether delay types are parametric
+  array[delay_types + 1] int<lower = 0> delay_types_groups; // index of each delay (parametric or non)

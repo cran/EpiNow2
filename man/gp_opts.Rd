@@ -18,13 +18,14 @@ gp_opts(
 }
 \arguments{
 \item{basis_prop}{Numeric, proportion of time points to use as basis
-functions. Defaults to 0.1. Decreasing this value results in a decrease in
+functions. Defaults to 0.2. Decreasing this value results in a decrease in
 accuracy but a faster compute time (with increasing it having the first
 effect). In general smaller posterior length scales require a higher
 proportion of basis functions. See (Riutort-Mayol et al. 2020
 \url{https://arxiv.org/abs/2004.11408}) for advice on updating this default.}
 
-\item{boundary_scale}{Numeric, defaults to 1.5. Boundary scale of the approximate Gaussian process. See (Riutort-Mayol et al. 2020
+\item{boundary_scale}{Numeric, defaults to 1.5. Boundary scale of the
+approximate Gaussian process. See (Riutort-Mayol et al. 2020
 \url{https://arxiv.org/abs/2004.11408}) for advice on updating this default.}
 
 \item{ls_mean}{Numeric, defaults to 21 days. The mean of the lognormal

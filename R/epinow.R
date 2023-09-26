@@ -4,7 +4,7 @@
 #' This function wraps the functionality of `estimate_infections()` and
 #' `forecast_infections()` in order to estimate Rt and cases by date of
 #' infection, forecast into these infections into the future. It also contains
-#' additional functionality to convert forecasts to date of report and produc
+#' additional functionality to convert forecasts to date of report and produce
 #' summary output useful for reporting results and interpreting them. See
 #' [here](https://gist.github.com/seabbs/163d0f195892cde685c70473e1f5e867) for
 #' an example of using `epinow` to estimate Rt for Covid-19 in a country from
@@ -25,7 +25,8 @@
 #' report_cases, and report_summary.
 #' @author Sam Abbott
 #' @export
-#' @seealso estimate_infections simulate_infections forecast_infections regional_epinow
+#' @seealso estimate_infections simulate_infections forecast_infections
+#' @seealso regional_epinow
 #' @inheritParams setup_target_folder
 #' @inheritParams estimate_infections
 #' @inheritParams setup_default_logging
@@ -40,9 +41,13 @@
 #' old_opts <- options()
 #' options(mc.cores = ifelse(interactive(), 4, 1))
 #' # construct example distributions
-#' generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-#' incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-#' reporting_delay <- list(
+#' generation_time <- get_generation_time(
+#'  disease = "SARS-CoV-2", source = "ganyani"
+#' )
+#' incubation_period <- get_incubation_period(
+#'  disease = "SARS-CoV-2", source = "lauer"
+#' )
+#' reporting_delay <- dist_spec(
 #'   mean = convert_to_logmean(2, 1),
 #'   mean_sd = 0.1,
 #'   sd = convert_to_logsd(2, 1),
@@ -55,9 +60,10 @@
 #'
 #' # estimate Rt and nowcast/forecast cases by date of infection
 #' out <- epinow(
-#'   reported_cases = reported_cases, generation_time = generation_time,
+#'   reported_cases = reported_cases,
+#'   generation_time = generation_time_opts(generation_time),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
-#'   delays = delay_opts(incubation_period, reporting_delay)
+#'   delays = delay_opts(incubation_period + reporting_delay)
 #' )
 #' # summary of the latest estimates
 #' summary(out)
@@ -91,8 +97,9 @@ epinow <- function(reported_cases,
     return_output <- TRUE
   }
 
-  if (is.null(CrIs) | length(CrIs) == 0 | !is.numeric(CrIs)) {
-    futile.logger::flog.fatal("At least one credible interval must be specified",
+  if (is.null(CrIs) || length(CrIs) == 0 || !is.numeric(CrIs)) {
+    futile.logger::flog.fatal(
+      "At least one credible interval must be specified",
       name = "EpiNow2.epinow"
     )
     stop("At least one credible interval must be specified")
@@ -249,7 +256,7 @@ epinow <- function(reported_cases,
     out$trace <- rlang::trace_back()
   }
 
-  if (!is.null(target_folder) & !is.null(out$error)) {
+  if (!is.null(target_folder) && !is.null(out$error)) {
     saveRDS(out$error, paste0(target_folder, "/error.rds"))
     saveRDS(out$trace, paste0(target_folder, "/trace.rds"))
   }

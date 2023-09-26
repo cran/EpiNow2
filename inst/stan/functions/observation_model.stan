@@ -1,5 +1,5 @@
 // apply day of the week effect
-vector day_of_week_effect(vector reports, int[] day_of_week, vector effect) {
+vector day_of_week_effect(vector reports, array[] int day_of_week, vector effect) {
   int t = num_elements(reports);
   int wl = num_elements(effect);
   // scale day of week effect
@@ -24,20 +24,20 @@ vector truncate(vector reports, vector trunc_rev_cmf, int reconstruct) {
   int t = num_elements(reports);
   vector[t] trunc_reports = reports;
   // Calculate cmf of truncation delay
-  int trunc_max = num_elements(trunc_rev_cmf);
+  int trunc_max = min(t, num_elements(trunc_rev_cmf));
   int first_t = t - trunc_max + 1;
   // Apply cdf of truncation delay to truncation max last entries in reports
   if (reconstruct) {
-    trunc_reports[first_t:t] = trunc_reports[first_t:t] ./ trunc_rev_cmf;
-  }else{
-    trunc_reports[first_t:t] = trunc_reports[first_t:t] .* trunc_rev_cmf;
+    trunc_reports[first_t:t] ./= trunc_rev_cmf[1:trunc_max];
+  } else {
+    trunc_reports[first_t:t] .*= trunc_rev_cmf[1:trunc_max];
   }
   return(trunc_reports);
 }
 // Truncation distribution priors
-void truncation_lp(real[] truncation_mean, real[] truncation_sd,
-                   real[] trunc_mean_mean, real[] trunc_mean_sd,
-                   real[] trunc_sd_mean, real[] trunc_sd_sd) {
+void truncation_lp(array[] real truncation_mean, array[] real truncation_sd,
+                   array[] real trunc_mean_mean, array[] real trunc_mean_sd,
+                   array[] real trunc_sd_mean, array[] real trunc_sd_sd) {
   int truncation = num_elements(truncation_mean);
   if (truncation) {
     if (trunc_mean_sd[1] > 0) {
@@ -51,70 +51,64 @@ void truncation_lp(real[] truncation_mean, real[] truncation_sd,
   }
 }
 // update log density for reported cases
-void report_lp(int[] cases, vector reports,
-               real[] rep_phi, real phi_mean, real phi_sd,
+void report_lp(array[] int cases, vector reports,
+               array[] real rep_phi, real phi_mean, real phi_sd,
                int model_type, real weight) {
-  real sqrt_phi = 1e5;
   if (model_type) {
-    // the reciprocal overdispersion parameter (phi)
+    real sqrt_phi; // the reciprocal overdispersion parameter (phi)
     rep_phi[model_type] ~ normal(phi_mean, phi_sd) T[0,];
     sqrt_phi = 1 / sqrt(rep_phi[model_type]);
-    // defer to poisson if phi is large, to avoid overflow or
-    // if poisson specified
-  }
-  if (sqrt_phi > 1e4) {
     if (weight == 1) {
-      cases ~ poisson(reports);
-    }else{
-      target += poisson_lpmf(cases | reports) * weight;
+      cases ~ neg_binomial_2(reports, sqrt_phi);
+    } else {
+      target += neg_binomial_2_lpmf(cases | reports, sqrt_phi) * weight;
     }
   } else {
     if (weight == 1) {
-      cases ~ neg_binomial_2(reports, sqrt_phi);
-    }else{
-      target += neg_binomial_2_lpmf(cases | reports, sqrt_phi);
+      cases ~ poisson(reports);
+    } else {
+      target += poisson_lpmf(cases | reports) * weight;
     }
   }
-  
 }
 // update log likelihood (as above but not vectorised and returning log likelihood)
-vector report_log_lik(int[] cases, vector reports,
-                      real[] rep_phi, int model_type, real weight) {
+vector report_log_lik(array[] int cases, vector reports,
+                      array[] real rep_phi, int model_type, real weight) {
   int t = num_elements(reports);
   vector[t] log_lik;
-  real sqrt_phi = 1e5;
-  if (model_type) {
-  // the reciprocal overdispersion parameter (phi)
-  sqrt_phi = 1 / sqrt(rep_phi[model_type]);
-  }
 
   // defer to poisson if phi is large, to avoid overflow
-  if (sqrt_phi > 1e4) {
+  if (model_type == 0) {
     for (i in 1:t) {
       log_lik[i] = poisson_lpmf(cases[i] | reports[i]) * weight;
     }
   } else {
+    real sqrt_phi = 1 / sqrt(rep_phi[model_type]);
     for (i in 1:t) {
       log_lik[i] = neg_binomial_2_lpmf(cases[i] | reports[i], sqrt_phi) * weight;
     }
-    }
+  }
   return(log_lik);
 }
 // sample reported cases from the observation model
-int[] report_rng(vector reports, real[] rep_phi, int model_type) {
+array[] int report_rng(vector reports, array[] real rep_phi, int model_type) {
   int t = num_elements(reports);
-  int sampled_reports[t];
+  array[t] int sampled_reports;
   real sqrt_phi = 1e5;
   if (model_type) {
     sqrt_phi = 1 / sqrt(rep_phi[model_type]);
   }
     
   for (s in 1:t) {
-    // defer to poisson if phi is large, to avoid overflow
-    if (sqrt_phi > 1e4) {
-      sampled_reports[s] = poisson_rng(reports[s] > 1e8 ? 1e8 : reports[s]);
+    if (reports[s] < 1e-8) {
+      sampled_reports[s] = 0;
     } else {
-      sampled_reports[s] = neg_binomial_2_rng(reports[s] > 1e8 ? 1e8 : reports[s], sqrt_phi);
+      // defer to poisson if phi is large, to avoid overflow
+      if (sqrt_phi > 1e4) {
+        sampled_reports[s] = poisson_rng(reports[s] > 1e8 ? 1e8 : reports[s]);
+      } else {
+        sampled_reports[s] = neg_binomial_2_rng(reports[s] > 1e8 ? 1e8 : reports[s], sqrt_phi);
+      }
     }
   }
   return(sampled_reports);

@@ -38,16 +38,21 @@
 #' of the reported data over time. All data sets must contain a complete vector
 #' of dates.
 #'
-#' @param max_truncation Deprecated; use `trunc_max` instead.
+#' @param max_truncation Deprecated; use `truncation` instead.
 #'
-#' @param trunc_max Integer, defaults to 10. Maximum number of
-#' days to include in the truncation distribution.
+#' @param trunc_max Deprecated; use `truncation` instead.
 #'
-#' @param trunc_dist Character, defaults to "lognormal". The parametric
-#' distribution to be used for truncation.
+#' @param trunc_dist Deprecated; use `truncation` instead.
 #'
 #' @param model A compiled stan model to override the default model. May be
 #' useful for package developers or those developing extensions.
+#'
+#' @param weigh_delay_priors Logical. If TRUE, all delay distribution priors
+#' will be weighted by the number of observation data points, in doing so
+#' approximately placing an independent prior at each time step and usually
+#' preventing the posteriors from shifting. If FALSE (default), no weight will
+#' be applied, i.e. delay distributions will be treated as a single
+#' parameters.
 #'
 #' @param verbose Logical, should model fitting progress be returned.
 #'
@@ -62,11 +67,14 @@
 #' used for fitting (`data`) and the fit object (`fit`).
 #'
 #' @author Sam Abbott
+#' @author Sebastian Funk
 #' @export
 #' @inheritParams calc_CrIs
+#' @inheritParams estimate_infections
 #' @importFrom purrr map reduce map_dbl
 #' @importFrom rstan sampling
-#' @importFrom data.table copy .N as.data.table merge.data.table setDT setcolorder
+#' @importFrom data.table copy .N as.data.table merge.data.table setDT
+#' @importFrom data.table setcolorder
 #' @examples
 #' # set number of cores to use
 #' old_opts <- options()
@@ -76,7 +84,7 @@
 #' reported_cases <- example_confirmed[1:60]
 #'
 #' # define example truncation distribution (note not integer adjusted)
-#' trunc <- list(
+#' trunc <- dist_spec(
 #'   mean = convert_to_logmean(3, 2),
 #'   mean_sd = 0.1,
 #'   sd = convert_to_logsd(3, 2),
@@ -87,17 +95,24 @@
 #' # apply truncation to example data
 #' construct_truncation <- function(index, cases, dist) {
 #'   set.seed(index)
+#'   if (dist$dist == 0) {
+#'     dfunc <- dlnorm
+#'   } else {
+#'     dfunc <- dgamma
+#'   }
 #'   cmf <- cumsum(
-#'     dlnorm(
+#'     dfunc(
 #'       1:(dist$max + 1),
-#'       rnorm(1, dist$mean, dist$mean_sd),
-#'       rnorm(1, dist$sd, dist$sd_sd)
+#'       rnorm(1, dist$mean_mean, dist$mean_sd),
+#'       rnorm(1, dist$sd_mean, dist$sd_sd)
 #'     )
 #'   )
 #'   cmf <- cmf / cmf[dist$max + 1]
 #'   cmf <- rev(cmf)[-1]
 #'   trunc_cases <- data.table::copy(cases)[1:(.N - index)]
-#'   trunc_cases[(.N - length(cmf) + 1):.N, confirm := as.integer(confirm * cmf)]
+#'   trunc_cases[
+#'     (.N - length(cmf) + 1):.N, confirm := as.integer(confirm * cmf)
+#'   ]
 #'   return(trunc_cases)
 #' }
 #' example_data <- purrr::map(c(20, 15, 10, 0),
@@ -123,19 +138,73 @@
 #'
 #' options(old_opts)
 estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
-                                trunc_dist = c("lognormal"),
+                                trunc_dist = "lognormal",
+                                truncation = dist_spec(
+                                  mean = 0, sd = 0, mean_sd = 1, sd_sd = 1,
+                                  max = 10
+                                ),
                                 model = NULL,
                                 CrIs = c(0.2, 0.5, 0.9),
+                                weigh_delay_priors = FALSE,
                                 verbose = TRUE,
                                 ...) {
-  trunc_dist <- match.arg(trunc_dist)
 
-  if (!missing(max_truncation) && missing(trunc_max)) {
-    warning(
-      "The `max_truncation` argument is deprecated. ",
-      "Use `trunc_max` instead."
+  ## code block to remove in EpiNow2 2.0.0
+  construct_trunc <- FALSE
+  if (!missing(trunc_max)) {
+    if (!missing(truncation)) {
+      stop(
+        "`trunc_max` and `truncation` arguments are both given. ",
+        "Use only `truncation` instead.")
+    }
+    if (!missing(max_truncation)) {
+      stop(
+        "`max_truncation` and `trunc_max` arguments are both given. ",
+        "Use only `truncation` instead.")
+    }
+    deprecate_warn(
+      "1.4.0",
+      "estimate_truncation(trunc_max)",
+      "estimate_truncation(truncation)",
+      "The argument will be removed completely in version 2.0.0."
+    )
+    construct_trunc <- TRUE
+  }
+  if (!missing(max_truncation)) {
+    if (!missing(truncation)) {
+      stop(
+        "`max_truncation` and `truncation` arguments are both given. ",
+        "Use only `truncation` instead.")
+    }
+    deprecate_warn(
+      "1.4.0",
+      "estimate_truncation(max_truncation)",
+      "estimate_truncation(truncation)",
+      "The argument will be removed completely in version 2.0.0."
     )
     trunc_max <- max_truncation
+    construct_trunc <- TRUE
+  }
+  if (!missing(trunc_dist)) {
+    trunc_dist <- match.arg(trunc_dist)
+    if (!missing(truncation)) {
+      stop(
+        "`trunc_dist` and `truncation` arguments are both given. ",
+        "Use only `truncation` instead.")
+    }
+    deprecate_warn(
+      "1.4.0",
+      "estimate_truncation(trunc_dist)",
+      "estimate_truncation(truncation)",
+      "The argument will be removed completely in version 2.0.0."
+    )
+    construct_trunc <- TRUE
+  }
+  if (construct_trunc) {
+    truncation <- dist_spec(
+      mean = 0, mean_sd = 1, sd = 0, sd_sd = 1, distribution = trunc_dist,
+      max = trunc_max
+    )
   }
 
   # combine into ordered matrix
@@ -148,7 +217,7 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
     confirm := NULL
   ])
   obs <- purrr::reduce(obs, merge, all = TRUE)
-  obs_start <- nrow(obs) - trunc_max - sum(is.na(obs$`1`)) + 1
+  obs_start <- max(nrow(obs) - trunc_max - sum(is.na(obs$`1`)) + 1, 1)
   obs_dist <- purrr::map_dbl(2:(ncol(obs)), ~ sum(is.na(obs[[.]])))
   obs_data <- obs[, -1][, purrr::map(.SD, ~ ifelse(is.na(.), 0, .))]
   obs_data <- obs_data[obs_start:.N]
@@ -158,10 +227,13 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
     obs = obs_data,
     obs_dist = obs_dist,
     t = nrow(obs_data),
-    obs_sets = ncol(obs_data),
-    trunc_max = trunc_max,
-    trunc_dist = trunc_dist
+    obs_sets = ncol(obs_data)
   )
+
+  data <- c(data, create_stan_delays(
+    trunc = truncation,
+    weight = ifelse(weigh_delay_priors, data$t, 1)
+  ))
 
   ## convert to integer
   data$trunc_dist <-
@@ -170,8 +242,8 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
   # initial conditions
   init_fn <- function() {
     data <- list(
-      logmean = rnorm(1, 0, 1),
-      logsd = abs(rnorm(1, 0, 1)),
+      delay_mean = array(rnorm(1, 0, 1)),
+      delay_sd = array(abs(rnorm(1, 0, 1))) + 1,
       phi = abs(rnorm(1, 0, 1)),
       sigma = abs(rnorm(1, 0, 1))
     )
@@ -191,13 +263,14 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
 
   out <- list()
   # Summarise fit truncation distribution for downstream usage
-  out$dist <- list(
-    mean = round(rstan::summary(fit, pars = "logmean")$summary[1], 3),
-    mean_sd = round(rstan::summary(fit, pars = "logmean")$summary[3], 3),
-    sd = round(rstan::summary(fit, pars = "logsd")$summary[1], 3),
-    sd_sd = round(rstan::summary(fit, pars = "logsd")$summary[3], 3),
-    max = trunc_max
+  out$dist <- dist_spec(
+    mean = round(rstan::summary(fit, pars = "delay_mean")$summary[1], 3),
+    mean_sd = round(rstan::summary(fit, pars = "delay_mean")$summary[3], 3),
+    sd = round(rstan::summary(fit, pars = "delay_sd")$summary[1], 3),
+    sd_sd = round(rstan::summary(fit, pars = "delay_sd")$summary[3], 3),
+    max = truncation$max
   )
+  out$dist$dist <- truncation$dist
 
   # summarise reconstructed observations
   recon_obs <- extract_stan_param(fit, "recon_obs",
@@ -205,7 +278,7 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
     var_names = TRUE
   )
   recon_obs <- recon_obs[, id := variable][, variable := NULL]
-  recon_obs <- recon_obs[, dataset := 1:.N][
+  recon_obs <- recon_obs[, dataset := seq_len(.N)][
     ,
     dataset := dataset %% data$obs_sets
   ][
@@ -224,10 +297,10 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
     estimates <- estimates[, lapply(.SD, as.integer)]
     estimates <- estimates[, index := .N - 0:(.N - 1)]
     if (!is.null(estimates$n_eff)) {
-      estimates[, c("n_eff") := NULL]
+      estimates[, "n_eff" := NULL]
     }
     if (!is.null(estimates$Rhat)) {
-      estimates[, c("Rhat") := NULL]
+      estimates[, "Rhat" := NULL]
     }
 
     target_obs <-
@@ -246,7 +319,7 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
   out$obs <- data.table::rbindlist(out$obs)
   out$last_obs <- last_obs
   # summarise estimated cmf of the truncation distribution
-  out$cmf <- extract_stan_param(fit, "rev_cmf", CrIs = CrIs)
+  out$cmf <- extract_stan_param(fit, "trunc_rev_cmf", CrIs = CrIs)
   out$cmf <- data.table::as.data.table(out$cmf)[, index := seq_len(.N)]
   data.table::setcolorder(out$cmf, "index")
   out$data <- data
@@ -272,7 +345,8 @@ estimate_truncation <- function(obs, max_truncation, trunc_max = 10,
 #' @author Sam Abbott
 #' @seealso plot estimate_truncation
 #' @method plot estimate_truncation
-#' @importFrom ggplot2 ggplot aes geom_col geom_point labs scale_x_date scale_y_continuous theme theme_bw
+#' @importFrom ggplot2 ggplot aes geom_col geom_point labs scale_x_date
+#' @importFrom ggplot2 scale_y_continuous theme theme_bw
 #' @export
 plot.estimate_truncation <- function(x, ...) {
   plot <- ggplot2::ggplot(x$obs, ggplot2::aes(x = date, y = last_confirm)) +
@@ -292,7 +366,9 @@ plot.estimate_truncation <- function(x, ...) {
 
   plot <- plot +
     ggplot2::theme_bw() +
-    ggplot2::labs(y = "Confirmed Cases", x = "Date", col = "Type", fill = "Type") +
+    ggplot2::labs(
+      y = "Confirmed Cases", x = "Date", col = "Type", fill = "Type"
+    ) +
     ggplot2::scale_x_date(date_breaks = "day", date_labels = "%b %d") +
     ggplot2::scale_y_continuous(labels = scales::comma) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
