@@ -3,11 +3,10 @@
 #' @description `r lifecycle::badge("stable")`
 #'
 #' @param results_dir A character string giving the directory in which results
-#'  are stored (as produced by `regional_rt_pipeline`).
+#'  are stored (as produced by [regional_epinow()]).
 #'
 #' @return A named character vector containing the results to plot.
-#' @author Sam Abbott
-#' @export
+#' @keywords internal
 get_regions <- function(results_dir) {
   # regions to include - based on folder names
   regions <- list.dirs(results_dir,
@@ -16,11 +15,12 @@ get_regions <- function(results_dir) {
   )
 
   # put into alphabetical order
-  regions <- regions[!(regions %in% "runtimes.csv")]
+  regions <- regions[!(regions == "runtimes.csv")]
   regions <- sort(regions)
   names(regions) <- regions
   return(regions)
 }
+
 #' Get a Single Raw Result
 #'
 #' @description `r lifecycle::badge("stable")`
@@ -34,9 +34,8 @@ get_regions <- function(results_dir) {
 #' @param result_dir Character string giving the location of the target
 #' directory.
 #'
-#' @return An R object read in from the targeted .rds file
-#' @author Sam Abbott
-#' @export
+#' @return An R object read in from the targeted `.rds` file
+#' @keywords internal
 get_raw_result <- function(file, region, date,
                            result_dir) {
   file_path <- file.path(result_dir, region, date, file)
@@ -49,11 +48,11 @@ get_raw_result <- function(file, region, date,
 #' Summarises results across regions either from input or from disk. See the
 #' examples for details.
 #'
-#' @param regional_output A list of output as produced by `regional_epinow` and
-#' stored in the `regional` list.
+#' @param regional_output A list of output as produced by [regional_epinow()]
+#' and stored in the `regional` list.
 #'
 #' @param results_dir A character string indicating the folder containing the
-#' `EpiNow2` results to extract.
+#' `{EpiNow2}` results to extract.
 #'
 #' @param date A Character string (in the format "yyyy-mm-dd") indicating the
 #' date to extract data for. Defaults to "latest" which finds the latest
@@ -65,48 +64,17 @@ get_raw_result <- function(file, region, date,
 #' returned.
 #'
 #' @return A list of estimates, forecasts and estimated cases by date of report.
-#' @author Sam Abbott
 #' @export
 #' @importFrom purrr map safely
 #' @importFrom data.table rbindlist
 #' @examples
-#' \donttest{
-#' # construct example distributions
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
-#' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
-#' )
-#' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
-#'
-#' # example case vector
-#' cases <- example_confirmed[1:30]
-#' cases <- data.table::rbindlist(list(
-#'   data.table::copy(cases)[, region := "testland"],
-#'   cases[, region := "realland"]
+#' # get example multiregion estimates
+#' regional_out <- readRDS(system.file(
+#'     package = "EpiNow2", "extdata", "example_regional_epinow.rds"
 #' ))
 #'
-#' # save results to tmp folder
-#' dir <- file.path(tempdir(check = TRUE), "results")
-#' # run multiregion estimates
-#' regional_out <- regional_epinow(
-#'   reported_cases = cases,
-#'   generation_time = generation_time_opts(generation_time),
-#'   delays = delay_opts(incubation_period + reporting_delay),
-#'   rt = rt_opts(rw = 7), gp = NULL,
-#'   output = c("regions", "latest"),
-#'   target_folder = dir,
-#'   return_output = TRUE
-#' )
 #' # from output
 #' results <- get_regional_results(regional_out$regional, samples = FALSE)
-#' names(results)
-#'
-#' # from a folder
-#' folder_results <- get_regional_results(results_dir = dir, samples = FALSE)
-#' names(folder_results)
-#' }
 get_regional_results <- function(regional_output,
                                  results_dir, date,
                                  samples = TRUE,
@@ -123,7 +91,7 @@ get_regional_results <- function(regional_output,
     # find all regions
     regions <- get_regions(results_dir)
 
-    load_data <- purrr::safely(EpiNow2::get_raw_result) # nolint
+    load_data <- purrr::safely(get_raw_result) # nolint
 
     # get estimates
     get_estimates_file <- function(samples_path, summarised_path) {
@@ -185,57 +153,93 @@ get_regional_results <- function(regional_output,
   }
   return(out)
 }
+
 #' Get a Literature Distribution
 #'
 #'
-#' @description `r lifecycle::badge("stable")`
-#' Search a data frame for a distribution and return it in the format expected
-#' by `delay_opts()` and the `generation_time` argument of `epinow` and
-#' `estimate_infections`.
+#' @description `r lifecycle::badge("deprecated")`
 #'
-#' @param data A `data.table` in the format of `generation_times`.
+#' This function has been deprecated. Please specify a distribution
+#' using functions such as [Gamma()] or [LogNormal()] instead.
+#'
+#' @param data A `<data.table>` in the format of `generation_times`.
 #'
 #' @param disease A character string indicating the disease of interest.
 #'
 #' @param source A character string indicating the source of interest.
 #'
-#' @param max_value Numeric, the maximum value to allow. Defaults to 15 days.
+#' @param max_value Numeric, the maximum value to allow. Defaults to 14 days.
 #'
 #' @param fixed Logical, defaults to `FALSE`. Should distributions be supplied
 #' as fixed values (vs with uncertainty)?
 #'
 #' @return A list defining a distribution
 #'
-#' @author Sam Abbott
+#' @seealso [dist_spec()]
 #' @export
-#' @examples
-#' get_dist(
-#'  EpiNow2::generation_times, disease = "SARS-CoV-2", source = "ganyani"
-#' )
-get_dist <- function(data, disease, source, max_value = 15, fixed = FALSE) {
+#' @keywords internal
+get_dist <- function(data, disease, source, max_value = 14, fixed = FALSE) {
+  lifecycle::deprecate_warn(
+    "1.5.0", "get_dist()",
+    details = c(
+      paste(
+        "Please use distribution functions such as `Gamma()` or `Lognormal()`",
+        "instead."
+      ),
+      "The function will be removed completely in the next version."
+    )
+  )
   target_disease <- disease
   target_source <- source
   data <- data[disease == target_disease][source == target_source]
-  dist <- as.list(data[, .(mean, mean_sd, sd, sd_sd, max = max_value, dist)])
   if (fixed) {
-    dist$mean_sd <- 0
-    dist$sd_sd <- 0
+    data$sd <- 0
+    data$sd_sd <- 0
   }
-  return(do.call(dist_spec, dist))
+  parameters <- list(
+    Normal(data$mean, data$mean_sd),
+    Normal(data$sd, data$sd_sd)
+  )
+  if (data$dist == "gamma") {
+    names(parameters) <- c("mean", "sd")
+  } else {
+    names(parameters) <- c("meanlog", "sdlog")
+  }
+  parameters$max <- max_value
+  return(new_dist_spec(
+    params = parameters,
+    distribution = data$dist
+  ))
 }
-#'  Get a Literature Distribution for the Generation Time
+#' Get a Literature Distribution for the Generation Time
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description `r lifecycle::badge("deprecated")`
+#'
 #' Extracts a literature distribution from `generation_times`.
+#' This function has been deprecated. Please specify a distribution
+#' using functions such as [Gamma()] or [LogNormal()] instead.
 #'
 #' @inheritParams get_dist
 #' @inherit get_dist
 #' @export
-#' @author Sam Abbott
-#' @examples
-#' get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-get_generation_time <- function(disease, source, max_value = 15,
+#' @seealso [dist_spec()]
+#' @keywords internal
+get_generation_time <- function(disease, source, max_value = 14,
                                 fixed = FALSE) {
+  lifecycle::deprecate_warn(
+    "1.5.0", "get_generation_time()",
+    details = c(
+      paste(
+        "Please use distribution functions such as `Gamma()` or `Lognormal()`",
+        "instead."
+      ),
+      "The function will be removed completely in the next version.",
+      paste(
+        "To obtain the previous estimate by Ganyani et al. (2020) use",
+        "`example_generation_time`."
+      )
+    )
+  )
   dist <- get_dist(EpiNow2::generation_times,
     disease = disease, source = source,
     max_value = max_value, fixed = fixed
@@ -245,17 +249,32 @@ get_generation_time <- function(disease, source, max_value = 15,
 }
 #'  Get a Literature Distribution for the Incubation Period
 #'
-#' @description `r lifecycle::badge("stable")`
-#' Extracts a literature distribution from `incubation_periods`.
+#' @description `r lifecycle::badge("deprecated")`
+#'
+#' Extracts a literature distribution from `generation_times`.
+#' This function has been deprecated. Please specify a distribution
+#' using functions such as [Gamma()] or [LogNormal()] instead.
 #'
 #' @inheritParams get_dist
 #' @inherit get_dist
-#' @author Sam Abbott
 #' @export
-#' @examples
-#' get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
-get_incubation_period <- function(disease, source, max_value = 15,
+#' @keywords internal
+get_incubation_period <- function(disease, source, max_value = 14,
                                   fixed = FALSE) {
+  lifecycle::deprecate_warn(
+    "1.5.0", "get_incubation_period()",
+    details = c(
+      paste(
+        "Please use distribution functions such as `Gamma()` or `Lognormal()`",
+        "instead."
+      ),
+      "The function will be removed completely in the next version.",
+     paste(
+      "To obtain the previous estimate by Ganyani et al. (2020) use",
+      "`example_incubation_period`."
+     )
+    )
+  )
   dist <- get_dist(EpiNow2::incubation_periods,
     disease = disease, source = source,
     max_value = max_value, fixed = fixed
@@ -278,14 +297,13 @@ get_incubation_period <- function(disease, source, max_value = 15,
 #'
 #' @return A character vector of regions with the highest reported cases
 #'
-#' @author Sam Abbott
 #' @importFrom data.table copy setorderv
 #' @importFrom lubridate days
-#' @export
-get_regions_with_most_reports <- function(reported_cases,
+#' @keywords internal
+get_regions_with_most_reports <- function(data,
                                           time_window = 7,
                                           no_regions = 6) {
-  most_reports <- data.table::copy(reported_cases)
+  most_reports <- data.table::copy(data)
   most_reports <-
     most_reports[,
       .SD[date >= (max(date, na.rm = TRUE) - lubridate::days(time_window))
@@ -306,23 +324,15 @@ get_regions_with_most_reports <- function(reported_cases,
 ##'
 ##' The seeding time is set to the mean of the specified delays, constrained
 ##' to be at least the maximum generation time
-##' @param delays Delays as specified using `dist_spec`
-##' @param generation_time Generation time as specified using `dist_spec`
+##' @inheritParams estimate_infections
 ##' @return An integer seeding time
-##' @author Sebastian Funk
-get_seeding_time <- function(delays, generation_time) {
+##' @keywords internal
+get_seeding_time <- function(delays, generation_time, rt = rt_opts()) {
   # Estimate the mean delay -----------------------------------------------
-  seeding_time <- sum(mean(delays))
-  if (seeding_time < 1) {
-    seeding_time <- 1
-  } else {
-    seeding_time <- as.integer(seeding_time)
+  seeding_time <- sum(mean(delays, ignore_uncertainty = TRUE))
+  if (!is.null(rt)) {
+    ## make sure we have at least (length of total gt pmf - 1) seeding time
+    seeding_time <- max(seeding_time, sum(max(generation_time)))
   }
-  ## make sure we have at least (length of total gt pmf - 1) seeding time
-  seeding_time <- max(
-    seeding_time,
-    sum(generation_time$max) + sum(generation_time$np_pmf_max) -
-      length(generation_time$max) - length(generation_time$np_pmf_max)
-  )
-  return(seeding_time)
+  return(max(round(seeding_time), 1))
 }

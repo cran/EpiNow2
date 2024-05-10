@@ -4,7 +4,11 @@
 \alias{backcalc_opts}
 \title{Back Calculation Options}
 \usage{
-backcalc_opts(prior = "reports", prior_window = 14, rt_window = 1)
+backcalc_opts(
+  prior = c("reports", "none", "infections"),
+  prior_window = 14,
+  rt_window = 1
+)
 }
 \arguments{
 \item{prior}{A character string defaulting to "reports". Defines the prior
@@ -30,7 +34,7 @@ average to use when estimating Rt. This must be odd so that the central
 estimate is included.}
 }
 \value{
-A list of back calculation settings.
+A \verb{<backcalc_opts>} object of back calculation settings.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -40,7 +44,4 @@ of cases. Only used if \code{rt = NULL}.
 \examples{
 # default settings
 backcalc_opts()
-}
-\author{
-Sam Abbott
 }

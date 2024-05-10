@@ -4,7 +4,7 @@
 \alias{rstan_opts}
 \title{Rstan Options}
 \usage{
-rstan_opts(object = NULL, samples = 2000, method = "sampling", ...)
+rstan_opts(object = NULL, samples = 2000, method = c("sampling", "vb"), ...)
 }
 \arguments{
 \item{object}{Stan model object. By default uses the compiled package
@@ -14,7 +14,7 @@ default.}
 When using multiple chains iterations per chain is samples / chains.}
 
 \item{method}{A character string, defaulting to sampling. Currently supports
-\code{rstan::sampling} ("sampling") or \code{rstan:vb} ("vb").}
+\code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}} ("sampling") or \code{\link[rstan:stanmodel-method-vb]{rstan::vb()}}.}
 
 \item{...}{Additional parameters to pass  underlying option functions.}
 }
@@ -22,20 +22,9 @@ When using multiple chains iterations per chain is samples / chains.}
 A list of arguments to pass to the appropriate rstan functions.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Defines a list specifying the arguments passed to underlying \code{rstan}
-functions via \code{rstan_sampling_opts()} and \code{rstan_vb_opts()}.Custom settings
-can be supplied which override the defaults.
-}
-\examples{
-rstan_opts(samples = 1000)
-
-# using vb
-rstan_opts(method = "vb")
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Deprecated; specify options in \code{\link[=stan_opts]{stan_opts()}} instead.
 }
 \seealso{
-rstan_sampling_opts rstan_vb_opts
-}
-\author{
-Sam Abbott
+\code{\link[=rstan_sampling_opts]{rstan_sampling_opts()}} \code{\link[=rstan_vb_opts]{rstan_vb_opts()}}
 }

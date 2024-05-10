@@ -16,7 +16,7 @@ summarise_results(
 \item{regions}{An character string containing the list of regions to extract
 results for (must all have results for the same target date).}
 
-\item{summaries}{A list of summary data frames as output by \code{epinow}}
+\item{summaries}{A list of summary \verb{<data.frame>}s as output by \code{epinow}}
 
 \item{results_dir}{An optional character string indicating the location of
 the results directory to extract results from.}
@@ -36,3 +36,4 @@ A list of summary data
 Used internally by \code{regional_summary} to produce a summary table of results.
 May be streamlined in later releases.
 }
+\keyword{internal}

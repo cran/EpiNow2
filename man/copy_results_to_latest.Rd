@@ -21,6 +21,4 @@ No return value, called for side effects
 Copies output from the dated folder to a latest folder. May be undergo
 changes in later releases.
 }
-\author{
-Sam Abbott
-}
+\keyword{internal}

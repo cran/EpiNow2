@@ -10,7 +10,7 @@ rt_opts(
   rw = 0,
   use_breakpoints = TRUE,
   future = "latest",
-  gp_on = "R_t-1",
+  gp_on = c("R_t-1", "R0"),
   pop = 0
 )
 }
@@ -55,7 +55,8 @@ the population that is susceptible. When set to 0 no population adjustment
 is done.}
 }
 \value{
-A list of settings defining the time-varying reproduction number.
+An \verb{<rt_opts>} object with settings defining the time-varying
+reproduction number.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -72,7 +73,4 @@ rt_opts(prior = list(mean = 2, sd = 1))
 
 # add a weekly random walk
 rt_opts(rw = 7)
-}
-\author{
-Sam Abbott
 }

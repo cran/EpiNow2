@@ -4,7 +4,13 @@
 \alias{summary.estimate_infections}
 \title{Summary output from estimate_infections}
 \usage{
-\method{summary}{estimate_infections}(object, type = "snapshot", date = NULL, params = NULL, ...)
+\method{summary}{estimate_infections}(
+  object,
+  type = c("snapshot", "parameters", "samples"),
+  date = NULL,
+  params = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{A list of output as produced by "estimate_infections".}
@@ -24,7 +30,7 @@ samples.}
 \item{...}{Pass additional arguments to \code{report_summary}}
 }
 \value{
-Returns a data frame of summary output
+Returns a \verb{<data.frame>} of summary output
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}

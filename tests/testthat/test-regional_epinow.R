@@ -1,12 +1,7 @@
 
 skip_on_cran()
 
-generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani", max_value = 5)
-reporting_delay <- dist_spec(
-  mean = log(3), mean_sd = 0.1,
-  sd = log(2), sd_sd = 0.1, max = 5
-)
-
+# get example delays
 futile.logger::flog.threshold("FATAL")
 
 ## Uses example case vector
@@ -23,9 +18,9 @@ df_non_zero <- function(df) {
 test_that("regional_epinow produces expected output when run with default settings", {
   out <- suppressWarnings(
     regional_epinow(
-      reported_cases = cases,
-      generation_time = generation_time_opts(generation_time),
-      delays = delay_opts(reporting_delay),
+      data = cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_reporting_delay),
       rt = rt_opts(rw = 10), gp = NULL,
       stan = stan_opts(
         samples = 100, warmup = 100,
@@ -47,15 +42,15 @@ test_that("regional_epinow produces expected output when run with default settin
   df_non_zero(out$regional$realland$estimated_reported_cases$samples)
   df_non_zero(out$regional$realland$estimated_reported_cases$summarised)
   df_non_zero(out$regional$realland$summary)
-  expect_equal(names(out$regional$realland$plots), c("infections", "reports", "R", "growth_rate", "summary"))
+  expect_equal(names(out$regional$realland$plots), c("summary", "infections", "reports", "R", "growth_rate"))
 })
 
 test_that("regional_epinow runs without error when given a very short timeout", {
   output <- capture.output(suppressMessages(
     out <- regional_epinow(
-      reported_cases = cases,
-      generation_time = generation_time_opts(generation_time),
-      delays = delay_opts(reporting_delay),
+      data = cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_reporting_delay),
       stan = stan_opts(
         samples = 1000, warmup = 100,
         cores = 1, chains = 2,
@@ -67,9 +62,9 @@ test_that("regional_epinow runs without error when given a very short timeout", 
   expect_true(all(vapply(out$regional, function(x) !is.null(x$error), TRUE)))
   output <- capture.output(suppressMessages(
     out <- regional_epinow(
-      reported_cases = cases,
-      generation_time = generation_time_opts(generation_time),
-      delays = delay_opts(reporting_delay),
+      data = cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_reporting_delay),
       stan = stan_opts(
         samples = 1000, warmup = 100,
         cores = 1, chains = 2,
@@ -84,13 +79,13 @@ test_that("regional_epinow runs without error when given a very short timeout", 
 
 test_that("regional_epinow produces expected output when run with region specific settings", {
   gp <- opts_list(gp_opts(), cases)
-  gp <- update_list(gp, list(realland = NULL))
+  gp <- modifyList(gp, list(realland = NULL), keep.null = TRUE)
   rt <- opts_list(rt_opts(), cases, realland = rt_opts(rw = 7))
   out <- suppressWarnings(
     regional_epinow(
-      reported_cases = cases,
-      generation_time = generation_time_opts(generation_time),
-      delays = delay_opts(reporting_delay),
+      data = cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_reporting_delay),
       rt = rt, gp = gp,
       stan = stan_opts(
         samples = 100, warmup = 100,
@@ -112,5 +107,13 @@ test_that("regional_epinow produces expected output when run with region specifi
   df_non_zero(out$regional$realland$estimated_reported_cases$samples)
   df_non_zero(out$regional$realland$estimated_reported_cases$summarised)
   df_non_zero(out$regional$realland$summary)
-  expect_equal(names(out$regional$realland$plots), c("infections", "reports", "R", "growth_rate", "summary"))
+  expect_equal(names(out$regional$realland$plots), c("summary", "infections", "reports", "R", "growth_rate"))
+})
+
+test_that("deprecated arguments are recognised", {
+  expect_deprecated(
+    regional_epinow(
+      reported_cases = cases,
+      generation_time = generation_time_opts(Fixed(1))
+  ))
 })

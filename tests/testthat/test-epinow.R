@@ -1,11 +1,9 @@
 skip_on_cran()
 
-
-generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani", max_value = 15)
-incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer", max_value = 15)
-reporting_delay <- dist_spec(
-  mean = convert_to_logmean(2, 1), mean_sd = 0.1,
-  sd = convert_to_logsd(2, 1), sd_sd = 0.1,
+# set example reporting delay
+reporting_delay <- LogNormal(
+  meanlog = Normal(0.6, 0.06),
+  sdlog = Normal(0.5, 0.1),
   max = 10
 )
 
@@ -19,17 +17,19 @@ df_non_zero <- function(df) {
 expected_out <- c("estimates", "estimated_reported_cases", "summary", "plots", "timing")
 
 test_that("epinow produces expected output when run with default settings", {
-  out <- suppressWarnings(epinow(
-    reported_cases = reported_cases,
-    generation_time = generation_time_opts(generation_time),
-    delays = delay_opts(incubation_period + reporting_delay),
-    stan = stan_opts(
-      samples = 25, warmup = 25,
-      cores = 1, chains = 2,
-      control = list(adapt_delta = 0.8)
-    ),
-    logs = NULL, verbose = FALSE
-  ))
+  outputs <- capture.output(suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(c(example_incubation_period, reporting_delay)),
+      stan = stan_opts(
+        samples = 25, warmup = 25,
+        cores = 1, chains = 2,
+        control = list(adapt_delta = 0.8)
+      ),
+      logs = NULL, verbose = FALSE
+    )
+  )))
 
   expect_equal(names(out), expected_out)
   df_non_zero(out$estimates$samples)
@@ -37,36 +37,113 @@ test_that("epinow produces expected output when run with default settings", {
   df_non_zero(out$estimated_reported_cases$samples)
   df_non_zero(out$estimated_reported_cases$summarised)
   df_non_zero(out$summary)
-  expect_equal(names(out$plots), c("infections", "reports", "R", "growth_rate", "summary"))
+  expect_equal(names(out$plots), c("summary", "infections", "reports", "R", "growth_rate"))
+})
+
+test_that("epinow produces expected output when run with the
+           cmdstanr backend", {
+  skip_on_os("windows")
+  output <- capture.output(suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(backend = "cmdstanr"),
+      logs = NULL, verbose = FALSE
+    )
+  )))
+
+  expect_equal(names(out), expected_out)
+  df_non_zero(out$estimates$samples)
+  df_non_zero(out$estimates$summarised)
+  df_non_zero(out$estimated_reported_cases$samples)
+  df_non_zero(out$estimated_reported_cases$summarised)
+  df_non_zero(out$summary)
+  expect_equal(
+    names(out$plots), c("summary", "infections", "reports", "R", "growth_rate")
+  )
+})
+
+test_that("epinow produces expected output when run with the
+           laplace algorithm", {
+  skip_on_os("windows")
+  output <- capture.output(suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(method = "laplace", backend = "cmdstanr"),
+      logs = NULL, verbose = FALSE
+    )
+  )))
+  expect_equal(names(out), expected_out)
+  df_non_zero(out$estimates$samples)
+  df_non_zero(out$estimates$summarised)
+  df_non_zero(out$estimated_reported_cases$samples)
+  df_non_zero(out$estimated_reported_cases$summarised)
+  df_non_zero(out$summary)
+  expect_equal(
+    names(out$plots), c("summary", "infections", "reports", "R", "growth_rate")
+  )
+})
+
+test_that("epinow produces expected output when run with the
+           pathfinder algorithm", {
+  skip_on_os("windows")
+  output <- capture.output(suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(method = "pathfinder", backend = "cmdstanr"),
+      logs = NULL, verbose = FALSE
+    )
+  )))
+  expect_equal(names(out), expected_out)
+  df_non_zero(out$estimates$samples)
+  df_non_zero(out$estimates$summarised)
+  df_non_zero(out$estimated_reported_cases$samples)
+  df_non_zero(out$estimated_reported_cases$summarised)
+  df_non_zero(out$summary)
+  expect_equal(
+    names(out$plots), c("summary", "infections", "reports", "R", "growth_rate")
+  )
 })
 
 test_that("epinow runs without error when saving to disk", {
-  expect_null(suppressWarnings(epinow(
-    reported_cases = reported_cases,
-    generation_time = generation_time_opts(generation_time),
-    delays = delay_opts(incubation_period + reporting_delay),
-    stan = stan_opts(
-      samples = 25, warmup = 25, cores = 1, chains = 2,
-      control = list(adapt_delta = 0.8)
-    ),
-    target_folder = tempdir(check = TRUE),
-    logs = NULL, verbose = FALSE
+  output <- capture.output(suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(
+        samples = 25, warmup = 25, cores = 1, chains = 2,
+        control = list(adapt_delta = 0.8)
+      ),
+      target_folder = tempdir(check = TRUE),
+      logs = NULL, verbose = FALSE
+    )
   )))
+  expect_null(out)
 })
 
 test_that("epinow can produce partial output as specified", {
-  out <- suppressWarnings(epinow(
-    reported_cases = reported_cases,
-    generation_time = generation_time_opts(generation_time),
-    delays = delay_opts(incubation_period + reporting_delay),
-    stan = stan_opts(
-      samples = 25, warmup = 25,
-      cores = 1, chains = 2,
-      control = list(adapt_delta = 0.8)
-    ),
-    output = NULL,
-    logs = NULL, verbose = FALSE
-  ))
+  output <- capture.output(suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(
+        example_generation_time, weight_prior = FALSE
+      ),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(
+        samples = 25, warmup = 25,
+        cores = 1, chains = 2,
+        control = list(adapt_delta = 0.8)
+      ),
+      output = NULL,
+      logs = NULL, verbose = FALSE
+    )
+  )))
   expect_equal(names(out), c("estimates", "estimated_reported_cases", "summary"))
   expect_null(out$estimates$samples)
   df_non_zero(out$estimates$summarised)
@@ -79,9 +156,9 @@ test_that("epinow can produce partial output as specified", {
 
 test_that("epinow fails as expected when given a short timeout", {
   expect_error(suppressWarnings(x = epinow(
-    reported_cases = reported_cases,
-    generation_time = generation_time_opts(generation_time),
-    delays = delay_opts(incubation_period + reporting_delay),
+    data = reported_cases,
+    generation_time = generation_time_opts(example_generation_time),
+    delays = delay_opts(example_incubation_period + reporting_delay),
     stan = stan_opts(
       samples = 100, warmup = 100,
       cores = 1, chains = 2,
@@ -94,26 +171,41 @@ test_that("epinow fails as expected when given a short timeout", {
 
 
 test_that("epinow fails if given NUTs arguments when using variational inference", {
-  expect_error(suppressWarnings(epinow(
-    reported_cases = reported_cases,
-    generation_time = generation_time_opts(generation_time),
-    delays = delay_opts(incubation_period + reporting_delay),
-    stan = stan_opts(
-      samples = 100, warmup = 100,
-      cores = 1, chains = 2,
-      method = "vb"
-    ),
-    logs = NULL, verbose = FALSE
-  )))
+  expect_error(capture.output(suppressMessages(suppressWarnings(
+    epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(
+        samples = 100, warmup = 100,
+        cores = 1, chains = 2,
+        method = "vb"
+      ),
+      logs = NULL, verbose = FALSE
+    )
+  ))))
 })
 
 
 test_that("epinow fails if given variational inference arguments when using NUTs", {
-  expect_error(suppressWarnings(epinow(
-    reported_cases = reported_cases,
-    generation_time = generation_time_opts(generation_time),
-    delays = delay_opts(incubation_period + reporting_delay),
-    stan = stan_opts(method = "sampling", tol_rel_obj = 1),
-    logs = NULL, verbose = FALSE
-  )))
+  expect_error(capture.output(suppressMessages(suppressWarnings(
+    epinow(
+      data = reported_cases,
+      generation_time = generation_time_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(method = "sampling", tol_rel_obj = 1),
+      logs = NULL, verbose = FALSE
+    )
+  ))))
+})
+
+test_that("deprecated arguments are recognised", {
+  expect_deprecated(
+    x <- capture.output(suppressMessages(
+      epinow(
+        reported_cases = reported_cases,
+        generation_time = generation_time_opts(Fixed(1))
+      )
+    ))
+  )
 })

@@ -3,26 +3,23 @@
 futile.logger::flog.threshold("FATAL")
 
 reported_cases <- EpiNow2::example_confirmed[1:30]
-generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani", max_value = 10)
-incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer", max_value = 10)
-reporting_delay <- dist_spec(
-  mean = convert_to_logmean(2, 1), mean_sd = 0.1,
-  sd = convert_to_logsd(2, 1), sd_sd = 0.1, max = 10
-)
 
-default_estimate_infections <- function(..., add_stan = list(), delay = TRUE) {
+default_estimate_infections <- function(..., add_stan = list(), gt = TRUE,
+                                        delay = TRUE) {
   futile.logger::flog.threshold("FATAL")
 
-  def_stan <- stan_opts(
+  def_stan <- list(
     chains = 2, warmup = 50, samples = 50,
     control = list(adapt_delta = 0.8)
   )
-  stan_args <- def_stan[setdiff(names(def_stan), names(add_stan))]
-  stan_args <- c(stan_args, add_stan)
+  def_stan <- modifyList(def_stan, add_stan)
+  stan_args <- do.call(stan_opts, def_stan)
 
   suppressWarnings(estimate_infections(...,
-    generation_time = generation_time_opts(generation_time),
-    delays = ifelse(delay, list(delay_opts(reporting_delay)), list(delay_opts()))[[1]],
+    generation_time = fifelse(
+      gt, generation_time_opts(example_generation_time), generation_time_opts()
+    ),
+    delays = ifelse(delay, list(delay_opts(example_reporting_delay)), list(delay_opts()))[[1]],
     stan = stan_args, verbose = FALSE
   ))
 }
@@ -33,6 +30,7 @@ test_estimate_infections <- function(...) {
   expect_true(nrow(out$samples) > 0)
   expect_true(nrow(out$summarised) > 0)
   expect_true(nrow(out$observations) > 0)
+  invisible(out)
 }
 
 # Test functionality ------------------------------------------------------
@@ -40,6 +38,22 @@ test_estimate_infections <- function(...) {
 test_that("estimate_infections successfully returns estimates using default settings", {
   skip_on_cran()
   test_estimate_infections(reported_cases)
+})
+
+test_that("estimate_infections successfully returns estimates when passed NA values", {
+  skip_on_cran()
+  reported_cases_na <- data.table::copy(reported_cases)
+  reported_cases_na[sample(1:30, 5), confirm := NA]
+  test_estimate_infections(reported_cases_na)
+})
+
+test_that("estimate_infections successfully returns estimates when accumulating to weekly", {
+  skip_on_cran()
+  reported_cases_weekly <- data.table::copy(reported_cases)
+  reported_cases_weekly[, confirm := frollsum(confirm, 7)]
+  reported_cases_weekly <-
+    reported_cases_weekly[seq(7, nrow(reported_cases_weekly), 7)]
+  test_estimate_infections(reported_cases_weekly, obs = obs_opts(na = "accumulate"))
 })
 
 test_that("estimate_infections successfully returns estimates using no delays", {
@@ -79,17 +93,31 @@ test_that("estimate_infections successfully returns estimates using a random wal
   test_estimate_infections(reported_cases, gp = NULL, rt = rt_opts(rw = 7))
 })
 
+test_that("estimate_infections works without setting a generation time", {
+  skip_on_cran()
+  df <- test_estimate_infections(reported_cases, gt = FALSE, delay = FALSE)
+  ## check exp(r) == R
+  growth_rate <- df$samples[variable == "growth_rate"][,
+    list(date, sample, growth_rate = value)
+  ]
+  R <- df$samples[variable == "R"][,
+    list(date, sample, R = value)
+  ]
+  combined <- merge(growth_rate, R, by = c("date", "sample"), all = FALSE)
+  expect_equal(exp(combined$growth_rate), combined$R)
+})
+
 test_that("estimate_infections fails as expected when given a very short timeout", {
   skip_on_cran()
   expect_error(output <- capture.output(suppressMessages(
     out <- default_estimate_infections(
       reported_cases,
-      add_stan = list(future = TRUE, max_execution_time = 1)
+      add_stan = list(future = TRUE, max_execution_time = 1, samples = 2000)
   ))), "all chains failed")
   expect_error(output <- capture.output(suppressMessages(
     out <- default_estimate_infections(
       reported_cases,
-      add_stan = list(future = FALSE, max_execution_time = 1)
+      add_stan = list(future = FALSE, max_execution_time = 1, samples = 2000)
   ))), "timed out")
 })
 

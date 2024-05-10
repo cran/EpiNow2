@@ -7,22 +7,22 @@
 plot_estimates(
   estimate,
   reported,
-  ylab = "Cases",
+  ylab,
   hline,
   obs_as_col = TRUE,
   max_plot = 10,
-  estimate_type = NULL
+  estimate_type = c("Estimate", "Estimate based on partial data", "Forecast")
 )
 }
 \arguments{
-\item{estimate}{A data.table of estimates containing the following
+\item{estimate}{A \verb{<data.table>} of estimates containing the following
 variables: date, type (must contain "estimate", "estimate based on partial
 data" and optionally "forecast").}
 
-\item{reported}{A data.table of reported cases with the following variables:
-date, confirm.}
+\item{reported}{A \verb{<data.table>} of reported cases with the following
+variables: date, confirm.}
 
-\item{ylab}{Character string, defaulting to "Cases". Title for the plot y
+\item{ylab}{Character string. Title for the plot y
 axis.}
 
 \item{hline}{Numeric, if supplied gives the horizontal intercept for a
@@ -44,40 +44,27 @@ A \code{ggplot2} object
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#questioning}{\figure{lifecycle-questioning.svg}{options: alt='[Questioning]'}}}{\strong{[Questioning]}}
-Allows users to plot the output from \code{estimate_infections} easily. In future
-releases it  may be depreciated in favour of increasing the functionality of
-the S3 plot methods.
+Allows users to plot the output from \code{\link[=estimate_infections]{estimate_infections()}} easily.
+In future releases it may be depreciated in favour of increasing the
+functionality of the S3 plot methods.
 }
 \examples{
-\donttest{
-# define example cases
-cases <- example_confirmed[1:40]
+# get example model results
+out <- readRDS(system.file(
+    package = "EpiNow2", "extdata", "example_estimate_infections.rds"
+))
 
-# set up example delays
-generation_time <- get_generation_time(
- disease = "SARS-CoV-2", source = "ganyani"
-)
-incubation_period <- get_incubation_period(
- disease = "SARS-CoV-2", source = "lauer"
-)
-reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
-
-# run model
-out <- estimate_infections(cases,
-  generation_time = generation_time_opts(generation_time),
-  delays = delay_opts(incubation_period + reporting_delay)
-)
 # plot infections
 plot_estimates(
   estimate = out$summarised[variable == "infections"],
-  reported = cases,
+  reported = out$observations,
   ylab = "Cases", max_plot = 2
 ) + ggplot2::facet_wrap(~type, scales = "free_y")
 
 # plot reported cases estimated via Rt
 plot_estimates(
   estimate = out$summarised[variable == "reported_cases"],
-  reported = cases,
+  reported = out$observations,
   ylab = "Cases"
 )
 
@@ -94,5 +81,4 @@ plot_estimates(
   ylab = "Effective Reproduction No.",
   hline = 1, estimate_type = "Estimate"
 )
-}
 }

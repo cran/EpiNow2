@@ -4,7 +4,7 @@
 \alias{create_future_rt}
 \title{Construct the Required Future Rt assumption}
 \usage{
-create_future_rt(future = "latest", delay = 0)
+create_future_rt(future = c("latest", "project", "estimate"), delay = 0)
 }
 \arguments{
 \item{future}{A character string or integer. This argument indicates how to
@@ -22,9 +22,7 @@ A list containing a logical called fixed and an integer called from
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Converts the \code{future} argument from \code{rt_opts()} into arguments that can be
-passed to \code{stan}.
+Converts the \code{future} argument from \code{\link[=rt_opts]{rt_opts()}} into arguments that can be
+passed to stan.
 }
-\author{
-Sam Abbott
-}
+\keyword{internal}

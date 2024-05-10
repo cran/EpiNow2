@@ -7,7 +7,7 @@
 #' @param regions An character string containing the list of regions to extract
 #' results for (must all have results for the same target date).
 #'
-#' @param summaries A list of summary data frames as output by `epinow`
+#' @param summaries A list of summary `<data.frame>`s as output by `epinow`
 #'
 #' @param results_dir An optional character string indicating the location of
 #' the results directory to extract results from.
@@ -22,7 +22,7 @@
 #' @importFrom purrr safely map_chr map_dbl map_chr
 #' @importFrom data.table setorderv melt merge.data.table dcast
 #' @return A list of summary data
-#' @export
+#' @keywords internal
 summarise_results <- function(regions,
                               summaries = NULL,
                               results_dir = NULL,
@@ -72,7 +72,7 @@ summarise_results <- function(regions,
   estimates <- data.table::rbindlist(estimates, idcol = "region", fill = TRUE)
   numeric_estimates <-
     data.table::copy(estimates)[measure %in% c(
-      "New confirmed cases by infection date",
+      "New infections per day",
       "Effective reproduction no."
     )][
       ,
@@ -83,17 +83,17 @@ summarise_results <- function(regions,
     ][
       ,
       metric := factor(measure, levels = c(
-        "New confirmed cases by infection date",
+        "New infections per day",
         "Effective reproduction no."
       ))
     ][, measure := NULL]
 
 
   numeric_estimates <- data.table::merge.data.table(numeric_estimates,
-    estimates[measure %in% "Expected change in daily cases"][
+    estimates[measure == "Expected change in daily reports"][
       ,
       .(region,
-       `Expected change in daily cases` = estimate,
+       `Expected change in daily reports` = estimate,
        prob_control = numeric_estimate
       )
     ],
@@ -112,8 +112,8 @@ summarise_results <- function(regions,
   estimates <- estimates[, numeric_estimate := NULL][
     ,
     measure := factor(measure, levels = c(
-      "New confirmed cases by infection date",
-      "Expected change in daily cases",
+      "New infections per day",
+      "Expected change in daily reports",
       "Effective reproduction no.",
       "Rate of growth",
       "Doubling/halving time (days)" # nolint
@@ -165,39 +165,17 @@ summarise_results <- function(regions,
 #' @importFrom data.table setDT fcase
 #' @importFrom futile.logger flog.info
 #' @examples
-#' \donttest{
-#' # example delays
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
-#' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
-#' )
-#' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 30)
-#'
-#' # example case vector from EpiSoon
-#' cases <- example_confirmed[1:30]
-#' cases <- data.table::rbindlist(list(
-#'   data.table::copy(cases)[, region := "testland"],
-#'   cases[, region := "realland"]
+#' # get example output from regional_epinow model
+#' regional_out <- readRDS(system.file(
+#'     package = "EpiNow2", "extdata", "example_regional_epinow.rds"
 #' ))
 #'
-#' # run basic nowcasting pipeline
-#' out <- regional_epinow(
-#'   reported_cases = cases,
-#'   generation_time = generation_time_opts(generation_time),
-#'   delays = delay_opts(incubation_period + reporting_delay),
-#'   output = "region",
-#'   rt = NULL
-#' )
-#'
 #' regional_summary(
-#'   regional_output = out$regional,
-#'   reported_cases = cases
+#'   regional_output = regional_out$regional,
+#'   data = regional_out$summary$reported_cases
 #' )
-#' }
 regional_summary <- function(regional_output = NULL,
-                             reported_cases,
+                             data,
                              results_dir = NULL,
                              summary_dir = NULL,
                              target_date = NULL,
@@ -207,7 +185,7 @@ regional_summary <- function(regional_output = NULL,
                              plot = TRUE,
                              max_plot = 10,
                              ...) {
-  reported_cases <- data.table::setDT(reported_cases)
+  reported_cases <- data.table::setDT(data)
   if (is.null(summary_dir)) {
     futile.logger::flog.info(
       "No summary directory specified so returning summary output"
@@ -224,7 +202,7 @@ regional_summary <- function(regional_output = NULL,
   if (is.null(regional_output)) {
     if (!is.null(results_dir)) {
       futile.logger::flog.info("Extracting results from: %s", results_dir)
-      regions <- EpiNow2::get_regions(results_dir)
+      regions <- get_regions(results_dir)
       if (is.null(target_date)) {
         target_date <- "latest"
       }
@@ -282,8 +260,8 @@ regional_summary <- function(regional_output = NULL,
   )
 
   force_factor <- function(df) {
-    df[, `Expected change in daily cases` :=
-      factor(`Expected change in daily cases`,
+    df[, `Expected change in daily reports` :=
+      factor(`Expected change in daily reports`,
         levels = c(
           "Increasing", "Likely increasing", "Stable",
           "Likely decreasing", "Decreasing"
@@ -304,7 +282,7 @@ regional_summary <- function(regional_output = NULL,
 
   # adaptive add a logscale to the summary plot based on range of observed cases
   current_inf <- summarised_results$data[
-    metric %in% "New confirmed cases by infection date"
+    metric == "New infections per day"
   ]
   uppers <- grepl("upper_", colnames(current_inf), fixed = TRUE) # nolint
   lowers <- grepl("lower_", colnames(current_inf), fixed = TRUE) # nolint
@@ -432,8 +410,8 @@ regional_summary <- function(regional_output = NULL,
 #' Summarise rt and cases
 #'
 #' @description `r lifecycle::badge("maturing")`
-#' Produces summarised data frames of output across regions. Used internally by
-#' `regional_summary`.
+#' Produces summarised `<data.frame>`s of output across regions.
+#' Used internally by `regional_summary`.
 #'
 #' @param regional_results A list of dataframes as produced by
 #' `get_regional_results`
@@ -451,7 +429,7 @@ regional_summary <- function(regional_output = NULL,
 #' @seealso regional_summary
 #' @return A list of summarised Rt, cases by date of infection and cases by
 #' date of report
-#' @export
+#' @keywords internal
 #' @importFrom data.table setnames fwrite setorderv
 summarise_key_measures <- function(regional_results = NULL,
                                    results_dir = NULL, summary_dir = NULL,
@@ -513,6 +491,7 @@ summarise_key_measures <- function(regional_results = NULL,
   save_variable(out$cases_by_report, "cases_by_report")
   return(out)
 }
+
 #' Summarise Regional Runtimes
 #'
 #' @description `r lifecycle::badge("maturing")`
@@ -525,34 +504,12 @@ summarise_key_measures <- function(regional_results = NULL,
 #' @export
 #' @importFrom data.table data.table fwrite
 #' @importFrom purrr map safely
+#' @keywords internal
 #' @examples
-#' \donttest{
-#' # example delays
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
-#' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
-#' )
-#' reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 15)
-#'
-#' cases <- example_confirmed[1:30]
-#' cases <- data.table::rbindlist(list(
-#'   data.table::copy(cases)[, region := "testland"],
-#'   cases[, region := "realland"]
+#' regional_out <- readRDS(system.file(
+#'     package = "EpiNow2", "extdata", "example_regional_epinow.rds"
 #' ))
-#'
-#' # run basic nowcasting pipeline
-#' regional_out <- regional_epinow(
-#'   reported_cases = cases,
-#'   generation_time = generation_time_opts(generation_time),
-#'   delays = delay_opts(incubation_period + reporting_delay),
-#'   stan = stan_opts(samples = 100, warmup = 100),
-#'   output = c("region", "timing")
-#' )
-#'
 #' regional_runtimes(regional_output = regional_out$regional)
-#' }
 regional_runtimes <- function(regional_output = NULL,
                               target_folder = NULL,
                               target_date = NULL,
@@ -583,15 +540,14 @@ regional_runtimes <- function(regional_output = NULL,
     regions <- get_regions(target_folder)
     timings <- data.table::data.table(
       region = regions,
-      time = unlist(purrr::map(regions, ~ safe_read(paste0(
-        target_folder,
-        "/", ., "/", target_date,
-        "/runtime.rds"
+      time = unlist(purrr::map(regions, ~ safe_read(file.path(
+        target_folder, ., target_date,
+        "runtime.rds"
       )))[[1]])
     )
   }
   if (!is.null(target_folder)) {
-    data.table::fwrite(timings, paste0(target_folder, "/runtimes.csv"))
+    data.table::fwrite(timings, file.path(target_folder, "runtimes.csv"))
   }
   if (return_output) {
     return(timings)
@@ -682,9 +638,11 @@ calc_CrIs <- function(samples, summarise_by = NULL, CrIs = c(0.2, 0.5, 0.9)) {
 #' Extract Credible Intervals Present
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Helper function to extract the credible intervals present in a data frame.
-#' @param summarised A data frame as processed by `calc_CrIs`
-#' @return A numeric vector of credible intervals detected in the data frame.
+#' Helper function to extract the credible intervals present in a
+#' `<data.frame>`.
+#' @param summarised A `<data.frame>` as processed by `calc_CrIs`
+#' @return A numeric vector of credible intervals detected in
+#' the `<data.frame>`.
 #' @export
 #' @examples
 #' samples <- data.frame(value = 1:10, type = "car")
@@ -703,8 +661,8 @@ extract_CrIs <- function(summarised) {
 #' Calculate Summary Statistics
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Calculate summary statistics from a data frame by group. Currently supports
-#' the mean, median and standard deviation.
+#' Calculate summary statistics from a `<data.frame>` by group.
+#' Currently supports the mean, median and standard deviation.
 #' @return A data.table containing the upper and lower bounds for the specified
 #' credible interval
 #' @export
@@ -732,7 +690,7 @@ calc_summary_stats <- function(samples, summarise_by = NULL) {
 #' Calculate All Summary Measures
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Calculate summary statistics and credible intervals from a data frame by
+#' Calculate summary statistics and credible intervals from a `<data.frame>` by
 #' group.
 #'
 #' @param order_by A character vector of parameters to order by, defaults to
@@ -787,19 +745,23 @@ calc_summary_measures <- function(samples,
 #'
 #' @inheritParams summary.estimate_infections
 #'
+#' @importFrom rlang arg_match
+#'
 #' @param ... Pass additional summary arguments to lower level methods
 #'
 #' @seealso summary.estimate_infections epinow
 #' @aliases summary
 #' @method summary epinow
-#' @return Returns a data frame of summary output
+#' @return Returns a `<data.frame>` of summary output
 #' @export
-summary.epinow <- function(object, output = "estimates",
+summary.epinow <- function(object,
+                           output = c(
+                             "estimates", "forecast", "estimated_reported_cases"
+                           ),
                            date = NULL, params = NULL,
                            ...) {
-  choices <- c("estimates", "forecast", "estimated_reported_cases")
-  output <- match.arg(output, choices, several.ok = FALSE)
-  if (output %in% "estimates") {
+  output <- arg_match(output)
+  if (output == "estimates") {
     out <- summary(object$estimates,
       date = date,
       params = params, ...
@@ -837,15 +799,17 @@ summary.epinow <- function(object, output = "estimates",
 #' @param params A character vector of parameters to filter for.
 #'
 #' @param ... Pass additional arguments to `report_summary`
-#'
+#' @importFrom rlang arg_match
 #' @seealso summary estimate_infections report_summary
 #' @method summary estimate_infections
-#' @return Returns a data frame of summary output
+#' @return Returns a `<data.frame>` of summary output
 #' @export
-summary.estimate_infections <- function(object, type = "snapshot",
+summary.estimate_infections <- function(object,
+                                        type = c(
+                                          "snapshot", "parameters", "samples"
+                                        ),
                                         date = NULL, params = NULL, ...) {
-  choices <- c("snapshot", "parameters", "samples")
-  type <- match.arg(type, choices, several.ok = FALSE)
+  type <- arg_match(type)
   if (is.null(date)) {
     target_date <- unique(
       object$summarised[type != "forecast"][date == max(date)]$date
@@ -854,7 +818,7 @@ summary.estimate_infections <- function(object, type = "snapshot",
     target_date <- as.Date(date)
   }
 
-  if (type %in% "snapshot") {
+  if (type == "snapshot") {
     out <- report_summary(
       summarised_estimates = object$summarised[date == target_date],
       rt_samples = object$samples[variable == "R"][
@@ -863,7 +827,7 @@ summary.estimate_infections <- function(object, type = "snapshot",
       ...
     )
   } else if (type %in% c("parameters", "samples")) {
-    if (type %in% "parameters") {
+    if (type == "parameters") {
       type <- "summarised"
     }
     out <- object[[type]]

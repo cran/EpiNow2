@@ -1,130 +1,3 @@
-#' Report case counts by date of report
-#'
-#' @description `r lifecycle::badge("soft-deprecated")`
-#' Convolves latent infections to reported cases via an observation model.
-#' Likely to be removed/replaced in later releases by functionality drawing on
-#' the `stan` implementation.
-#'
-#' @param case_estimates A data.table of case estimates with the following
-#' variables: date, sample, cases
-#'
-#' @param case_forecast A data.table of case forecasts with the following
-#' variables: date, sample, cases. If not supplied the default is not to
-#' incorporate forecasts.
-#'
-#' @param reporting_effect A `data.table` giving the weekly reporting effect
-#'  with the following variables: `sample` (must be the same as in `nowcast`),
-#'  `effect` (numeric scaling factor for each weekday),`day` (numeric 1 - 7
-#'  (1 = Monday and 7 = Sunday)). If not supplied then no weekly reporting
-#'  effect is assumed.
-#'
-#' @return A list of `data.table`s. The first entry contains the following
-#' variables `sample`, `date` and `cases` with the second being summarised
-#' across samples.
-#'
-#' @export
-#' @inheritParams estimate_infections
-#' @inheritParams adjust_infection_to_report
-#' @importFrom data.table data.table rbindlist
-#' @importFrom future.apply future_lapply
-#' @examples
-#' \donttest{
-#' # define example cases
-#' cases <- example_confirmed[1:40]
-#'
-#' # set up example delays
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
-#' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
-#' )
-#' reporting_delay <- dist_spec(
-#'   mean = convert_to_logmean(2, 1), mean_sd = 0.1,
-#'   sd = convert_to_logsd(2, 1), sd_sd = 0.1, max = 10
-#' )
-#'
-#' # Instead of running them model we use example
-#' # data for speed in this example.
-#' cases <- cases[, cases := as.integer(confirm)]
-#' cases <- cases[, confirm := NULL][, sample := 1]
-#'
-#' reported_cases <- report_cases(
-#'   case_estimates = cases,
-#'   delays = delay_opts(incubation_period + reporting_delay),
-#'   type = "sample"
-#' )
-#' print(reported_cases)
-#' }
-report_cases <- function(case_estimates,
-                         case_forecast = NULL,
-                         delays,
-                         type = "sample",
-                         reporting_effect,
-                         CrIs = c(0.2, 0.5, 0.9)) {
-  samples <- length(unique(case_estimates$sample))
-
-  # define delay distributions
-  delay_defs <- purrr::map(
-    seq_along(delays$mean_mean),
-    ~ EpiNow2::lognorm_dist_def(
-      mean = delays$mean_mean[.],
-      mean_sd = delays$mean_sd[.],
-      sd = delays$mean_mean[.],
-      sd_sd = delays$mean_sd[.],
-      max_value = delays$max[.],
-      samples = samples
-    )
-  )
-  # add a null reporting effect if missing
-  if (missing(reporting_effect)) {
-    reporting_effect <- data.table::data.table(
-      sample = list(1:samples),
-      effect = rep(1, 7),
-      day = 1:7
-    )
-    reporting_effect <- reporting_effect[,
-      .(sample = unlist(sample)), by = .(effect, day)
-    ]
-  }
-  # filter and sum nowcast to use only upscaled cases by date of infection
-  infections <- data.table::copy(case_estimates)
-
-  # add in case forecast if present
-  if (!is.null(case_forecast)) {
-    infections <- data.table::rbindlist(list(
-      infections,
-      case_forecast[, .(date, sample, cases = as.integer(cases))]
-    ), use.names = TRUE)
-  }
-
-  ## For each sample map to report date
-  report <- future.apply::future_lapply(1:max(infections$sample),
-    function(id) {
-      EpiNow2::adjust_infection_to_report(infections[sample == id],
-        delay_defs = purrr::map(delay_defs, ~ .[id, ]),
-        type = type,
-        reporting_effect = reporting_effect[sample == id, ]$effect
-      )
-    },
-    future.seed = TRUE
-  )
-
-  report <- data.table::rbindlist(report, idcol = "sample")
-
-  out <- list()
-  # bind all samples together
-  out$samples <- report
-  # summarise samples
-  out$summarised <- calc_summary_measures(
-    report[, value := cases][, cases := NULL],
-    summarise_by = "date",
-    order_by = "date",
-    CrIs = CrIs
-  )
-  return(out)
-}
-
 #' Provide Summary Statistics for Estimated Infections and Rt
 #' @description `r lifecycle::badge("questioning")`
 #' Creates a snapshot summary of estimates. May be removed in later releases as
@@ -198,8 +71,8 @@ report_summary <- function(summarised_estimates,
   # regional summary
   summary <- data.table::data.table(
     measure = c(
-      "New confirmed cases by infection date",
-      "Expected change in daily cases",
+      "New infections per day",
+      "Expected change in daily reports",
       "Effective reproduction no.",
       "Rate of growth",
       "Doubling/halving time (days)" # nolint
@@ -224,7 +97,7 @@ report_summary <- function(summarised_estimates,
   }
 
   if (!is.null(target_folder)) {
-    saveRDS(summary, paste0(target_folder, "/summary.rds"))
+    saveRDS(summary, file.path(target_folder, "summary.rds"))
   }
   return(summary)
 }
@@ -262,36 +135,17 @@ report_summary <- function(summarised_estimates,
 #' `summarised_estimates[variable == "growth_rate"]`, respectively.
 #' @export
 #' @examples
-#' \donttest{
-#' # define example cases
-#' cases <- example_confirmed[1:40]
-#'
-#' # set up example delays
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
-#' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
-#' )
-#' reporting_delay <- bootstrapped_dist_fit(
-#'  rlnorm(100, log(6), 1), max_value = 30
-#' )
-#'
-#' # run model
-#' out <- estimate_infections(cases,
-#'   stan = stan_opts(samples = 500),
-#'   generation_time = generation_time_opts(generation_time),
-#'   delays = delay_opts(incubation_period + reporting_delay),
-#'   rt = NULL
-#' )
+#' # get example output form estimate_infections
+#' out <- readRDS(system.file(
+#'     package = "EpiNow2", "extdata", "example_estimate_infections.rds"
+#' ))
 #'
 #' # plot infections
 #' plots <- report_plots(
 #'   summarised_estimates = out$summarised,
-#'   reported = cases
+#'   reported = out$observations
 #' )
 #' plots
-#' }
 report_plots <- function(summarised_estimates, reported,
                          target_folder = NULL, ...) {
   # set input to data.table
@@ -302,14 +156,14 @@ report_plots <- function(summarised_estimates, reported,
   infections <- plot_estimates(
     estimate = summarised_estimates[variable == "infections"],
     reported = reported,
-    ylab = "Cases by \n date of infection",
+    ylab = "New infections \n per day",
     ...
   )
 
   # cases by report ---------------------------------------------------------
   reports <- plot_estimates(
     estimate = summarised_estimates[variable == "reported_cases"],
-    reported = reported, ylab = "Cases by \n date of report",
+    reported = reported, ylab = "New reports \n per day",
     ...
   )
 

@@ -5,7 +5,13 @@
 \alias{summary}
 \title{Summary output from epinow}
 \usage{
-\method{summary}{epinow}(object, output = "estimates", date = NULL, params = NULL, ...)
+\method{summary}{epinow}(
+  object,
+  output = c("estimates", "forecast", "estimated_reported_cases"),
+  date = NULL,
+  params = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{A list of output as produced by "epinow".}
@@ -20,7 +26,7 @@
 \item{...}{Pass additional summary arguments to lower level methods}
 }
 \value{
-Returns a data frame of summary output
+Returns a \verb{<data.frame>} of summary output
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}

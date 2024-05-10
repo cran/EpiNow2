@@ -51,23 +51,48 @@ void truncation_lp(array[] real truncation_mean, array[] real truncation_sd,
   }
 }
 // update log density for reported cases
-void report_lp(array[] int cases, vector reports,
+void report_lp(array[] int cases, array[] int cases_time, vector reports,
                array[] real rep_phi, real phi_mean, real phi_sd,
-               int model_type, real weight) {
+               int model_type, real weight, int accumulate) {
+  int n = num_elements(cases_time) - accumulate; // number of observations
+  vector[n] obs_reports; // reports at observation time
+  array[n] int obs_cases; // observed cases at observation time
+  if (accumulate) {
+    int t = num_elements(reports);
+    int i = 0;
+    int current_obs = 0;
+    obs_reports = rep_vector(0, n);
+    while (i <= t && current_obs <= n) {
+      if (current_obs > 0) { // first observation gets ignored when accumulating
+        obs_reports[current_obs] += reports[i];
+      }
+      if (i == cases_time[current_obs + 1]) {
+        current_obs += 1;
+      }
+      i += 1;
+    }
+    obs_cases = cases[2:(n + 1)];
+  } else {
+    obs_reports = reports[cases_time];
+    obs_cases = cases;
+  }
   if (model_type) {
-    real sqrt_phi; // the reciprocal overdispersion parameter (phi)
-    rep_phi[model_type] ~ normal(phi_mean, phi_sd) T[0,];
-    sqrt_phi = 1 / sqrt(rep_phi[model_type]);
+    real dispersion = inv_square(phi_sd > 0 ? rep_phi[model_type] : phi_mean);
+    if (phi_sd > 0) {
+      rep_phi[model_type] ~ normal(phi_mean, phi_sd) T[0,];
+    }
     if (weight == 1) {
-      cases ~ neg_binomial_2(reports, sqrt_phi);
+      obs_cases ~ neg_binomial_2(obs_reports, dispersion);
     } else {
-      target += neg_binomial_2_lpmf(cases | reports, sqrt_phi) * weight;
+      target += neg_binomial_2_lpmf(
+        obs_cases | obs_reports, dispersion
+      ) * weight;
     }
   } else {
     if (weight == 1) {
-      cases ~ poisson(reports);
+      obs_cases ~ poisson(obs_reports);
     } else {
-      target += poisson_lpmf(cases | reports) * weight;
+      target += poisson_lpmf(obs_cases | obs_reports) * weight;
     }
   }
 }
@@ -83,9 +108,9 @@ vector report_log_lik(array[] int cases, vector reports,
       log_lik[i] = poisson_lpmf(cases[i] | reports[i]) * weight;
     }
   } else {
-    real sqrt_phi = 1 / sqrt(rep_phi[model_type]);
+    real dispersion = inv_square(rep_phi[model_type]);
     for (i in 1:t) {
-      log_lik[i] = neg_binomial_2_lpmf(cases[i] | reports[i], sqrt_phi) * weight;
+      log_lik[i] = neg_binomial_2_lpmf(cases[i] | reports[i], dispersion) * weight;
     }
   }
   return(log_lik);
@@ -94,20 +119,20 @@ vector report_log_lik(array[] int cases, vector reports,
 array[] int report_rng(vector reports, array[] real rep_phi, int model_type) {
   int t = num_elements(reports);
   array[t] int sampled_reports;
-  real sqrt_phi = 1e5;
+  real dispersion = 1e5;
   if (model_type) {
-    sqrt_phi = 1 / sqrt(rep_phi[model_type]);
+    dispersion = inv_square(rep_phi[model_type]);
   }
-    
+
   for (s in 1:t) {
     if (reports[s] < 1e-8) {
       sampled_reports[s] = 0;
     } else {
       // defer to poisson if phi is large, to avoid overflow
-      if (sqrt_phi > 1e4) {
+      if (dispersion > 1e4) {
         sampled_reports[s] = poisson_rng(reports[s] > 1e8 ? 1e8 : reports[s]);
       } else {
-        sampled_reports[s] = neg_binomial_2_rng(reports[s] > 1e8 ? 1e8 : reports[s], sqrt_phi);
+        sampled_reports[s] = neg_binomial_2_rng(reports[s] > 1e8 ? 1e8 : reports[s], dispersion);
       }
     }
   }

@@ -1,46 +1,49 @@
 #' Generation Time Distribution Options
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Returns generation time parameters in a format for lower level model use. The
-#' generation time can either be given as a \code{disease} and \code{source} to
-#' be passed to [get_generation_time], or as parameters of a distribution to be
-#' passed to [dist_spec].
+#' Returns generation time parameters in a format for lower level model use.
 #'
-#' @param dist A delay distribution or series of delay distributions generated
-#' using [dist_spec()] or [get_generation_time()]. If no distribution is given
-#' a fixed generation time of 1 will be assumed.
+#' @param dist A delay distribution or series of delay distributions . If no
+#'   distribution is given a fixed generation time of 1 will be assumed.
 #'
 #' @param ... deprecated; use `dist` instead
 #' @param disease deprecated; use `dist` instead
 #' @param source deprecated; use `dist` instead
 #' @param max deprecated; use `dist` instead
 #' @param fixed deprecated; use `dist` instead
-#' @param prior_weight deprecated; prior weights are now specified as a
-#' model option. Use the `weigh_delay_priors` argument of `estimate_infections`
-#' instead.
-#' @return A list summarising the input delay distributions.
-#' @author Sebastian Funk
-#' @author Sam Abbott
-#' @seealso convert_to_logmean convert_to_logsd bootstrapped_dist_fit dist_spec
+#' @param weight_prior Logical; if TRUE (default), any priors given in `dist`
+#'   will be weighted by the number of observation data points, in doing so
+#'   approximately placing an independent prior at each time step and usually
+#'   preventing the posteriors from shifting. If FALSE, no weight will be
+#'   applied, i.e. any parameters in `dist` will be treated as a single
+#'    parameters.
+#' @inheritParams apply_tolerance
+#' @return A `<generation_time_opts>` object summarising the input delay
+#' distributions.
+#' @seealso [convert_to_logmean()] [convert_to_logsd()]
+#' [bootstrapped_dist_fit()] [Gamma()] [LogNormal()] [Fixed()]
 #' @export
 #' @examples
 #' # default settings with a fixed generation time of 1
 #' generation_time_opts()
 #'
 #' # A fixed gamma distributed generation time
-#' generation_time_opts(dist_spec(mean = 3, sd = 2, max = 15))
+#' generation_time_opts(Gamma(mean = 3, sd = 2, max = 14))
 #'
 #' # An uncertain gamma distributed generation time
 #' generation_time_opts(
-#'  dist_spec(mean = 3, sd = 2, mean_sd = 1, sd_sd = 0.5, max = 15)
+#'   Gamma(
+#'     mean = Normal(mean = 3, sd = 1),
+#'     sd = Normal(mean = 2, sd = 0.5),
+#'     max = 14
+#'   )
 #' )
 #'
-#' # A generation time sourced from the literature
-#' dist <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-#' generation_time_opts(dist)
-generation_time_opts <- function(dist = dist_spec(mean = 1), ...,
-                                 disease, source, max = 15L, fixed = FALSE,
-                                 prior_weight) {
+#' # An example generation time
+#' generation_time_opts(example_generation_time)
+generation_time_opts <- function(dist = Fixed(1), ...,
+                                 disease, source, max = 14, fixed = FALSE,
+                                 tolerance = 0.001, weight_prior = TRUE) {
   deprecated_options_given <- FALSE
   dot_options <- list(...)
 
@@ -50,12 +53,12 @@ generation_time_opts <- function(dist = dist_spec(mean = 1), ...,
   if (type_options > 1) {
     stop(
       "Generation time can be given either as distributional options ",
-      "or as disease/source, but not both."
+      "or as a combination of disease and source, but not both."
     )
   }
   if (length(dot_options) > 0) {
     if (is(dist, "dist_spec")) { ## dist not specified
-      dot_options$dist <- "gamma"
+      dot_options$distribution <- "gamma"
     }
     ## set max
     if (!("max" %in% names(dot_options))) {
@@ -65,8 +68,8 @@ generation_time_opts <- function(dist = dist_spec(mean = 1), ...,
     if (!("mean" %in% names(dot_options))) {
       dot_options$mean <- 1
     }
-    dot_options$fixed <- fixed
     dist <- do.call(dist_spec, dot_options)
+    if (fixed) dist <- fix_dist(dist)
     deprecated_options_given <- TRUE
   } else if (!missing(disease) && !missing(source)) {
     dist <- get_generation_time(disease, source, max, fixed)
@@ -79,26 +82,98 @@ generation_time_opts <- function(dist = dist_spec(mean = 1), ...,
     }
     deprecated_options_given <- TRUE
   }
-  if (!missing(prior_weight)) {
-    deprecate_warn(
-      "1.4.0", "generation_time_opts(prior_weight)",
-      "estimate_infections(weigh_delay_prior)",
-      "This argument will be removed in version 2.0.0."
-    )
-  }
   if (deprecated_options_given) {
     warning(
-      "The generation time distribution must be given to ",
-      "`generation_time_opts` using a call to either ",
-      "`dist_spec` or `get_generation_time`. ",
+      "The generation time distribution should be given to ",
+      "`generation_time_opts` using a `dist_spec`. ",
       "This behaviour has changed from previous versions of `EpiNow2` and ",
       "any code using it may need to be updated as any other ways of ",
       "specifying the generation time are deprecated and will be removed in ",
-      "version 2.0.0. For examples and more ",
+      "the next version. For examples and more ",
       "information, see the relevant documentation pages using ",
       "`?generation_time_opts`")
   }
+  if (missing(dist)) {
+    warning(
+      "No generation time distribution given. Assuming a fixed generation ",
+      "time of 1 day, i.e. the reproduction number is the same as the daily ",
+      "growth rate. If this was intended then this warning can be silenced by ",
+      "setting `dist` explicitly to `Fixed(1)`."
+    )
+  }
+  check_stan_delay(dist)
+  attr(dist, "tolerance") <- tolerance
+  attr(dist, "weight_prior") <- weight_prior
+  attr(dist, "class") <- c("generation_time_opts", class(dist))
   return(dist)
+}
+
+#' Secondary Reports Options
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Returns a list of options defining the secondary model used in
+#' [estimate_secondary()]. This model is a combination of a convolution of
+#' previously observed primary reports combined with current primary reports
+#' (either additive or subtractive). It can optionally be cumulative. See the
+#' documentation of `type` for sensible options to cover most use cases and the
+#' returned values of [secondary_opts()] for all currently supported options.
+#'
+#' @param type A character string indicating the type of observation the
+#' secondary reports are. Options include:
+#'
+#' - "incidence": Assumes that secondary reports equal a convolution of
+#' previously observed primary reported cases. An example application is deaths
+#' from an infectious disease predicted by reported cases of that disease (or
+#' estimated infections).
+#'
+#' - "prevalence": Assumes that secondary reports are cumulative and are
+#' defined by currently observed primary reports minus a convolution of
+#' secondary reports. An example application is hospital bed usage predicted by
+#' hospital admissions.
+#'
+#' @param ... Overwrite options defined by type. See the returned values for all
+#' options that can be passed.
+#' @importFrom rlang arg_match
+#' @seealso [estimate_secondary()]
+#' @return A `<secondary_opts>` object of binary options summarising secondary
+#' model used in [estimate_secondary()]. Options returned are `cumulative`
+#' (should the secondary report be cumulative), `historic` (should a
+#' convolution of primary reported cases be used to predict secondary reported
+#' cases), `primary_hist_additive` (should the historic convolution of primary
+#' reported cases be additive or subtractive), `current` (should currently
+#' observed primary reported cases contribute to current secondary reported
+#' cases), `primary_current_additive` (should current primary reported cases be
+#' additive or subtractive).
+#'
+#' @export
+#' @examples
+#' # incidence model
+#' secondary_opts("incidence")
+#'
+#' # prevalence model
+#' secondary_opts("prevalence")
+secondary_opts <- function(type = c("incidence", "prevalence"), ...) {
+  type <- arg_match(type)
+  if (type == "incidence") {
+    data <- list(
+      cumulative = 0,
+      historic = 1,
+      primary_hist_additive = 1,
+      current = 0,
+      primary_current_additive = 0
+    )
+  } else if (type == "prevalence") {
+    data <- list(
+      cumulative = 1,
+      historic = 1,
+      primary_hist_additive = 0,
+      current = 1,
+      primary_current_additive = 1
+    )
+  }
+  data <- modifyList(data, list(...))
+  attr(data, "class") <- c("secondary_opts", class(data))
+  return(data)
 }
 
 #' Delay Distribution Options
@@ -106,30 +181,32 @@ generation_time_opts <- function(dist = dist_spec(mean = 1), ...,
 #' @description `r lifecycle::badge("stable")`
 #' Returns delay distributions formatted for usage by downstream
 #' functions.
-#' @param dist A delay distribution or series of delay distributions generated
-#' using [dist_spec()]. Default is an empty call to [dist_spec()], i.e. no delay
+#' @param dist A delay distribution or series of delay distributions. Default is
+#'   a fixed distribution with all mass at 0, i.e. no delay.
 #' @param ... deprecated; use `dist` instead
 #' @param fixed deprecated; use `dist` instead
-#' @return A list summarising the input delay distributions.
-#' @author Sam Abbott
-#' @author Sebastian Funk
-#' @seealso convert_to_logmean convert_to_logsd bootstrapped_dist_fit dist_spec
+#' @inheritParams apply_tolerance
+#' @inheritParams generation_time_opts
+#' @return A `<delay_opts>` object summarising the input delay distributions.
+#' @seealso [convert_to_logmean()] [convert_to_logsd()]
+#' [bootstrapped_dist_fit()] [dist_spec()]
 #' @export
 #' @examples
 #' # no delays
 #' delay_opts()
 #'
 #' # A single delay that has uncertainty
-#' delay <- dist_spec(mean = 1, mean_sd = 0.2, sd = 0.5, sd_sd = 0.1, max = 15)
+#' delay <- LogNormal(mean = Normal(1, 0.2), sd = Normal(0.5, 0.1), max = 14)
 #' delay_opts(delay)
 #'
 #' # A single delay without uncertainty
-#' delay <- dist_spec(mean = 1, sd = 0.5, max = 15)
+#' delay <- LogNormal(meanlog = 1, sdlog = 0.5, max = 14)
 #' delay_opts(delay)
 #'
 #' # Multiple delays (in this case twice the same)
 #' delay_opts(delay + delay)
-delay_opts <- function(dist = dist_spec(), ..., fixed = FALSE) {
+delay_opts <- function(dist = Fixed(0), ..., fixed = FALSE, tolerance = 0.001,
+                       weight_prior = TRUE) {
   dot_options <- list(...)
   if (!is(dist, "dist_spec")) { ## could be old syntax
     if (is.list(dist)) {
@@ -152,14 +229,18 @@ delay_opts <- function(dist = dist_spec(), ..., fixed = FALSE) {
       "This behaviour has changed from previous versions of `EpiNow2` and ",
       "any code using it may need to be updated as any other ways of ",
       "specifying delays are deprecated and will be removed in ",
-      "version 2.0.0. For examples and more ",
+      "the next version. For examples and more ",
       "information, see the relevant documentation pages using ",
       "`?delay_opts`."
     )
   } else if (length(dot_options) > 0) {
     ## can be removed once dot options are hard deprecated
-    stop("Unknown named arguments passed to `delay_opts`" )
+    stop("Unknown named arguments passed to `delay_opts`")
   }
+  check_stan_delay(dist)
+  attr(dist, "tolerance") <- tolerance
+  attr(dist, "weight_prior") <- weight_prior
+  attr(dist, "class") <- c("delay_opts", class(dist))
   return(dist)
 }
 
@@ -167,25 +248,36 @@ delay_opts <- function(dist = dist_spec(), ..., fixed = FALSE) {
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Returns a truncation distribution formatted for usage by
-#' downstream functions. See `estimate_truncation()` for an approach to
+#' downstream functions. See [estimate_truncation()] for an approach to
 #' estimate these distributions.
 #'
 #' @param dist A delay distribution or series of delay distributions reflecting
-#' the truncation generated using [dist_spec()] or [estimate_truncation()].
-#' Default is an empty call to [dist_spec()], i.e. no truncation
-#' @return A list summarising the input truncation distribution.
+#' the truncation. It can be specified using the probability distributions
+#' interface in `EpiNow2` (See `?EpiNow2::Distributions`) or estimated using
+#' [estimate_truncation()], which returns a `dist` object, suited
+#' for use here out-of-box. Default is a fixed distribution with maximum 0, i.e.
+#' no truncation.
+#' @param weight_prior Logical; if TRUE, the truncation prior will be weighted
+#'   by the number of observation data points, in doing so approximately placing
+#'   an independent prior at each time step and usually preventing the
+#'   posteriors from shifting. If FALSE (default), no weight will be applied,
+#'   i.e. the truncation distribution will be treated as a single parameter.
 #'
-#' @author Sam Abbott
-#' @author Sebastian Funk
-#' @seealso convert_to_logmean convert_to_logsd bootstrapped_dist_fit dist_spec
+#' @inheritParams apply_tolerance
+#' @return A `<trunc_opts>` object summarising the input truncation
+#' distribution.
+#'
+#' @seealso [convert_to_logmean()] [convert_to_logsd()]
+#' [bootstrapped_dist_fit()] [dist_spec()]
 #' @export
 #' @examples
 #' # no truncation
 #' trunc_opts()
 #'
 #' # truncation dist
-#' trunc_opts(dist = dist_spec(mean = 3, sd = 2, max = 10))
-trunc_opts <- function(dist = dist_spec()) {
+#' trunc_opts(dist = LogNormal(mean = 3, sd = 2, max = 10))
+trunc_opts <- function(dist = Fixed(0), tolerance = 0.001,
+                       weight_prior = FALSE) {
   if (!is(dist, "dist_spec")) {
     if (is.list(dist)) {
       dist <- do.call(dist_spec, dist)
@@ -196,11 +288,15 @@ trunc_opts <- function(dist = dist_spec()) {
       "This behaviour has changed from previous versions of `EpiNow2` and ",
       "any code using it may need to be updated as any other ways of ",
       "specifying delays are deprecated and will be removed in ",
-      "version 2.0.0. For examples and more ",
+      "the next version. For examples and more ",
       "information, see the relevant documentation pages using ",
       "`?trunc_opts`"
     )
   }
+  check_stan_delay(dist)
+  attr(dist, "tolerance") <- tolerance
+  attr(dist, "weight_prior") <- weight_prior
+  attr(dist, "class") <- c("trunc_opts", class(dist))
   return(dist)
 }
 
@@ -242,9 +338,10 @@ trunc_opts <- function(dist = dist_spec()) {
 #' but the method relying on a global mean will revert to this for real time
 #' estimates, which may not be desirable.
 #'
-#' @return A list of settings defining the time-varying reproduction number.
-#' @author Sam Abbott
+#' @return An `<rt_opts>` object with settings defining the time-varying
+#' reproduction number.
 #' @inheritParams create_future_rt
+#' @importFrom rlang arg_match
 #' @export
 #' @examples
 #' # default settings
@@ -260,7 +357,7 @@ rt_opts <- function(prior = list(mean = 1, sd = 1),
                     rw = 0,
                     use_breakpoints = TRUE,
                     future = "latest",
-                    gp_on = "R_t-1",
+                    gp_on = c("R_t-1", "R0"),
                     pop = 0) {
   rt <- list(
     prior = prior,
@@ -269,7 +366,7 @@ rt_opts <- function(prior = list(mean = 1, sd = 1),
     use_breakpoints = use_breakpoints,
     future = future,
     pop = pop,
-    gp_on = match.arg(gp_on, choices = c("R_t-1", "R0"))
+    gp_on = arg_match(gp_on)
   )
 
   # replace default settings with those specified by user
@@ -280,6 +377,7 @@ rt_opts <- function(prior = list(mean = 1, sd = 1),
   if (!("mean" %in% names(rt$prior) && "sd" %in% names(rt$prior))) {
     stop("prior must have both a mean and sd specified")
   }
+  attr(rt, "class") <- c("rt_opts", class(rt))
   return(rt)
 }
 
@@ -310,16 +408,17 @@ rt_opts <- function(prior = list(mean = 1, sd = 1),
 #' @param rt_window Integer, defaults to 1. The size of the centred rolling
 #' average to use when estimating Rt. This must be odd so that the central
 #' estimate is included.
+#' @importFrom rlang arg_match
 #'
-#' @return A list of back calculation settings.
-#' @author Sam Abbott
+#' @return A `<backcalc_opts>` object of back calculation settings.
 #' @export
 #' @examples
 #' # default settings
 #' backcalc_opts()
-backcalc_opts <- function(prior = "reports", prior_window = 14, rt_window = 1) {
+backcalc_opts <- function(prior = c("reports", "none", "infections"),
+                          prior_window = 14, rt_window = 1) {
   backcalc <- list(
-    prior = match.arg(prior, choices = c("reports", "none", "infections")),
+    prior = arg_match(prior),
     prior_window = prior_window,
     rt_window = as.integer(rt_window)
   )
@@ -329,6 +428,7 @@ backcalc_opts <- function(prior = "reports", prior_window = 14, rt_window = 1) {
        estimate"
     )
   }
+  attr(backcalc, "class") <- c("backcalc_opts", class(backcalc))
   return(backcalc)
 }
 
@@ -347,13 +447,13 @@ backcalc_opts <- function(prior = "reports", prior_window = 14, rt_window = 1) {
 #' \code{inv_gamma(1.499007, 0.057277 * ls_max)}.
 #'
 #' @param ls_max Numeric, defaults to 60. The maximum value of the length
-#' scale. Updated in `create_gp_data` to be the length of the input data if this
-#' is smaller.
+#' scale. Updated in [create_gp_data()] to be the length of the input data if
+#' this is smaller.
 #'
 #' @param ls_min Numeric, defaults to 0. The minimum value of the length scale.
 #'
 #' @param alpha_sd Numeric, defaults to 0.05. The standard deviation of the
-#'  magnitude parameter o  the Gaussian process kernel. Should be approximately
+#'  magnitude parameter of the Gaussian process kernel. Should be approximately
 #' the expected standard deviation of the logged Rt.
 #'
 #' @param kernel Character string, the type of kernel required. Currently
@@ -375,8 +475,8 @@ backcalc_opts <- function(prior = "reports", prior_window = 14, rt_window = 1) {
 #' approximate Gaussian process. See (Riutort-Mayol et al. 2020
 #' <https://arxiv.org/abs/2004.11408>) for advice on updating this default.
 #'
-#' @return A list of settings defining the Gaussian process
-#' @author Sam Abbott
+#' @importFrom rlang arg_match
+#' @return A `<gp_opts>` object of settings defining the Gaussian process
 #' @export
 #' @examples
 #' # default settings
@@ -391,7 +491,7 @@ gp_opts <- function(basis_prop = 0.2,
                     ls_min = 0,
                     ls_max = 60,
                     alpha_sd = 0.05,
-                    kernel = "matern",
+                    kernel = c("matern_3/2", "se"),
                     matern_type = 3 / 2) {
   gp <- list(
     basis_prop = basis_prop,
@@ -401,13 +501,14 @@ gp_opts <- function(basis_prop = 0.2,
     ls_min = ls_min,
     ls_max = ls_max,
     alpha_sd = alpha_sd,
-    kernel = match.arg(kernel, choices = c("se", "matern_3/2")),
+    kernel = arg_match(kernel),
     matern_type = matern_type
   )
 
   if (gp$matern_type != 3 / 2) {
     stop("only the Matern 3/2 kernel is currently supported") # nolint
   }
+  attr(gp, "class") <- c("gp_opts", class(gp))
   return(gp)
 }
 
@@ -417,33 +518,39 @@ gp_opts <- function(basis_prop = 0.2,
 #' Defines a list specifying the structure of the observation
 #' model. Custom settings can be supplied which override the defaults.
 #' @param family Character string defining the observation model. Options are
-#' Negative binomial ("negbin"), the default, and Poisson.
-#' @param phi A numeric vector of length 2, defaults to 0, 1. Indicates the
-#' mean and standard deviation of the normal prior used for the observation
-#' process.
-#'
-#' @param weight Numeric, defaults to 1. Weight to give the observed data in
-#'  the log density.
+#'   Negative binomial ("negbin"), the default, and Poisson.
+#' @param phi Overdispersion parameter of the reporting process, used only if
+#'   `familiy` is "negbin". Can be supplied either as a single numeric value
+#'   (fixed overdispersion) or a list with numeric elements mean (`mean`) and
+#'   standard deviation (`sd`) defining a normally distributed overdispersion.
+#'   Defaults to a list with elements `mean = 0` and `sd = 1`.
+#' @param weight Numeric, defaults to 1. Weight to give the observed data in the
+#'   log density.
 #' @param week_effect Logical defaulting to `TRUE`. Should a day of the week
-#' effect be used in the observation model.
-#'
+#'   effect be used in the observation model.
 #' @param week_length Numeric assumed length of the week in days, defaulting to
-#' 7 days. This can be modified if data aggregated over a period other than a
-#' week or if data has a non-weekly periodicity.
-#'
-#' @param scale List, defaulting to an empty list. Should an scaling factor be
-#' applied to map latent infections (convolved to date of report). If none
-#' empty a mean (`mean`) and standard deviation (`sd`) needs to be supplied
-#' defining the normally distributed scaling factor.
-#'
+#'   7 days. This can be modified if data aggregated over a period other than a
+#'   week or if data has a non-weekly periodicity.
+#' @param scale Scaling factor to be applied to map latent infections (convolved
+#'   to date of report). Can be supplied either as a single numeric value (fixed
+#'   scale) or a list with numeric elements mean (`mean`) and standard deviation
+#'   (`sd`) defining a normally distributed scaling factor. Defaults to 1, i.e.
+#'   no scaling.
+#' @param na Character. Options are "missing" (the default) and "accumulate".
+#'   This determines how NA values in the data are interpreted. If set to
+#'   "missing", any NA values in the observation data set will be interpreted as
+#'   missing and skipped in the likelihood. If set to "accumulate", modelled
+#'   observations will be accumulated and added to the next non-NA data point.
+#'   This can be used to model incidence data that is reported at less than
+#'   daily intervals. If set to "accumulate", the first data point is not
+#'   included in the likelihood but used only to reset modelled observations to
+#'   zero.
 #' @param likelihood Logical, defaults to `TRUE`. Should the likelihood be
-#' included in the model.
-#'
+#'   included in the model.
 #' @param return_likelihood Logical, defaults to `FALSE`. Should the likelihood
-#' be returned by the model.
-#'
-#' @return A list of observation model settings.
-#' @author Sam Abbott
+#'   be returned by the model.
+#' @importFrom rlang arg_match
+#' @return An `<obs_opts>` object of observation model settings.
 #' @export
 #' @examples
 #' # default settings
@@ -454,43 +561,91 @@ gp_opts <- function(basis_prop = 0.2,
 #'
 #' # Scale reported data
 #' obs_opts(scale = list(mean = 0.2, sd = 0.02))
-obs_opts <- function(family = "negbin",
-                     phi = c(0, 1),
+obs_opts <- function(family = c("negbin", "poisson"),
+                     phi = list(mean = 0, sd = 1),
                      weight = 1,
                      week_effect = TRUE,
                      week_length = 7,
-                     scale = list(),
+                     scale = 1,
+                     na = c("missing", "accumulate"),
                      likelihood = TRUE,
                      return_likelihood = FALSE) {
-  if (length(phi) != 2 || !is.numeric(phi)) {
-    stop("phi be numeric and of length two")
+  na <- arg_match(na)
+  if (na == "accumulate") {
+    message(
+      "Accumulating modelled values that correspond to NA values in the data ",
+      "by adding them to the next non-NA data point. This means that the ",
+      "first data point is not included in the likelihood but used only to ",
+      "reset modelled observations to zero. If the first data point should be ",
+      "included in the likelihood this can be achieved by adding a data point ",
+      "of arbitrary value before the first data point."
+    )
+  }
+
+  if (length(phi) == 2 && is.numeric(phi)) {
+    warning(
+      "Specifying `phi` as a length 2 vector is deprecated. Mean and SD ",
+      "should be given as list elements."
+    )
+    phi <- list(mean = phi[1], sd = phi[2])
   }
   obs <- list(
-    family = match.arg(family, choices = c("poisson", "negbin")),
+    family = arg_match(family),
     phi = phi,
     weight = weight,
     week_effect = week_effect,
     week_length = week_length,
     scale = scale,
+    accumulate = as.integer(na == "accumulate"),
     likelihood = likelihood,
     return_likelihood = return_likelihood
   )
 
-  if (length(obs$scale) != 0) {
-    scale_names <- names(obs$scale)
-    scale_correct <- "mean" %in% scale_names & "sd" %in% scale_names
-    if (!scale_correct) {
-      stop("If specifying a scale both a mean and sd are needed")
+  for (param in c("phi", "scale")) {
+    if (is.numeric(obs[[param]])) {
+      obs[[param]] <- list(mean = obs[[param]], sd = 0)
+    }
+    if (!(all(c("mean", "sd") %in% names(obs[[param]])))) {
+      stop("If specifying a ", param, " as list both a mean and sd are needed")
     }
   }
+
+  attr(obs, "class") <- c("obs_opts", class(obs))
   return(obs)
 }
 
 #' Rstan Sampling Options
 #'
+#' @description `r lifecycle::badge("deprecated")`
+#' Deprecated; use [stan_sampling_opts()] instead.
+#' @inheritParams stan_sampling_opts
+#' @return A list of arguments to pass to [rstan::sampling()].
+#' @export
+rstan_sampling_opts <- function(cores = getOption("mc.cores", 1L),
+                                warmup = 250,
+                                samples = 2000,
+                                chains = 4,
+                                control = list(),
+                                save_warmup = FALSE,
+                                seed = as.integer(runif(1, 1, 1e8)),
+                                future = FALSE,
+                                max_execution_time = Inf,
+                                ...) {
+  lifecycle::deprecate_warn(
+    "1.5.0", "rstan_sampling_opts()",
+    "stan_sampling_opts()"
+  )
+  return(stan_sampling_opts(
+    cores, warmup, samples, chains, control, save_warmup, seed, future,
+    max_execution_time, backend = "rstan", ...
+  ))
+}
+
+#' Stan Sampling Options
+#'
 #' @description `r lifecycle::badge("stable")`
-#'  Defines a list specifying the arguments passed to
-#' `rstan::sampling`. Custom settings can be supplied which override the
+#'  Defines a list specifying the arguments passed to either [rstan::sampling()]
+#'  or [cmdstanr::sample()]. Custom settings can be supplied which override the
 #'  defaults.
 #'
 #' @param cores Number of cores to use when executing the chains in parallel,
@@ -518,7 +673,7 @@ obs_opts <- function(family = "negbin",
 #' @param future Logical, defaults to `FALSE`. Should stan chains be run in
 #' parallel using `future`. This allows users to have chains fail gracefully
 #' (i.e when combined with `max_execution_time`). Should be combined with a
-#' call to `future::plan`.
+#' call to [future::plan()].
 #'
 #' @param max_execution_time Numeric, defaults to Inf (seconds). If set wil
 #' kill off processing of each chain if not finished within the specified
@@ -526,26 +681,29 @@ obs_opts <- function(family = "negbin",
 #' returned. If less than 2 chains return within the allowed time then
 #' estimation will fail with an informative error.
 #'
-#' @param ... Additional parameters to pass to `rstan::sampling`.
+#' @inheritParams stan_opts
 #'
-#' @return A list of arguments to pass to `rstan::sampling`.
-#' @author Sam Abbott
+#' @param ... Additional parameters to pass to [rstan::sampling()].
+#' @importFrom utils modifyList
+#' @return A list of arguments to pass to [rstan::sampling()] or
+#' [cmdstanr::sample().
 #' @export
 #' @examples
-#' rstan_sampling_opts(samples = 2000)
-rstan_sampling_opts <- function(cores = getOption("mc.cores", 1L),
-                                warmup = 250,
-                                samples = 2000,
-                                chains = 4,
-                                control = list(),
-                                save_warmup = FALSE,
-                                seed = as.integer(runif(1, 1, 1e8)),
-                                future = FALSE,
-                                max_execution_time = Inf,
-                                ...) {
+#' stan_sampling_opts(samples = 2000)
+stan_sampling_opts <- function(cores = getOption("mc.cores", 1L),
+                               warmup = 250,
+                               samples = 2000,
+                               chains = 4,
+                               control = list(),
+                               save_warmup = FALSE,
+                               seed = as.integer(runif(1, 1, 1e8)),
+                               future = FALSE,
+                               max_execution_time = Inf,
+                               backend = c("rstan", "cmdstanr"),
+                               ...) {
+  dot_args <- list(...)
+  backend <- arg_match(backend)
   opts <- list(
-    cores = cores,
-    warmup = warmup,
     chains = chains,
     save_warmup = save_warmup,
     seed = seed,
@@ -553,37 +711,77 @@ rstan_sampling_opts <- function(cores = getOption("mc.cores", 1L),
     max_execution_time = max_execution_time
   )
   control_def <- list(adapt_delta = 0.95, max_treedepth = 15)
-  opts$control <- update_list(control_def, control)
-  opts$iter <- ceiling(samples / opts$chains) + opts$warmup
-  opts <- c(opts, ...)
+  control_def <- modifyList(control_def, control)
+  if (any(c("iter", "iter_sampling") %in% names(dot_args))) {
+    warning(
+      "Number of samples should be specified using the `samples` and `warmup`",
+      "arguments rather than `iter` or `iter_sampliing` which will be ignored."
+    )
+  }
+  dot_args$iter <- NULL
+  dot_args$iter_sampling <- NULL
+  if (backend == "rstan") {
+    opts <- c(opts, list(
+      cores = cores,
+      warmup = warmup,
+      control = control_def,
+      iter = ceiling(samples / opts$chains) + warmup
+    ))
+  } else if (backend == "cmdstanr") {
+    opts <- c(opts, list(
+      parallel_chains = cores,
+      iter_warmup = warmup,
+      iter_sampling = ceiling(samples / opts$chains)
+    ), control_def)
+  }
+  opts <- c(opts, dot_args)
   return(opts)
 }
 
 #' Rstan Variational Bayes Options
 #'
+#' @description `r lifecycle::badge("deprecated")`
+#' Deprecated; use [stan_vb_opts()] instead.
+#' @inheritParams stan_vb_opts
+#' @return A list of arguments to pass to [rstan::vb()].
+#' @export
+rstan_vb_opts <- function(samples = 2000,
+                          trials = 10,
+                          iter = 10000, ...) {
+  lifecycle::deprecate_warn(
+    "1.5.0", "rstan_vb_opts()",
+    "stan_vb_opts()"
+  )
+  return(stan_vb_opts(samples, trials, iter, ...))
+}
+
+#' Stan Variational Bayes Options
+#'
 #' @description `r lifecycle::badge("stable")`
-#'  Defines a list specifying the arguments passed to
-#' `rstan::vb`. Custom settings can be supplied which override the defaults.
+#' Defines a list specifying the arguments passed to [rstan::vb()] or
+#' [cmdstanr::variational()]. Custom settings can be supplied which override the
+#' defaults.
 #'
 #' @param samples Numeric, default 2000. Overall number of approximate posterior
 #' samples.
 #'
-#' @param trials Numeric, defaults to 10. Number of attempts to use `rstan::vb`
-#' before failing.
+#' @param trials Numeric, defaults to 10. Number of attempts to use
+#' rstan::vb()] before failing.
 #'
 #' @param iter Numeric, defaulting to 10000. Number of iterations to use in
-#' `rtan::vb`.
+#' [rstan::vb()].
 #'
-#' @param ... Additional parameters to pass to `rstan::vb`.
+#' @param ... Additional parameters to pass to [rstan::vb()] or
+#' [cmdstanr::variational()], depending on the chosen backend.
 #'
-#' @return A list of arguments to pass to `rstan::vb`.
-#' @author Sam Abbott
+#' @return A list of arguments to pass to [rstan::vb()] or
+#'   [cmdstanr::variational()], depending on the chosen backend.
 #' @export
 #' @examples
-#' rstan_vb_opts(samples = 1000)
-rstan_vb_opts <- function(samples = 2000,
-                          trials = 10,
-                          iter = 10000, ...) {
+#' stan_vb_opts(samples = 1000)
+stan_vb_opts <- function(samples = 2000,
+                         trials = 10,
+                         iter = 10000, ...) {
   opts <- list(
     trials = trials,
     iter = iter,
@@ -593,35 +791,86 @@ rstan_vb_opts <- function(samples = 2000,
   return(opts)
 }
 
+#' Stan Laplace algorithm Options
+#'
+#' @description `r lifecycle::badge("experimental")`
+#' Defines a list specifying the arguments passed to [cmdstanr::laplace()].
+#'
+#' @inheritParams stan_opts
+#' @inheritParams stan_vb_opts
+#' @param ... Additional parameters to pass to [cmdstanr::laplace()].
+#' @return A list of arguments to pass to [cmdstanr::laplace()].
+#' @export
+#' @examples
+#' stan_laplace_opts()
+stan_laplace_opts <- function(backend = "cmdstanr",
+                              trials = 10,
+                              ...) {
+  if (backend != "cmdstanr") {
+    stop(
+      "The Laplace algorithm is only available with the \"cmdstanr\" backend."
+    )
+  }
+  opts <- list(trials = trials)
+  opts <- c(opts, ...)
+  return(opts)
+}
+
+#' Stan pathfinder algorithm Options
+#'
+#' @description `r lifecycle::badge("experimental")`
+#' Defines a list specifying the arguments passed to [cmdstanr::laplace()].
+#'
+#' @inheritParams stan_opts
+#' @inheritParams stan_vb_opts
+#' @param ... Additional parameters to pass to [cmdstanr::laplace()].
+#' @return A list of arguments to pass to [cmdstanr::laplace()].
+#' @export
+#' @examples
+#' stan_laplace_opts()
+stan_pathfinder_opts <- function(backend = "cmdstanr",
+                                 samples = 2000,
+                                 trials = 10,
+                                 ...) {
+  if (backend != "cmdstanr") {
+    stop(
+      "The pathfinder algorithm is only available with the \"cmdstanr\" ",
+      "backend."
+    )
+  }
+  opts <- list(
+    trials = trials,
+    draws = samples
+  )
+  opts <- c(opts, ...)
+  return(opts)
+}
+
 #' Rstan Options
 #'
-#' @description `r lifecycle::badge("stable")`
-#' Defines a list specifying the arguments passed to underlying `rstan`
-#' functions via `rstan_sampling_opts()` and `rstan_vb_opts()`.Custom settings
-#'  can be supplied which override the defaults.
+#' @description `r lifecycle::badge("deprecated")`
+#' Deprecated; specify options in [stan_opts()] instead.
 #'
 #' @param object Stan model object. By default uses the compiled package
 #' default.
 #'
 #' @param method A character string, defaulting to sampling. Currently supports
-#' `rstan::sampling` ("sampling") or `rstan:vb` ("vb").
+#' [rstan::sampling()] ("sampling") or [rstan::vb()].
 #'
 #' @param ... Additional parameters to pass  underlying option functions.
-#'
+#' @importFrom rlang arg_match
 #' @return A list of arguments to pass to the appropriate rstan functions.
-#' @author Sam Abbott
 #' @export
 #' @inheritParams rstan_sampling_opts
-#' @seealso rstan_sampling_opts rstan_vb_opts
-#' @examples
-#' rstan_opts(samples = 1000)
-#'
-#' # using vb
-#' rstan_opts(method = "vb")
+#' @seealso [rstan_sampling_opts()] [rstan_vb_opts()]
 rstan_opts <- function(object = NULL,
                        samples = 2000,
-                       method = "sampling", ...) {
-  method <- match.arg(method, choices = c("sampling", "vb"))
+                       method = c("sampling", "vb"), ...) {
+  lifecycle::deprecate_warn(
+    "1.5.0", "rstan_opts()",
+    "stan_opts()"
+  )
+  method <- arg_match(method)
   # shared everywhere opts
   if (is.null(object)) {
     object <- stanmodels$estimate_infections
@@ -630,10 +879,14 @@ rstan_opts <- function(object = NULL,
     object = object,
     method = method
   )
-  if (method %in% "sampling") {
-    opts <- c(opts, rstan_sampling_opts(samples = samples, ...))
-  } else if (method %in% "vb") {
-    opts <- c(opts, rstan_vb_opts(samples = samples, ...))
+  if (method == "sampling") {
+    opts <- c(
+      opts, stan_sampling_opts(samples = samples, backend = "rstan", ...)
+    )
+  } else if (method == "vb") {
+    opts <- c(
+      opts, stan_vb_opts(samples = samples, ...)
+    )
   }
   return(opts)
 }
@@ -642,11 +895,21 @@ rstan_opts <- function(object = NULL,
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Defines a list specifying the arguments passed to underlying stan
-#' backend functions via `rstan_sampling_opts()` and `rstan_vb_opts()`. Custom
+#' backend functions via [stan_sampling_opts()] and [stan_vb_opts()]. Custom
 #' settings can be supplied which override the defaults.
 #'
+#' @param object Stan model object. By default uses the compiled package
+#' default if using the "rstan" backend, and the default model obtained using
+#' [epinow2_cmdstan_model()] if using the "cmdstanr" backend.
+#'
+#' @param method A character string, defaulting to sampling. Currently supports
+#' MCMC sampling ("sampling") or approximate posterior sampling via
+#' variational inference ("vb") and, as experimental features if the
+#' "cmdstanr" backend is used, approximate posterior sampling with the
+#' laplace algorithm ("laplace") or pathfinder ("pathfinder").
+#'
 #' @param backend Character string indicating the backend to use for fitting
-#' stan models. Currently only "rstan" is supported.
+#' stan models. Supported arguments are "rstan" (default) or "cmdstanr".
 #'
 #' @param init_fit `r lifecycle::badge("experimental")`
 #' Character string or `stanfit` object, defaults to NULL. Should an initial
@@ -654,61 +917,116 @@ rstan_opts <- function(object = NULL,
 #' national level fit to parametrise regional level fits. Optionally a
 #' character string can be passed with the currently supported option being
 #' "cumulative". This fits the model to cumulative cases and may be useful for
-#'  certain data sets where the sampler gets stuck or struggles to initialise.
-#' See `init_cumulative_fit()` for details.
+#' certain data sets where the sampler gets stuck or struggles to initialise.
+#' See [init_cumulative_fit()] for details.
 #'
 #' This implementation is based on the approach taken in
 #' [epidemia](https://github.com/ImperialCollegeLondon/epidemia/) authored by
 #' James Scott.
 #'
+#' This argument is deprecated and the default (NULL) will be used from
+#' the next version.
+#'
 #' @param return_fit Logical, defaults to TRUE. Should the fit stan model be
 #' returned.
 #'
-#' @param ... Additional parameters to pass  underlying option functions.
+#' @param ... Additional parameters to pass to underlying option functions,
+#'   [stan_sampling_opts()] or [stan_vb_opts()], depending on the method
 #'
-#' @return A list of arguments to pass to the appropriate rstan functions.
-#' @author Sam Abbott
+#' @importFrom rlang arg_match
+#' @return A `<stan_opts>` object of arguments to pass to the appropriate
+#' rstan functions.
 #' @export
 #' @inheritParams rstan_opts
-#' @seealso rstan_opts
+#' @seealso [stan_sampling_opts()] [stan_vb_opts()]
 #' @examples
-#' # using default of rstan::sampling
+#' # using default of [rstan::sampling()]
 #' stan_opts(samples = 1000)
 #'
 #' # using vb
 #' stan_opts(method = "vb")
-stan_opts <- function(samples = 2000,
-                      backend = "rstan",
+stan_opts <- function(object = NULL,
+                      samples = 2000,
+                      method = c("sampling", "vb", "laplace", "pathfinder"),
+                      backend = c("rstan", "cmdstanr"),
                       init_fit = NULL,
                       return_fit = TRUE,
                       ...) {
-  backend <- match.arg(backend, choices = "rstan")
-  if (backend %in% "rstan") {
-    opts <- rstan_opts(
-      samples = samples,
-      ...
+  method <- arg_match(method)
+  backend_passed <- !missing(backend)
+  backend <- arg_match(backend)
+  if (backend == "cmdstanr" && !requireNamespace("cmdstanr", quietly = TRUE)) {
+    stop(
+      "The `cmdstanr` package needs to be installed for using the ",
+      "\"cmdstanr\" backend."
     )
   }
+  opts <- list()
+  if (!is.null(object)) {
+    if (backend_passed) {
+      warning(
+        "`backend` option will be ignored as a stan model object has been ",
+        "passed."
+      )
+    }
+    if (inherits(object, "stanmodel")) {
+      backend <- "rstan"
+    } else if (inherits(object, "CmdStanModel")) {
+      backend <- "cmdstanr"
+    } else {
+      stop("`object` must be a stan model object")
+    }
+  } else {
+    backend <- arg_match(backend, values = c("rstan", "cmdstanr"))
+    opts <- c(opts, list(backend = backend))
+  }
+  opts <- c(opts, list(
+    object = object,
+    method = method
+  ))
+  if (method == "sampling") {
+    opts <- c(
+      opts, stan_sampling_opts(samples = samples, backend = backend, ...)
+    )
+  } else if (method == "vb") {
+    opts <- c(opts, stan_vb_opts(samples = samples, ...))
+  } else if (method == "laplace") {
+    opts <- c(
+      opts, stan_laplace_opts(backend = backend, ...)
+    )
+  } else if (method == "pathfinder") {
+    opts <- c(
+      opts, stan_pathfinder_opts(samples = samples, backend = backend, ...)
+    )
+  }
+
   if (!is.null(init_fit)) {
+    deprecate_warn(
+      when = "1.5.0",
+      what = "stan_opts(init_fit)",
+      details = paste("This argument is deprecated and the default (NULL)",
+                      "will be used from the next version.")
+    )
     if (is.character(init_fit)) {
-      init_fit <- match.arg(init_fit, choices = "cumulative")
+      init_fit <- arg_match(init_fit, values = "cumulative")
     }
     opts$init_fit <- init_fit
   }
   opts <- c(opts, list(return_fit = return_fit))
+  attr(opts, "class") <- c("stan_opts", class(opts))
   return(opts)
 }
 
 #' Return an _opts List per Region
 #'
 #' @description `r lifecycle::badge("maturing")`
-#' Define a list of `_opts()` to pass to `regional_epinow` `_opts()` accepting
+#' Define a list of `_opts()` to pass to [regional_epinow()] `_opts()` accepting
 #' arguments. This is useful when different settings are needed between regions
-#' within a single `regional_epinow` call. Using `opts_list` the defaults can
-#' be applied to all regions present with an override passed to regions as
-#' necessary (either within `opts_list` or externally).
+#' within a single [regional_epinow()] call. Using [opts_list()] the defaults
+#' can be applied to all regions present with an override passed to regions as
+#' necessary (either within [opts_list()] or externally).
 #'
-#' @param opts An `_opts()` function call such as `rt_opts()`.
+#' @param opts An `_opts()` function call such as [rt_opts()].
 #'
 #' @param reported_cases A data frame containing a `region` variable
 #' indicating the target regions.
@@ -716,10 +1034,11 @@ stan_opts <- function(samples = 2000,
 #' @param ... Optional override for region defaults. See the examples
 #' for use case.
 #'
+#' @importFrom utils modifyList
+#'
 #' @return A named list of options per region which can be passed to the `_opt`
 #' accepting arguments of `regional_epinow`.
-#' @author Sam Abbott
-#' @seealso regional_epinow rt_opts
+#' @seealso [regional_epinow()] [rt_opts()]
 #' @export
 #' @examples
 #' # uses example case vector
@@ -743,7 +1062,7 @@ opts_list <- function(opts, reported_cases, ...) {
   regions <- unique(reported_cases$region)
   default <- rep(list(opts), length(regions))
   names(default) <- regions
-  out <- update_list(default, list(...))
+  out <- modifyList(default, list(...))
   return(out)
 }
 
@@ -759,7 +1078,6 @@ opts_list <- function(opts, reported_cases, ...) {
 #' @param region A character string indicating a region of interest.
 #'
 #' @return A list of options
-#' @author Sam Abbott
 filter_opts <- function(opts, region) {
   if (region %in% names(opts)) {
     out <- opts[[region]]

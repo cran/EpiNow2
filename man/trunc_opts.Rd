@@ -4,20 +4,32 @@
 \alias{trunc_opts}
 \title{Truncation Distribution Options}
 \usage{
-trunc_opts(dist = dist_spec())
+trunc_opts(dist = Fixed(0), tolerance = 0.001, weight_prior = FALSE)
 }
 \arguments{
 \item{dist}{A delay distribution or series of delay distributions reflecting
-the truncation generated using \code{\link[=dist_spec]{dist_spec()}} or \code{\link[=estimate_truncation]{estimate_truncation()}}.
-Default is an empty call to \code{\link[=dist_spec]{dist_spec()}}, i.e. no truncation}
+the truncation. It can be specified using the probability distributions
+interface in \code{EpiNow2} (See \code{?EpiNow2::Distributions}) or estimated using
+\code{\link[=estimate_truncation]{estimate_truncation()}}, which returns a \code{dist} object, suited
+for use here out-of-box. Default is a fixed distribution with maximum 0, i.e.
+no truncation.}
+
+\item{tolerance}{Numeric; the desired tolerance level.}
+
+\item{weight_prior}{Logical; if TRUE, the truncation prior will be weighted
+by the number of observation data points, in doing so approximately placing
+an independent prior at each time step and usually preventing the
+posteriors from shifting. If FALSE (default), no weight will be applied,
+i.e. the truncation distribution will be treated as a single parameter.}
 }
 \value{
-A list summarising the input truncation distribution.
+A \verb{<trunc_opts>} object summarising the input truncation
+distribution.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Returns a truncation distribution formatted for usage by
-downstream functions. See \code{estimate_truncation()} for an approach to
+downstream functions. See \code{\link[=estimate_truncation]{estimate_truncation()}} for an approach to
 estimate these distributions.
 }
 \examples{
@@ -25,13 +37,9 @@ estimate these distributions.
 trunc_opts()
 
 # truncation dist
-trunc_opts(dist = dist_spec(mean = 3, sd = 2, max = 10))
+trunc_opts(dist = LogNormal(mean = 3, sd = 2, max = 10))
 }
 \seealso{
-convert_to_logmean convert_to_logsd bootstrapped_dist_fit dist_spec
-}
-\author{
-Sam Abbott
-
-Sebastian Funk
+\code{\link[=convert_to_logmean]{convert_to_logmean()}} \code{\link[=convert_to_logsd]{convert_to_logsd()}}
+\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link[=dist_spec]{dist_spec()}}
 }

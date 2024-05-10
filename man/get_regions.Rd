@@ -8,7 +8,7 @@ get_regions(results_dir)
 }
 \arguments{
 \item{results_dir}{A character string giving the directory in which results
-are stored (as produced by \code{regional_rt_pipeline}).}
+are stored (as produced by \code{\link[=regional_epinow]{regional_epinow()}}).}
 }
 \value{
 A named character vector containing the results to plot.
@@ -16,6 +16,4 @@ A named character vector containing the results to plot.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 }
-\author{
-Sam Abbott
-}
+\keyword{internal}

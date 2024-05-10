@@ -43,7 +43,7 @@ of sampling process.}
 \item{future}{Logical, defaults to \code{FALSE}. Should stan chains be run in
 parallel using \code{future}. This allows users to have chains fail gracefully
 (i.e when combined with \code{max_execution_time}). Should be combined with a
-call to \code{future::plan}.}
+call to \code{\link[future:plan]{future::plan()}}.}
 
 \item{max_execution_time}{Numeric, defaults to Inf (seconds). If set wil
 kill off processing of each chain if not finished within the specified
@@ -51,20 +51,12 @@ timeout. When more than 2 chains finish successfully estimates will still be
 returned. If less than 2 chains return within the allowed time then
 estimation will fail with an informative error.}
 
-\item{...}{Additional parameters to pass to \code{rstan::sampling}.}
+\item{...}{Additional parameters to pass to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}.}
 }
 \value{
-A list of arguments to pass to \code{rstan::sampling}.
+A list of arguments to pass to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Defines a list specifying the arguments passed to
-\code{rstan::sampling}. Custom settings can be supplied which override the
-defaults.
-}
-\examples{
-rstan_sampling_opts(samples = 2000)
-}
-\author{
-Sam Abbott
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Deprecated; use \code{\link[=stan_sampling_opts]{stan_sampling_opts()}} instead.
 }

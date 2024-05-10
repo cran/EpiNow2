@@ -13,11 +13,11 @@ get_regional_results(
 )
 }
 \arguments{
-\item{regional_output}{A list of output as produced by \code{regional_epinow} and
-stored in the \code{regional} list.}
+\item{regional_output}{A list of output as produced by \code{\link[=regional_epinow]{regional_epinow()}}
+and stored in the \code{regional} list.}
 
 \item{results_dir}{A character string indicating the folder containing the
-\code{EpiNow2} results to extract.}
+\code{{EpiNow2}} results to extract.}
 
 \item{date}{A Character string (in the format "yyyy-mm-dd") indicating the
 date to extract data for. Defaults to "latest" which finds the latest
@@ -37,44 +37,11 @@ Summarises results across regions either from input or from disk. See the
 examples for details.
 }
 \examples{
-\donttest{
-# construct example distributions
-generation_time <- get_generation_time(
- disease = "SARS-CoV-2", source = "ganyani"
-)
-incubation_period <- get_incubation_period(
- disease = "SARS-CoV-2", source = "lauer"
-)
-reporting_delay <- estimate_delay(rlnorm(100, log(6), 1), max_value = 10)
-
-# example case vector
-cases <- example_confirmed[1:30]
-cases <- data.table::rbindlist(list(
-  data.table::copy(cases)[, region := "testland"],
-  cases[, region := "realland"]
+# get example multiregion estimates
+regional_out <- readRDS(system.file(
+    package = "EpiNow2", "extdata", "example_regional_epinow.rds"
 ))
 
-# save results to tmp folder
-dir <- file.path(tempdir(check = TRUE), "results")
-# run multiregion estimates
-regional_out <- regional_epinow(
-  reported_cases = cases,
-  generation_time = generation_time_opts(generation_time),
-  delays = delay_opts(incubation_period + reporting_delay),
-  rt = rt_opts(rw = 7), gp = NULL,
-  output = c("regions", "latest"),
-  target_folder = dir,
-  return_output = TRUE
-)
 # from output
 results <- get_regional_results(regional_out$regional, samples = FALSE)
-names(results)
-
-# from a folder
-folder_results <- get_regional_results(results_dir = dir, samples = FALSE)
-names(folder_results)
-}
-}
-\author{
-Sam Abbott
 }

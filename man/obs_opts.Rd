@@ -5,12 +5,13 @@
 \title{Observation Model Options}
 \usage{
 obs_opts(
-  family = "negbin",
-  phi = c(0, 1),
+  family = c("negbin", "poisson"),
+  phi = list(mean = 0, sd = 1),
   weight = 1,
   week_effect = TRUE,
   week_length = 7,
-  scale = list(),
+  scale = 1,
+  na = c("missing", "accumulate"),
   likelihood = TRUE,
   return_likelihood = FALSE
 )
@@ -19,12 +20,14 @@ obs_opts(
 \item{family}{Character string defining the observation model. Options are
 Negative binomial ("negbin"), the default, and Poisson.}
 
-\item{phi}{A numeric vector of length 2, defaults to 0, 1. Indicates the
-mean and standard deviation of the normal prior used for the observation
-process.}
+\item{phi}{Overdispersion parameter of the reporting process, used only if
+\code{familiy} is "negbin". Can be supplied either as a single numeric value
+(fixed overdispersion) or a list with numeric elements mean (\code{mean}) and
+standard deviation (\code{sd}) defining a normally distributed overdispersion.
+Defaults to a list with elements \code{mean = 0} and \code{sd = 1}.}
 
-\item{weight}{Numeric, defaults to 1. Weight to give the observed data in
-the log density.}
+\item{weight}{Numeric, defaults to 1. Weight to give the observed data in the
+log density.}
 
 \item{week_effect}{Logical defaulting to \code{TRUE}. Should a day of the week
 effect be used in the observation model.}
@@ -33,10 +36,21 @@ effect be used in the observation model.}
 7 days. This can be modified if data aggregated over a period other than a
 week or if data has a non-weekly periodicity.}
 
-\item{scale}{List, defaulting to an empty list. Should an scaling factor be
-applied to map latent infections (convolved to date of report). If none
-empty a mean (\code{mean}) and standard deviation (\code{sd}) needs to be supplied
-defining the normally distributed scaling factor.}
+\item{scale}{Scaling factor to be applied to map latent infections (convolved
+to date of report). Can be supplied either as a single numeric value (fixed
+scale) or a list with numeric elements mean (\code{mean}) and standard deviation
+(\code{sd}) defining a normally distributed scaling factor. Defaults to 1, i.e.
+no scaling.}
+
+\item{na}{Character. Options are "missing" (the default) and "accumulate".
+This determines how NA values in the data are interpreted. If set to
+"missing", any NA values in the observation data set will be interpreted as
+missing and skipped in the likelihood. If set to "accumulate", modelled
+observations will be accumulated and added to the next non-NA data point.
+This can be used to model incidence data that is reported at less than
+daily intervals. If set to "accumulate", the first data point is not
+included in the likelihood but used only to reset modelled observations to
+zero.}
 
 \item{likelihood}{Logical, defaults to \code{TRUE}. Should the likelihood be
 included in the model.}
@@ -45,7 +59,7 @@ included in the model.}
 be returned by the model.}
 }
 \value{
-A list of observation model settings.
+An \verb{<obs_opts>} object of observation model settings.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -61,7 +75,4 @@ obs_opts(week_effect = TRUE)
 
 # Scale reported data
 obs_opts(scale = list(mean = 0.2, sd = 0.02))
-}
-\author{
-Sam Abbott
 }

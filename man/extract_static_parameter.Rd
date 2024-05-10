@@ -9,15 +9,13 @@ extract_static_parameter(param, samples)
 \arguments{
 \item{param}{Character string indicating the parameter to extract}
 
-\item{samples}{Extracted stan model (using \code{rstan::extract})}
+\item{samples}{Extracted stan model (using \code{\link[rstan:stanfit-method-extract]{rstan::extract()}})}
 }
 \value{
-A data frame containing the parameter name, sample id and sample
+A \verb{<data.frame>} containing the parameter name, sample id and sample
 value
 }
 \description{
 Extract Samples from a Parameter with a Single Dimension
 }
-\author{
-Sam Abbott
-}
+\keyword{internal}

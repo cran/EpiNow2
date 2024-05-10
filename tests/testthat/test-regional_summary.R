@@ -1,12 +1,12 @@
-
-
-fit <- readRDS("test-models/regional_epinow/static.rds")
-cases <- readRDS("test-models/regional_epinow/cases.rds")
+fit <- readRDS(system.file(
+  package = "EpiNow2", "extdata", "example_regional_epinow.rds"
+))
+cases <- fit$summary$reported_cases
 
 test_that("regional_summary works with default settings", {
   out <- regional_summary(
     regional_output = fit$regional,
-    reported_cases = cases
+    data = cases
   )
   expect_equal(
     names(out),
@@ -22,7 +22,7 @@ test_that("regional_summary works with default settings", {
 test_that("regional_summary works when no plots are requested", {
   out <- regional_summary(
     regional_output = fit$regional,
-    reported_cases = cases,
+    data = cases,
     plot = FALSE
   )
   expect_equal(
@@ -38,21 +38,21 @@ test_that("regional_summary works when no plots are requested", {
 test_that("regional_summary works with a lower and upper bound of 0", {
   regional_zero_fit <- lapply(fit$regional, function(x) {
     numeric_estimate <- x$summary[
-        measure == "New confirmed cases by infection date"
+        measure == "New infections per day"
       ]$numeric_estimate[[1]]
     uppers <- grep("upper_", colnames(numeric_estimate), value = TRUE)
     lowers <- grep("lower_", colnames(numeric_estimate), value = TRUE)
     numeric_estimate[, paste(uppers) := 0]
     numeric_estimate[, paste(lowers) := 0]
     x$summary[
-        measure == "New confirmed cases by infection date",
+        measure == "New infections per day",
         numeric_estimate := list(..numeric_estimate)
       ]
     return(x)
   })
   out <- regional_summary(
     regional_output = regional_zero_fit,
-    reported_cases = cases,
+    data = cases,
     plot = TRUE
   )
   expect_equal(

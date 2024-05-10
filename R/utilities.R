@@ -62,8 +62,8 @@ make_conf <- function(value, CrI = 90, reverse = FALSE) {
   )
   conf <- paste0(
     value$median, " (",
-    ifelse(!reverse, CrI$lower, CrI$upper), " -- ",
-    ifelse(!reverse, CrI$upper, CrI$lower), ")"
+    ifelse(reverse, CrI$upper, CrI$lower), " -- ",
+    ifelse(reverse, CrI$lower, CrI$upper), ")"
   )
   return(conf)
 }
@@ -146,10 +146,11 @@ R_to_growth <- function(R, gamma_mean, gamma_sd) {
 #' Allocate Delays into Required Stan Format
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Allocate delays for stan. Used in `delay_opts()`.
+#' Allocate delays for stan. Used in [delay_opts()].
 #' @param delay_var List of numeric delays
 #' @param no_delays Numeric, number of delays
 #' @return A numeric array
+#' @keywords internal
 allocate_delays <- function(delay_var, no_delays) {
   if (no_delays > 0) {
     out <- unlist(delay_var)
@@ -163,12 +164,13 @@ allocate_delays <- function(delay_var, no_delays) {
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Allocate missing parameters to be empty two dimensional arrays. Used
-#' internally by `simulate_infections.`
+#' internally by [forecast_infections()].
 #' @param data A list of parameters
 #' @param params A character vector of parameters to allocate to
 #' empty if missing.
 #' @param n Numeric, number of samples to assign an empty array
 #' @return A list of parameters some allocated to be empty
+#' @keywords internal
 allocate_empty <- function(data, params, n = 0) {
   for (param in params) {
     if (!exists(param, data)) {
@@ -196,13 +198,14 @@ allocate_empty <- function(data, params, n = 0) {
 #'
 #' @return A logical vector of named output arguments
 #' @importFrom  futile.logger flog.info flog.debug
+#' @keywords internal
 match_output_arguments <- function(input_args = NULL,
                                    supported_args = NULL,
                                    logger = NULL,
                                    level = "info") {
-  if (level %in% "info") {
+  if (level == "info") {
     flog_fn <- futile.logger::flog.info
-  } else if (level %in% "debug") {
+  } else if (level == "debug") {
     flog_fn <- futile.logger::flog.debug
   }
   # make supported args a logical vector
@@ -245,7 +248,7 @@ match_output_arguments <- function(input_args = NULL,
 #' @param target_dir A character string indicating the target directory for the
 #' file.
 #'
-#' @param ... Additional arguments passed to `rstan::expose_stan_functions`.
+#' @param ... Additional arguments passed to [rstan::expose_stan_functions()].
 #'
 #' @return No return value, called for side effects
 #' @export
@@ -272,7 +275,7 @@ expose_stan_fns <- function(files, target_dir, ...) {
 #' @description `r lifecycle::badge("stable")`
 #' Convert from mean and standard deviation to the log mean of the
 #' lognormal distribution. Useful for defining distributions supported by
-#' `estimate_infections`, `epinow`, and `regional_epinow`.
+#' [estimate_infections()], [epinow()], and [regional_epinow()].
 #' @param mean Numeric, mean of a distribution
 #' @param sd Numeric, standard deviation of a distribution
 #'
@@ -291,7 +294,7 @@ convert_to_logmean <- function(mean, sd) {
 #' @description `r lifecycle::badge("stable")`
 #' Convert from mean and standard deviation to the log standard deviation of the
 #' lognormal distribution. Useful for defining distributions supported by
-#' `estimate_infections`, `epinow`, and `regional_epinow`.
+#' [estimate_infections()], [epinow()], and [regional_epinow()].
 #' @param mean Numeric, mean of a distribution
 #' @param sd Numeric, standard deviation of a distribution
 #'
@@ -306,9 +309,9 @@ convert_to_logsd <- function(mean, sd) {
 }
 
 discretised_lognormal_pmf <- function(meanlog, sdlog, max_d, reverse = FALSE) {
-  pmf <- plnorm(1:max_d, meanlog, sdlog) -
-    plnorm(0:(max_d - 1), meanlog, sdlog)
-  pmf <- as.vector(pmf) / as.vector(plnorm(max_d, meanlog, sdlog))
+  pmf <- plnorm(1:(max_d + 1), meanlog, sdlog) -
+    plnorm(0:max_d, meanlog, sdlog)
+  pmf <- as.vector(pmf) / as.vector(plnorm(max_d + 1, meanlog, sdlog))
   if (reverse) {
     pmf <- rev(pmf)
   }
@@ -316,7 +319,9 @@ discretised_lognormal_pmf <- function(meanlog, sdlog, max_d, reverse = FALSE) {
 }
 
 discretised_lognormal_pmf_conv <- function(x, meanlog, sdlog) {
-  pmf <- discretised_lognormal_pmf(meanlog, sdlog, length(x), reverse = TRUE)
+  pmf <- discretised_lognormal_pmf(
+    meanlog, sdlog, length(x) - 1, reverse = TRUE
+  )
   conv <- sum(x * pmf, na.rm = TRUE)
   return(conv)
 }
@@ -325,9 +330,10 @@ discretised_gamma_pmf <- function(mean, sd, max_d, zero_pad = 0,
                                   reverse = FALSE) {
   alpha <- exp(2 * (log(mean) - log(sd)))
   beta <- exp(log(mean) - 2 * log(sd))
-  pmf <- pgamma(1:max_d, shape = alpha, scale = beta) -
-    pgamma(0:(max_d - 1), shape = alpha, scale = beta)
-  pmf <- as.vector(pmf) / as.vector(pgamma(max_d, shape = alpha, scale = beta))
+  pmf <- pgamma(1:(max_d + 1), shape = alpha, scale = beta) -
+    pgamma(0:max_d, shape = alpha, scale = beta)
+  pmf <- as.vector(pmf) /
+    as.vector(pgamma(max_d + 1, shape = alpha, scale = beta))
   if (zero_pad > 0) {
     pmf <- c(rep(0, zero_pad), pmf)
   }
@@ -337,40 +343,23 @@ discretised_gamma_pmf <- function(mean, sd, max_d, zero_pad = 0,
   return(pmf)
 }
 
-#' Update a List
-#'
-#' @description `r lifecycle::badge("stable")`
-#' Used to handle updating settings in a list. For example when making
-#' changes to `opts_list` output.
-#' @param defaults A list of default settings
-#' @param optional A list of optional settings to override defaults
-#' @return A list
-#' @export
-update_list <- function(defaults = list(), optional = list()) {
-  if (length(optional) != 0) {
-    defaults <- defaults[setdiff(names(defaults), names(optional))]
-    updated <- c(defaults, optional)
-  } else {
-    updated <- defaults
-  }
-  return(updated)
-}
-
 #' Adds a day of the week vector
 #'
 #' @param dates Vector of dates
 #' @param week_effect Numeric from 1 to 7 defaults to 7
 #'
 #' @return A numeric vector containing the period day of the week index
-#' @export
+#' @keywords internal
 #' @importFrom lubridate wday
 #' @examples
+#' \dontrun{
 #' dates <- seq(as.Date("2020-03-15"), by = "days", length.out = 15)
 #' # Add date based day of week
 #' add_day_of_week(dates, 7)
 #'
 #' # Add shorter week
 #' add_day_of_week(dates, 4)
+#' }
 add_day_of_week <- function(dates, week_effect = 7) {
   if (week_effect == 7) {
     day_of_week <- lubridate::wday(dates, week_start = 1)
@@ -383,10 +372,10 @@ add_day_of_week <- function(dates, week_effect = 7) {
 
 #' Set to Single Threading
 #'
-#' This function sets the threads used by data.table to 1 in the parent function
-#' and then restores the initial data.table threads when the function exits.
-#' This is primarily used as an internal function inside of other functions
-#' and will generally not be used on its own.
+#' This function sets the threads used by `{data.table}` to 1 in the parent
+#' function and then restores the initial `{data.table}` threads when the
+#' function exits. This is primarily used as an internal function inside of
+#' other functions and will generally not be used on its own.
 #'
 #' @importFrom data.table getDTthreads setDTthreads
 #' @keywords internal
@@ -403,7 +392,6 @@ add_day_of_week <- function(dates, week_effect = 7) {
 #' data.table::getDTthreads()
 #' }
 #' @export
-
 set_dt_single_thread <- function() {
   a <- list2env(x = list(dt_previous_threads = data.table::getDTthreads()))
 
@@ -418,8 +406,7 @@ set_dt_single_thread <- function() {
 }
 
 #' @importFrom stats glm median na.omit pexp pgamma plnorm quasipoisson rexp
-#' @importFrom lifecycle deprecate_warn
-#' @importFrom stats rlnorm rnorm rpois runif sd var rgamma
+#' @importFrom stats rlnorm rnorm rpois runif sd var rgamma pnorm
 globalVariables(
   c(
     "bottom", "cases", "confidence", "confirm", "country_code", "crps",
@@ -427,22 +414,21 @@ globalVariables(
     "date_onset_sample", "date_onset_symptoms", "date_onset.x", "date_onset.y",
     "date_report", "day", "doubling_time", "effect",
     "Effective reproduction no.", "estimates",
-    "Expected change in daily cases", "fit_meas", "goodness_of_fit",
+    "Expected change in daily reports", "fit_meas", "goodness_of_fit",
     "gt_sample", "import_status", "imported", "index", "latest", "little_r",
     "lower", "max_time", "mean_R", "Mean(R)", "metric", "mid_lower",
-    "mid_upper", "min_time", "model", "modifier", "n", "New",
-    "confirmed cases by infection date", "overall_little_r", "params",
+    "mid_upper", "min_time", "model", "modifier", "n", "New", "params",
     "prob_control", "provnum_ne", "R0_range", "region", "region_code",
     "report_delay", "results_dir", "rt", "rt_type",
     "sample_R", "sampled_r", "sd_R", "sd_rt", "Std(R)", "t_end", "t_start",
     "target_date", "time", "time_varying_r", "top", "total", "type", "upper",
     "value", "var", "vars", "viridis_palette", "window", ".", "%>%",
-    "New confirmed cases by infection date", "Data", "R", "reference",
+    "New infections per day", "Data", "R", "reference",
     ".SD", "day_of_week", "forecast_type", "measure", "numeric_estimate",
     "point", "strat", "estimate", "breakpoint", "variable", "value.V1",
-    "central_lower", "central_upper", "mean_sd", "sd_sd", "average_7",
+    "central_lower", "central_upper", "mean_sd", "sd_sd", "average_7_day",
     "..lowers", "..upper_CrI", "..uppers", "timing", "dataset", "last_confirm",
     "report_date", "secondary", "id", "conv", "meanlog", "primary", "scaled",
-    "scaling", "sdlog"
+    "scaling", "sdlog", "lookup", "new_draw", ".draw"
   )
 )

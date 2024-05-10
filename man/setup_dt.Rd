@@ -4,17 +4,18 @@
 \alias{setup_dt}
 \title{Convert to Data Table}
 \usage{
-setup_dt(reported_cases)
+setup_dt(data)
 }
 \arguments{
-\item{reported_cases}{A data frame of confirmed cases (confirm) by date
-(date). confirm must be integer and date must be in date format.}
+\item{data}{A \verb{<data.frame>} of confirmed cases (confirm) by date
+(date). \code{confirm} must be numeric and \code{date} must be in date format.}
 }
 \value{
 A data table
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Convenience function that sets the number of \code{data.table} cores to 1 and
-maps input to be a \code{data.table}
+Convenience function that sets the number of \code{{data.table}} cores to 1 and
+maps input to be a \code{{data.table}}
 }
+\keyword{internal}

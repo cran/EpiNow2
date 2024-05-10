@@ -1,27 +1,29 @@
 #' Real-time Rt Estimation, Forecasting and Reporting by Region
 #'
 #' @description `r lifecycle::badge("maturing")`
-#' Efficiently runs `epinow()` across multiple regions in an efficient manner
+#' Efficiently runs [epinow()] across multiple regions in an efficient manner
 #' and conducts basic data checks and cleaning such as removing regions with
 #' fewer than `non_zero_points` as these are unlikely to produce reasonable
 #' results whilst consuming significant resources. See the documentation for
-#' `epinow` for further information.
+#' [epinow()] for further information.
 #'
 #' By default all arguments supporting input from `_opts()` functions are
 #' shared across regions (including delays, truncation, Rt settings, stan
 #' settings, and gaussian process settings). Region specific settings are
 #' supported by passing a named list of `_opts()` calls (with an entry per
-#' region) to the relevant argument. A helper function (`opts_list`) is
+#' region) to the relevant argument. A helper function ([opts_list()]) is
 #' available to facilitate building this list.
 #'
 #' Regions can be estimated in parallel using the `{future}` package (see
-#' `setup_future`). The progress of producing estimates across multiple regions
-#' is tracked using the `progressr` package. Modify this behaviour using
-#' progressr::handlers and enable it in batch by setting
+#' [setup_future()]). The progress of producing estimates across multiple
+#' regions is tracked using the `{progressr}` package. Modify this behaviour
+#' using [progressr::handlers()] and enable it in batch by setting
 #' `R_PROGRESSR_ENABLE=TRUE` as an environment variable.
 #'
-#' @param reported_cases A data frame of confirmed cases (confirm) by date
+#' @param data A `<data.frame>` of confirmed cases (confirm) by date
 #' (date), and region (`region`).
+#'
+#' @param reported_cases Deprecated; use `data` instead.
 #'
 #' @param non_zero_points Numeric, the minimum number of time points with
 #' non-zero cases in a region required for that region to be evaluated.
@@ -36,22 +38,22 @@
 #' summarised estimates and summary statistics. If `target_folder` is not NULL
 #' then the default is also to copy all results into a latest folder.
 #'
-#' @param summary_args A list of arguments passed to `regional_summary`. See
-#' the `regional_summary` documentation for details.
+#' @param summary_args A list of arguments passed to [regional_summary()]. See
+#' the [regional_summary()] documentation for details.
 #'
 #' @param verbose Logical defaults to FALSE. Outputs verbose progress messages
-#' to the console from `epinow`.
+#' to the console from [epinow()].
 #'
-#' @param ... Pass additional arguments to `epinow`. See the documentation for
-#' `epinow` for details.
+#' @param ... Pass additional arguments to [epinow()]. See the documentation for
+#' [epinow()] for details.
 #'
 #' @inheritParams epinow
 #' @inheritParams regional_summary
 #' @return A list of output stratified at the top level into regional output
 #' and across region output summary output
 #' @export
-#' @seealso epinow estimate_infections forecast_infections
-#' @seealso setup_future regional_summary
+#' @seealso [epinow()] [estimate_infections()] [setup_future()]
+#' [regional_summary()]
 #' @importFrom future.apply future_lapply
 #' @importFrom data.table as.data.table setDT copy setorder
 #' @importFrom purrr safely map compact keep
@@ -65,20 +67,6 @@
 #' old_opts <- options()
 #' options(mc.cores = ifelse(interactive(), 4, 1))
 #'
-#' # construct example distributions
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
-#' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
-#' )
-#' reporting_delay <- dist_spec(
-#'   mean = convert_to_logmean(2, 1),
-#'   mean_sd = 0.1,
-#'   sd = convert_to_logsd(2, 1),
-#'   sd_sd = 0.1, max = 15
-#' )
-#'
 #' # uses example case vector
 #' cases <- example_confirmed[1:60]
 #' cases <- data.table::rbindlist(list(
@@ -88,10 +76,11 @@
 #'
 #' # run epinow across multiple regions and generate summaries
 #' # samples and warmup have been reduced for this example
+#' # for more examples, see the "estimate_infections examples" vignette
 #' def <- regional_epinow(
-#'   reported_cases = cases,
-#'   generation_time = generation_time_opts(generation_time),
-#'   delays = delay_opts(incubation_period + reporting_delay),
+#'   data = cases,
+#'   generation_time = generation_time_opts(example_generation_time),
+#'   delays = delay_opts(example_incubation_period + example_reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
 #'   stan = stan_opts(
 #'     samples = 100, warmup = 200,
@@ -99,28 +88,10 @@
 #'   ),
 #'   verbose = interactive()
 #' )
-#'
-#' # apply a different rt method per region
-#' # (here a gaussian process and a weekly random walk)
-#' gp <- opts_list(gp_opts(), cases)
-#' gp <- update_list(gp, list(realland = NULL))
-#' rt <- opts_list(rt_opts(), cases, realland = rt_opts(rw = 7))
-#' region_rt <- regional_epinow(
-#'   reported_cases = cases,
-#'   generation_time = generation_time_opts(generation_time),
-#'   delays = delay_opts(incubation_period + reporting_delay),
-#'   rt = rt, gp = gp,
-#'   stan = stan_opts(
-#'     samples = 100, warmup = 200,
-#'     control = list(adapt_delta = 0.95)
-#'   ),
-#'   verbose = interactive()
-#' )
-#'
 #' options(old_opts)
 #' }
-regional_epinow <- function(reported_cases,
-                            generation_time,
+regional_epinow <- function(data,
+                            generation_time = generation_time_opts(),
                             delays = delay_opts(),
                             truncation = trunc_opts(),
                             rt = rt_opts(),
@@ -140,7 +111,23 @@ regional_epinow <- function(reported_cases,
                             return_output = FALSE,
                             summary_args = list(),
                             verbose = FALSE,
-                            logs = tempdir(check = TRUE), ...) {
+                            logs = tempdir(check = TRUE), ...,
+                            reported_cases) {
+  # Warning for deprecated arguments
+  if (!missing(reported_cases)) {
+     if (!missing(data)) {
+       stop("Can't have `reported_cases` and `data` arguments. ",
+            "Use `data` instead."
+       )
+    }
+    lifecycle::deprecate_warn(
+      "1.5.0",
+      "regional_epinow(reported_cases)",
+      "regional_epinow(data)",
+      "The argument will be removed completely in the next version."
+    )
+    data <- reported_cases
+  }
   # supported output
   output <- match_output_arguments(output,
     supported_args = c(
@@ -153,7 +140,7 @@ regional_epinow <- function(reported_cases,
   # make timing compulsory
   output["timing"] <- TRUE
   if (missing(target_date)) {
-    target_date <- as.character(max(reported_cases$date))
+    target_date <- as.character(max(data$date))
   }
 
   # setup logging -----------------------------------------------------------
@@ -175,7 +162,7 @@ regional_epinow <- function(reported_cases,
   }
 
   # clean regions
-  reported_cases <- clean_regions(reported_cases, non_zero_points)
+  reported_cases <- clean_regions(data, non_zero_points)
   regions <- unique(reported_cases$region)
 
   # run regions (make parallel using future::plan)
@@ -197,7 +184,7 @@ regional_epinow <- function(reported_cases,
       stan = stan,
       horizon = horizon,
       CrIs = CrIs,
-      reported_cases = reported_cases,
+      data = reported_cases,
       target_folder = target_folder,
       target_date = target_date,
       output = output,
@@ -234,7 +221,7 @@ regional_epinow <- function(reported_cases,
       c(
         list(
           regional_output = sucessful_regional_out,
-          reported_cases = reported_cases,
+          data = reported_cases,
           return_output = return_output
         ),
         summary_args
@@ -278,13 +265,13 @@ regional_epinow <- function(reported_cases,
 #' Removes regions with insufficient time points, and provides logging
 #' information on the input.
 #'
-#' @seealso regional_epinow
+#' @seealso [regional_epinow()]
 #' @inheritParams regional_epinow
 #' @importFrom data.table copy setDT
 #' @importFrom futile.logger flog.info
 #' @return A dataframe of cleaned regional data
-clean_regions <- function(reported_cases, non_zero_points) {
-  reported_cases <- data.table::setDT(reported_cases)
+clean_regions <- function(data, non_zero_points) {
+  reported_cases <- data.table::setDT(data)
   # check for regions more than required time points with cases
   eval_regions <- data.table::copy(reported_cases)[,
     .(confirm = confirm > 0), by = c("region", "date")][,
@@ -326,12 +313,12 @@ clean_regions <- function(reported_cases, non_zero_points) {
 #' Run epinow with Regional Processing Code
 #'
 #' @description `r lifecycle::badge("maturing")`
-#' Internal function that handles calling `epinow`. Future work will extend this
-#' function to better handle `stan` logs and allow the user to modify settings
-#' between regions.
+#' Internal function that handles calling [epinow()]. Future work will extend
+#' this function to better handle stan logs and allow the user to modify
+#' settings between regions.
 #'
 #' @param target_region Character string indicating the region being evaluated
-#' @param progress_fn Function as returned by `progressr::progressor`. Allows
+#' @param progress_fn Function as returned by [progressr::progressor()]. Allows
 #' the use of a  progress bar.
 #'
 #' @param complete_logger Character string indicating the logger to output
@@ -340,8 +327,8 @@ clean_regions <- function(reported_cases, non_zero_points) {
 #' @inheritParams regional_epinow
 #' @importFrom futile.logger flog.trace flog.warn
 #' @importFrom purrr quietly
-#' @seealso regional_epinow
-#' @return A list of processed output as produced by `process_region`
+#' @seealso [regional_epinow()]
+#' @return A list of processed output as produced by [process_region()]
 run_region <- function(target_region,
                        generation_time,
                        delays,
@@ -353,7 +340,7 @@ run_region <- function(target_region,
                        stan,
                        horizon,
                        CrIs,
-                       reported_cases,
+                       data,
                        target_folder,
                        target_date,
                        return_output,
@@ -374,7 +361,7 @@ run_region <- function(target_region,
     "filtering data for target region %s", target_region,
     name = "EpiNow2.epinow"
   )
-  regional_cases <- reported_cases[region %in% target_region][, region := NULL]
+  regional_cases <- data[region %in% target_region][, region := NULL]
 
   futile.logger::flog.trace(
     "calling epinow2::epinow to process data for %s", target_region,
@@ -392,7 +379,7 @@ run_region <- function(target_region,
     stan = filter_opts(stan, target_region),
     horizon = horizon,
     CrIs = CrIs,
-    reported_cases = regional_cases,
+    data = regional_cases,
     target_folder = target_folder,
     target_date = target_date,
     return_output = TRUE,
@@ -420,17 +407,18 @@ run_region <- function(target_region,
 #' @description `r lifecycle::badge("maturing")`
 #' Internal function that removes output that is not required, and returns
 #' logging information.
-#' @param out List of output returned by `epinow`
+#' @param out List of output returned by [epinow()]
 #'
-#' @param timing Output from `Sys.time`
+#' @param timing Output from [Sys.time()]
 #'
 #' @param return_timing Logical, should runtime be returned
 #'
 #' @inheritParams regional_epinow
 #' @inheritParams run_region
-#' @seealso regional_epinow
+#' @seealso [regional_epinow()]
 #' @importFrom futile.logger flog.info
 #' @return A list of processed output
+#' @keywords internal
 process_region <- function(out, target_region, timing,
                            return_output = TRUE, return_timing = TRUE,
                            complete_logger = "EpiNow2.epinow") {
@@ -455,16 +443,18 @@ process_region <- function(out, target_region, timing,
 #' Process all Region Estimates
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Internal function that processes the output from multiple `epinow` runs, adds
-#' summary logging information.
-#' @param regional_out A list of output from multiple runs of `regional_epinow`
+#' Internal function that processes the output from multiple [epinow()] runs,
+#' adds summary logging information.
+#' @param regional_out A list of output from multiple runs of
+#' [regional_epinow()]
 #'
 #' @param regions A character vector identifying the regions that have been run
 #'
 #' @importFrom purrr keep map compact
 #' @importFrom futile.logger flog.trace flog.info
-#' @seealso regional_epinow epinow
+#' @seealso [regional_epinow()] [epinow()]
 #' @return A list of all regional estimates and successful regional estimates
+#' @keywords internal
 process_regions <- function(regional_out, regions) {
   # names on regional_out
   names(regional_out) <- regions

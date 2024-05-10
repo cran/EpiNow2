@@ -12,7 +12,7 @@ gp_opts(
   ls_min = 0,
   ls_max = 60,
   alpha_sd = 0.05,
-  kernel = "matern",
+  kernel = c("matern_3/2", "se"),
   matern_type = 3/2
 )
 }
@@ -39,11 +39,11 @@ process length scale will be used with recommended parameters
 \item{ls_min}{Numeric, defaults to 0. The minimum value of the length scale.}
 
 \item{ls_max}{Numeric, defaults to 60. The maximum value of the length
-scale. Updated in \code{create_gp_data} to be the length of the input data if this
-is smaller.}
+scale. Updated in \code{\link[=create_gp_data]{create_gp_data()}} to be the length of the input data if
+this is smaller.}
 
 \item{alpha_sd}{Numeric, defaults to 0.05. The standard deviation of the
-magnitude parameter o  the Gaussian process kernel. Should be approximately
+magnitude parameter of the Gaussian process kernel. Should be approximately
 the expected standard deviation of the logged Rt.}
 
 \item{kernel}{Character string, the type of kernel required. Currently
@@ -55,7 +55,7 @@ kernel ("matern", with \code{matern_type = 3/2}). Defaulting to the Matern 3 ove
 Currently only the Matern 3/2 kernel is supported.}
 }
 \value{
-A list of settings defining the Gaussian process
+A \verb{<gp_opts>} object of settings defining the Gaussian process
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -68,7 +68,4 @@ gp_opts()
 
 # add a custom length scale
 gp_opts(ls_mean = 4)
-}
-\author{
-Sam Abbott
 }

@@ -6,12 +6,11 @@
 #' @inheritParams setup_target_folder
 #' @inheritParams estimate_infections
 #' @return Numeric forecast horizon adjusted for the users intention
-#' @author Sam Abbott
-#' @export
-update_horizon <- function(horizon, target_date, reported_cases) {
+#' @keywords internal
+update_horizon <- function(horizon, target_date, data) {
   if (horizon != 0) {
     horizon <- horizon + as.numeric(
-      as.Date(target_date) - max(reported_cases$date)
+      as.Date(target_date) - max(data$date)
     )
   }
   return(horizon)
@@ -25,19 +24,16 @@ update_horizon <- function(horizon, target_date, reported_cases) {
 #' @inheritParams setup_target_folder
 #' @inheritParams epinow
 #' @return No return value, called for side effects
-#' @author Sam Abbott
-#' @export
-save_input <- function(reported_cases, target_folder) {
+#' @keywords internal
+save_input <- function(data, target_folder) {
   if (!is.null(target_folder)) {
-    latest_date <- reported_cases[confirm > 0][date == max(date)]$date
+    latest_date <- data[confirm > 0][date == max(date)]$date
 
-    saveRDS(latest_date, paste0(target_folder, "/latest_date.rds"))
-    saveRDS(reported_cases, paste0(target_folder, "/reported_cases.rds"))
+    saveRDS(latest_date, file.path(target_folder, "latest_date.rds"))
+    saveRDS(data, file.path(target_folder, "reported_cases.rds"))
   }
   return(invisible(NULL))
 }
-
-
 
 #' Save Estimated Infections
 #'
@@ -51,11 +47,10 @@ save_input <- function(reported_cases, target_folder) {
 #' be returned.
 #'
 #' @seealso estimate_infections
-#' @author Sam Abbott
 #' @inheritParams setup_target_folder
 #' @inheritParams  estimate_infections
 #' @return No return value, called for side effects
-#' @export
+#' @keywords internal
 save_estimate_infections <- function(estimates, target_folder = NULL,
                                      samples = TRUE, return_fit = TRUE) {
   if (!is.null(target_folder)) {
@@ -88,8 +83,7 @@ save_estimate_infections <- function(estimates, target_folder = NULL,
 #'
 #' @return A list of samples and summarised estimates of estimated cases by
 #' date of report.
-#' @author Sam Abbott
-#' @export
+#' @keywords internal
 #' @importFrom data.table := rbindlist
 estimates_by_report_date <- function(estimates, CrIs = c(0.2, 0.5, 0.9),
                                      target_folder = NULL, samples = TRUE) {
@@ -134,8 +128,7 @@ estimates_by_report_date <- function(estimates, CrIs = c(0.2, 0.5, 0.9),
 #' @inheritParams setup_target_folder
 #'
 #' @return No return value, called for side effects
-#' @author Sam Abbott
-#' @export
+#' @keywords internal
 copy_results_to_latest <- function(target_folder = NULL, latest_folder = NULL) {
   if (!is.null(target_folder)) {
     ## Save all results to a latest folder as well
@@ -175,8 +168,7 @@ copy_results_to_latest <- function(target_folder = NULL, latest_folder = NULL) {
 #' @inheritParams save_estimate_infections
 #'
 #' @return A list of output as returned by `epinow`
-#' @author Sam Abbott
-#' @export
+#' @keywords internal
 construct_output <- function(estimates,
                              estimated_reported_cases,
                              plots = NULL,

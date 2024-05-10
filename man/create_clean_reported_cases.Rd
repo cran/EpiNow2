@@ -5,15 +5,17 @@
 \title{Create Clean Reported Cases}
 \usage{
 create_clean_reported_cases(
-  reported_cases,
-  horizon,
+  data,
+  horizon = 0,
   filter_leading_zeros = TRUE,
-  zero_threshold = Inf
+  zero_threshold = Inf,
+  fill = NA_integer_,
+  add_breakpoints = TRUE
 )
 }
 \arguments{
-\item{reported_cases}{A data frame of confirmed cases (confirm) by date
-(date). confirm must be integer and date must be in date format.}
+\item{data}{A \verb{<data.frame>} of confirmed cases (confirm) by date
+(date). \code{confirm} must be numeric and \code{date} must be in date format.}
 
 \item{horizon}{Numeric, defaults to 7. Number of days into the future to
 forecast.}
@@ -23,21 +25,30 @@ start of the time series be filtered out.}
 
 \item{zero_threshold}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} Numeric defaults
 to Inf. Indicates if detected zero cases are meaningful by using a threshold
-number of cases based on the 7 day average. If the average is above this
-threshold then the zero is replaced with the backwards looking rolling
-average. If set to infinity then no changes are made.}
+number of cases based on the 7-day average. If the average is above this
+threshold then the zero is replaced using \code{fill}.}
+
+\item{fill}{Numeric, defaults to NA. Value to use to replace NA values or
+zeroes that are flagged because the 7-day average is above the
+\code{zero_threshold}. If the default NA is used then dates with NA values or with
+7-day averages above the \code{zero_threshold} will be skipped in model fitting.
+If this is set to 0 then the only effect is to replace NA values with 0.}
+
+\item{add_breakpoints}{Logical, defaults to TRUE. Should a breakpoint column
+be added to the data frame if it does not exist.}
 }
 \value{
 A cleaned data frame of reported cases
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Cleans a data frame of reported cases by replacing missing dates with 0
-cases and applies an optional threshold at which point 0 cases are replaced
-with a moving average of observed cases. See \code{zero_threshold} for details.
+Filters leading zeros, completes dates, and applies an optional threshold at
+which point 0 cases are replaced with a user supplied value (defaults to
+\code{NA}).
 }
-\author{
-Sam Abbott
-
-Lloyd Chapman
+\examples{
+\dontrun{
+create_clean_reported_cases(example_confirmed, 7)
 }
+}
+\keyword{internal}

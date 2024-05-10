@@ -1,6 +1,73 @@
+# EpiNow2 1.5.0
+
+This release comes with a change of maintainer, from @seabbs to @sbfnk.
+This is to reflect who will handle the upcoming CRAN submission, but is not expected to lead to a change in workflows.
+
+## Major changes
+
+* The interface to generating delay distributions has been completely overhauled. Instead of calling `dist_spec()` users now specify distributions using functions that represent the available distributions, i.e. `LogNormal()`, `Gamma()` and `Fixed()`. See `?EpiNow2::Distributions`. Uncertainty is specified using calls of the same nature, to `Normal()`. More information on the underlying design can be found in `inst/dev/design_dist.md` By @sbfnk in #504 and reviewed by @seabbs.
+* Delay discretisation is now based on a two-day censoring window (with uniform probability in between), based on recommendations in [Park et al, medRxiv, 2024](https://doi.org/10.1101/2024.01.12.24301247). By @sbfnk in #518 and reviewed by @jamesmbaazam.
+
+## Deprecations
+
+* The functions `sample_approx_dist()`, `report_cases()`, and `adjust_infection_reports()` have been deprecated as the functionality they provide can now be achieved with `simulate_secondary()`. See #597 by @jamesmbaazam and reviewed by @sbfnk.
+* The utility function `update_list()` has been deprecated in favour of `utils::modifyList()` because it comes with an installation of R. By @jamesmbaazam in #491 and reviewed by @seabbs.
+* The `fixed` argument to `dist_spec` has been deprecated and replaced by a `fix_dist()` function. By @sbfnk in #503 and reviewed by @seabbs.
+* The functions `get_dist()`, `get_generation_time()`, `get_incubation_period()` have been deprecated and replaced with examples. By @sbfnk in #481 and reviewed by @seabbs.
+* The function `init_cumulative_fit()` has been deprecated. By @jamesmbaazam in #541 and reviewed by @sbfnk.
+* The model-specific `weigh_delay_priors` argument has been deprecated in favour of delay-specific prior weighting using `weight_priors`. See `generation_time_opts()`, `delay_opts()`, and `trunc_opts()`. By @sbfnk in #630 and reviewed by @jamesmbaazam.
+* All functions now use a `data` argument to pass data. The existing `reported_cases`, `reports`, and `obs` arguments are deprecated and will be removed in v2.0.0. By @jamesmbaazam in #638 and reviewed by @sbfnk.
+
+## Other breaking changes
+
+* Updated `estimate_infections()` so that rather than imputing missing data, it now skips these data points in the likelihood. This is a breaking change as it alters the behaviour of the model when dates are missing from a time series but are known to be zero. We recommend that users check their results when updating to this version but expect this to in most cases improve performance. By @seabbs in #528 and reviewed by @sbfnk.
+* `simulate_infections` has been renamed to `forecast_infections` in line with `simulate_secondary` and `forecast_secondary`. The terminology is: a forecast is done from a fit to existing data, a simulation from first principles. By @sbfnk in #544 and reviewed by @seabbs.
+* A new `simulate_infections` function has been added that can be used to simulate from the model from given initial conditions and parameters. By @sbfnk in #557 and reviewed by @jamesmbaazam.
+* The function `init_cumulative_fit()` has been deprecated. By @jamesmbaazam in #541 and reviewed by @sbfnk.
+* The interface to generating delay distributions has been completely overhauled. Instead of calling `dist_spec()` users now specify distributions using functions that represent the available distributions, i.e. `LogNormal()`, `Gamma()` and `Fixed()`. Uncertainty is specified using calls of the same nature, to `Normal()`. More information on the underlying design can be found in `inst/dev/design_dist.md` By @sbfnk in #504 and reviewed by @seabbs.
+* The accessor functions `get_parameters()`, `get_pmf()`, and `get_distribution()` have been added to extract elements of a <dist_spec> object. By @sbfnk in #646 and reviewed by @jamesmbaazam.
+* The functions `sample_approx_dist()`, `report_cases()`, and `adjust_infection_reports()` have been deprecated as the functionality they provide can now be achieved with `simulate_secondary()`. See #597 by @jamesmbaazam and reviewed by @sbfnk.
+
+## Documentation
+
+* Two new vignettes have been added to cover the workflow and example uses. By @sbfnk in #458 and reviewed by @jamesmbaazam.
+* Removed references to the no longer existing `forecast_infections` function. By @sbfnk in #460 and reviewed by @seabbs.
+* The contribution guide has been improved to include more detail on ways to contribute new features/enhancements, report bugs, and improve or suggest vignettes. By @jamesmbaazam in #464 and reviewed by @seabbs.
+* Updated the code in `inst/CITATION` and added a GitHub Actions workflow to auto-generate `citation.cff` so that the two citation files are always in sync with `DESCRIPTION`. By @jamesmbazam in #467, with contributions from @Bisaloo, and reviewed by @seabbs and @sbfnk.
+* Updated the documentation of the `data` argument in `estimate_infections()` and `confirm` column in the `obs` argument of `estimate_truncation()` to allow `numeric` types, not just `integer`. See #594, by @jamesmbaazam, and reviewed by @sbfnk.
+* Removed the reporting templates that were previously provided. See #604 by @jamesmbaazam, and reviewed by @sbfnk.
+* Clarified how estimated or specified uncertainty around data truncation can be passed to `epinow()`, `regional_epinow()`, and `estimate_infections()` using the `truncation` argument. By @jamesmbaazam in #644 and reviewed by @sbnfk.
+* Internal functions have been removed from the pkgdown index. By @sbfnk in #735.
+
+## Package
+
+* Replaced use of `purrr::transpose()` with `purrr::list_transpose()` because the former is superseded. By @jamesmbaazam in #524 and reviewed by @seabbs.
+* Reduced the number of long-running examples. By @sbfnk in #459 and reviewed by @seabbs.
+* Changed all instances of arguments that refer to the maximum of a distribution to reflect the maximum. Previously this did, in some instance, refer to the length of the PMF. By @sbfnk in #468.
+* Fixed a bug in the bounds of delays when setting initial conditions. By @sbfnk in #474.
+* Added input checking to `estimate_infections()`, `estimate_secondary()`, `estimate_truncation()`, `simulate_infections()`, and `epinow()`. `check_reports_valid()` has been added to validate the reports dataset passed to these functions. Tests are added to check `check_reports_valid()`. As part of input validation, the various `*_opts()` functions now return subclasses of the same name as the functions and are tested against passed arguments to ensure the right `*_opts()` is passed to the right argument. For example, the `obs` argument in `estimate_secondary()` is expected to only receive arguments passed through `obs_opts()` and will error otherwise. By @jamesmbaazam in #476 and reviewed by @sbfnk and @seabbs.
+* Added the possibility of specifying a fixed observation scaling. By @sbfnk in #550 and reviewed by @seabbs.
+* Added the possibility of specifying fixed overdispersion. By @sbfnk in #560 and reviewed by @seabbs.
+* The example in `estimate_truncation()` has been simplified. The package now ships with a dataset `example_truncated`, which is used in the `estimate_truncation()` example and tests. The steps for creating the `example_truncated` is stored in `./data-raw/estimate-truncation.R`. By @jamesmbaazam in #584 and reviewed by @seabbs and @sbfnk.
+* Tests have been updated to only set random seeds before snapshot tests involving random number generation, and unset them subsequently. By @sbfnk in #590 and reviewed by @seabbs.
+* A function `simulate_secondary()` was added to simulate from parameters of the `estimate_secondary` model. A function of the same name that was previously based on a reimplementation of that model in R with potentially time-varying scalings and delays has been renamed to `convolve_and_scale()`. By @sbfnk in #591 and reviewed by @seabbs.
+* Fixed broken links in the README. By @jamesmbaazam in #617 and reviewed by @sbfnk.
+* Replaced descriptions and plot labels to be more general and clearer. By @sbfnk in #621 and reviewed by @jamesmbaazam.
+* Argument choices have been moved into default arguments. By @sbfnk in #622 and reviewed by @seabbs.
+* `simulate_infections()` gained the argument `seeding_time` to change the seeding time. Additionally, the documentation was improved. By @sbfnk in #627 and reviewed by @jamesmbaazam.
+* A `cmdstanr` backend has been added. By @sbfnk in #537 and #642 and reviewed by @seabbs.
+
+## Model changes
+
+* Updated the parameterisation of the dispersion term `phi` to be `phi = 1 / sqrt_phi ^ 2` rather than the previous parameterisation `phi = 1 / sqrt(sqrt_phi)` based on the suggested prior [here](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations#story-when-the-generic-prior-fails-the-case-of-the-negative-binomial) and the performance benefits seen in the `epinowcast` package (see [here](https://github.com/epinowcast/epinowcast/blob/8eff560d1fd8305f5fb26c21324b2bfca1f002b4/inst/stan/epinowcast.stan#L314)). By @seabbs in #487 and reviewed by @sbfnk.
+* Added an `na` argument to `obs_opts()` that allows the user to specify whether NA values in the data should be interpreted as missing or accumulated in the next non-NA data point. By @sbfnk in #534 and reviewed by @seabbs.
+* Growth rates are now calculated directly from the infection trajectory as `log I(t) - log I(t - 1)`. Originally by @seabbs in #213, finished by @sbfnk in #610 and reviewed by @seabbs.
+* Fixed a bug when using the nonmechanistic model that could lead to explosive growth. By @sbfnk in #612 and reviewed by @jamesmbaazam.
+* Added the arguments `filter_leading_zeros` and `zero_threshold` to `estimate_secondary()` and `estimate_truncation()` to allow the user to specify whether to filter leading zeros in the data and the threshold for replacing zero cases. These arguments were already used in `estimate_infections()`, `epinow()`, and `regional_epinow()`. See `?estimate_secondary` and `?estimate_truncation` for more details. By @jamesmbaazam in #608 and reviewed by @sbfnk.
+
 # EpiNow2 1.4.0
 
-This package contains some bug fixes, minor new features, and the initial stages of some broader improvement to future handling of delay distributions.
+This release contains some bug fixes, minor new features, and the initial stages of some broader improvement to future handling of delay distributions.
 
 ## Breaking changes
 
@@ -140,8 +207,8 @@ reporting delay and the generation time. These are based on an implementation in
  
 ## Deprecated features
 
-* `simulate_cases()` and `forecast_infections()` have been deprecated and have been removed. These functions depend on `EpiSoon` which itself is archived and near equivalent functionality is available within `EpiNow2` and in other packages (@seabbs).
-* Functions supporting secondary forecasting using `forecast_infections()` (i.e in `epinow())
+* `simulate_cases()` and `simulate_infections()` have been deprecated and have been removed. These functions depend on `EpiSoon` which itself is archived and near equivalent functionality is available within `EpiNow2` and in other packages (@seabbs).
+* Functions supporting secondary forecasting using `simulate_infections()` (i.e in `epinow())
 have been removed along with the arguments that supported them (@seabbs).
 * `global_map()`, `country_map()`, and `theme_map()` have all been deprecated and have been removed. These functions were used to support reporting of reproduction number
 estimates and are considered out of scope for `EpiNow2`. If finding useful contacting the

@@ -4,16 +4,16 @@
 \alias{get_dist}
 \title{Get a Literature Distribution}
 \usage{
-get_dist(data, disease, source, max_value = 15, fixed = FALSE)
+get_dist(data, disease, source, max_value = 14, fixed = FALSE)
 }
 \arguments{
-\item{data}{A \code{data.table} in the format of \code{generation_times}.}
+\item{data}{A \verb{<data.table>} in the format of \code{generation_times}.}
 
 \item{disease}{A character string indicating the disease of interest.}
 
 \item{source}{A character string indicating the source of interest.}
 
-\item{max_value}{Numeric, the maximum value to allow. Defaults to 15 days.}
+\item{max_value}{Numeric, the maximum value to allow. Defaults to 14 days.}
 
 \item{fixed}{Logical, defaults to \code{FALSE}. Should distributions be supplied
 as fixed values (vs with uncertainty)?}
@@ -22,16 +22,12 @@ as fixed values (vs with uncertainty)?}
 A list defining a distribution
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Search a data frame for a distribution and return it in the format expected
-by \code{delay_opts()} and the \code{generation_time} argument of \code{epinow} and
-\code{estimate_infections}.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function has been deprecated. Please specify a distribution
+using functions such as \code{\link[=Gamma]{Gamma()}} or \code{\link[=LogNormal]{LogNormal()}} instead.
 }
-\examples{
-get_dist(
- EpiNow2::generation_times, disease = "SARS-CoV-2", source = "ganyani"
-)
+\seealso{
+\code{\link[=dist_spec]{dist_spec()}}
 }
-\author{
-Sam Abbott
-}
+\keyword{internal}

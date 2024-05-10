@@ -4,18 +4,33 @@
 \alias{delay_opts}
 \title{Delay Distribution Options}
 \usage{
-delay_opts(dist = dist_spec(), ..., fixed = FALSE)
+delay_opts(
+  dist = Fixed(0),
+  ...,
+  fixed = FALSE,
+  tolerance = 0.001,
+  weight_prior = TRUE
+)
 }
 \arguments{
-\item{dist}{A delay distribution or series of delay distributions generated
-using \code{\link[=dist_spec]{dist_spec()}}. Default is an empty call to \code{\link[=dist_spec]{dist_spec()}}, i.e. no delay}
+\item{dist}{A delay distribution or series of delay distributions. Default is
+a fixed distribution with all mass at 0, i.e. no delay.}
 
 \item{...}{deprecated; use \code{dist} instead}
 
 \item{fixed}{deprecated; use \code{dist} instead}
+
+\item{tolerance}{Numeric; the desired tolerance level.}
+
+\item{weight_prior}{Logical; if TRUE (default), any priors given in \code{dist}
+will be weighted by the number of observation data points, in doing so
+approximately placing an independent prior at each time step and usually
+preventing the posteriors from shifting. If FALSE, no weight will be
+applied, i.e. any parameters in \code{dist} will be treated as a single
+parameters.}
 }
 \value{
-A list summarising the input delay distributions.
+A \verb{<delay_opts>} object summarising the input delay distributions.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -27,21 +42,17 @@ functions.
 delay_opts()
 
 # A single delay that has uncertainty
-delay <- dist_spec(mean = 1, mean_sd = 0.2, sd = 0.5, sd_sd = 0.1, max = 15)
+delay <- LogNormal(mean = Normal(1, 0.2), sd = Normal(0.5, 0.1), max = 14)
 delay_opts(delay)
 
 # A single delay without uncertainty
-delay <- dist_spec(mean = 1, sd = 0.5, max = 15)
+delay <- LogNormal(meanlog = 1, sdlog = 0.5, max = 14)
 delay_opts(delay)
 
 # Multiple delays (in this case twice the same)
 delay_opts(delay + delay)
 }
 \seealso{
-convert_to_logmean convert_to_logsd bootstrapped_dist_fit dist_spec
-}
-\author{
-Sam Abbott
-
-Sebastian Funk
+\code{\link[=convert_to_logmean]{convert_to_logmean()}} \code{\link[=convert_to_logsd]{convert_to_logsd()}}
+\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link[=dist_spec]{dist_spec()}}
 }

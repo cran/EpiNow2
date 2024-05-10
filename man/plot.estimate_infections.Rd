@@ -5,23 +5,28 @@
 \alias{plot}
 \title{Plot method for estimate_infections}
 \usage{
-\method{plot}{estimate_infections}(x, type = "summary", ...)
+\method{plot}{estimate_infections}(
+  x,
+  type = c("summary", "infections", "reports", "R", "growth_rate", "all"),
+  ...
+)
 }
 \arguments{
 \item{x}{A list of output as produced by \code{estimate_infections}}
 
-\item{type}{A character vector indicating the name of plots to return.
+\item{type}{A character vector indicating the name of the plot to return.
 Defaults to  "summary" with supported options being "infections", "reports",
-"R", "growth_rate", "summary", "all".}
+"R", "growth_rate", "summary", "all". If "all" is supplied all plots are
+generated.}
 
 \item{...}{Pass additional arguments to report_plots}
 }
 \value{
-List of plots as produced by \code{report_plots}
+List of plots as produced by \code{\link[=report_plots]{report_plots()}}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
-\code{plot} method for class "estimate_infections".
+\code{plot} method for class \verb{<estimate_infections>}.
 }
 \seealso{
 plot report_plots estimate_infections

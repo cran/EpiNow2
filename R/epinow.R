@@ -1,14 +1,13 @@
 #' Real-time Rt Estimation, Forecasting and Reporting
 #'
-#' @description `r lifecycle::badge("maturing")`
-#' This function wraps the functionality of `estimate_infections()` and
-#' `forecast_infections()` in order to estimate Rt and cases by date of
-#' infection, forecast into these infections into the future. It also contains
-#' additional functionality to convert forecasts to date of report and produce
-#' summary output useful for reporting results and interpreting them. See
-#' [here](https://gist.github.com/seabbs/163d0f195892cde685c70473e1f5e867) for
-#' an example of using `epinow` to estimate Rt for Covid-19 in a country from
-#' the ECDC data source.
+#' @description `r lifecycle::badge("stable")`
+#' This function wraps the functionality of [estimate_infections()] in order
+#' to estimate Rt and cases by date of infection and forecast these infections
+#' into the future. In addition to the functionality of
+#' [estimate_infections()] it produces additional summary output useful for
+#' reporting results and interpreting them as well as error catching and
+#' reporting, making it particularly useful for production use e.g. running at
+#' set intervals on a dedicated server.
 #'
 #' @param output A character vector of optional output to return. Supported
 #' options are samples ("samples"), plots ("plots"), the run time ("timing"),
@@ -19,14 +18,12 @@
 #' @param return_output Logical, defaults to FALSE. Should output be returned,
 #' this automatically updates to TRUE if no directory for saving is specified.
 #'
-#' @param plot_args A list of optional arguments passed to `plot.epinow()`.
+#' @param plot_args A list of optional arguments passed to [plot.epinow()].
 #'
-#' @return A list of output from estimate_infections, forecast_infections,
-#' report_cases, and report_summary.
-#' @author Sam Abbott
+#' @return A list of output from estimate_infections with additional elements
+#'   summarising results and reporting errors if they have occurred.
 #' @export
-#' @seealso estimate_infections simulate_infections forecast_infections
-#' @seealso regional_epinow
+#' @seealso [estimate_infections()] [forecast_infections()] [regional_epinow()]
 #' @inheritParams setup_target_folder
 #' @inheritParams estimate_infections
 #' @inheritParams setup_default_logging
@@ -34,26 +31,32 @@
 #' @importFrom lubridate days
 #' @importFrom futile.logger flog.fatal flog.warn flog.error flog.debug ftry
 #' @importFrom rlang cnd_muffle
-#' @author Sam Abbott
+#' @importFrom checkmate assert_string assert_path_for_output
+#' assert_date assert_logical
+#' @importFrom R.utils isDirectory
 #' @examples
 #' \donttest{
 #' # set number of cores to use
 #' old_opts <- options()
 #' options(mc.cores = ifelse(interactive(), 4, 1))
-#' # construct example distributions
-#' generation_time <- get_generation_time(
-#'  disease = "SARS-CoV-2", source = "ganyani"
+#'
+#' # set an example generation time. In practice this should use an estimate
+#' # from the literature or be estimated from data
+#' generation_time <- Gamma(
+#'   shape = Normal(1.3, 0.3),
+#'   rate = Normal(0.37, 0.09),
+#'   max = 14
 #' )
-#' incubation_period <- get_incubation_period(
-#'  disease = "SARS-CoV-2", source = "lauer"
+#' # set an example incubation period. In practice this should use an estimate
+#' # from the literature or be estimated from data
+#' incubation_period <- LogNormal(
+#'    meanlog = Normal(1.6, 0.06),
+#'    sdlog = Normal(0.4, 0.07),
+#'    max = 14
 #' )
-#' reporting_delay <- dist_spec(
-#'   mean = convert_to_logmean(2, 1),
-#'   mean_sd = 0.1,
-#'   sd = convert_to_logsd(2, 1),
-#'   sd_sd = 0.1,
-#'   max = 10
-#' )
+#' # set an example reporting delay. In practice this should use an estimate
+#' # from the literature or be estimated from data
+#' reporting_delay <- LogNormal(mean = 2, sd = 1, max = 10)
 #'
 #' # example case data
 #' reported_cases <- example_confirmed[1:40]
@@ -75,8 +78,9 @@
 #'
 #' options(old_opts)
 #' }
-epinow <- function(reported_cases,
-                   generation_time = NULL,
+# nolint start: cyclocomp_linter
+epinow <- function(data,
+                   generation_time = generation_time_opts(),
                    delays = delay_opts(),
                    truncation = trunc_opts(),
                    rt = rt_opts(),
@@ -92,7 +96,34 @@ epinow <- function(reported_cases,
                    output = c("samples", "plots", "latest", "fit", "timing"),
                    plot_args = list(),
                    target_folder = NULL, target_date,
-                   logs = tempdir(), id = "epinow", verbose = interactive()) {
+                   logs = tempdir(), id = "epinow", verbose = interactive(),
+                   reported_cases) {
+  # Warning for deprecated arguments
+  if (!missing(reported_cases)) {
+    if (!missing(data)) {
+      stop("Can't have `reported_cases` and `data` arguments. ",
+           "Use `data` instead."
+      )
+    }
+    lifecycle::deprecate_warn(
+      "1.5.0",
+      "epinow(reported_cases)",
+      "epinow(data)",
+      "The argument will be removed completely in the next version."
+    )
+    data <- reported_cases
+  }
+  # Check inputs
+  assert_logical(return_output)
+  stopifnot("target_folder is not a directory" =
+              !is.null(target_folder) || isDirectory(target_folder)
+            )
+  if (!missing(target_date)) {
+    assert_string(target_date)
+  }
+  assert_string(id)
+  assert_logical(verbose)
+
   if (is.null(target_folder)) {
     return_output <- TRUE
   }
@@ -113,7 +144,7 @@ epinow <- function(reported_cases,
   }
   # target data -------------------------------------------------------------
   if (missing(target_date)) {
-    target_date <- max(reported_cases$date, na.rm = TRUE)
+    target_date <- max(data$date, na.rm = TRUE)
   }
 
   # setup logging -----------------------------------------------------------
@@ -149,7 +180,7 @@ epinow <- function(reported_cases,
     }
 
     # convert input to DT -----------------------------------------------------
-    reported_cases <- setup_dt(reported_cases)
+    reported_cases <- setup_dt(data)
 
     # save input data ---------------------------------------------------------
     save_input(reported_cases, target_folder)
@@ -159,7 +190,7 @@ epinow <- function(reported_cases,
 
     # estimate infections and Reproduction no ---------------------------------
     estimates <- estimate_infections(
-      reported_cases = reported_cases,
+      data = reported_cases,
       generation_time = generation_time,
       delays = delays,
       truncation = truncation,
@@ -239,7 +270,7 @@ epinow <- function(reported_cases,
       }
     ),
     error = function(e) {
-      if (id %in% "epinow") {
+      if (id == "epinow") {
         stop(e)
       } else {
         error_text <- sprintf("%s: %s - %s", id, e$message, toString(e$call))
@@ -257,15 +288,15 @@ epinow <- function(reported_cases,
   }
 
   if (!is.null(target_folder) && !is.null(out$error)) {
-    saveRDS(out$error, paste0(target_folder, "/error.rds"))
-    saveRDS(out$trace, paste0(target_folder, "/trace.rds"))
+    saveRDS(out$error, file.path(target_folder, "error.rds"))
+    saveRDS(out$trace, file.path(target_folder, "trace.rds"))
   }
 
   # log timing if specified
   if (output["timing"]) {
     out$timing <- round(as.numeric(end_time - start_time), 1)
     if (!is.null(target_folder)) {
-      saveRDS(out$timing, paste0(target_folder, "/runtime.rds"))
+      saveRDS(out$timing, file.path(target_folder, "runtime.rds"))
     }
   }
 
@@ -282,3 +313,4 @@ epinow <- function(reported_cases,
     return(invisible(NULL))
   }
 }
+# nolint end: cyclocomp_linter

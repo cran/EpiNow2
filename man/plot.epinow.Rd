@@ -7,20 +7,21 @@
 \method{plot}{epinow}(x, type = "summary", ...)
 }
 \arguments{
-\item{x}{A list of output as produced by \code{epinow}}
+\item{x}{A list of output as produced by \code{\link[=epinow]{epinow()}}.}
 
-\item{type}{A character vector indicating the name of plots to return.
+\item{type}{A character vector indicating the name of the plot to return.
 Defaults to  "summary" with supported options being "infections", "reports",
-"R", "growth_rate", "summary", "all".}
+"R", "growth_rate", "summary", "all". If "all" is supplied all plots are
+generated.}
 
 \item{...}{Pass additional arguments to report_plots}
 }
 \value{
-List of plots as produced by \code{report_plots}
+List of plots as produced by \code{\link[=report_plots]{report_plots()}}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
-\code{plot} method for class "epinow".
+\code{plot} method for class \verb{<epinow>}.
 }
 \seealso{
 plot plot.estimate_infections report_plots estimate_infections

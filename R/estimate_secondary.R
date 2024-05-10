@@ -3,7 +3,7 @@
 #' @description `r lifecycle::badge("stable")`
 #' Estimates the relationship between a primary and secondary observation, for
 #' example hospital admissions and deaths or hospital admissions and bed
-#' occupancy. See `secondary_opts()` for model structure options. See parameter
+#' occupancy. See [secondary_opts()] for model structure options. See parameter
 #' documentation for model defaults and options. See the examples for case
 #' studies using synthetic data and
 #' [here](https://gist.github.com/seabbs/4f09d7609df298db7a86c31612ff9d17)
@@ -14,24 +14,26 @@
 #' [here](https://github.com/epiforecasts/covid.german.forecasts/blob/master/rt-forecast/death-from-cases.R) # nolint
 #' for an application forecasting Covid-19 deaths in Germany and Poland.
 #'
-#' @param secondary A call to `secondary_opts()` or a list containing the
+#' @param secondary A call to [secondary_opts()] or a list containing the
 #' following  binary variables: cumulative, historic, primary_hist_additive,
 #' current, primary_current_additive. These parameters control the structure of
-#' the secondary model, see `secondary_opts()` for details.
+#' the secondary model, see [secondary_opts()] for details.
 #'
 #' @param delays A call to [delay_opts()] defining delay distributions between
-#' primary and secondary observations See the documentation of `delay_opts()`
+#' primary and secondary observations See the documentation of [delay_opts()]
 #' for details. By default a diffuse prior  is assumed with a mean of 14 days
 #' and standard deviation of 7 days (with a standard deviation of 0.5 and 0.25
 #' respectively on the log scale).
 #'
-#' @param reports A data frame containing the `date` of report and both
+#' @param data A `<data.frame>` containing the `date` of report and both
 #' `primary` and `secondary` reports.
+#'
+#' @param reports Deprecated; use `data` instead.
 #'
 #' @param model A compiled stan model to override the default model. May be
 #' useful for package developers or those developing extensions.
 #'
-#' @param priors A `data.frame` of named priors to be used in model fitting
+#' @param priors A `<data.frame>` of named priors to be used in model fitting
 #' rather than the defaults supplied from other arguments. This is typically
 #' useful if wanting to inform an estimate from the posterior of another model
 #' fit.
@@ -48,23 +50,25 @@
 #' parameters.
 #'
 #' @param verbose Logical, should model fitting progress be returned. Defaults
-#' to `interactive()`.
+#' to [interactive()].
 #'
-#' @param ... Additional parameters to pass to `rstan::sampling`.
+#' @param ... Additional parameters to pass to [stan_opts()].
 #'
-#' @return A list containing: `predictions` (a data frame ordered by date with
-#' the primary, and secondary observations, and a summary of the model
+#' @return A list containing: `predictions` (a `<data.frame>` ordered by date
+#' with the primary, and secondary observations, and a summary of the model
 #' estimated secondary observations), `posterior` which contains a summary of
 #' the entire model posterior, `data` (a list of data used to fit the
 #' model), and `fit` (the `stanfit` object).
-#' @author Sam Abbott
 #' @export
 #' @inheritParams estimate_infections
 #' @inheritParams update_secondary_args
 #' @inheritParams calc_CrIs
 #' @importFrom rstan sampling
 #' @importFrom lubridate wday
-#' @importFrom data.table as.data.table merge.data.table
+#' @importFrom data.table as.data.table merge.data.table nafill
+#' @importFrom utils modifyList
+#' @importFrom checkmate assert_class assert_numeric assert_data_frame
+#' assert_logical
 #' @examples
 #' \donttest{
 #' # set number of cores to use
@@ -85,7 +89,7 @@
 #' cases[, meanlog := 1.8][, sdlog := 0.5]
 #'
 #' # Simulate secondary cases
-#' cases <- simulate_secondary(cases, type = "incidence")
+#' cases <- convolve_and_scale(cases, type = "incidence")
 #' #
 #' # fit model to example data specifying a weak prior for fraction reported
 #' # with a secondary case
@@ -111,7 +115,7 @@
 #' cases[, meanlog := 1.6][, sdlog := 0.8]
 #'
 #' # Simulate secondary cases
-#' cases <- simulate_secondary(cases, type = "prevalence")
+#' cases <- convolve_and_scale(cases, type = "prevalence")
 #'
 #' # fit model to example prevalence data
 #' prev <- estimate_secondary(cases[1:100],
@@ -131,66 +135,116 @@
 #'
 #' options(old_opts)
 #' }
-estimate_secondary <- function(reports,
+estimate_secondary <- function(data,
                                secondary = secondary_opts(),
                                delays = delay_opts(
-                                 dist_spec(
-                                   mean = 2.5, mean_sd = 0.5,
-                                   sd = 0.47, sd_sd = 0.25, max = 30
-                                 )
+                                 LogNormal(
+                                   meanlog = Normal(2.5, 0.5),
+                                   sdlog = Normal(0.47, 0.25),
+                                   max = 30
+                                 ), weight_prior = FALSE
                                ),
                                truncation = trunc_opts(),
                                obs = obs_opts(),
+                               stan = stan_opts(),
                                burn_in = 14,
                                CrIs = c(0.2, 0.5, 0.9),
+                               filter_leading_zeros = FALSE,
+                               zero_threshold = Inf,
                                priors = NULL,
                                model = NULL,
                                weigh_delay_priors = FALSE,
                                verbose = interactive(),
-                               ...) {
-  reports <- data.table::as.data.table(reports)
+                               ...,
+                               reports) {
+  # Deprecate reported_cases in favour of data
+  if (!missing(reports)) {
+     if (!missing(data)) {
+      stop("Can't have `reported` and `data` arguments. Use `data` instead.")
+    }
+    lifecycle::deprecate_warn(
+      "1.5.0",
+      "estimate_secondary(reports)",
+      "estimate_secondary(data)",
+      "The argument will be removed completely in the next version."
+    )
+    data <- reports
+  }
+  # Validate the inputs
+  check_reports_valid(data, model = "estimate_secondary")
+  assert_class(secondary, "secondary_opts")
+  assert_class(delays, "delay_opts")
+  assert_class(truncation, "trunc_opts")
+  assert_class(obs, "obs_opts")
+  assert_numeric(burn_in, lower = 0)
+  assert_numeric(CrIs, lower = 0, upper = 1)
+  assert_logical(filter_leading_zeros)
+  assert_numeric(zero_threshold, lower = 0)
+  assert_data_frame(priors, null.ok = TRUE)
+  assert_class(model, "stanfit", null.ok = TRUE)
+  assert_logical(weigh_delay_priors)
+  assert_logical(verbose)
+
+  reports <- data.table::as.data.table(data)
+  secondary_reports <- reports[, list(date, confirm = secondary)]
+  secondary_reports <- create_clean_reported_cases(
+    secondary_reports,
+    filter_leading_zeros = filter_leading_zeros,
+    zero_threshold = zero_threshold
+  )
+  ## fill in missing data (required if fitting to prevalence)
+  complete_secondary <- create_complete_cases(secondary_reports)
+
+  ## fill down
+  secondary_reports[, confirm := nafill(confirm, type = "locf")]
+  ## fill any early data up
+  secondary_reports[, confirm := nafill(confirm, type = "nocb")]
+
+  # Ensure that reports and secondary_reports are aligned
+  reports <- merge.data.table(
+    reports, secondary_reports[, list(date)], by = "date"
+  )
 
   if (burn_in >= nrow(reports)) {
     stop("burn_in is greater or equal to the number of observations.
          Some observations must be used in fitting")
   }
   # observation and control data
-  data <- list(
+  stan_data <- list(
     t = nrow(reports),
-    obs = reports$secondary,
     primary = reports$primary,
+    obs = secondary_reports$confirm,
+    obs_time = complete_secondary[lookup > burn_in]$lookup - burn_in,
+    lt = sum(complete_secondary$lookup > burn_in),
     burn_in = burn_in,
     seeding_time = 0
   )
   # secondary model options
-  data <- c(data, secondary)
+  stan_data <- c(stan_data, secondary)
   # delay data
-  data <- c(data, create_stan_delays(
+  stan_data <- c(stan_data, create_stan_delays(
     delay = delays,
     trunc = truncation,
-    weight = ifelse(weigh_delay_priors, data$t, 1)
+    time_points = stan_data$t
   ))
 
   # observation model data
-  data <- c(data, create_obs_model(obs, dates = reports$date))
+  stan_data <- c(stan_data, create_obs_model(obs, dates = reports$date))
 
   # update data to use specified priors rather than defaults
-  data <- update_secondary_args(data, priors = priors, verbose = verbose)
+  stan_data <- update_secondary_args(stan_data,
+    priors = priors, verbose = verbose
+  )
 
   # initial conditions (from estimate_infections)
   inits <- create_initial_conditions(
-    c(data, list(estimate_r = 0, fixed = 1, bp_n = 0))
+    c(stan_data, list(estimate_r = 0, fixed = 1, bp_n = 0))
   )
   # fit
-  if (is.null(model)) {
-    model <- stanmodels$estimate_secondary
-  }
-  fit <- rstan::sampling(model,
-    data = data,
-    init = inits,
-    refresh = ifelse(verbose, 50, 0),
-    ...
+  args <- create_stan_args(
+    stan = stan, data = stan_data, init = inits, model = "estimate_secondary"
   )
+  fit <- fit_model(args, id = "estimate_secondary")
 
   out <- list()
   out$predictions <- extract_stan_param(fit, "sim_secondary", CrIs = CrIs)
@@ -204,100 +258,31 @@ estimate_secondary <- function(reports,
     fit,
     CrIs = CrIs
   )
-  out$data <- data
+  out$data <- stan_data
   out$fit <- fit
   class(out) <- c("estimate_secondary", class(out))
   return(out)
-}
-
-#' Secondary Reports Options
-#'
-#' @description `r lifecycle::badge("stable")`
-#' Returns a list of options defining the secondary model used in
-#' `estimate_secondary()`. This model is a combination of a convolution of
-#' previously observed primary reports combined with current primary reports
-#' (either additive or subtractive). It can optionally be cumulative. See the
-#' documentation of `type` for sensible options to cover most use cases and the
-#' returned values of [secondary_opts()] for all currently supported options.
-#'
-#' @param type A character string indicating the type of observation the
-#' secondary reports are. Options include:
-#'
-#' - "incidence": Assumes that secondary reports equal a convolution of
-#' previously observed primary reported cases. An example application is deaths
-#' from an infectious disease predicted by reported cases of that disease (or
-#' estimated infections).
-#'
-#' - "prevalence": Assumes that secondary reports are cumulative and are
-#' defined by currently observed primary reports minus a convolution of
-#' secondary reports. An example application is hospital bed usage predicted by
-#' hospital admissions.
-#'
-#' @param ... Overwrite options defined by type. See the returned values for all
-#' options that can be passed.
-#'
-#' @seealso estimate_secondary
-#' @return A list of binary options summarising secondary model used in
-#' `estimate_secondary()`. Options returned are `cumulative` (should the
-#' secondary report be cumulative), `historic` (should a convolution of primary
-#' reported cases be used to predict secondary reported cases),
-#' `primary_hist_additive` (should the historic convolution of primary reported
-#' cases be additive or subtractive), `current` (should currently observed
-#' primary reported cases contribute to current secondary reported cases),
-#' `primary_current_additive` (should current primary reported cases be
-#' additive or subtractive).
-#'
-#' @export
-#' @author Sam Abbott
-#' @examples
-#' # incidence model
-#' secondary_opts("incidence")
-#'
-#' # prevalence model
-#' secondary_opts("prevalence")
-secondary_opts <- function(type = "incidence", ...) {
-  type <- match.arg(type, choices = c("incidence", "prevalence"))
-  if (type %in% "incidence") {
-    data <- list(
-      cumulative = 0,
-      historic = 1,
-      primary_hist_additive = 1,
-      current = 0,
-      primary_current_additive = 0
-    )
-  } else if (type %in% "prevalence") {
-    data <- list(
-      cumulative = 1,
-      historic = 1,
-      primary_hist_additive = 0,
-      current = 1,
-      primary_current_additive = 1
-    )
-  }
-  data <- update_list(data, list(...))
-  return(data)
 }
 
 #' Update estimate_secondary default priors
 #'
 #' @description `r lifecycle::badge("stable")`
 #' This functions allows the user to more easily specify data driven or model
-#' based priors for `estimate_secondary()` from example from previous model fits
-#' using a `data.frame` to overwrite other default settings. Note that default
-#' settings are still required.
+#'   based priors for [estimate_secondary()] from example from previous model
+#'   fits using a `<data.frame>` to overwrite other default settings. Note that
+#'   default settings are still required.
 #'
 #' @param data A list of data and arguments as returned by `create_stan_data()`.
 #'
-#' @param priors A `data.frame` of named priors to be used in model fitting
-#' rather than the defaults supplied from other arguments. This is typically
-#' useful if wanting to inform a estimate from the posterior of another model
-#' fit. Priors that are currently use to update the defaults are the scaling
-#' fraction ("frac_obs"), the mean delay ("delay_mean"), and standard deviation
-#' of the delay ("delay_sd"). The `data.frame` should have the following
-#' variables: `variable`, `mean`, and `sd`.
+#' @param priors A `<data.frame>` of named priors to be used in model fitting
+#'   rather than the defaults supplied from other arguments. This is typically
+#'   useful if wanting to inform a estimate from the posterior of another model
+#'   fit. Priors that are currently use to update the defaults are the scaling
+#'   fraction ("frac_obs"), and delay parameters ("delay_params"). The
+#'   `<data.frame>` should have the following variables: `variable`, `mean`, and
+#'   `sd`.
 #'
 #' @return A list as produced by `create_stan_data()`.
-#' @author Sam Abbott
 #' @export
 #' @inheritParams create_stan_args
 #' @importFrom data.table as.data.table
@@ -320,18 +305,15 @@ update_secondary_args <- function(data, priors, verbose = TRUE) {
       data$obs_scale_sd <- as.array(signif(scale$sd, 3))
     }
     # replace delay parameters if present
-    delay_mean <- priors[grepl("delay_mean", variable, fixed = TRUE)]
-    delay_sd <- priors[grepl("delay_sd", variable, fixed = TRUE)]
-    if (nrow(delay_mean) > 0) {
-      if (is.null(data$delay_mean_mean)) {
+    delay_params <- priors[grepl("delay_params", variable, fixed = TRUE)]
+    if (nrow(delay_params) > 0) {
+      if (is.null(data$delay_params_mean)) {
         warning(
           "Cannot replace delay distribution parameters as no default has been set" # nolint
         )
       }
-      data$delay_mean_mean <- as.array(signif(delay_mean$mean, 3))
-      data$delay_mean_sd <- as.array(signif(delay_mean$sd, 3))
-      data$delay_sd_mean <- as.array(signif(delay_sd$mean, 3))
-      data$delay_sd_sd <- as.array(signif(delay_sd$sd, 3))
+      data$delay_params_mean <- as.array(signif(delay_params$mean, 3))
+      data$delay_params_sd <- as.array(signif(delay_params$sd, 3))
     }
     phi <- priors[grepl("rep_phi", variable, fixed = TRUE)]
     if (nrow(phi) > 0) {
@@ -356,7 +338,7 @@ update_secondary_args <- function(data, priors, verbose = TRUE) {
 #'
 #' @param to Date object indicating when to plot up to.
 #'
-#' @param new_obs A data.frame containing the columns `date` and `secondary`
+#' @param new_obs A `<data.frame>` containing the columns `date` and `secondary`
 #' which replace the secondary observations stored in the `estimate_secondary`
 #' output.
 #'
@@ -364,7 +346,6 @@ update_secondary_args <- function(data, priors, verbose = TRUE) {
 #'
 #' @return A `ggplot` object.
 #'
-#' @author Sam Abbott
 #' @seealso plot estimate_secondary
 #' @method plot estimate_secondary
 #' @importFrom ggplot2 ggplot aes geom_col geom_point labs scale_x_date
@@ -375,7 +356,7 @@ plot.estimate_secondary <- function(x, primary = FALSE,
                                     from = NULL, to = NULL,
                                     new_obs = NULL,
                                     ...) {
-  predictions <- data.table::copy(x$predictions)
+  predictions <- data.table::copy(x$predictions)[!is.na(secondary)]
 
   if (!is.null(new_obs)) {
     new_obs <- data.table::as.data.table(new_obs)
@@ -415,16 +396,23 @@ plot.estimate_secondary <- function(x, primary = FALSE,
   )
   plot <- plot +
     ggplot2::theme_bw() +
-    ggplot2::labs(y = "Confirmed Cases", x = "Date") +
+    ggplot2::labs(y = "Reports per day", x = "Date") +
     ggplot2::scale_x_date(date_breaks = "week", date_labels = "%b %d") +
     ggplot2::scale_y_continuous(labels = scales::comma) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
   return(plot)
 }
 
-#' Simulate a secondary observation
+#' Convolve and scale a time series
 #'
-#' @param data A data frame containing the `date` of report and `primary`
+#' This applies a lognormal convolution with given, potentially time-varying
+#' parameters representing the parameters of the lognormal distribution used for
+#' the convolution and an optional scaling factor. This is akin to the model
+#' used in [estimate_secondary()] and [simulate_secondary()].
+#'
+#' Up to version 1.4.0 this function was called [simulate_secondary()].
+#'
+#' @param data A `<data.frame>` containing the `date` of report and `primary`
 #' cases as a numeric vector.
 #'
 #' @param family Character string defining the observation model. Options are
@@ -437,15 +425,14 @@ plot.estimate_secondary <- function(x, primary = FALSE,
 #' @param ... Additional parameters to pass to the observation model (i.e
 #'  `rnbinom` or `rpois`).
 #'
-#' @return A data frame containing simulated data in the format required by
+#' @return A `<data.frame>` containing simulated data in the format required by
 #' [estimate_secondary()].
 #'
-#' @author Sam Abbott
-#' @author Sebastian Funk
 #' @seealso estimate_secondary
 #' @inheritParams secondary_opts
 #' @importFrom data.table as.data.table copy shift
 #' @importFrom purrr pmap_dbl
+#' @importFrom rlang arg_match
 #' @export
 #' @examples
 #' # load data.table for manipulation
@@ -464,7 +451,7 @@ plot.estimate_secondary <- function(x, primary = FALSE,
 #' cases[, meanlog := 1.8][, sdlog := 0.5]
 #'
 #' # Simulate secondary cases
-#' cases <- simulate_secondary(cases, type = "incidence")
+#' cases <- convolve_and_scale(cases, type = "incidence")
 #' cases
 #' #### Prevalence data example ####
 #'
@@ -479,12 +466,13 @@ plot.estimate_secondary <- function(x, primary = FALSE,
 #' cases[, meanlog := 1.6][, sdlog := 0.8]
 #'
 #' # Simulate secondary cases
-#' cases <- simulate_secondary(cases, type = "prevalence")
+#' cases <- convolve_and_scale(cases, type = "prevalence")
 #' cases
-simulate_secondary <- function(data, type = "incidence", family = "poisson",
+convolve_and_scale <- function(data, type = c("incidence", "prevalence"),
+                               family = c("none", "poisson", "negbin"),
                                delay_max = 30, ...) {
-  type <- match.arg(type, choices = c("incidence", "prevalence"))
-  family <- match.arg(family, choices = c("none", "poisson", "negbin"))
+  type <- arg_match(type)
+  family <- arg_match(family)
   data <- data.table::as.data.table(data)
   data <- data.table::copy(data)
   data <- data[, index := seq_len(.N)]
@@ -497,7 +485,7 @@ simulate_secondary <- function(data, type = "incidence", family = "poisson",
       list(i = index, m = meanlog, s = sdlog),
       function(i, m, s) {
         discretised_lognormal_pmf_conv(
-          scaled[max(1, i - delay_max):i],
+          scaled[max(1, i - delay_max - 1):i],
           meanlog = m, sdlog = s
         )
       }
@@ -534,31 +522,31 @@ simulate_secondary <- function(data, type = "incidence", family = "poisson",
 #'
 #' @description `r lifecycle::badge("experimental")`
 #' This function forecasts secondary observations using the output of
-#' `estimate_secondary()` and either observed primary data or a forecast of
-#' primary observations. See the examples of `estimate_secondary()`
-#' for one use case. It can also be combined with `estimate_infections()` t
+#' [estimate_secondary()] and either observed primary data or a forecast of
+#' primary observations. See the examples of [estimate_secondary()]
+#' for one use case. It can also be combined with [estimate_infections()] to
 #' produce a forecast for a secondary observation from a forecast of a primary
-#' observation. See the examples of `estimate_secondary()` for
+#' observation. See the examples of [estimate_secondary()] for
 #' example use cases on synthetic data. See
 #' [here](https://gist.github.com/seabbs/4f09d7609df298db7a86c31612ff9d17)
 #' for an example of forecasting Covid-19 deaths from Covid-19 cases.
 #'
 #' @param estimate An object of class "estimate_secondary" as produced by
-#' `estimate_secondary()`.
+#' [estimate_secondary()].
 #'
-#' @param primary A data.frame containing at least `date` and `value` (integer)
-#' variables and optionally `sample`. Used as the primary observation used to
-#' forecast the secondary observations. Alternatively, this may be an object of
-#' class "estimate_infections" as produced by `estimate_infections()`. If
-#' `primary` is of class "estimate_infections" then the internal samples will
+#' @param primary A `<data.frame>` containing at least `date` and `value`
+#' (integer) variables and optionally `sample`. Used as the primary observation
+#' used to forecast the secondary observations. Alternatively, this may be an
+#' object of class "estimate_infections" as produced by `estimate_infections()`.
+#' If `primary` is of class "estimate_infections" then the internal samples will
 #' be filtered to have a minimum date ahead of those observed in the `estimate`
 #' object.
 #'
 #' @param primary_variable A character string indicating the primary variable,
 #' defaulting to "reported_cases". Only used when primary is of class
-#' "estimate_infections".
+#' `<estimate_infections>`.
 #'
-#' @param model A compiled stan model as returned by `rstan::stan_model`.
+#' @param model A compiled stan model as returned by [rstan::stan_model()].
 #'
 #' @param samples Numeric, number of posterior samples to simulate from. The
 #' default is to use all samples in the `primary` input when present. If not
@@ -567,14 +555,13 @@ simulate_secondary <- function(data, type = "incidence", family = "poisson",
 #' @param all_dates Logical, defaults to FALSE. Should a forecast for all dates
 #' and not just those in the forecast horizon be returned.
 #'
-#' @return A list containing: `predictions` (a data frame ordered by date with
-#' the primary, and secondary observations, and a summary of the forecast
+#' @return A list containing: `predictions` (a `<data.frame>` ordered by date
+#' with the primary, and secondary observations, and a summary of the forecast
 #' secondary observations. For primary observations in the forecast horizon
-#' when uncertainty is present the median is used), `samples` a data frame of
-#' forecast secondary observation posterior samples, and `forecast` a summary
+#' when uncertainty is present the median is used), `samples` a `<data.frame>`
+#' of forecast secondary observation posterior samples, and `forecast` a summary
 #' of the forecast secondary observation posterior.
 #'
-#' @author Sam Abbott
 #' @importFrom rstan extract sampling
 #' @importFrom data.table rbindlist merge.data.table as.data.table setorderv
 #' @importFrom data.table setcolorder copy
@@ -582,12 +569,14 @@ simulate_secondary <- function(data, type = "incidence", family = "poisson",
 #' @importFrom utils tail
 #' @importFrom purrr map
 #' @inheritParams estimate_secondary
-#' @seealso estimate_secondary
+#' @inheritParams stan_opts
+#' @seealso [estimate_secondary()]
 #' @export
 forecast_secondary <- function(estimate,
                                primary,
                                primary_variable = "reported_cases",
                                model = NULL,
+                               backend = "rstan",
                                samples = NULL,
                                all_dates = FALSE,
                                CrIs = c(0.2, 0.5, 0.9)) {
@@ -619,7 +608,7 @@ forecast_secondary <- function(estimate,
   updated_primary <- primary
 
   ## extract samples from given stanfit object
-  draws <- rstan::extract(estimate$fit,
+  draws <- extract_samples(estimate$fit,
     pars = c(
       "sim_secondary", "log_lik",
       "lp__", "secondary"
@@ -659,28 +648,26 @@ forecast_secondary <- function(estimate,
   # combine with data
   data <- c(data, draws)
 
-  # load model
-  if (is.null(model)) {
-    model <- stanmodels$simulate_secondary
-  }
-
   # allocate empty parameters
   data <- allocate_empty(
-    data, c("frac_obs", "delay_mean", "delay_sd", "rep_phi"),
+    data, c("frac_obs", "delay_param", "rep_phi"),
     n = data$n
   )
   data$all_dates <- as.integer(all_dates)
+
   ## simulate
-  sims <- rstan::sampling(
-    object = model,
-    data = data, chains = 1, iter = 1,
-    algorithm = "Fixed_param",
-    refresh = 0
+  args <- create_stan_args(
+    stan_opts(
+      model = model, backend = backend, chains = 1, samples = 1, warmup = 1
+    ),
+    data = data, fixed_param = TRUE, model = "simulate_secondary"
   )
+
+  sims <- fit_model(args, id = "simulate_secondary")
 
   # extract samples and organise
   dates <- unique(primary_fit$date)
-  samples <- rstan::extract(sims, "sim_secondary")$sim_secondary
+  samples <- extract_samples(sims, "sim_secondary")$sim_secondary
   samples <- as.data.table(samples)
   colnames(samples) <- c("iterations", "sample", "time", "value")
   samples <- samples[, c("iterations", "time") := NULL]

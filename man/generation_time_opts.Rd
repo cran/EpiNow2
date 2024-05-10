@@ -5,19 +5,19 @@
 \title{Generation Time Distribution Options}
 \usage{
 generation_time_opts(
-  dist = dist_spec(mean = 1),
+  dist = Fixed(1),
   ...,
   disease,
   source,
-  max = 15L,
+  max = 14,
   fixed = FALSE,
-  prior_weight
+  tolerance = 0.001,
+  weight_prior = TRUE
 )
 }
 \arguments{
-\item{dist}{A delay distribution or series of delay distributions generated
-using \code{\link[=dist_spec]{dist_spec()}} or \code{\link[=get_generation_time]{get_generation_time()}}. If no distribution is given
-a fixed generation time of 1 will be assumed.}
+\item{dist}{A delay distribution or series of delay distributions . If no
+distribution is given a fixed generation time of 1 will be assumed.}
 
 \item{...}{deprecated; use \code{dist} instead}
 
@@ -29,41 +29,43 @@ a fixed generation time of 1 will be assumed.}
 
 \item{fixed}{deprecated; use \code{dist} instead}
 
-\item{prior_weight}{deprecated; prior weights are now specified as a
-model option. Use the \code{weigh_delay_priors} argument of \code{estimate_infections}
-instead.}
+\item{tolerance}{Numeric; the desired tolerance level.}
+
+\item{weight_prior}{Logical; if TRUE (default), any priors given in \code{dist}
+will be weighted by the number of observation data points, in doing so
+approximately placing an independent prior at each time step and usually
+preventing the posteriors from shifting. If FALSE, no weight will be
+applied, i.e. any parameters in \code{dist} will be treated as a single
+parameters.}
 }
 \value{
-A list summarising the input delay distributions.
+A \verb{<generation_time_opts>} object summarising the input delay
+distributions.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
-Returns generation time parameters in a format for lower level model use. The
-generation time can either be given as a \code{disease} and \code{source} to
-be passed to \link{get_generation_time}, or as parameters of a distribution to be
-passed to \link{dist_spec}.
+Returns generation time parameters in a format for lower level model use.
 }
 \examples{
 # default settings with a fixed generation time of 1
 generation_time_opts()
 
 # A fixed gamma distributed generation time
-generation_time_opts(dist_spec(mean = 3, sd = 2, max = 15))
+generation_time_opts(Gamma(mean = 3, sd = 2, max = 14))
 
 # An uncertain gamma distributed generation time
 generation_time_opts(
- dist_spec(mean = 3, sd = 2, mean_sd = 1, sd_sd = 0.5, max = 15)
+  Gamma(
+    mean = Normal(mean = 3, sd = 1),
+    sd = Normal(mean = 2, sd = 0.5),
+    max = 14
+  )
 )
 
-# A generation time sourced from the literature
-dist <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
-generation_time_opts(dist)
+# An example generation time
+generation_time_opts(example_generation_time)
 }
 \seealso{
-convert_to_logmean convert_to_logsd bootstrapped_dist_fit dist_spec
-}
-\author{
-Sebastian Funk
-
-Sam Abbott
+\code{\link[=convert_to_logmean]{convert_to_logmean()}} \code{\link[=convert_to_logsd]{convert_to_logsd()}}
+\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link[=Gamma]{Gamma()}} \code{\link[=LogNormal]{LogNormal()}} \code{\link[=Fixed]{Fixed()}}
 }

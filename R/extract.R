@@ -1,20 +1,20 @@
 #' Extract Samples for a Parameter from a Stan model
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Extracts a single from a list of `stan` output and returns it as a
-#' `data.table`.
+#' Extracts a single from a list of stan output and returns it as a
+#' `<data.table>`.
 #
 #' @param param Character string indicating the parameter to extract
 #'
-#' @param samples Extracted stan model (using `rstan::extract`)
+#' @param samples Extracted stan model (using [rstan::extract()])
 #'
 #' @param dates A vector identifying the dimensionality of the parameter to
 #' extract. Generally this will be a date.
 #'
-#' @return A data frame containing the parameter name, date, sample id and
+#' @return A `<data.frame>` containing the parameter name, date, sample id and
 #' sample value.
-#' @author Sam Abbott
 #' @importFrom data.table melt as.data.table
+#' @keywords internal
 extract_parameter <- function(param, samples, dates) {
   param_df <- data.table::as.data.table(
     t(
@@ -42,9 +42,9 @@ extract_parameter <- function(param, samples, dates) {
 #' Extract Samples from a Parameter with a Single Dimension
 #'
 #' @inheritParams extract_parameter
-#' @return A data frame containing the parameter name, sample id and sample
+#' @return A `<data.frame>` containing the parameter name, sample id and sample
 #' value
-#' @author Sam Abbott
+#' @keywords internal
 extract_static_parameter <- function(param, samples) {
   data.table::data.table(
     parameter = param,
@@ -53,6 +53,75 @@ extract_static_parameter <- function(param, samples) {
   )
 }
 
+#' Extract all samples from a stan fit
+#'
+#' If the `object` argument is a `<stanfit>` object, it simply returns the
+#' result of [rstan::extract()]. If it is a `<CmdStanMCMC>` it returns samples
+#' in the same format as [rstan::extract()] does for `<stanfit>` objects.
+#' @param stan_fit A `<stanfit>` or `<CmdStanMCMC>` object as returned by
+#'   [fit_model()].
+#' @param pars Any selection of parameters to extract
+#' @param include whether the parameters specified in `pars` should be included
+#' (`TRUE`, the default) or excluded (`FALSE`)
+#' @return List of data.tables with samples
+#' @export
+#'
+#' @importFrom data.table data.table melt setkey
+#' @importFrom rstan extract
+extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
+  if (inherits(stan_fit, "stanfit")) {
+    args <- list(object = stan_fit, include = include)
+    if (!is.null(pars)) args <- c(args, list(pars = pars))
+    return(do.call(rstan::extract, args))
+  }
+  if (!inherits(stan_fit, "CmdStanMCMC") &&
+      !inherits(stan_fit, "CmdStanFit")) {
+    stop("stan_fit must be a <stanfit>, <CmdStanMCMC> or <CmdStanFit> object")
+  }
+
+  # extract sample from stan object
+  if (!include) {
+    all_pars <- stan_fit$metadata()$stan_variables
+    pars <- setdiff(all_pars, pars)
+  }
+  samples_df <- data.table::data.table(stan_fit$draws(
+    variables = pars, format = "df")
+  )
+  # convert to rstan format
+  samples_df <- suppressWarnings(data.table::melt(
+    samples_df, id.vars = c(".chain", ".iteration", ".draw")
+  ))
+  samples_df <- samples_df[,
+    index := sub("^.*\\[([0-9,]+)\\]$", "\\1", variable)
+  ][,
+    variable := sub("\\[.*$", "", variable)
+  ]
+  samples <- split(samples_df, by = "variable")
+  samples <- purrr::map(samples, \(df) {
+    permutation <- sample(
+      seq_len(max(df$.draw)), max(df$.draw), replace = FALSE
+    )
+    df <- df[, new_draw := permutation[.draw]]
+    setkey(df, new_draw)
+    max_indices <- strsplit(tail(df$index, 1), split = ",", fixed = TRUE)[[1]]
+    if (any(grepl("[^0-9]", max_indices))) {
+      max_indices <- 1
+    } else {
+      max_indices <- as.integer(max_indices)
+    }
+    ret <- aperm(
+      a = array(df$value, dim = c(max_indices, length(permutation))),
+      perm = c(length(max_indices) + 1, seq_along(max_indices))
+    )
+    ## permute
+    dimnames(ret) <- c(
+      list(iterations = NULL), rep(list(NULL), length(max_indices))
+    )
+    return(ret)
+  })
+
+  return(samples)
+}
 
 #' Extract Parameter Samples from a Stan Model
 #'
@@ -60,9 +129,7 @@ extract_static_parameter <- function(param, samples) {
 #' Extracts a custom set of parameters from a stan object and adds
 #' stratification and dates where appropriate.
 #'
-#' @param stan_fit A fit Stan model as returned by `rstan:sampling`.
-#'
-#' @param data A list of the data supplied to the `rstan::sampling` call.
+#' @param data A list of the data supplied to the [fit_model()] call.
 #'
 #' @param reported_dates A vector of dates to report estimates for.
 #'
@@ -75,15 +142,17 @@ extract_static_parameter <- function(param, samples) {
 #' @param merge if TRUE, merge samples and data so that parameters can be
 #' extracted from data.
 #'
-#' @return A list of dataframes each containing the posterior of a parameter
-#' @author Sam Abbott
+#' @inheritParams extract_samples
+#' @return A list of `<data.frame>`'s each containing the posterior of a
+#' parameter
 #' @importFrom rstan extract
 #' @importFrom data.table data.table
+#' @keywords internal
 extract_parameter_samples <- function(stan_fit, data, reported_dates,
                                       reported_inf_dates,
                                       drop_length_1 = FALSE, merge = FALSE) {
   # extract sample from stan object
-  samples <- rstan::extract(stan_fit)
+  samples <- extract_samples(stan_fit)
 
   ## drop initial length 1 dimensions if requested
   if (drop_length_1) {
@@ -113,33 +182,36 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
     samples,
     reported_dates
   )
-  if (data$estimate_r == 1) {
-    out$R <- extract_parameter(
-      "R",
-      samples,
-      reported_dates
-    )
-    if (data$bp_n > 0) {
-      out$breakpoints <- extract_parameter(
-        "bp_effects",
+  if ("estimate_r" %in% names(data)) {
+    if (data$estimate_r == 1) {
+      out$R <- extract_parameter(
+        "R",
         samples,
-        1:data$bp_n
+        reported_dates
       )
-      out$breakpoints <- out$breakpoints[,
-        strat := date][, c("time", "date") := NULL
-      ]
+      if (data$bp_n > 0) {
+        out$breakpoints <- extract_parameter(
+          "bp_effects",
+          samples,
+          1:data$bp_n
+        )
+        out$breakpoints <- out$breakpoints[
+          ,
+          strat := date
+        ][, c("time", "date") := NULL]
+      }
+    } else {
+      out$R <- extract_parameter(
+        "gen_R",
+        samples,
+        reported_dates
+      )
     }
-  } else {
-    out$R <- extract_parameter(
-      "gen_R",
-      samples,
-      reported_dates
-    )
   }
   out$growth_rate <- extract_parameter(
     "r",
     samples,
-    reported_dates
+    reported_dates[-1]
   )
   if (data$week_effect > 1) {
     out$day_of_week <- extract_parameter(
@@ -153,19 +225,12 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
     ]
   }
   if (data$delay_n_p > 0) {
-    out$delay_mean <- extract_parameter(
-      "delay_mean", samples, seq_len(data$delay_n_p)
+    out$delay_params <- extract_parameter(
+      "delay_params", samples, seq_len(data$delay_params_length)
     )
-    out$delay_mean <-
-      out$delay_mean[, strat := as.character(time)][, time := NULL][,
+    out$delay_params <-
+      out$delay_params[, strat := as.character(time)][, time := NULL][,
         date := NULL
-      ]
-    out$delay_sd <- extract_parameter(
-      "delay_sd", samples, seq_len(data$delay_n_p)
-    )
-    out$delay_sd <-
-      out$delay_sd[, strat := as.character(time)][, time := NULL][,
-       date := NULL
       ]
   }
   if (data$model_type == 1) {
@@ -175,7 +240,7 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
       value.V1 := NULL
     ]
   }
-  if (data$obs_scale == 1) {
+  if ("obs_scale_sd" %in% names(data) && data$obs_scale_sd > 0) {
     out$fraction_observed <- extract_static_parameter("frac_obs", samples)
     out$fraction_observed <- out$fraction_observed[, value := value.V1][,
       value.V1 := NULL
@@ -188,10 +253,10 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Extracts summarised parameter posteriors from a `stanfit` object using
-#' `rstan::summary` in a format consistent with other summary functions in
-#' `EpiNow2`.
+#' `rstan::summary()` in a format consistent with other summary functions
+#' in `{EpiNow2}`.
 #'
-#' @param fit A `stanfit` objec.
+#' @param fit A `<stanfit>` objec.
 #
 #' @param params A character vector of parameters to extract. Defaults to all
 #' parameters.
@@ -199,14 +264,14 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
 #' @param var_names Logical defaults to `FALSE`. Should variables be named.
 #' Automatically set to TRUE if multiple parameters are to be extracted.
 #'
-#' @return A `data.table` summarising parameter posteriors. Contains a
+#' @return A `<data.table>` summarising parameter posteriors. Contains a
 #' following variables: `variable`, `mean`, `mean_se`, `sd`, `median`, and
 #' `lower_`, `upper_` followed by credible interval labels indicating the
 #' credible intervals present.
 #'
-#' @author Sam Abbott
 #' @inheritParams calc_summary_measures
 #' @export
+#' @importFrom posterior mcse_mean
 #' @importFrom data.table as.data.table :=
 #' @importFrom rstan summary
 extract_stan_param <- function(fit, params = NULL,
@@ -217,28 +282,37 @@ extract_stan_param <- function(fit, params = NULL,
   sym_CrIs <- sort(sym_CrIs)
   CrIs <- round(100 * CrIs, 0)
   CrIs <- c(paste0("lower_", rev(CrIs)), "median", paste0("upper_", CrIs))
-  args <- list(object = fit, probs = sym_CrIs)
   if (!is.null(params)) {
     if (length(params) > 1) {
       var_names <- TRUE
     }
-    args <- c(args, pars = params)
   } else {
     var_names <- TRUE
   }
-  summary <- do.call(rstan::summary, args)
-  summary <- data.table::as.data.table(summary$summary,
-    keep.rownames = ifelse(var_names,
-      "variable",
-      FALSE
+  if (inherits(fit, "stanfit")) { # rstan backend
+    args <- list(object = fit, probs = sym_CrIs)
+    if (!is.null(params)) args <- c(args, list(pars = params))
+    summary <- do.call(rstan::summary, args)
+    summary <- data.table::as.data.table(summary$summary,
+      keep.rownames = ifelse(var_names,
+        "variable",
+        FALSE
+      )
     )
-  )
-  cols <- c("mean", "se_mean", "sd", CrIs, "n_eff", "Rhat")
+    summary <- summary[, c("n_eff", "Rhat") := NULL]
+  } else if (inherits(fit, "CmdStanMCMC")) { # cmdstanr backend
+    summary <- fit$summary(
+      variable = params,
+      mean, mcse_mean, sd, ~quantile(.x, probs = sym_CrIs)
+    )
+    if (!var_names) summary$variable <- NULL
+    summary <- data.table::as.data.table(summary)
+  }
+  cols <- c("mean", "se_mean", "sd", CrIs)
   if (var_names) {
     cols <- c("variable", cols)
   }
   colnames(summary) <- cols
-  summary <- summary[, c("n_eff", "Rhat") := NULL]
   return(summary)
 }
 
@@ -247,18 +321,18 @@ extract_stan_param <- function(fit, params = NULL,
 #' @description `r lifecycle::badge("experimental")`
 #' Extracts posterior samples to use to initialise a full model fit. This may
 #' be useful for certain data sets where the sampler gets stuck or cannot
-#' easily be initialised. In `estimate_infections()`, `epinow()` and\
-#' `regional_epinow()` this option can be engaged by setting
+#' easily be initialised. In [estimate_infections()], [epinow()] and
+#' [regional_epinow()] this option can be engaged by setting
 #' `stan_opts(init_fit = <stanfit>)`.
 #'
 #' This implementation is based on the approach taken in
 #' [epidemia](https://github.com/ImperialCollegeLondon/epidemia/) authored by
 #' James Scott.
 #'
-#' @param fit A stanfit object.
+#' @param fit A `<stanfit>` object.
 #'
 #' @param current_inits A function that returns a list of initial conditions
-#' (such as `create_initial_conditions()`). Only used in `exclude_list` is
+#' (such as [create_initial_conditions()]). Only used in `exclude_list` is
 #' specified.
 #'
 #' @param exclude_list A character vector of parameters to not initialise from
@@ -269,18 +343,17 @@ extract_stan_param <- function(fit, params = NULL,
 #' @return A function that when called returns a set of initial conditions as a
 #' named list.
 #'
-#' @author Sam Abbott
 #' @importFrom purrr map
 #' @importFrom rstan extract
+#' @importFrom utils modifyList
 #' @export
-
 extract_inits <- function(fit, current_inits,
                           exclude_list = NULL,
                           samples = 50) {
   # extract and generate samples as function
   init_fun <- function(i) {
     res <- lapply(
-      rstan::extract(fit),
+      extract_samples(fit),
       function(x) {
         if (length(dim(x)) == 1) {
           as.array(x[i])
@@ -318,7 +391,7 @@ extract_inits <- function(fit, current_inits,
     if (!is.null(exclude_list)) {
       old_inits_sample <- old_inits()
       old_inits_sample <- old_inits_sample[exclude]
-      new_inits <- update_list(fit_inits, old_inits_sample)
+      new_inits <- modifyList(fit_inits, old_inits_sample)
     } else {
       new_inits <- fit_inits
     }
