@@ -1,7 +1,7 @@
-f64f415ff580e0ba6c17e152c39b3aa1 *DESCRIPTION
+61c1f643e1f7672a3ec46e4f8326fa2d *DESCRIPTION
 d9c2d56b08ec4ad730418c5de1c75310 *LICENSE
 dfa3c9877456bde926854de7916aa575 *NAMESPACE
-fb497962adc20880e1d3cd610b204756 *NEWS.md
+42f8c9441db20a7521506a7c4637437d *NEWS.md
 fff8e5b52479445dd5b0d414985c19f6 *R/EpiNow2-package.R
 12b0f0d3b1a77835b6a2c113ef4ac920 *R/checks.R
 7235c967a04930d23adc2604a0fc9180 *R/create.R
@@ -40,7 +40,7 @@ f1ecddaa4cab6fdc1b525b8433cff871 *data/example_generation_time.rda
 93ccb609e2498c8b043254dd9006b2b3 *data/example_truncated.rda
 f9eee81cbc011d74e1dc91c2fe2af7f4 *data/generation_times.rda
 f3d0c5dadbc7c6bb47d5714072c6b171 *data/incubation_periods.rda
-ae3f05e09486b0d3239cdd91f6c1c73f *inst/CITATION
+93c88e3e2afad8051c4b8908bac005c6 *inst/CITATION
 4b670ef548e4e12002c3ef85660265fb *inst/WORDLIST
 5f9c1791c45145a55161d85e02d5507b *inst/doc/EpiNow2.Rmd
 d51555eb1a8edf1225e6410efacccfed *inst/doc/EpiNow2.html

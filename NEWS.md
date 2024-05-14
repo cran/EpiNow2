@@ -1,3 +1,7 @@
+# EpiNow2 1.5.1
+
+A patch release to fix an issue with the date in the package citation.
+
 # EpiNow2 1.5.0
 
 This release comes with a change of maintainer, from @seabbs to @sbfnk.
