@@ -1,7 +1,7 @@
-61c1f643e1f7672a3ec46e4f8326fa2d *DESCRIPTION
+c32552805af66e3beca6a77f03e92393 *DESCRIPTION
 d9c2d56b08ec4ad730418c5de1c75310 *LICENSE
 dfa3c9877456bde926854de7916aa575 *NAMESPACE
-42f8c9441db20a7521506a7c4637437d *NEWS.md
+7d716edd0f8aba11bf6d0e859db36677 *NEWS.md
 fff8e5b52479445dd5b0d414985c19f6 *R/EpiNow2-package.R
 12b0f0d3b1a77835b6a2c113ef4ac920 *R/checks.R
 7235c967a04930d23adc2604a0fc9180 *R/create.R
@@ -28,7 +28,7 @@ d94468250514ee3a6b222ed3ee747617 *R/simulate_secondary.R
 40854bdf88cf7cd5c51d0a56f7898aaa *R/stanmodels.R
 c36654e4e9de3651f6897e74be5e5040 *R/summarise.R
 acab4cb83af3a412799fda0461b018fc *R/utilities.R
-8facbb2ff741a7c9bce62e0fc309b0aa *README.md
+763c0b1d45a08d9de16b0fece2c3bb7a *README.md
 f61db891eb928123aba4412ca322f508 *build/partial.rdb
 6bca6e3abe765ec6233491d130457dec *build/vignette.rds
 df462e42a1ad87b93d2fef5af5db4103 *configure
@@ -40,7 +40,6 @@ f1ecddaa4cab6fdc1b525b8433cff871 *data/example_generation_time.rda
 93ccb609e2498c8b043254dd9006b2b3 *data/example_truncated.rda
 f9eee81cbc011d74e1dc91c2fe2af7f4 *data/generation_times.rda
 f3d0c5dadbc7c6bb47d5714072c6b171 *data/incubation_periods.rda
-93c88e3e2afad8051c4b8908bac005c6 *inst/CITATION
 4b670ef548e4e12002c3ef85660265fb *inst/WORDLIST
 5f9c1791c45145a55161d85e02d5507b *inst/doc/EpiNow2.Rmd
 d51555eb1a8edf1225e6410efacccfed *inst/doc/EpiNow2.html
