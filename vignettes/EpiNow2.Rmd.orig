@@ -34,7 +34,7 @@ library(EpiNow2)
 
 ### Reporting delays, incubation period and generation time
 
-Distributions can be supplied in two ways. First, one can supplying delay data to `estimate_delay()`, where a subsampled bootstrapped lognormal will be fit to account for uncertainty in the observed data without being biased by changes in incidence (see `?EpiNow2::estimate_delay()`).
+Distributions can be supplied in two ways. First, one can supply delay data to `estimate_delay()`, where a subsampled bootstrapped lognormal will be fit to account for uncertainty in the observed data without being biased by changes in incidence (see `?EpiNow2::estimate_delay()`).
 
 Second, one can specify predetermined delays with uncertainty using the distribution functions such as `Gamma` or `Lognormal`. An arbitrary number of delay distributions are supported in `dist_spec()` with a common use case being an incubation period followed by a reporting delay. For more information on specifying distributions see (see `?EpiNow2::Distributions`).
 
@@ -61,6 +61,20 @@ example_generation_time
 example_incubation_period
 ```
 
+Users can also pass a non-parametric delay distribution vector using the `NonParametric` option 
+for both the generation interval and reporting delays. It is important to note that if doing so,
+both delay distributions are 0-indexed, meaning the first element corresponds to the probability mass
+at day 0 of an individual's infection. Because the discretised renewal equation doesn't support mass on day 0, the generation interval should be passed in as a 0-indexed vector with a mass of zero on day 0. 
+If this is not the case, a warning will indicate that the vector is being left-truncated and renormalized.
+
+```{r}
+example_non_parametric_gi <-  NonParametric(pmf = c(0, 0.3, 0.5, 0.2))
+
+example_non_parametric_delay <- NonParametric(pmf = c(0.01, 0.1, 0.5, 0.3, 0.09))
+```
+These distributions are passed to downstream functions in the same way that the 
+parametric distributions are. 
+
 Now, to the functions.
 
 ### [epinow()](https://epiforecasts.io/EpiNow2/reference/epinow.html)
@@ -79,7 +93,7 @@ Estimate cases by date of infection, the time-varying reproduction number, the r
 ```{r, message = FALSE, warning = FALSE}
 estimates <- epinow(
   data = reported_cases,
-  generation_time = generation_time_opts(example_generation_time),
+  generation_time = gt_opts(example_generation_time),
   delays = delay_opts(example_incubation_period + reporting_delay),
   rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
   stan = stan_opts(cores = 4, control = list(adapt_delta = 0.99)),
@@ -108,7 +122,7 @@ head(summary(estimates, output = "estimated_reported_cases"))
 
 A range of plots are returned (with the single summary plot shown below). These plots can also be generated using the following `plot` method.
 
-```{r, dpi = 330, fig.width = 12, fig.height = 12, message = FALSE, warning = FALSE}
+```{r plot_estimates, message = FALSE, warning = FALSE}
 plot(estimates)
 ```
 
@@ -133,7 +147,7 @@ Calling `regional_epinow()` runs the `epinow()` on each region in turn (or in pa
 ```{r, message = FALSE, warning = FALSE}
 estimates <- regional_epinow(
   data = reported_cases,
-  generation_time = generation_time_opts(example_generation_time),
+  generation_time = gt_opts(example_generation_time),
   delays = delay_opts(example_incubation_period + reporting_delay),
   rt = rt_opts(prior = list(mean = 2, sd = 0.2), rw = 7),
   gp = NULL,
@@ -151,6 +165,6 @@ knitr::kable(estimates$summary$summarised_results$table)
 
 A range of plots are again returned (with the single summary plot shown below).
 
-```{r, dpi = 330, fig.width = 12, fig.height = 12, message = FALSE, warning = FALSE}
+```{r plot_regional_epinow_summary, message = FALSE, warning = FALSE}
 estimates$summary$summary_plot
 ```

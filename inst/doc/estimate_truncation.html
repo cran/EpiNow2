@@ -27,22 +27,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -251,19 +235,41 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Model definition: estimate_truncation()</h1>
+<h1 class="title toc-ignore">Model definition:
+estimate_truncation()</h1>
 
 
 
-<p><strong>This is a work in progress. Please consider submitting a PR to improve it.</strong></p>
-<p>This model deals with the problem of <em>nowcasting</em>, or adjusting for right-truncation in reported count data. This occurs when the quantity being observed, for example cases, hospitalisations or deaths, is reported with a delay, resulting in an underestimation of recent counts. The <code>estimate_truncation()</code> model attempts to infer parameters of the underlying delay distributions from multiple snapshots of past data. It is designed to be a simple model that can integrate with the other models in the package and therefore may not be ideal for all uses. For a more principled approach to nowcasting please consider using the <a href="https://package.epinowcast.org">epinowcast</a> package.</p>
-<p>Given snapshots <span class="math inline">\(C^{i}_{t}\)</span> reflecting reported counts for time <span class="math inline">\(t\)</span> where <span class="math inline">\(i=1\ldots S\)</span> is in order of recency (earliest snapshots first) and <span class="math inline">\(S\)</span> is the number of past snapshots used for estimation, we try to infer the parameters of a discrete truncation distribution <span class="math inline">\(\zeta(\tau | \mu_{\zeta}, \sigma_{\zeta})\)</span> with corresponding probability mass function <span class="math inline">\(Z(\tau | \mu_{\zeta}\)</span>).</p>
-<p>The model assumes that final counts <span class="math inline">\(D_{t}\)</span> are related to observed snapshots via the truncation distribution such that</p>
+<p><strong>This is a work in progress. Please consider submitting a PR
+to improve it.</strong></p>
+<p>This model deals with the problem of <em>nowcasting</em>, or
+adjusting for right-truncation in reported count data. This occurs when
+the quantity being observed, for example cases, hospitalisations or
+deaths, is reported with a delay, resulting in an underestimation of
+recent counts. The <code>estimate_truncation()</code> model attempts to
+infer parameters of the underlying delay distributions from multiple
+snapshots of past data. It is designed to be a simple model that can
+integrate with the other models in the package and therefore may not be
+ideal for all uses. For a more principled approach to nowcasting please
+consider using the <a href="https://package.epinowcast.org">epinowcast</a> package.</p>
+<p>Given snapshots <span class="math inline">\(C^{i}_{t}\)</span>
+reflecting reported counts for time <span class="math inline">\(t\)</span> where <span class="math inline">\(i=1\ldots S\)</span> is in order of recency
+(earliest snapshots first) and <span class="math inline">\(S\)</span> is
+the number of past snapshots used for estimation, we try to infer the
+parameters of a discrete truncation distribution <span class="math inline">\(\zeta(\tau | \mu_{\zeta}, \sigma_{\zeta})\)</span>
+with corresponding probability mass function <span class="math inline">\(Z(\tau | \mu_{\zeta}\)</span>).</p>
+<p>The model assumes that final counts <span class="math inline">\(D_{t}\)</span> are related to observed snapshots
+via the truncation distribution such that</p>
 <p><span class="math display">\[\begin{equation}
-C^{i &lt; S)_{t}_\sim \mathcal{NegBinom}\left(Z (T_i - t | \mu_{Z}, \sigma_{Z}) D(t) + \sigma, \varphi\right)
+C^{i &lt; S)_{t}_\sim \mathcal{NegBinom}\left(Z (T_i - t | \mu_{Z},
+\sigma_{Z}) D(t) + \sigma, \varphi\right)
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(T_i\)</span> is the date of the final observation in snapshot <span class="math inline">\(i\)</span>, <span class="math inline">\(Z(\tau)\)</span> is defined to be zero for negative values of <span class="math inline">\(\tau\)</span> and <span class="math inline">\(\sigma\)</span> is an additional error term.</p>
-<p>The final counts <span class="math inline">\(D_{t}\)</span> are estimated from the most recent snapshot as</p>
+<p>where <span class="math inline">\(T_i\)</span> is the date of the
+final observation in snapshot <span class="math inline">\(i\)</span>,
+<span class="math inline">\(Z(\tau)\)</span> is defined to be zero for
+negative values of <span class="math inline">\(\tau\)</span> and <span class="math inline">\(\sigma\)</span> is an additional error term.</p>
+<p>The final counts <span class="math inline">\(D_{t}\)</span> are
+estimated from the most recent snapshot as</p>
 <p><span class="math display">\[\begin{equation}
 D_t = \frac{C^{S}}{Z (T_\mathrm{S} - t | \mu_{Z}, \sigma_{Z})}
 \end{equation}\]</span></p>

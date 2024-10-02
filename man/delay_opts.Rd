@@ -8,7 +8,7 @@ delay_opts(
   dist = Fixed(0),
   ...,
   fixed = FALSE,
-  tolerance = 0.001,
+  default_cdf_cutoff = 0.001,
   weight_prior = TRUE
 )
 }
@@ -20,13 +20,15 @@ a fixed distribution with all mass at 0, i.e. no delay.}
 
 \item{fixed}{deprecated; use \code{dist} instead}
 
-\item{tolerance}{Numeric; the desired tolerance level.}
+\item{default_cdf_cutoff}{Numeric; default CDF cutoff to be used if an
+unconstrained distribution is passed as \code{dist}. If \code{dist} is already
+constrained by having a maximum or CDF cutoff this is ignored.}
 
 \item{weight_prior}{Logical; if TRUE (default), any priors given in \code{dist}
 will be weighted by the number of observation data points, in doing so
 approximately placing an independent prior at each time step and usually
-preventing the posteriors from shifting. If FALSE, no weight will be
-applied, i.e. any parameters in \code{dist} will be treated as a single
+preventing the posteriors from shifting. If FALSE, no weight
+will be applied, i.e. any parameters in \code{dist} will be treated as a single
 parameters.}
 }
 \value{
@@ -54,5 +56,5 @@ delay_opts(delay + delay)
 }
 \seealso{
 \code{\link[=convert_to_logmean]{convert_to_logmean()}} \code{\link[=convert_to_logsd]{convert_to_logsd()}}
-\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link[=dist_spec]{dist_spec()}}
+\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link{Distributions}}
 }

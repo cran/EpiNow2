@@ -38,8 +38,8 @@ being evaluated. If set to NULL then all simulations are done at once.}
 \item{backend}{Character string indicating the backend to use for fitting
 stan models. Supported arguments are "rstan" (default) or "cmdstanr".}
 
-\item{verbose}{Logical defaults to \code{\link[=interactive]{interactive()}}. Should a progress bar
-(from \code{progressr}) be shown.}
+\item{verbose}{Logical defaults to \code{\link[=interactive]{interactive()}}. If the \code{progressr}
+package is available, a progress bar will be shown.}
 }
 \value{
 A list of output as returned by \code{\link[=estimate_infections]{estimate_infections()}} but based on
@@ -66,7 +66,6 @@ est <- estimate_infections(reported_cases,
   generation_time = generation_time_opts(example_generation_time),
   delays = delay_opts(example_incubation_period + example_reporting_delay),
   rt = rt_opts(prior = list(mean = 2, sd = 0.1), rw = 7),
-  stan = stan_opts(control = list(adapt_delta = 0.9)),
   obs = obs_opts(scale = list(mean = 0.1, sd = 0.01)),
   gp = NULL, horizon = 0
 )

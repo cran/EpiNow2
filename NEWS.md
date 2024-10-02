@@ -1,3 +1,55 @@
+# EpiNow2 1.6.0
+
+A release that introduces model improvements to the Gaussian Process models, alongside a number of other improvements and bug fixes.
+
+## Documentation
+
+- The documentation of the `rt` argument has been expanded in the case where `rt = NULL` to make explicit the settings that are applied in that case. By @jamesmbaazam in #779 and reviewed by @sbfnk.
+- The README has been updated to link to the free course on nowcasting and forecasting. The availability of variational inference, Laplace approximation, and Pathfinder through `cmdstanr` has also be surfaced. By @jamesmbaazam in #753 and reviewed by @seabbs.
+- Some implicit argument defaults have been made explicit in the function definition. By @Bisaloo in #729.
+- The installation guide in the README has been updated to provide instructions for configuring the C toolchain of Windows, MacOS, and Linux. By @jamesmbaazam in #707 and reviewed by @sbfnk.
+
+## Model changes
+
+- The interface for defining delay distributions has been generalised to also cater for continuous distributions
+- When defining probability distributions these can now be truncated using the `tolerance` argument
+- Ornstein-Uhlenbeck and 5 / 2 Matérn kernels have been added. By @sbfnk in #741 and reviewed by @seabbs.
+- Gaussian processes have been vectorised, leading to some speed gains 🚀 , and the `gp_opts()` function has gained three more options, "periodic", "ou",  and "se", to specify periodic and linear kernels respectively. By @seabbs in #742 and reviewed by @jamesmbaazam.
+- Prior predictive checks have been used to update the following priors: the prior on the magnitude of the Gaussian process (from HalfNormal(0, 1) to HalfNormal(0, 0.1)), and the prior on the overdispersion (from 1 / HalfNormal(0, 1)^2 to 1 / HalfNormal(0, 0.25)). In the user-facing API, this is a change in default values of the `sd` of `phi` in `obs_opts()` from 1 to 0.25. By @seabbs in #742 and reviewed by @jamesmbaazam.
+- The default stan control options have been updated from `list(adapt_delta = 0.95, max_treedepth = 15)` to `list(adapt_delta = 0.9, max_treedepth = 12)` due to improved performance and to reduce the runtime of the default parameterisations. By @seabbs in #742 and reviewed by @jamesmbaazam.
+- Initialisation has been simplified by sampling directly from the priors, where possible, rather than from a constrained space. By @seabbs in #742 and reviewed by @jamesmbaazam.
+- Unnecessary normalisation of delay priors has been removed. By @seabbs in #742 and reviewed by @jamesmbaazam.
+- Ornstein-Uhlenbeck and 5 / 2 Matérn kernels have been added. By @sbfnk in #741 and reviewed by @seabbs.
+- Switch to broadcasting from random walks and added unit tests. By @seabbs in #747 and reviewed by @jamesmbaazam.
+- Optimised convolution code to take into account the relative length of the vectors being convolved. See #745 by @seabbs and reviewed by @jamesmbaazam.
+- Switch to broadcasting the day of the week effect. By @seabbs in #746 and reviewed by @jamesmbaazam.
+- A warning is now thrown if nonparametric PMFs passed to delay options have consecutive tail values that are below a certain low threshold as these lead to loss in speed with little gain in accuracy. By @jamesmbaazam in #752 and reviewed by @seabbs, with a subsequent bug fix in #802.
+- `dist_fit()` can now accept any number of `samples` without throwing a warning when `samples` < 1000 in #751 by @jamesmbaazam and reviewed by @seabbs and @sbfnk.
+
+## Package changes
+
+- `epinow()` now returns the "timing" output in a "time difference"" format that is easier to understand and work with. By @jamesmbaazam in #688 and reviewed by @sbfnk.
+- All functions now use the `{cli}` R package to signal errors, warnings, and messages. By @jamesmbaazam in #762 and reviewed by @seabbs.
+- `fix_dist()` has been renamed to `fix_parameters()` because it removes the uncertainty in a distribution's parameters. By @sbfnk in #733 and reviewed by @jamesmbaazam.
+- `plot.dist_spec` now uses color instead of line types to display pmfs vs cmfs. By @jamesmbaazam in #788 and reviewed by @sbfnk.
+- The use of the `{progressr}` package for displaying progress bars is now optional, as is the use of `{future}` and `{future.apply}` for parallelisation. By @sbfnk in #798 and reviewed by @seabbs.
+- Specifying nonparametric generation time intervals with a nonzero first element (corresponding to the zero bin) is being deprecated as the current behaviour of setting it to zero internally was not well exposed. By @sbfnk in #.
+
+## Bug fixes
+
+- a bug was fixed that caused delay option functions to report an error if only the CDF cutoff was specified. By @sbfnk in #716 and reviewed by @jamesmbaazam.
+- a bug was fixed where `forecast_secondary()` did not work with fixed delays. By @sbfnk in #717 and reviewed by @seabbs.
+- a bug was fixed that caused delay option functions to report an error if only the CDF cutoff was specified. By @sbfnk.
+- a bug was fixed that led to the truncation PMF being shortened from the wrong side when the truncation PMF was longer than the supplied data. By @seabbs in #736 and reviewed by @sbfnk and @jamesmbaazam.
+- a bug was fixed that caused internal validation checks on delay distributions to fail if they contained non-parametric distributions. By @jamesmbaazam in #750 and reviewed by @seabbs.
+- a bug was fixed where combined distributions where shown in alphabetical order, rather than the order in which they were combined. By @sbfnk in #784 and reviewed by @jamesmbaazam.
+
+## Documentation
+
+- Updated the documentation of the dots argument of the `stan_sampling_opts()` to add that the dots are passed to `cmdstanr::sample()`. By @jamesmbaazam in #699 and reviewed by @sbfnk.
+- `generation_time_opts()` has been shortened to `gt_opts()` to make it easier to specify. Calls to both functions are equivalent. By @jamesmbaazam in #698 and reviewed by @seabbs and @sbfnk .
+- Added stan documentation for `update_rt()`. By @seabbs in #747 and reviewed by @jamesmbaazam.
+
 # EpiNow2 1.5.2
 
 A patch release to further fix an issue with the date in the package citation. This has now been addressed by removing `inst/CITATION`.

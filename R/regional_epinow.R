@@ -16,7 +16,7 @@
 #'
 #' Regions can be estimated in parallel using the `{future}` package (see
 #' [setup_future()]). The progress of producing estimates across multiple
-#' regions is tracked using the `{progressr}` package. Modify this behaviour
+#' regions can be tracked using the `{progressr}` package. Modify this behaviour
 #' using [progressr::handlers()] and enable it in batch by setting
 #' `R_PROGRESSR_ENABLE=TRUE` as an environment variable.
 #'
@@ -54,13 +54,11 @@
 #' @export
 #' @seealso [epinow()] [estimate_infections()] [setup_future()]
 #' [regional_summary()]
-#' @importFrom future.apply future_lapply
 #' @importFrom data.table as.data.table setDT copy setorder
 #' @importFrom purrr safely map compact keep
 #' @importFrom futile.logger flog.info flog.warn flog.trace
 #' @importFrom R.utils withTimeout
 #' @importFrom rlang cnd_muffle
-#' @importFrom progressr with_progress progressor
 #' @examples
 #' \donttest{
 #' # set number of cores to use
@@ -79,19 +77,18 @@
 #' # for more examples, see the "estimate_infections examples" vignette
 #' def <- regional_epinow(
 #'   data = cases,
-#'   generation_time = generation_time_opts(example_generation_time),
+#'   generation_time = gt_opts(example_generation_time),
 #'   delays = delay_opts(example_incubation_period + example_reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
 #'   stan = stan_opts(
-#'     samples = 100, warmup = 200,
-#'     control = list(adapt_delta = 0.95)
+#'     samples = 100, warmup = 200
 #'   ),
 #'   verbose = interactive()
 #' )
 #' options(old_opts)
 #' }
 regional_epinow <- function(data,
-                            generation_time = generation_time_opts(),
+                            generation_time = gt_opts(),
                             delays = delay_opts(),
                             truncation = trunc_opts(),
                             rt = rt_opts(),
@@ -108,25 +105,17 @@ regional_epinow <- function(data,
                               "regions", "summary", "samples",
                               "plots", "latest"
                             ),
-                            return_output = FALSE,
+                            return_output = is.null(target_folder),
                             summary_args = list(),
                             verbose = FALSE,
                             logs = tempdir(check = TRUE), ...,
                             reported_cases) {
-  # Warning for deprecated arguments
   if (!missing(reported_cases)) {
-     if (!missing(data)) {
-       stop("Can't have `reported_cases` and `data` arguments. ",
-            "Use `data` instead."
-       )
-    }
-    lifecycle::deprecate_warn(
+    lifecycle::deprecate_stop(
       "1.5.0",
       "regional_epinow(reported_cases)",
-      "regional_epinow(data)",
-      "The argument will be removed completely in the next version."
+      "regional_epinow(data)"
     )
-    data <- reported_cases
   }
   # supported output
   output <- match_output_arguments(output,
@@ -156,7 +145,6 @@ regional_epinow <- function(data,
     futile.logger::flog.info(
       "No target directory specified so returning output"
     )
-    return_output <- TRUE
   } else {
     futile.logger::flog.info("Saving estimates to : %s", target_folder)
   }
@@ -171,9 +159,8 @@ regional_epinow <- function(data,
     " function"
   )
 
-  progressr::with_progress({
-    progress_fn <- progressr::progressor(along = regions)
-    regional_out <- future.apply::future_lapply(regions, run_region,
+  run_regions <- function(progress_fn = NULL) {
+    lapply_func(regions, run_region,
       generation_time = generation_time,
       delays = delays,
       truncation = truncation,
@@ -196,10 +183,19 @@ regional_epinow <- function(data,
       progress_fn = progress_fn,
       verbose = verbose,
       ...,
-      future.scheduling = Inf,
-      future.seed = TRUE
+      future.opts = list(
+        future.scheduling = Inf,
+        future.seed = TRUE
+      )
     )
-  })
+  }
+  if (requireNamespace("progressr", quietly = TRUE)) {
+    progressr::with_progress({
+      regional_out <- run_regions(progressr::progressor(along = regions))
+    })
+  } else {
+    regional_out <- run_regions()
+  }
 
   out <- process_regions(regional_out, regions)
   regional_out <- out$all
@@ -285,6 +281,7 @@ clean_regions <- function(data, non_zero_points) {
       "Producing estimates for: %s regions",
       length(eval_regions)
     )
+    #nolint start: undesirable_function_linter
     message <- ifelse(length(orig_regions) == 0, 0,
       length(orig_regions)
     )
@@ -292,11 +289,13 @@ clean_regions <- function(data, non_zero_points) {
       "Regions excluded: %s regions",
       message
     )
+    #nolint end
   } else {
     futile.logger::flog.info(
       "Producing estimates for: %s",
       toString(eval_regions)
     )
+    #nolint start: undesirable_function_linter
     message <- ifelse(length(orig_regions) == 0, "none",
       toString(orig_regions)
     )
@@ -304,6 +303,7 @@ clean_regions <- function(data, non_zero_points) {
       "Regions excluded: %s",
       message
     )
+    #nolint end
   }
   # exclude zero regions
   reported_cases <- reported_cases[!is.na(region)][region %in% eval_regions]
@@ -319,7 +319,7 @@ clean_regions <- function(data, non_zero_points) {
 #'
 #' @param target_region Character string indicating the region being evaluated
 #' @param progress_fn Function as returned by [progressr::progressor()]. Allows
-#' the use of a  progress bar.
+#' the use of a  progress bar. If NULL (default), no progress bar is used.
 #'
 #' @param complete_logger Character string indicating the logger to output
 #' the completion of estimation to.
@@ -347,7 +347,7 @@ run_region <- function(target_region,
                        output,
                        complete_logger,
                        verbose,
-                       progress_fn,
+                       progress_fn = NULL,
                        ...) {
   futile.logger::flog.info("Initialising estimates for: %s", target_region,
     name = "EpiNow2.epinow"
@@ -396,7 +396,7 @@ run_region <- function(target_region,
     complete_logger
   )
 
-  if (!missing(progress_fn)) {
+  if (!is.null(progress_fn)) {
     progress_fn(sprintf("Region: %s", target_region))
   }
   return(out)

@@ -5,12 +5,19 @@
 \title{Internal function for generating a \code{dist_spec} given parameters and a
 distribution.}
 \usage{
-new_dist_spec(params, distribution)
+new_dist_spec(params, distribution, max = Inf, cdf_cutoff = 0)
 }
 \arguments{
 \item{params}{Parameters of the distribution (including \code{max})}
 
 \item{distribution}{Character; the distribution to use.}
+
+\item{max}{Numeric, maximum value of the distribution. The distribution will
+be truncated at this value. Default: \code{Inf}, i.e. no maximum.}
+
+\item{cdf_cutoff}{Numeric; the desired CDF cutoff. Any part of the
+cumulative distribution function beyond 1 minus the value of this argument is
+removed. Default: \code{0}, i.e. use the full distribution.}
 }
 \value{
 A \code{dist_spec} of the given specification.
@@ -22,7 +29,7 @@ a \code{dist_spec}. If they have uncertainty this will be done using sampling.
 }
 \examples{
 new_dist_spec(
-  params = list(mean = 2, sd = 1, max = Inf),
+  params = list(mean = 2, sd = 1),
   distribution = "normal"
 )
 }

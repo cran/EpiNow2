@@ -24,6 +24,7 @@
 #' @return A stan fit of an interval censored distribution
 #' @export
 #' @inheritParams stan_opts
+#' @importFrom cli cli_warn col_blue
 #' @examples
 #' \donttest{
 #' # integer adjusted exponential model
@@ -48,13 +49,6 @@
 dist_fit <- function(values = NULL, samples = 1000, cores = 1,
                      chains = 2, dist = "exp", verbose = FALSE,
                      backend = "rstan") {
-  if (samples < 1000) {
-    samples <- 1000
-    warning(sprintf("%s %s", "`samples` must be at least 1000.",
-                    "Now setting it to 1000 internally."
-                    )
-            )
-  }
   # model parameters
   lows <- values - 1
   lows <- ifelse(lows <= 0, 1e-6, lows)
@@ -135,20 +129,21 @@ dist_fit <- function(values = NULL, samples = 1000, cores = 1,
 #' bootstrapped posteriors.
 #'
 #' @param bootstraps Numeric, defaults to 1. The number of bootstrap samples
-#' (with replacement) of the delay distribution to take.
+#' (with replacement) of the delay distribution to take. If `samples` is less
+#' than `bootstraps`, `samples` takes the value of `bootstraps`.
 #'
-#' @param bootstrap_samples Numeric, defaults to 100. The number of samples to
-#' take in each bootstrap. When the sample size of the supplied delay
-#' distribution is less than 100 this is used instead.
+#' @param bootstrap_samples Numeric, defaults to 250. The number of samples to
+#' take in each bootstrap if the sample size of the supplied delay
+#' distribution is less than its value.
 #'
-#' @param max_value Numeric, defaults to  the maximum value in the observed
+#' @param max_value Numeric, defaults to the maximum value in the observed
 #' data. Maximum delay to  allow (added to output but does impact fitting).
 #'
 #' @return A `<dist_spec>` object summarising the bootstrapped distribution
 #' @importFrom purrr list_transpose
-#' @importFrom future.apply future_lapply
 #' @importFrom rstan extract
 #' @importFrom data.table data.table rbindlist
+#' @importFrom cli cli_abort col_blue
 #' @export
 #' @examples
 #' \donttest{
@@ -165,9 +160,14 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
                                   bootstrap_samples = 250, max_value,
                                   verbose = FALSE) {
   if (!dist %in% c("gamma", "lognormal")) {
-    stop("Only lognormal and gamma distributions are supported")
+    cli_abort(
+      c(
+        "x" = "Unsupported distribution.",
+        "i" = "Only {col_blue(\"lognormal\")} and {col_blue(\"gamma\")}
+      distributions are supported"
+      )
+    )
   }
-
   if (samples < bootstraps) {
     samples <- bootstraps
   }
@@ -183,16 +183,13 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
 
     fit <- EpiNow2::dist_fit(values, samples = samples, dist = dist)
 
-
     out <- list()
     if (dist == "lognormal") {
-      out$mean_samples <- sample(extract(fit)$mu, samples)
-      out$sd_samples <- sample(extract(fit)$sigma, samples)
+      out$meanlog <- sample(extract(fit)$mu, samples)
+      out$sdlog <- sample(extract(fit)$sigma, samples)
     } else if (dist == "gamma") {
-      alpha_samples <- sample(extract(fit)$alpha, samples)
-      beta_samples <- sample(extract(fit)$beta, samples)
-      out$mean_samples <- alpha_samples / beta_samples
-      out$sd_samples <- sqrt(alpha_samples) / beta_samples
+      out$shape <- sample(extract(fit)$alpha, samples)
+      out$rate <- sample(extract(fit)$beta, samples)
     }
     return(out)
   }
@@ -201,7 +198,7 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
     dist_samples <- get_single_dist(values, samples = samples)
   } else {
     ## Fit each sub sample
-    dist_samples <- future.apply::future_lapply(1:bootstraps,
+    dist_samples <- lapply_func(1:bootstraps,
       function(boot) {
         get_single_dist(
           sample(values,
@@ -211,12 +208,15 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
           samples = ceiling(samples / bootstraps)
         )
       },
-      future.scheduling = Inf,
-      future.globals = c(
-        "values", "bootstraps", "samples",
-        "bootstrap_samples", "get_single_dist"
-      ),
-      future.packages = "data.table", future.seed = TRUE
+      future.opts = list(
+        future.scheduling = Inf,
+        future.globals = c(
+          "values", "bootstraps", "samples",
+          "bootstrap_samples", "get_single_dist"
+        ),
+        future.packages = "data.table",
+        future.seed = TRUE
+      )
     )
 
 
@@ -224,17 +224,16 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
     dist_samples <- purrr::map(dist_samples, unlist)
   }
 
-  out <- list()
-  out$mean <- mean(dist_samples$mean_samples)
-  out$mean_sd <- sd(dist_samples$mean_samples)
-  out$sd <- mean(dist_samples$sd_sample)
-  out$sd_sd <- sd(dist_samples$sd_samples)
+  params <- lapply(dist_samples, function(x) {
+    Normal(mean = mean(x), sd = sd(x))
+  })
+
   if (!missing(max_value)) {
-    out$max <- max_value
+    max <- max_value
   } else {
-    out$max <- max(values)
+    max <- max(values)
   }
-  return(do.call(dist_spec, out))
+  return(new_dist_spec(params = params, max = max, distribution = dist))
 }
 
 #' Estimate a Delay Distribution

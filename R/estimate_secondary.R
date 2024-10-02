@@ -69,6 +69,7 @@
 #' @importFrom utils modifyList
 #' @importFrom checkmate assert_class assert_numeric assert_data_frame
 #' assert_logical
+#' @importFrom cli cli_abort col_red
 #' @examples
 #' \donttest{
 #' # set number of cores to use
@@ -159,16 +160,11 @@ estimate_secondary <- function(data,
                                reports) {
   # Deprecate reported_cases in favour of data
   if (!missing(reports)) {
-     if (!missing(data)) {
-      stop("Can't have `reported` and `data` arguments. Use `data` instead.")
-    }
-    lifecycle::deprecate_warn(
+    lifecycle::deprecate_stop(
       "1.5.0",
       "estimate_secondary(reports)",
-      "estimate_secondary(data)",
-      "The argument will be removed completely in the next version."
+      "estimate_secondary(data)"
     )
-    data <- reports
   }
   # Validate the inputs
   check_reports_valid(data, model = "estimate_secondary")
@@ -206,8 +202,13 @@ estimate_secondary <- function(data,
   )
 
   if (burn_in >= nrow(reports)) {
-    stop("burn_in is greater or equal to the number of observations.
-         Some observations must be used in fitting")
+    cli_abort(
+      c(
+        "!" = "{.var burn_in} is {col_red(\"greater or equal to the number of
+        observations\")}.",
+        "i" = "Supply a {.var burn_in} less than the number of observations."
+      )
+    )
   }
   # observation and control data
   stan_data <- list(
@@ -286,6 +287,7 @@ estimate_secondary <- function(data,
 #' @export
 #' @inheritParams create_stan_args
 #' @importFrom data.table as.data.table
+#' @importFrom cli cli_inform cli_warn
 #' @examples
 #' priors <- data.frame(variable = "frac_obs", mean = 3, sd = 1)
 #' data <- list(obs_scale_mean = 4, obs_scale_sd = 3)
@@ -294,8 +296,9 @@ update_secondary_args <- function(data, priors, verbose = TRUE) {
   priors <- data.table::as.data.table(priors)
   if (!missing(priors) && !is.null(priors) && nrow(priors) > 0) {
     if (verbose) {
-      message(
-        "Replacing specified priors with those from the passed in prior dataframe" # nolint
+      cli_inform(
+        "Replacing specified priors with those passed through the
+        {.var prior} dataframe."
       )
     }
     # replace scaling if present in the prior
@@ -308,8 +311,11 @@ update_secondary_args <- function(data, priors, verbose = TRUE) {
     delay_params <- priors[grepl("delay_params", variable, fixed = TRUE)]
     if (nrow(delay_params) > 0) {
       if (is.null(data$delay_params_mean)) {
-        warning(
-          "Cannot replace delay distribution parameters as no default has been set" # nolint
+        cli_warn(
+          c(
+            "!" = "Cannot replace delay distribution parameters.",
+            "i" = "No default has been set."
+          )
         )
       }
       data$delay_params_mean <- as.array(signif(delay_params$mean, 3))
@@ -650,7 +656,7 @@ forecast_secondary <- function(estimate,
 
   # allocate empty parameters
   data <- allocate_empty(
-    data, c("frac_obs", "delay_param", "rep_phi"),
+    data, c("frac_obs", "delay_params", "rep_phi"),
     n = data$n
   )
   data$all_dates <- as.integer(all_dates)

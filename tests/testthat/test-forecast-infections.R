@@ -4,7 +4,7 @@ futile.logger::flog.threshold("FATAL")
 reported_cases <- EpiNow2::example_confirmed[1:50]
 
 out <- suppressWarnings(estimate_infections(reported_cases,
-  generation_time = generation_time_opts(example_generation_time),
+  generation_time = gt_opts(example_generation_time),
   delays = delay_opts(example_reporting_delay),
   gp = NULL, rt = rt_opts(rw = 14),
   stan = stan_opts(
@@ -77,10 +77,4 @@ test_that("forecast_infections works to simulate a passed in estimate_infections
   R_samples <- R_samples[date >= "2020-04-01", value := 1.1]
   sims_sample <- forecast_infections(out, R_samples)
   expect_equal(names(sims_sample), c("samples", "summarised", "observations"))
-})
-
-test_that("simulate_infections with a given estimate is deprecated", {
-  expect_deprecated(
-    sims <- simulate_infections(out)
-  )
 })

@@ -16,10 +16,8 @@ default_estimate_infections <- function(..., add_stan = list(), gt = TRUE,
   stan_args <- do.call(stan_opts, def_stan)
 
   suppressWarnings(estimate_infections(...,
-    generation_time = fifelse(
-      gt, generation_time_opts(example_generation_time), generation_time_opts()
-    ),
-    delays = ifelse(delay, list(delay_opts(example_reporting_delay)), list(delay_opts()))[[1]],
+    generation_time = ifelse(gt, list(gt_opts(example_generation_time)), list(gt_opts()))[[1]],
+    delays = ifelse(delay, list(delay_opts(example_incubation_period + example_reporting_delay)), list(delay_opts()))[[1]],
     stan = stan_args, verbose = FALSE
   ))
 }
@@ -38,6 +36,20 @@ test_estimate_infections <- function(...) {
 test_that("estimate_infections successfully returns estimates using default settings", {
   skip_on_cran()
   test_estimate_infections(reported_cases)
+})
+
+test_that("estimate_infections successfully returns estimates using a Matern 5/2 kernel", {
+  skip_on_cran()
+  test_estimate_infections(
+    reported_cases, gp = gp_opts(kernel = "matern", matern_order = 5 / 2)
+  )
+})
+
+test_that("estimate_infections successfully returns estimates using a periodic kernel", {
+  skip_on_cran()
+  test_estimate_infections(
+    reported_cases, gp = gp_opts(kernel = "periodic")
+  )
 })
 
 test_that("estimate_infections successfully returns estimates when passed NA values", {
@@ -87,7 +99,6 @@ test_that("estimate_infections successfully returns estimates using a single bre
   )
 })
 
-
 test_that("estimate_infections successfully returns estimates using a random walk", {
   skip_on_cran()
   test_estimate_infections(reported_cases, gp = NULL, rt = rt_opts(rw = 7))
@@ -105,6 +116,13 @@ test_that("estimate_infections works without setting a generation time", {
   ]
   combined <- merge(growth_rate, R, by = c("date", "sample"), all = FALSE)
   expect_equal(exp(combined$growth_rate), combined$R)
+})
+
+test_that("estimate_infections works with different kernels", {
+  skip_on_cran()
+  test_estimate_infections(reported_cases, gp = gp_opts(kernel = "se"))
+  test_estimate_infections(reported_cases, gp = gp_opts(kernel = "ou"))
+  test_estimate_infections(reported_cases, gp = gp_opts(matern_order = 5 / 2))
 })
 
 test_that("estimate_infections fails as expected when given a very short timeout", {

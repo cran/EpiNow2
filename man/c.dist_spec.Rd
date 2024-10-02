@@ -7,7 +7,7 @@
 \method{c}{dist_spec}(...)
 }
 \arguments{
-\item{...}{The delay distributions (from calls to \code{\link[=dist_spec]{dist_spec()}}) to combine}
+\item{...}{The delay distributions to combine}
 }
 \value{
 Combined delay distributions (with class \verb{<dist_spec>})
@@ -16,6 +16,9 @@ Combined delay distributions (with class \verb{<dist_spec>})
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This combines the parameters so that they can be fed as multiple delay
 distributions to \code{\link[=epinow]{epinow()}} or \code{\link[=estimate_infections]{estimate_infections()}}.
+
+Note that distributions that already are combinations of other distributions
+cannot be combined with other combinations of distributions.
 }
 \examples{
 # A fixed lognormal distribution with mean 5 and sd 1.

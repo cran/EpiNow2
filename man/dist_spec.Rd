@@ -8,10 +8,6 @@ dist_spec(
   distribution = c("lognormal", "normal", "gamma", "fixed", "empty"),
   params_mean = numeric(0),
   params_sd = numeric(0),
-  mean,
-  sd = 0,
-  mean_sd = 0,
-  sd_sd = 0,
   max = Inf,
   pmf = numeric(0),
   fixed = FALSE
@@ -29,14 +25,6 @@ distribution as defined in [natural_params().}
 \item{params_sd}{Numeric. Standard deviations of the parameters of the
 distribution as defined in [natural_params().}
 
-\item{mean}{Deprecated; use \code{params_mean} instead.}
-
-\item{sd}{Deprecated; use \code{params_mean} instead.}
-
-\item{mean_sd}{Deprecated; use \code{params_sd} instead.}
-
-\item{sd_sd}{Deprecated; use \code{params_sd} instead.}
-
 \item{max}{Numeric, maximum value of the distribution. The distribution will
 be truncated at this value. Default: \code{Inf}, i.e. no maximum.}
 
@@ -45,7 +33,7 @@ probability mass function of the delay (starting with 0); defaults to an
 empty vector corresponding to a parametric specification of the distribution
 (using \code{params_mean}, and \code{params_sd}.}
 
-\item{fixed}{Deprecated, use \code{\link[=fix_dist]{fix_dist()}} instead.}
+\item{fixed}{Deprecated, use \code{\link[=fix_parameters]{fix_parameters()}} instead.}
 }
 \value{
 A list of distribution options.

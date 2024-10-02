@@ -25,6 +25,7 @@
 #'
 #' @importFrom futile.logger flog.threshold flog.appender appender.tee
 #' @importFrom futile.logger appender.file flog.info
+#' @importFrom cli cli_inform col_blue
 #' @return Nothing
 #' @export
 setup_logging <- function(threshold = "INFO", file = NULL,
@@ -32,26 +33,31 @@ setup_logging <- function(threshold = "INFO", file = NULL,
   if (is.null(name)) {
     name <- "ROOT"
   }
-  message(sprintf(
-    "Logging threshold set at %s for the %s logger",
-    threshold, name
-  ))
+  cli_inform(
+    "Logging threshold set at {threshold} for the name logger"
+  )
   futile.logger::flog.threshold(threshold, name = name)
 
   if (!is.null(file)) {
     if (mirror_to_console) {
-      message(sprintf("Writing %s logs to the console and: %s", name, file))
+      cli_inform(
+        "Writing {col_blue(name)} logs to the console and: {.file {file}}."
+      )
       futile.logger::flog.appender(
         futile.logger::appender.tee(file), name = name
       )
     } else {
-      message(sprintf("Writing %s logs to: %s", name, file))
+      cli_inform(
+        "Writing {col_blue(name)} logs to: {.file {file}}."
+      )
       futile.logger::flog.appender(
         futile.logger::appender.file(file), name = name
       )
     }
   } else {
-    message(sprintf("Writing %s logs to the console", name))
+    cli_inform(
+      "Writing {col_blue(name)} logs to the console."
+    )
     futile.logger::flog.appender(futile.logger::appender.console(), name = name)
   }
   return(invisible(NULL))
@@ -115,7 +121,8 @@ setup_default_logging <- function(logs = tempdir(check = TRUE),
 #' A utility function that aims to streamline the set up
 #' of the required future backend with sensible defaults for most users of
 #' [regional_epinow()]. More advanced users are recommended to setup their own
-#' `{future}` backend based on their available resources.
+#' `{future}` backend based on their available resources. Running this requires
+#' the `{future}` package to be installed.
 #'
 #' @param strategies A vector length 1 to 2 of strategies to pass to
 #' [future::plan()]. Nesting of parallelisation is from the top level down.
@@ -130,7 +137,7 @@ setup_default_logging <- function(logs = tempdir(check = TRUE),
 #'
 #' @inheritParams regional_epinow
 #' @importFrom futile.logger flog.error flog.info flog.debug
-#' @importFrom future availableCores plan tweak
+#' @importFrom cli cli_abort
 #' @export
 #' @return Numeric number of cores to use per worker. If greater than 1 pass to
 #' `stan_args = list(cores = "output from setup future")` or use
@@ -138,13 +145,31 @@ setup_default_logging <- function(logs = tempdir(check = TRUE),
 setup_future <- function(data,
                          strategies = c("multisession", "multisession"),
                          min_cores_per_worker = 4) {
+  if (!requireNamespace("future", quietly = TRUE)) {
+    futile.logger::flog.error(
+      "The future package is required for parallelisation"
+                   )
+    cli_abort(
+      c(
+        "!" = "The future package is required for parallelisation."
+      )
+    )
+  }
   if (length(strategies) > 2 || length(strategies) == 0) {
     futile.logger::flog.error("1 or 2 strategies should be used")
-    stop("1 or 2 strategies should be used")
+    cli_abort(
+      c(
+        "!" = "{.var strategies} must either be of length 1 or 2."
+      )
+    )
   }
   if (is.null(data$region)) {
     futile.logger::flog.error("Reported cases must contain a region")
-    stop("Exactly 2 strategies should be used")
+    cli_abort(
+      c(
+        "!" = "Exactly 2 strategies should be used."
+      )
+    )
   }
   if (length(strategies) == 1) {
     workers <- future::availableCores()

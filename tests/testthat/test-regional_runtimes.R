@@ -12,7 +12,7 @@ df_non_zero <- function(df) {
 
 out <- suppressWarnings(regional_epinow(
   data = cases,
-  generation_time = generation_time_opts(example_generation_time),
+  generation_time = gt_opts(example_generation_time),
   delays = delay_opts(example_reporting_delay),
   stan = stan_opts(
     samples = 25, warmup = 25,
@@ -27,5 +27,5 @@ test_that("regional_runtimes produces expected output when with input", {
   runtimes <- regional_runtimes(out$regional)
   expect_equal(names(runtimes), c("region", "time"))
   df_non_zero(runtimes)
-  expect_type(runtimes$time, "double")
+  expect_s3_class(runtimes$time, "difftime")
 })

@@ -12,7 +12,7 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/EpiNow2?color=ff69b4)](h
 license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/epiforecasts/EpiNow2/blob/main/LICENSE.md/)
 [![GitHub
 contributors](https://img.shields.io/github/contributors/epiforecasts/EpiNow2)](https://github.com/epiforecasts/EpiNow2/graphs/contributors)
-[![universe](https://epiforecasts.r-universe.dev/badges/EpiNow2)](http://epiforecasts.r-universe.dev/ui/#package:EpiNow2)
+[![universe](https://epiforecasts.r-universe.dev/badges/EpiNow2)](http://epiforecasts.r-universe.dev/#package:EpiNow2)
 [![GitHub
 commits](https://img.shields.io/github/commits-since/epiforecasts/EpiNow2/v1.4.0.svg?color=orange)](https://GitHub.com/epiforecasts/EpiNow2/commit/main/)
 [![DOI](https://zenodo.org/badge/272995211.svg)](https://zenodo.org/badge/latestdoi/272995211)
@@ -90,6 +90,20 @@ cost of the granularity of estimates or real-time performance, include:
 - Adjustment for the remaining susceptible population beyond the
   forecast horizon.
 
+By default, all these models are fit with [MCMC
+sampling](https://mc-stan.org/docs/reference-manual/mcmc.html) using the
+[`rstan`](https://mc-stan.org/users/interfaces/rstan) R package as the
+backend. Users can, however, switch to use approximate algorithms like
+[variational
+inference](https://en.wikipedia.org/wiki/Variational_Bayesian_methods),
+the
+[pathfinder](https://mc-stan.org/docs/reference-manual/pathfinder.html)
+algorithm, or [Laplace
+approximation](https://mc-stan.org/docs/reference-manual/laplace.html)
+especially for quick prototyping. The latter two methods are provided
+through the [`cmdstanr`](https://mc-stan.org/cmdstanr/) R package, so
+users will have to install that separately.
+
 The documentation for `estimate_infections` provides examples of the
 implementation of the different options available.
 
@@ -121,7 +135,7 @@ install.packages("EpiNow2")
 Install the development version of the package with:
 
 ``` r
-install.packages("EpiNow2", repos = "https://epiforecasts.r-universe.dev")
+install.packages("EpiNow2", repos = c("https://epiforecasts.r-universe.dev", getOption("repos")))
 ```
 
 Alternatively, install the development version of the package with
@@ -146,13 +160,20 @@ if (!require("remotes")) {
 remotes::install_github("epiforecasts/EpiNow2")
 ```
 
-Windows users will need a working installation of Rtools in order to
-build the package from source. See
-[here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started#checking-the-c-toolchain)
-for a guide to installing Rtools for use with Stan (which is the
-statistical modelling platform used for the underlying model). For
-simple deployment/development a prebuilt docker image is also available
-(see documentation
+To build `{EpiNow2}` from source, users will need to configure their C
+toolchain. This is because `{EpiNow2}` implements the underlying models
+in Stan (a statistical modelling programming language), which is built
+on C++.
+
+Each operating system has a different set up procedure. Windows users
+need to install an appropriate version of
+[RTools](https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Windows).
+Mac users can [follow these
+steps](https://github.com/stan-dev/rstan/wiki/Configuring-C---Toolchain-for-Mac),
+and Linux users can use [this
+guide](https://github.com/stan-dev/rstan/wiki/Configuring-C-Toolchain-for-Linux).
+For simple deployment/development a prebuilt docker image is also
+available (see documentation
 [here](https://github.com/epiforecasts/EpiNow2/wiki/Docker)).
 
 ## Resources
@@ -167,6 +188,12 @@ quickest entry point to the package. It provides a quick run through of
 the two main functions in the package and how to set up them up. It also
 discusses how to summarise and visualise the results after running the
 models.
+
+More broadly, users can also learn the details of estimating delay
+distributions, nowcasting, and forecasting in a structured way through
+the free and open short-course, [“Nowcasting and forecasting infectious
+disease dynamics”](https://nfidd.github.io/nfidd/), developed by some
+authors of this package.
 
 </details>
 <details>
@@ -245,19 +272,22 @@ Contributions of any kind are welcome!
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=jamesmbaazam">jamesmbaazam</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=joeHickson">joeHickson</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=hsbadr">hsbadr</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/commits?author=pitmonticone">pitmonticone</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/commits?author=actions-user">actions-user</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=dependabot[bot]">dependabot\[bot\]</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=pitmonticone">pitmonticone</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=github-actions[bot]">github-actions\[bot\]</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=actions-user">actions-user</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=ellisp">ellisp</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=jdmunday">jdmunday</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/commits?author=JAllen42">JAllen42</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/commits?author=andrjohns">andrjohns</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=pearsonca">pearsonca</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=JAllen42">JAllen42</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=adamkucharski">adamkucharski</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=andrjohns">andrjohns</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=Bisaloo">Bisaloo</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=LloydChapman">LloydChapman</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=medewitt">medewitt</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=nikosbosse">nikosbosse</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/commits?author=sophiemeakin">sophiemeakin</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/commits?author=github-actions[bot]">github-actions\[bot\]</a>
+<a href="https://github.com/epiforecasts/EpiNow2/commits?author=github-merge-queue[bot]">github-merge-queue\[bot\]</a>
 
 ### Issue Authors
 
@@ -286,20 +316,24 @@ Contributions of any kind are welcome!
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Aaffans">affans</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3AGauriSaran">GauriSaran</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Adavidvilanova">davidvilanova</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3ABisaloo">Bisaloo</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Ajrcpulliam">jrcpulliam</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Adajmcdon">dajmcdon</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Ajoshwlambert">joshwlambert</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Aavallecam">avallecam</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Aathowes">athowes</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Alorenzwalthert">lorenzwalthert</a>
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Alorenzwalthert">lorenzwalthert</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Anlinton">nlinton</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Amartinamcm">martinamcm</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Aadrian-lison">adrian-lison</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+author%3Akaitejohnson">kaitejohnson</a>
 
 ### Issue Contributors
 
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+commenter%3Ajhellewell14">jhellewell14</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+commenter%3Athlytras">thlytras</a>,
 <a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+commenter%3ALizaHadley">LizaHadley</a>,
-<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+commenter%3Antorresd">ntorresd</a>
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+commenter%3Antorresd">ntorresd</a>,
+<a href="https://github.com/epiforecasts/EpiNow2/issues?q=is%3Aissue+commenter%3ASamuelBrand1">SamuelBrand1</a>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->

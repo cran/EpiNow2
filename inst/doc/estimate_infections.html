@@ -27,22 +27,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -58,6 +42,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <style type="text/css">body {
 background-color: #fff;
@@ -251,177 +257,354 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Model definition: estimate_infections()</h1>
+<h1 class="title toc-ignore">Model definition:
+estimate_infections()</h1>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#infection-model"><span class="toc-section-number">1</span> Infection model</a>
+<li><a href="#infection-model"><span class="toc-section-number">1</span>
+Infection model</a>
 <ul>
 <li><a href="#renewal-equation-model"><span class="toc-section-number">1.1</span> Renewal equation model</a>
 <ul>
 <li><a href="#initialisation"><span class="toc-section-number">1.1.1</span> Initialisation</a></li>
-<li><a href="#infections"><span class="toc-section-number">1.1.2</span> Infections</a></li>
-<li><a href="#time-varying-reproduction-number"><span class="toc-section-number">1.1.3</span> Time-varying reproduction number</a></li>
-<li><a href="#beyond-the-end-of-the-observation-period"><span class="toc-section-number">1.1.4</span> Beyond the end of the observation period</a></li>
+<li><a href="#infections"><span class="toc-section-number">1.1.2</span>
+Infections</a></li>
+<li><a href="#time-varying-reproduction-number"><span class="toc-section-number">1.1.3</span> Time-varying reproduction
+number</a></li>
+<li><a href="#beyond-the-end-of-the-observation-period"><span class="toc-section-number">1.1.4</span> Beyond the end of the
+observation period</a></li>
 </ul></li>
-<li><a href="#non-mechanistic-infection-model"><span class="toc-section-number">1.2</span> Non-Mechanistic infection model</a>
+<li><a href="#non-mechanistic-infection-model"><span class="toc-section-number">1.2</span> Non-Mechanistic infection
+model</a>
 <ul>
 <li><a href="#initialisation-1"><span class="toc-section-number">1.2.1</span> Initialisation</a></li>
 <li><a href="#infections-1"><span class="toc-section-number">1.2.2</span> Infections</a></li>
-<li><a href="#time-varying-reproduction-number-1"><span class="toc-section-number">1.2.3</span> Time-varying reproduction number</a></li>
-<li><a href="#beyond-the-end-of-the-observation-period-1"><span class="toc-section-number">1.2.4</span> Beyond the end of the observation period</a></li>
+<li><a href="#time-varying-reproduction-number-1"><span class="toc-section-number">1.2.3</span> Time-varying reproduction
+number</a></li>
+<li><a href="#beyond-the-end-of-the-observation-period-1"><span class="toc-section-number">1.2.4</span> Beyond the end of the
+observation period</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#delays-and-scaling"><span class="toc-section-number">2</span> Delays and scaling</a></li>
 <li><a href="#observation-model"><span class="toc-section-number">3</span> Observation model</a>
 <ul>
-<li><a href="#truncation"><span class="toc-section-number">3.1</span> Truncation</a></li>
+<li><a href="#truncation"><span class="toc-section-number">3.1</span>
+Truncation</a></li>
 </ul></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
 
 <div id="infection-model" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> Infection model</h1>
-<p><code>estimate_infections()</code> supports a range of model formulations. Here we describe the most commonly used and highlight other options. The two main models for how new infections arise in the model are a <em>renewal equation model</em> and a <em>non-mechanistic infection model</em>. The initialisation of both of these models involves estimating an initial infection trajectory during a <code>seeding_time</code> <span class="math inline">\(t_\mathrm{seed}\)</span> (set to the mean of modelled delays from infection to observation) that precedes the first observation at time <span class="math inline">\(t=0\)</span>.</p>
+<h1><span class="header-section-number">1</span> Infection model</h1>
+<p><code>estimate_infections()</code> supports a range of model
+formulations. Here we describe the most commonly used and highlight
+other options. The two main models for how new infections arise in the
+model are a <em>renewal equation model</em> and a <em>non-mechanistic
+infection model</em>. The initialisation of both of these models
+involves estimating an initial infection trajectory during a
+<code>seeding_time</code> <span class="math inline">\(t_\mathrm{seed}\)</span> (set to the mean of
+modelled delays from infection to observation) that precedes the first
+observation at time <span class="math inline">\(t=0\)</span>.</p>
 <div id="renewal-equation-model" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> Renewal equation model</h2>
-<p>This is the default model and is used when <code>rt != NULL</code>. New infections are generated at discrete time steps of one day via the renewal equation<span class="citation"><sup>[1]</sup></span>. These infections are then mapped to observations via discrete convolutions with delay distributions.</p>
+<h2><span class="header-section-number">1.1</span> Renewal equation
+model</h2>
+<p>This is the default model and is used when <code>rt != NULL</code>.
+New infections are generated at discrete time steps of one day via the
+renewal equation<span class="citation"><sup>[1]</sup></span>. These
+infections are then mapped to observations via discrete convolutions
+with delay distributions.</p>
 <div id="initialisation" class="section level3" number="1.1.1">
-<h3 number="1.1.1"><span class="header-section-number">1.1.1</span> Initialisation</h3>
-<p>The model is initialised before the first observed data point by assuming constant exponential growth for the mean of modelled delays from infection to case report (called <code>seeding_time</code> <span class="math inline">\(t_\mathrm{seed}\)</span> in the model):</p>
+<h3><span class="header-section-number">1.1.1</span> Initialisation</h3>
+<p>The model is initialised before the first observed data point by
+assuming constant exponential growth for the mean of modelled delays
+from infection to case report (called <code>seeding_time</code> <span class="math inline">\(t_\mathrm{seed}\)</span> in the model):</p>
 <p><span class="math display">\[\begin{align}
   I_0  &amp;\sim \mathcal{LogNormal}(I_\mathrm{obs}, 0.2) \\
   r &amp;\sim \mathcal{Normal}(r_\mathrm{obs}, 0.2)\\
   I_{0 &lt; t \leq t_\mathrm{seed}} &amp;= I_0 \exp  \left(r t \right)
 \end{align}\]</span></p>
-<p>where <span class="math inline">\(I_{t}\)</span> is the number of latent infections on day <span class="math inline">\(t\)</span>, <span class="math inline">\(r\)</span> is the estimate of the initial growth rate, and <span class="math inline">\(I_\mathrm{obs}\)</span> and <span class="math inline">\(r_\mathrm{obs}\)</span> are estimated from the first week of observed data: <span class="math inline">\(I_\mathrm{obs}\)</span> as the mean of reported cases in the first 7 days (or the mean of all cases if fewer than 7 days of data are given), divided by the prior mean reporting fraction if less than 1 (see <a href="#delays-and-scaling">Delays and scaling</a>); and <span class="math inline">\(r_\mathrm{obs}\)</span> as the point estimate from fitting a linear regression model to the first 7 days of data (or all data if fewer than 7 days of data are given),</p>
+<p>where <span class="math inline">\(I_{t}\)</span> is the number of
+latent infections on day <span class="math inline">\(t\)</span>, <span class="math inline">\(r\)</span> is the estimate of the initial growth
+rate, and <span class="math inline">\(I_\mathrm{obs}\)</span> and <span class="math inline">\(r_\mathrm{obs}\)</span> are estimated from the
+first week of observed data: <span class="math inline">\(I_\mathrm{obs}\)</span> as the mean of reported
+cases in the first 7 days (or the mean of all cases if fewer than 7 days
+of data are given), divided by the prior mean reporting fraction if less
+than 1 (see <a href="#delays-and-scaling">Delays and scaling</a>); and
+<span class="math inline">\(r_\mathrm{obs}\)</span> as the point
+estimate from fitting a linear regression model to the first 7 days of
+data (or all data if fewer than 7 days of data are given),</p>
 <p><span class="math display">\[\begin{equation}
 log(C_t) = a + r_\mathrm{obs} t + \epsilon_t
-\end{equation}\]</span> where <span class="math inline">\(C_{t}\)</span> is the number of reported cases on day <span class="math inline">\(t\)</span>, <span class="math inline">\(a\)</span> an estimated intercept, and <span class="math inline">\(\epsilon_{t}\)</span> the error term.</p>
+\end{equation}\]</span> where <span class="math inline">\(C_{t}\)</span>
+is the number of reported cases on day <span class="math inline">\(t\)</span>, <span class="math inline">\(a\)</span>
+an estimated intercept, and <span class="math inline">\(\epsilon_{t}\)</span> the error term.</p>
 </div>
 <div id="infections" class="section level3" number="1.1.2">
-<h3 number="1.1.2"><span class="header-section-number">1.1.2</span> Infections</h3>
-<p>For the time window of the observed data and beyond infections are then modelled by weighting previous infections with the generation time and scaling by the instantaneous reproduction number:</p>
+<h3><span class="header-section-number">1.1.2</span> Infections</h3>
+<p>For the time window of the observed data and beyond infections are
+then modelled by weighting previous infections with the generation time
+and scaling by the instantaneous reproduction number:</p>
 <p><span class="math display">\[\begin{equation}
-  I_t = R_t \sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \mu_{g}, \sigma_{g}) I_{t - \tau}
+  I_t = R_t \sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \mu_{g},
+\sigma_{g}) I_{t - \tau}
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(g(\tau|\mu_{g}, \sigma_{g})\)</span> is the distribution of generation times (with discretised gamma or discretised log normal distributions available as options) with mean (or log mean in the case of lognormal distributions) <span class="math inline">\(\mu_g\)</span>, standard deviation (or log standard deviation in the case of lognormal distributions) <span class="math inline">\(\sigma_g\)</span> and maximum <span class="math inline">\(g_\mathrm{max}\)</span>. Generation times can either be specified as coming from a distribution with uncertainty by giving mean and standard deviations of normal priors, weighted by default by the number of observations (although this can be changed by the user) and truncated to be positive where relevant for the given distribution; or they can be specified as the parameters of a fixed distribution, or as fixed values.</p>
-<p>The distribution of generation times <span class="math inline">\(g\)</span> here represents the probability that somebody who became infectious on day 0 and who infects someone else during their course of infection does so on day <span class="math inline">\(\tau &gt; 0\)</span>, assuming that infection cannot happen on day 0. If not given this defaults to a fixed generation time of 1, in which case <span class="math inline">\(R_{t}\)</span> represents the exponential of the daily growth rate of infections.</p>
+<p>where <span class="math inline">\(g(\tau|\mu_{g},
+\sigma_{g})\)</span> is the distribution of generation times (with
+discretised gamma or discretised log normal distributions available as
+options) with mean (or log mean in the case of lognormal distributions)
+<span class="math inline">\(\mu_g\)</span>, standard deviation (or log
+standard deviation in the case of lognormal distributions) <span class="math inline">\(\sigma_g\)</span> and maximum <span class="math inline">\(g_\mathrm{max}\)</span>. Generation times can
+either be specified as coming from a distribution with uncertainty by
+giving mean and standard deviations of normal priors, weighted by
+default by the number of observations (although this can be changed by
+the user) and truncated to be positive where relevant for the given
+distribution; or they can be specified as the parameters of a fixed
+distribution, or as fixed values.</p>
+<p>The distribution of generation times <span class="math inline">\(g\)</span> here represents the probability that
+somebody who became infectious on day 0 and who infects someone else
+during their course of infection does so on day <span class="math inline">\(\tau &gt; 0\)</span>, assuming that infection
+cannot happen on day 0. If not given this defaults to a fixed generation
+time of 1, in which case <span class="math inline">\(R_{t}\)</span>
+represents the exponential of the daily growth rate of infections.</p>
 </div>
 <div id="time-varying-reproduction-number" class="section level3" number="1.1.3">
-<h3 number="1.1.3"><span class="header-section-number">1.1.3</span> Time-varying reproduction number</h3>
-<p>Different options are available for setting a prior for <span class="math inline">\(R_t\)</span>, the instantaneous reproduction number at time <span class="math inline">\(t\)</span>. The default prior is an approximate zero-mean Gaussian Process (GP) for the first differences in time on the log scale,</p>
+<h3><span class="header-section-number">1.1.3</span> Time-varying
+reproduction number</h3>
+<p>Different options are available for setting a prior for <span class="math inline">\(R_t\)</span>, the instantaneous reproduction
+number at time <span class="math inline">\(t\)</span>. The default prior
+is an approximate zero-mean Gaussian Process (GP) for the first
+differences in time on the log scale,</p>
 <p><span class="math display">\[\begin{equation}
   \log R_{t} - \log R_{t-1} \sim \mathrm{GP}_t
 \end{equation}\]</span></p>
-<p>More details on the mathematical form of the GP approximation and implementation are given in the <a href="gaussian_process_implementation_details.html">Gaussian Process implementation details</a> vignette. Other choices for the prior of <span class="math inline">\(R_t\)</span> are available such as a GP prior for the difference between <span class="math inline">\(R_t\)</span> and its mean value (implying that in the absence of data <span class="math inline">\(R_t\)</span> will revert to its prior mean rather than the last value with robust support from the data).</p>
+<p>More details on the mathematical form of the GP approximation and
+implementation are given in the <a href="gaussian_process_implementation_details.html">Gaussian Process
+implementation details</a> vignette. Other choices for the prior of
+<span class="math inline">\(R_t\)</span> are available such as a GP
+prior for the difference between <span class="math inline">\(R_t\)</span> and its mean value (implying that in
+the absence of data <span class="math inline">\(R_t\)</span> will revert
+to its prior mean rather than the last value with robust support from
+the data).</p>
 <p><span class="math display">\[\begin{equation}
   \log R_{t} - \log R_0 \sim \mathrm{GP}_t
 \end{equation}\]</span></p>
-<p>or, as a specific case of a Gaussian Process, a random walk of arbitrary length <span class="math inline">\(w\)</span>.</p>
+<p>or, as a specific case of a Gaussian Process, a random walk of
+arbitrary length <span class="math inline">\(w\)</span>.</p>
 <p><span class="math display">\[\begin{align}
-  \log R_{t \div w} &amp;\sim \mathcal{Normal} (R_{t \div (w - 1)}, \sigma_R)\\
+  \log R_{t \div w} &amp;\sim \mathcal{Normal} (R_{t \div (w - 1)},
+\sigma_R)\\
   \sigma_R &amp;\sim \mathcal{HalfNormal}(0, 0.1)
 \end{align}\]</span></p>
-<p>where <span class="math inline">\(\div\)</span> indicates interval-valued division (i.e. the floor of the division), such that for example <span class="math inline">\(w=1\)</span> indicates a daily and <span class="math inline">\(w=7\)</span> a weekly random walk.</p>
-<p>The choice of prior for the time-varying reproduction number impact run-time, smoothness of the estimates and real-time behaviour and may alter the best use-case for the model.</p>
-<p>The initial reproduction number <span class="math inline">\(R_{0}\)</span> has a log-normal prior with a given log mean <span class="math inline">\(\mu_{R}\)</span> and log standard deviation <span class="math inline">\(\sigma_{R}\)</span>, calculated from a given mean (default: 1) and standard deviation (default: 1).</p>
+<p>where <span class="math inline">\(\div\)</span> indicates
+interval-valued division (i.e. the floor of the division), such that for
+example <span class="math inline">\(w=1\)</span> indicates a daily and
+<span class="math inline">\(w=7\)</span> a weekly random walk.</p>
+<p>The choice of prior for the time-varying reproduction number impact
+run-time, smoothness of the estimates and real-time behaviour and may
+alter the best use-case for the model.</p>
+<p>The initial reproduction number <span class="math inline">\(R_{0}\)</span> has a log-normal prior with a given
+log mean <span class="math inline">\(\mu_{R}\)</span> and log standard
+deviation <span class="math inline">\(\sigma_{R}\)</span>, calculated
+from a given mean (default: 1) and standard deviation (default: 1).</p>
 <p><span class="math display">\[\begin{equation}
   R_0 \sim \mathcal{LogNormal}(\mu_R, \sigma_R)
 \end{equation}\]</span></p>
-<p>The simplest possible process model option is to use no time-varying prior and rely on just the intial fixed reproduction number <span class="math inline">\(R_0\)</span>.</p>
+<p>The simplest possible process model option is to use no time-varying
+prior and rely on just the intial fixed reproduction number <span class="math inline">\(R_0\)</span>.</p>
 </div>
 <div id="beyond-the-end-of-the-observation-period" class="section level3" number="1.1.4">
-<h3 number="1.1.4"><span class="header-section-number">1.1.4</span> Beyond the end of the observation period</h3>
-<p>Beyond the end of the observation period (<span class="math inline">\(T\)</span>), by default, the Gaussian process is assumed to continue. However, here again there are a range of options. These included fixing transmission dynamics (optionally this can also be done before the end of the observation period), and scaling <span class="math inline">\(R_t\)</span> based on the proportion of the population that remain susceptible. This is defined as followed,</p>
+<h3><span class="header-section-number">1.1.4</span> Beyond the end of
+the observation period</h3>
+<p>Beyond the end of the observation period (<span class="math inline">\(T\)</span>), by default, the Gaussian process is
+assumed to continue. However, here again there are a range of options.
+These included fixing transmission dynamics (optionally this can also be
+done before the end of the observation period), and scaling <span class="math inline">\(R_t\)</span> based on the proportion of the
+population that remain susceptible. This is defined as followed,</p>
 <p><span class="math display">\[\begin{equation}
-    I_t = (N - I^c_{t-1}) \left(1 - \exp \left(\frac{-I&#39;_t}{N - I^c_{T}}\right)\right),
+    I_t = (N - I^c_{t-1}) \left(1 - \exp \left(\frac{-I&#39;_t}{N -
+I^c_{T}}\right)\right),
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(I^c_t = \sum_{s&lt; t} I_s\)</span> are cumulative infections by <span class="math inline">\(t-1\)</span> and <span class="math inline">\(I&#39;_t\)</span> are the unadjusted infections defined above. This adjustment is based on the one implemented in the <code>epidemia</code> R package.<span class="citation"><sup>[2]</sup></span></p>
+<p>where <span class="math inline">\(I^c_t = \sum_{s&lt; t} I_s\)</span>
+are cumulative infections by <span class="math inline">\(t-1\)</span>
+and <span class="math inline">\(I&#39;_t\)</span> are the unadjusted
+infections defined above. This adjustment is based on the one
+implemented in the <code>epidemia</code> R package<span class="citation"><sup>[2]</sup></span>.</p>
 </div>
 </div>
 <div id="non-mechanistic-infection-model" class="section level2" number="1.2">
-<h2 number="1.2"><span class="header-section-number">1.2</span> Non-Mechanistic infection model</h2>
-<p>This is an alternative model that can be used by setting <code>rt = NULL</code> that assumes less epidemiological mechanism by directly modelling infections on a log scale with a range of process models. By default, this uses a Gaussian Process prior for the number of new infections each day (on the log scale) although alternatively infections can be estimated using a prior based on a fixed backwards mapping of observed cases. In general, these model options will be more computationally efficient than the renewal process model but may be less robust due to the lack of an epidemiological process model (i.e. more dependence is placed on the assumptions of the Gaussian process prior).</p>
+<h2><span class="header-section-number">1.2</span> Non-Mechanistic
+infection model</h2>
+<p>This is an alternative model that can be used by setting
+<code>rt = NULL</code> that assumes less epidemiological mechanism by
+directly modelling infections on a log scale with a range of process
+models. By default, this uses a Gaussian Process prior for the number of
+new infections each day (on the log scale) although alternatively
+infections can be estimated using a prior based on a fixed backwards
+mapping of observed cases. In general, these model options will be more
+computationally efficient than the renewal process model but may be less
+robust due to the lack of an epidemiological process model (i.e. more
+dependence is placed on the assumptions of the Gaussian process
+prior).</p>
 <div id="initialisation-1" class="section level3" number="1.2.1">
-<h3 number="1.2.1"><span class="header-section-number">1.2.1</span> Initialisation</h3>
-<p>In order to initialise this model, an initial estimate <span class="math inline">\(I_\mathrm{est}\)</span> of the infection trajectory is first created by first shifting observations back in time by <span class="math inline">\(t_\mathrm{seed}\)</span> and then smoothing the observation data with a moving average of window size <span class="math inline">\(z\)</span> (default: <span class="math inline">\(z=14\)</span>), allocated to the centre of the window:</p>
+<h3><span class="header-section-number">1.2.1</span> Initialisation</h3>
+<p>In order to initialise this model, an initial estimate <span class="math inline">\(I_\mathrm{est}\)</span> of the infection
+trajectory is first created by first shifting observations back in time
+by <span class="math inline">\(t_\mathrm{seed}\)</span> and then
+smoothing the observation data with a moving average of window size
+<span class="math inline">\(z\)</span> (default: <span class="math inline">\(z=14\)</span>), allocated to the centre of the
+window:</p>
 <p><span class="math display">\[\begin{align}
-  I_{\mathrm{est}, t \lt T - t_\mathrm{seed}} = \frac{1}{z} \sum_{\max(-t_\mathrm{seed}, t - z/2)}^{\min(t_\mathrm{obs}, t + z/2)} I_{\mathrm{obs}, t + t_\mathrm{seed}}
+  I_{\mathrm{est}, t \lt T - t_\mathrm{seed}} = \frac{1}{z}
+\sum_{\max(-t_\mathrm{seed}, t - z/2)}^{\min(t_\mathrm{obs}, t + z/2)}
+I_{\mathrm{obs}, t + t_\mathrm{seed}}
 \end{align}\]</span></p>
-<p>where <span class="math inline">\(T\)</span> is the day of the last observation, <span class="math inline">\(z/2\)</span> is rounded up to the nearest integer in the limits of the sum, and <span class="math inline">\(I_\mathrm{obs, t \lt 0} = 0\)</span>. Any date with <span class="math inline">\(I_{\mathrm{est}, t} = 0\)</span> cases following this procedure is then allocated 1 case to facilitate further processing in the model.</p>
-<p>For any times <span class="math inline">\(t &gt; T - t_\mathrm{seed}\)</span> the number of infections is then estimated by fitting an exponential curve to the final week of data and extrapolating this until the end of the forecast horizon.</p>
+<p>where <span class="math inline">\(T\)</span> is the day of the last
+observation, <span class="math inline">\(z/2\)</span> is rounded up to
+the nearest integer in the limits of the sum, and <span class="math inline">\(I_\mathrm{obs, t \lt 0} = 0\)</span>. Any date
+with <span class="math inline">\(I_{\mathrm{est}, t} = 0\)</span> cases
+following this procedure is then allocated 1 case to facilitate further
+processing in the model.</p>
+<p>For any times <span class="math inline">\(t &gt; T -
+t_\mathrm{seed}\)</span> the number of infections is then estimated by
+fitting an exponential curve to the final week of data and extrapolating
+this until the end of the forecast horizon.</p>
 </div>
 <div id="infections-1" class="section level3" number="1.2.2">
-<h3 number="1.2.2"><span class="header-section-number">1.2.2</span> Infections</h3>
-<p>By default, a Gaussian Process prior is used for the number of infections, resulting in smoother estimates of the infection curve. In this case, as in the renewal equation model there are two alternative formulations available. The default uses an approximate zero-mean GP for the differences between modelled infections and the initial estimate,</p>
+<h3><span class="header-section-number">1.2.2</span> Infections</h3>
+<p>By default, a Gaussian Process prior is used for the number of
+infections, resulting in smoother estimates of the infection curve. In
+this case, as in the renewal equation model there are two alternative
+formulations available. The default uses an approximate zero-mean GP for
+the differences between modelled infections and the initial
+estimate,</p>
 <p><span class="math display">\[\begin{equation}
   \log I_{t} - \log I_{\mathrm{est}, t} \sim \mathrm{GP}_t
 \end{equation}\]</span></p>
-<p>Alternatively, one can use is an approximate zero-mean Gaussian Process (GP) for the first differences in time on the log scale,</p>
+<p>Alternatively, one can use is an approximate zero-mean Gaussian
+Process (GP) for the first differences in time on the log scale,</p>
 <p><span class="math display">\[\begin{equation}
   \log I_{t} - \log I_{t-1} \sim \mathrm{GP}_t
 \end{equation}\]</span></p>
-<p>with <span class="math inline">\(\log I_{0} - \log I_{\mathrm{est}, 0} \sim \mathrm{GP}_{0}\)</span></p>
-<p>More details on the mathematical form of the Gaussian process approximation are given in the <a href="gaussian_process_implementation_details.html">Gaussian Process implementation details</a> vignette.</p>
-<p>As for the renewal equation model, the Gaussian process can be replaced by a random walk of arbitrary length <span class="math inline">\(w\)</span>.</p>
-<p>When using a fixed shift from infections to reported cases there is no process model and so <span class="math inline">\(I_\mathrm{est}\)</span> is used as the estimated infection curve (potentially scaled to take into account underreporting, see section <a href="#delays-and-scaling">Delays and scaling</a>).</p>
+<p>with <span class="math inline">\(\log I_{0} - \log I_{\mathrm{est},
+0} \sim \mathrm{GP}_{0}\)</span></p>
+<p>More details on the mathematical form of the Gaussian process
+approximation are given in the <a href="gaussian_process_implementation_details.html">Gaussian Process
+implementation details</a> vignette.</p>
+<p>As for the renewal equation model, the Gaussian process can be
+replaced by a random walk of arbitrary length <span class="math inline">\(w\)</span>.</p>
+<p>When using a fixed shift from infections to reported cases there is
+no process model and so <span class="math inline">\(I_\mathrm{est}\)</span> is used as the estimated
+infection curve (potentially scaled to take into account underreporting,
+see section <a href="#delays-and-scaling">Delays and scaling</a>).</p>
 </div>
 <div id="time-varying-reproduction-number-1" class="section level3" number="1.2.3">
-<h3 number="1.2.3"><span class="header-section-number">1.2.3</span> Time-varying reproduction number</h3>
-<p>In this model there is no prior on the time-varying reproduction number. Instead, this is calculated from the renewal equation as a post-processing step</p>
+<h3><span class="header-section-number">1.2.3</span> Time-varying
+reproduction number</h3>
+<p>In this model there is no prior on the time-varying reproduction
+number. Instead, this is calculated from the renewal equation as a
+post-processing step</p>
 <p><span class="math display">\[\begin{equation}
-  R_t = \frac{I_{t}}{\sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \mu_{g}, \sigma_{g}) I_{t - \tau}}
+  R_t = \frac{I_{t}}{\sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \mu_{g},
+\sigma_{g}) I_{t - \tau}}
 \end{equation}\]</span></p>
-<p>and optionally smoothed using a centred rolling mean with a window size that can be set by the user.</p>
+<p>and optionally smoothed using a centred rolling mean with a window
+size that can be set by the user.</p>
 </div>
 <div id="beyond-the-end-of-the-observation-period-1" class="section level3" number="1.2.4">
-<h3 number="1.2.4"><span class="header-section-number">1.2.4</span> Beyond the end of the observation period</h3>
-<p>Beyond the end of the observation period, by default, if using a Gaussian process it is assumed to continue. Alternatively, incidence can be fixed at ether the estimate at <span class="math inline">\(T\)</span> or a less recent, more certain estimate.</p>
+<h3><span class="header-section-number">1.2.4</span> Beyond the end of
+the observation period</h3>
+<p>Beyond the end of the observation period, by default, if using a
+Gaussian process it is assumed to continue. Alternatively, incidence can
+be fixed at ether the estimate at <span class="math inline">\(T\)</span>
+or a less recent, more certain estimate.</p>
 </div>
 </div>
 </div>
 <div id="delays-and-scaling" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Delays and scaling</h1>
-<p>If infections are observed with a delay (for example, the incubation period if based on symptomatic cases, and any delay from onset to report), they are convolved in the model to infections at the time scale of observations <span class="math inline">\(D_{t}\)</span> using delay distributions (with lognormal and gamma parameterisations available) <span class="math inline">\(\xi\)</span>, scaled by an underreporting factor <span class="math inline">\(\alpha\)</span> (which is 1 if all infections are observed). This model can be defined mathematically as follows,</p>
+<h1><span class="header-section-number">2</span> Delays and scaling</h1>
+<p>If infections are observed with a delay (for example, the incubation
+period if based on symptomatic cases, and any delay from onset to
+report), they are convolved in the model to infections at the time scale
+of observations <span class="math inline">\(D_{t}\)</span> using delay
+distributions (with lognormal and gamma parameterisations available)
+<span class="math inline">\(\xi\)</span>, scaled by an underreporting
+factor <span class="math inline">\(\alpha\)</span> (which is 1 if all
+infections are observed). This model can be defined mathematically as
+follows,</p>
 <p><span class="math display">\[\begin{equation}
-  D_t = \alpha \sum_{\tau = 0}^{\xi_\mathrm{max}} \xi (\tau | \mu_{\xi}, \sigma_{\xi}) I_{t-\tau}
+  D_t = \alpha \sum_{\tau = 0}^{\xi_\mathrm{max}} \xi (\tau | \mu_{\xi},
+\sigma_{\xi}) I_{t-\tau}
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(\xi(\tau|\mu_{\xi}, \sigma_{\xi})\)</span> is the combined discrete distribution of delays (with discretised gamma or discretised log normal distributions available as options) with mean (or log mean in the case of lognormal distributions) <span class="math inline">\(\mu_\xi\)</span>, standard deviation (or log standard deviation in the case of lognormal distributions) <span class="math inline">\(\sigma_\xi\)</span> and maximum <span class="math inline">\(\xi_\mathrm{max}\)</span>.</p>
-<p>Delays can either be specified as coming from a distribution with uncertainty by giving mean and standard deviations of normal priors, weighted by the number of observations and truncated to be positive where relevant for the given distribution; or they can be specified as the parameters of a fixed distribution, or as fixed values.</p>
-<p>The scaling factor <span class="math inline">\(\alpha\)</span> represents the proportion of cases that are ultimately reported, which by default is set to 1 (i.e. no underreporting) but can instead be set to come from a normal prior with given mean and standard deviation, truncated to be between 0 and 1.</p>
+<p>where <span class="math inline">\(\xi(\tau|\mu_{\xi},
+\sigma_{\xi})\)</span> is the combined discrete distribution of delays
+(with discretised gamma or discretised log normal distributions
+available as options) with mean (or log mean in the case of lognormal
+distributions) <span class="math inline">\(\mu_\xi\)</span>, standard
+deviation (or log standard deviation in the case of lognormal
+distributions) <span class="math inline">\(\sigma_\xi\)</span> and
+maximum <span class="math inline">\(\xi_\mathrm{max}\)</span>.</p>
+<p>Delays can either be specified as coming from a distribution with
+uncertainty by giving mean and standard deviations of normal priors,
+weighted by the number of observations and truncated to be positive
+where relevant for the given distribution; or they can be specified as
+the parameters of a fixed distribution, or as fixed values.</p>
+<p>The scaling factor <span class="math inline">\(\alpha\)</span>
+represents the proportion of cases that are ultimately reported, which
+by default is set to 1 (i.e. no underreporting) but can instead be set
+to come from a normal prior with given mean and standard deviation,
+truncated to be between 0 and 1.</p>
 </div>
 <div id="observation-model" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Observation model</h1>
-<p>The modelled counts <span class="math inline">\(D_{t}\)</span> are related to observations <span class="math inline">\(C_{t}\)</span>. By default this is assumed to follow a negative binomial distribution with overdispersion <span class="math inline">\(\varphi\)</span> (alternatively it can be modelled as a Poisson, in which case <span class="math inline">\(\varphi\)</span> is not used):</p>
+<h1><span class="header-section-number">3</span> Observation model</h1>
+<p>The modelled counts <span class="math inline">\(D_{t}\)</span> are
+related to observations <span class="math inline">\(C_{t}\)</span>. By
+default this is assumed to follow a negative binomial distribution with
+overdispersion <span class="math inline">\(\varphi\)</span>
+(alternatively it can be modelled as a Poisson, in which case <span class="math inline">\(\varphi\)</span> is not used):</p>
 <p><span class="math display">\[\begin{align}
-  C_t &amp;\sim \mathcal{NegBinom}\left(\omega_{(t \mod n_\omega)}D_t, \varphi\right)
+  C_t &amp;\sim \mathcal{NegBinom}\left(\omega_{(t \mod n_\omega)}D_t,
+\varphi\right)
 \end{align}\]</span></p>
-<p>where <span class="math inline">\(\omega_{t \mod n_\omega}\)</span> is a daily reporting effect of cyclicity <span class="math inline">\(n_{\omega}\)</span>. If <span class="math inline">\(n_{\omega}=7\)</span> this corresponds to a day-of-the-week reporting effect.</p>
+<p>where <span class="math inline">\(\omega_{t \mod n_\omega}\)</span>
+is a daily reporting effect of cyclicity <span class="math inline">\(n_{\omega}\)</span>. If <span class="math inline">\(n_{\omega}=7\)</span> this corresponds to a
+day-of-the-week reporting effect.</p>
 <p>This model uses the following priors for the observation model,</p>
 <p><span class="math display">\[\begin{align}
-    \frac{\omega}{n_\omega} &amp;\sim \mathcal{Dirichlet}(1, \ldots, 1) \\
+    \frac{\omega}{n_\omega} &amp;\sim \mathcal{Dirichlet}(1, \ldots, 1)
+\\
     \frac{1}{\sqrt{\varphi}} &amp;\sim \mathcal{HalfNormal}(0, 1)
 \end{align}\]</span></p>
 <div id="truncation" class="section level2" number="3.1">
-<h2 number="3.1"><span class="header-section-number">3.1</span> Truncation</h2>
-<p>The model supports counts that are right-truncated, i.e. reported with a delay leading to recent counts being subject to future upwards revision. Denoting the final truncated counts with <span class="math inline">\(D^{\ast}_{t}\)</span> they are obtained form the final modelled cases <span class="math inline">\(D_{t}\)</span> by applying a given discrete truncation distribution <span class="math inline">\(\zeta(\tau | \mu_{\zeta}, \sigma_{\zeta})\)</span> with cumulative mass function <span class="math inline">\(Z(\tau | \mu_{\zeta})\)</span>:</p>
+<h2><span class="header-section-number">3.1</span> Truncation</h2>
+<p>The model supports counts that are right-truncated, i.e. reported
+with a delay leading to recent counts being subject to future upwards
+revision. Denoting the final truncated counts with <span class="math inline">\(D^{\ast}_{t}\)</span> they are obtained form the
+final modelled cases <span class="math inline">\(D_{t}\)</span> by
+applying a given discrete truncation distribution <span class="math inline">\(\zeta(\tau | \mu_{\zeta}, \sigma_{\zeta})\)</span>
+with cumulative mass function <span class="math inline">\(Z(\tau |
+\mu_{\zeta})\)</span>:</p>
 <p><span class="math display">\[\begin{equation}
   D^ast_t = Z(T - t | \mu_{Z}, \sigma_{Z}) D_{t}
 \end{equation}\]</span></p>
-<p>If truncation is applied, the modelled cases <span class="math inline">\(D_{t}\)</span> are replaced by the truncated counts before confronting them with observations <span class="math inline">\(C_{t}\)</span> as described above.</p>
+<p>If truncation is applied, the modelled cases <span class="math inline">\(D_{t}\)</span> are replaced by the truncated
+counts before confronting them with observations <span class="math inline">\(C_{t}\)</span> as described above.</p>
 </div>
 </div>
-<div id="references" class="section level1 unnumbered" number>
-<h1 class="unnumbered" number>References</h1>
-<div id="refs" class="references hanging-indent">
-<div id="ref-renewal">
-<p>1. Fraser, C. (2007). Estimating individual and household reproduction numbers in an emerging epidemic. <em>PLOS ONE</em>, <em>2</em>(8), 1–12. <a href="https://doi.org/10.1371/journal.pone.0000758">https://doi.org/10.1371/journal.pone.0000758</a></p>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-renewal" class="csl-entry">
+1. Fraser, C. (2007). Estimating individual and household reproduction
+numbers in an emerging epidemic. <em>PLOS ONE</em>, <em>2</em>(8), 1–12.
+<a href="https://doi.org/10.1371/journal.pone.0000758">https://doi.org/10.1371/journal.pone.0000758</a>
 </div>
-<div id="ref-bhattSemiMechanisticBayesianModeling">
-<p>2. Bhatt, S., Ferguson, N., Flaxman, S., Gandy, A., Mishra, S., &amp; Scott, J. A. (n.d.-). <em>Semi-Mechanistic Bayesian modeling of COVID-19 with Renewal Processes</em>. 14.</p>
+<div id="ref-bhattSemiMechanisticBayesianModeling" class="csl-entry">
+2. Bhatt, S., Ferguson, N., Flaxman, S., Gandy, A., Mishra, S., &amp;
+Scott, J. A. (n.d.). <em>Semi-<span>Mechanistic Bayesian</span> modeling
+of <span>COVID-19</span> with <span>Renewal Processes</span></em>. 14.
 </div>
 </div>
 </div>

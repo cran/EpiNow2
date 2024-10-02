@@ -3,7 +3,8 @@ library("lifecycle")
 
 if (identical(Sys.getenv("NOT_CRAN"), "true")) {
   files <- c(
-    "convolve.stan", "pmfs.stan", "observation_model.stan", "secondary.stan",
+    "convolve.stan", "gaussian_process.stan", "pmfs.stan",
+    "observation_model.stan", "secondary.stan",
     "rt.stan", "infections.stan", "delays.stan", "generated_quantities.stan"
   )
   if (!(tolower(Sys.info()[["sysname"]]) %in% "windows")) {
@@ -16,6 +17,3 @@ if (identical(Sys.getenv("NOT_CRAN"), "true")) {
 }
 
 withr::defer(future::plan("sequential"), teardown_env())
-
-## process warning once as previous behaviour has been deprecated
-dummy <- suppressWarnings(dist_spec(mean = 0, sd = 1, max = 5))

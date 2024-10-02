@@ -32,8 +32,8 @@ When using multiple chains iterations per chain is samples / chains.}
 \item{chains}{Numeric, defaults to 4. Number of MCMC chains to use.}
 
 \item{control}{List, defaults to empty. control parameters to pass to
-underlying \code{rstan} function. By default \code{adapt_delta = 0.95} and
-\code{max_treedepth = 15} though these settings can be overwritten.}
+underlying \code{rstan} function. By default \code{adapt_delta = 0.9} and
+\code{max_treedepth = 12} though these settings can be overwritten.}
 
 \item{save_warmup}{Logical, defaults to FALSE. Should warmup progress be
 saved.}
@@ -55,11 +55,12 @@ estimation will fail with an informative error.}
 \item{backend}{Character string indicating the backend to use for fitting
 stan models. Supported arguments are "rstan" (default) or "cmdstanr".}
 
-\item{...}{Additional parameters to pass to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}}.}
+\item{...}{Additional parameters to pass to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}} or
+\code{\link[cmdstanr:model-method-sample]{cmdstanr::sample()}}.}
 }
 \value{
 A list of arguments to pass to \code{\link[rstan:stanmodel-method-sampling]{rstan::sampling()}} or
-[cmdstanr::sample().
+\code{\link[cmdstanr:model-method-sample]{cmdstanr::sample()}}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}

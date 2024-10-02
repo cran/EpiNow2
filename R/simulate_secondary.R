@@ -18,6 +18,7 @@
 #' @inheritParams estimate_secondary
 #' @importFrom checkmate assert_data_frame assert_date assert_numeric
 #'   assert_subset
+#' @importFrom cli cli_abort
 #' @return A data.table of simulated secondary observations (column `secondary`)
 #'   by date.
 #' @export
@@ -28,7 +29,7 @@
 #'   cases <- as.data.table(example_confirmed)[, primary := confirm]
 #'   sim <- simulate_secondary(
 #'     cases,
-#'     delays = delay_opts(fix_dist(example_reporting_delay)),
+#'     delays = delay_opts(fix_parameters(example_reporting_delay)),
 #'     obs = obs_opts(family = "poisson")
 #'   )
 #' }
@@ -41,7 +42,6 @@ simulate_secondary <- function(primary,
                                CrIs = c(0.2, 0.5, 0.9),
                                backend = "rstan",
                                ...) {
-  ## deprecated usage
   assert_data_frame(primary, any.missing = FALSE)
   assert_subset(c("date", "primary"), colnames(primary))
   assert_date(primary$date)
@@ -77,10 +77,12 @@ simulate_secondary <- function(primary,
   ))
 
   if (length(data$delay_params_sd) > 0 && any(data$delay_params_sd > 0)) {
-    stop(
-      "Cannot simulate from uncertain parameters. Use the [fix_dist()] ",
-      "function to set the parameters of uncertain distributions either the ",
-      "mean or a randomly sampled value"
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from uncertain parameters.",
+        "i" = "Use {.fn fix_parameters} to set the parameters of uncertain
+        distributions either using the mean or a randomly sampled value."
+      )
     )
   }
   data$delay_params <- array(
@@ -93,9 +95,11 @@ simulate_secondary <- function(primary,
   ))
 
   if (data$obs_scale_sd > 0) {
-    stop(
-      "Cannot simulate from uncertain observation scaling; use fixed scaling ",
-      "instead."
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from uncertain observation scaling.",
+        "i" = "Use fixed scaling instead."
+      )
     )
   }
   if (data$obs_scale) {
@@ -108,9 +112,11 @@ simulate_secondary <- function(primary,
 
   if (obs$family == "negbin") {
     if (data$phi_sd > 0) {
-      stop(
-        "Cannot simulate from uncertain overdispersion; use fixed ",
-        "overdispersion instead."
+      cli_abort(
+        c(
+          "!" = "Cannot simulate from uncertain overdispersion.",
+          "i" = "Use fixed overdispersion instead."
+        )
       )
     }
     data$rep_phi <- array(data$phi_mean, dim = c(1, 1))

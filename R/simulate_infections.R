@@ -8,10 +8,6 @@
 #' standard deviation of delays or observation scaling, must be fixed.
 #' Uncertain parameters are not allowed.
 #'
-#' A previous function called [simulate_infections()] that simulates from a
-#' given model fit has been renamed [forecast_infections()]. Using
-#' [simulate_infections()] with existing estimates is now deprecated. This
-#' option will be removed in the next version.
 #' @param R a data frame of reproduction numbers (column `R`) by date (column
 #'   `date`). Column `R` must be numeric and `date` must be in date format. If
 #'   not all days between the first and last day in the `date` are present,
@@ -44,6 +40,7 @@
 #' @importFrom checkmate assert_data_frame assert_date assert_numeric
 #'   assert_subset assert_integer
 #' @importFrom data.table data.table merge.data.table nafill rbindlist
+#' @importFrom cli cli_abort
 #' @return A data.table of simulated infections (variable `infections`) and
 #'   reported cases (variable `reported_cases`) by date.
 #' @export
@@ -57,9 +54,9 @@
 #'     R = R,
 #'     initial_infections = 100,
 #'     generation_time = generation_time_opts(
-#'       fix_dist(example_generation_time)
+#'       fix_parameters(example_generation_time)
 #'     ),
-#'     delays = delay_opts(fix_dist(example_reporting_delay)),
+#'     delays = delay_opts(fix_parameters(example_reporting_delay)),
 #'     obs = obs_opts(family = "poisson")
 #'   )
 #' }
@@ -75,16 +72,11 @@ simulate_infections <- function(estimates, R, initial_infections,
                                 pop = 0, ...) {
   ## deprecated usage
   if (!missing(estimates)) {
-    deprecate_warn(
+    deprecate_stop(
       "1.5.0",
       "simulate_infections(estimates)",
-      "forecast_infections()",
-      details = paste0(
-        "The `estimates` option will be removed from [simulate_infections()] ",
-        "in the next version."
-      )
+      "forecast_infections()"
     )
-    return(forecast_infections(estimates = estimates, ...))
   }
 
   ## check inputs
@@ -143,10 +135,12 @@ simulate_infections <- function(estimates, R, initial_infections,
   ))
 
   if (length(data$delay_params_sd) > 0 && any(data$delay_params_sd > 0)) {
-    stop(
-      "Cannot simulate from uncertain parameters. Use the [fix_dist()] ",
-      "function to set the parameters of uncertain distributions either the ",
-      "mean or a randomly sampled value"
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from uncertain parameters.",
+        "i" = "Use {.fn fix_parameters} to set the parameters of uncertain
+        distributions using either the mean or a randomly sampled value."
+      )
     )
   }
   data$delay_params <- array(
@@ -159,9 +153,11 @@ simulate_infections <- function(estimates, R, initial_infections,
   ))
 
   if (data$obs_scale_sd > 0) {
-    stop(
-      "Cannot simulate from uncertain observation scaling; use fixed scaling ",
-      "instead."
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from uncertain observation scaling.",
+        "i" = "Use fixed scaling instead."
+      )
     )
   }
   if (data$obs_scale) {
@@ -174,9 +170,11 @@ simulate_infections <- function(estimates, R, initial_infections,
 
   if (obs$family == "negbin") {
     if (data$phi_sd > 0) {
-      stop(
-        "Cannot simulate from uncertain overdispersion; use fixed ",
-        "overdispersion instead."
+      cli_abort(
+        c(
+          "!" = "Cannot simulate from uncertain overdispersion.",
+          "i" = "Use fixed overdispersion instead."
+        )
       )
     }
     data$rep_phi <- array(data$phi_mean, dim = c(1, 1))
@@ -251,17 +249,16 @@ simulate_infections <- function(estimates, R, initial_infections,
 #' simulate. May decrease run times due to reduced IO costs but this is still
 #' being evaluated. If set to NULL then all simulations are done at once.
 #'
-#' @param verbose Logical defaults to [interactive()]. Should a progress bar
-#' (from `progressr`) be shown.
+#' @param verbose Logical defaults to [interactive()]. If the `progressr`
+#' package is available, a progress bar will be shown.
 #' @inheritParams stan_opts
 #' @importFrom rstan extract sampling
 #' @importFrom purrr list_transpose map safely compact
-#' @importFrom future.apply future_lapply
-#' @importFrom progressr with_progress progressor
 #' @importFrom data.table rbindlist as.data.table
 #' @importFrom lubridate days
 #' @importFrom checkmate assert_class assert_names test_numeric test_data_frame
 #' assert_numeric assert_integerish assert_logical
+#' @importFrom cli cli_abort
 #' @return A list of output as returned by [estimate_infections()] but based on
 #' results from the specified scenario rather than fitting.
 #' @seealso [dist_spec()] [generation_time_opts()] [delay_opts()] [rt_opts()]
@@ -282,7 +279,6 @@ simulate_infections <- function(estimates, R, initial_infections,
 #'   generation_time = generation_time_opts(example_generation_time),
 #'   delays = delay_opts(example_incubation_period + example_reporting_delay),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1), rw = 7),
-#'   stan = stan_opts(control = list(adapt_delta = 0.9)),
 #'   obs = obs_opts(scale = list(mean = 0.1, sd = 0.01)),
 #'   gp = NULL, horizon = 0
 #' )
@@ -324,11 +320,15 @@ forecast_infections <- function(estimates,
   ## check inputs
   assert_class(estimates, "estimate_infections")
   assert_names(names(estimates), must.include = "fit")
-  stopifnot(
-    "R must either be a numeric vector or a data.frame" =
-    test_numeric(R, lower = 0, null.ok = TRUE) ||
-    test_data_frame(R, null.ok = TRUE)
-  )
+  if (!(test_numeric(R, lower = 0, null.ok = TRUE) ||
+    test_data_frame(R, null.ok = TRUE))) {
+    cli_abort(
+      c(
+        "!" = "R must either be a {.cls numeric} vector or
+        a {.cls data.frame}."
+      )
+    )
+  }
   if (test_data_frame(R)) {
     assert_names(names(R), must.include = c("date", "value"))
     assert_numeric(R$value, lower = 0)
@@ -470,20 +470,10 @@ forecast_infections <- function(estimates,
 
   safe_batch <- safely(batch_simulate)
 
-  if (backend == "cmdstanr") {
-    lapply_func <- lapply ## future_lapply can't handle cmdstanr
-  } else {
-    lapply_func <- function(...) future_lapply(future.seed = TRUE, ...)
-  }
-
-  ## simulate in batches
-  with_progress({
-    if (verbose) {
-      p <- progressor(along = batches)
-    }
-    out <- lapply_func(batches,
+  process_batches <- function(p = NULL) {
+    lapply_func(batches,
       function(batch) {
-        if (verbose) {
+        if (!is.null(p)) {
           p()
         }
         safe_batch(
@@ -491,18 +481,32 @@ forecast_infections <- function(estimates,
           shift, dates, batch[[1]],
           batch[[2]]
         )[[1]]
-      }
+      },
+      future.opts = list(
+        future.seed = TRUE
+      ),
+      backend = backend
     )
-  })
+  }
+
+  ## simulate in batches
+  if (verbose && requireNamespace("progressr", quietly = TRUE)) {
+    p <- progressr::progressor(along = batches)
+    progressr::with_progress({
+      regional_out <- process_batches(p)
+    })
+  } else {
+    regional_out <- process_batches()
+  }
 
   ## join batches
-  out <- compact(out)
-  out <- list_transpose(out, simplify = FALSE)
-  out <- map(out, rbindlist)
+  regional_out <- compact(regional_out)
+  regional_out <- list_transpose(regional_out, simplify = FALSE)
+  regional_out <- map(regional_out, rbindlist)
 
   ## format output
   format_out <- format_fit(
-    posterior_samples = out,
+    posterior_samples = regional_out,
     horizon = estimates$args$horizon,
     shift = shift,
     burn_in = 0,

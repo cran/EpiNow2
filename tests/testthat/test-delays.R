@@ -1,4 +1,4 @@
-test_stan_delays <- function(generation_time = generation_time_opts(Fixed(1)),
+test_stan_delays <- function(generation_time = gt_opts(Fixed(1)),
                              delays = delay_opts(),
                              truncation = trunc_opts(),
                              params = c()) {
@@ -21,14 +21,14 @@ test_that("generation times can be specified in different ways", {
   )
   expect_equal(
     test_stan_delays(
-      generation_time = generation_time_opts(Fixed(value = 3)),
+      generation_time = gt_opts(Fixed(value = 3)),
       params = delay_params
     ),
     c(0, 0, 0, 1, 1, 1)
   )
   expect_equal(
     round(test_stan_delays(
-      generation_time = generation_time_opts(
+      generation_time = gt_opts(
         LogNormal(meanlog = 3, sdlog = 1, max = 4)
       ),
       params = delay_params
@@ -54,6 +54,22 @@ test_that("delay parameters can be specified in different ways", {
     ), digits = 2), n = -2),
     c(0.01, 0.08, 0.20, 0.32, 0.40, 1.00)
   )
+  expect_equal(
+    tail(round(test_stan_delays(
+      delays = delay_opts(
+        LogNormal(meanlog = 0.5, sdlog = 0.5)
+      ),
+      params = delay_params
+    ), digits = 2), n = -2),
+    c(0.08, 0.33, 0.36, 0.16, 0.05, 0.02, 0.01, 0.00, 0.00, 1.00)
+  )
+  expect_equal(
+    test_stan_delays(
+      delays = delay_opts(NonParametric(pmf = c(0.1, 0.6, 0.3))),
+      params = delay_params
+    ),
+    c(0.0, 1.0, 0.1, 0.6, 0.3, 1.0)
+  )
 })
 
 test_that("truncation parameters can be specified in different ways", {
@@ -69,10 +85,20 @@ test_that("truncation parameters can be specified in different ways", {
 })
 
 test_that("distributions incompatible with stan models are caught", {
-  expect_error(generation_time_opts(
-    Gamma(2, 2)
-  ), "maximum")
+  expect_error(suppressMessages(gt_opts(
+    Gamma(2, 2), default_cdf_cutoff = 0
+  )), "maximum")
   expect_error(delay_opts(
     Normal(2, 2, max = 10)
   ), "lognormal")
+})
+
+test_that("nonparametric PMFs with nonzero first element for the generation time are deprecated", {
+  expect_deprecated(
+    gt_opts(c(
+      NonParametric(c(0.1, 0.5, 0.4)),
+      NonParametric(c(0.2, 0.6, 0.2))
+    )),
+    "nonzero first element"
+  )
 })

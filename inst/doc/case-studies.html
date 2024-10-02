@@ -27,22 +27,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -255,21 +239,34 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<p><strong>This is a work in progress. Please consider submitting a PR to improve it.</strong></p>
+<p><strong>This is a work in progress. Please consider submitting a PR
+to improve it.</strong></p>
 <div id="case-studies" class="section level1">
 <h1>Case studies</h1>
 <ul>
-<li><a href="https://samabbott.co.uk/cste-forecasting-workshop/">Estimating reporting delays and nowcasting/forecasting infections with EpiNow2 using HHS COVID-19 hospitalizations</a> by Sam Abbott, Zachary Susswein, and Katie Gostic.</li>
-<li><a href="https://github.com/epiforecasts/nowcasting.example/blob/main/inst/reports/epinow2.md">Estimating reporting delays and nowcasting/forecasting infections with EpiNow2</a> by Sebastian Funk and Sam Abbott.</li>
-<li><a href="https://gist.github.com/seabbs/4f09d7609df298db7a86c31612ff9d17">Forecast Covid-19 reported deaths from Covid-19 reported cases (both observed and forecast) for a country in the ECDC</a> by Sam Abbott.</li>
-<li><a href="https://gist.github.com/seabbs/176b0c7f83eab1a7192a25b28bbd116a">Explore Covid-19 data truncation in England</a> by Sam Abbott.</li>
-<li><a href="https://gist.github.com/seabbs/163d0f195892cde685c70473e1f5e867">Estimate the effective reproduction number of Covid-19 in last 3 months for a country</a> By Sam Abbott.</li>
+<li><a href="https://samabbott.co.uk/cste-forecasting-workshop/">Estimating
+reporting delays and nowcasting/forecasting infections with EpiNow2
+using HHS COVID-19 hospitalizations</a> by Sam Abbott, Zachary Susswein,
+and Katie Gostic.</li>
+<li><a href="https://github.com/epiforecasts/nowcasting.example/blob/main/inst/reports/epinow2.md">Estimating
+reporting delays and nowcasting/forecasting infections with EpiNow2</a>
+by Sebastian Funk and Sam Abbott.</li>
+<li><a href="https://gist.github.com/seabbs/4f09d7609df298db7a86c31612ff9d17">Forecast
+Covid-19 reported deaths from Covid-19 reported cases (both observed and
+forecast) for a country in the ECDC</a> by Sam Abbott.</li>
+<li><a href="https://gist.github.com/seabbs/176b0c7f83eab1a7192a25b28bbd116a">Explore
+Covid-19 data truncation in England</a> by Sam Abbott.</li>
+<li><a href="https://gist.github.com/seabbs/163d0f195892cde685c70473e1f5e867">Estimate
+the effective reproduction number of Covid-19 in last 3 months for a
+country</a> By Sam Abbott.</li>
 </ul>
 </div>
 <div id="public-health-surveillance" class="section level1">
 <h1>Public health surveillance</h1>
 <ul>
-<li>CDC. 2022. “Technical Report 3: Multi-National Monkeypox Outbreak, United States, 2022.” Centers for Disease Control and Prevention. October 3, 2022. <a href="https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report/report-3.html" class="uri">https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report/report-3.html</a>.</li>
+<li>CDC. 2022. “Technical Report 3: Multi-National Monkeypox Outbreak,
+United States, 2022.” Centers for Disease Control and Prevention.
+October 3, 2022. <a href="https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report/report-3.html" class="uri">https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report/report-3.html</a>.</li>
 </ul>
 </div>
 <div id="literature" class="section level1">
@@ -277,17 +274,42 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="by-package-authors" class="section level2">
 <h2>By package authors</h2>
 <ul>
-<li><p>Abbott, Sam, Joel Hellewell, Robin N. Thompson, Katharine Sherratt, Hamish P. Gibbs, Nikos I. Bosse, James D. Munday, et al. 2020. “Estimating the Time-Varying Reproduction Number of SARS-CoV-2 Using National and Subnational Case Counts.” Wellcome Open Research 5 (December): 112. <a href="http://dx.doi.org/10.12688/wellcomeopenres.16006.2" class="uri">http://dx.doi.org/10.12688/wellcomeopenres.16006.2</a></p></li>
-<li><p>Sherratt, Katharine, Sam Abbott, Sophie R. Meakin, Joel Hellewell, James D. Munday, Nikos Bosse, Null Null, Mark Jit, and Sebastian Funk. 2021. “Exploring Surveillance Data Biases When Estimating the Reproduction Number: With Insights into Subpopulation Transmission of COVID-19 in England.” Philosophical Transactions of the Royal Society of London. Series B, Biological Sciences 376 (1829): 20200283. <a href="http://dx.doi.org/10.1098/rstb.2020.0283" class="uri">http://dx.doi.org/10.1098/rstb.2020.0283</a></p></li>
-<li><p>Bosse, Nikos I., Sam Abbott, Johannes Bracher, Habakuk Hain, Billy J. Quilty, Mark Jit, Centre for the Mathematical Modelling of Infectious Diseases COVID-19 Working Group, Edwin van Leeuwen, Anne Cori, and Sebastian Funk. 2022. “Comparing Human and Model-Based Forecasts of COVID-19 in Germany and Poland.” PLoS Computational Biology 18 (9): e1010405. <a href="http://dx.doi.org/10.1371/journal.pcbi.1010405" class="uri">http://dx.doi.org/10.1371/journal.pcbi.1010405</a></p></li>
-<li><p>Davies, Nicholas G., Sam Abbott, Rosanna C. Barnard, Christopher I. Jarvis, Adam J. Kucharski, James D. Munday, Carl A. B. Pearson, et al. 2021. “Estimated Transmissibility and Impact of SARS-CoV-2 Lineage B.1.1.7 in England.” Science 372 (6538). <a href="https://doi.org/10.1126/science.abg3055" class="uri">https://doi.org/10.1126/science.abg3055</a>.</p></li>
-<li><p>Meakin, Sophie, Sam Abbott, Nikos Bosse, James Munday, Hugo Gruson, Joel Hellewell, Katharine Sherratt, CMMID COVID-19 Working Group, and Sebastian Funk. 2022. “Comparative Assessment of Methods for Short-Term Forecasts of COVID-19 Hospital Admissions in England at the Local Level.” BMC Medicine 20 (1): 86. <a href="http://dx.doi.org/10.1186/s12916-022-02271-x" class="uri">http://dx.doi.org/10.1186/s12916-022-02271-x</a></p></li>
+<li><p>Abbott, Sam, Joel Hellewell, Robin N. Thompson, Katharine
+Sherratt, Hamish P. Gibbs, Nikos I. Bosse, James D. Munday, et al. 2020.
+“Estimating the Time-Varying Reproduction Number of SARS-CoV-2 Using
+National and Subnational Case Counts.” Wellcome Open Research 5
+(December): 112. <a href="http://dx.doi.org/10.12688/wellcomeopenres.16006.2" class="uri">http://dx.doi.org/10.12688/wellcomeopenres.16006.2</a></p></li>
+<li><p>Sherratt, Katharine, Sam Abbott, Sophie R. Meakin, Joel
+Hellewell, James D. Munday, Nikos Bosse, Null Null, Mark Jit, and
+Sebastian Funk. 2021. “Exploring Surveillance Data Biases When
+Estimating the Reproduction Number: With Insights into Subpopulation
+Transmission of COVID-19 in England.” Philosophical Transactions of the
+Royal Society of London. Series B, Biological Sciences 376 (1829):
+20200283. <a href="http://dx.doi.org/10.1098/rstb.2020.0283" class="uri">http://dx.doi.org/10.1098/rstb.2020.0283</a></p></li>
+<li><p>Bosse, Nikos I., Sam Abbott, Johannes Bracher, Habakuk Hain,
+Billy J. Quilty, Mark Jit, Centre for the Mathematical Modelling of
+Infectious Diseases COVID-19 Working Group, Edwin van Leeuwen, Anne
+Cori, and Sebastian Funk. 2022. “Comparing Human and Model-Based
+Forecasts of COVID-19 in Germany and Poland.” PLoS Computational Biology
+18 (9): e1010405. <a href="http://dx.doi.org/10.1371/journal.pcbi.1010405" class="uri">http://dx.doi.org/10.1371/journal.pcbi.1010405</a></p></li>
+<li><p>Davies, Nicholas G., Sam Abbott, Rosanna C. Barnard, Christopher
+I. Jarvis, Adam J. Kucharski, James D. Munday, Carl A. B. Pearson, et
+al. 2021. “Estimated Transmissibility and Impact of SARS-CoV-2 Lineage
+B.1.1.7 in England.” Science 372 (6538). <a href="https://doi.org/10.1126/science.abg3055" class="uri">https://doi.org/10.1126/science.abg3055</a>.</p></li>
+<li><p>Meakin, Sophie, Sam Abbott, Nikos Bosse, James Munday, Hugo
+Gruson, Joel Hellewell, Katharine Sherratt, CMMID COVID-19 Working
+Group, and Sebastian Funk. 2022. “Comparative Assessment of Methods for
+Short-Term Forecasts of COVID-19 Hospital Admissions in England at the
+Local Level.” BMC Medicine 20 (1): 86. <a href="http://dx.doi.org/10.1186/s12916-022-02271-x" class="uri">http://dx.doi.org/10.1186/s12916-022-02271-x</a></p></li>
 </ul>
 </div>
 <div id="by-others" class="section level2">
 <h2>By others</h2>
 <ul>
-<li>Hay, James A., Lee Kennedy-Shaffer, Sanjat Kanjilal, Niall J. Lennon, Stacey B. Gabriel, Marc Lipsitch, and Michael J. Mina. 2021. “Estimating Epidemiologic Dynamics from Cross-Sectional Viral Load Distributions.” Science 373 (6552). <a href="https://doi.org/10.1126/science.abh0635" class="uri">https://doi.org/10.1126/science.abh0635</a>.</li>
+<li>Hay, James A., Lee Kennedy-Shaffer, Sanjat Kanjilal, Niall J.
+Lennon, Stacey B. Gabriel, Marc Lipsitch, and Michael J. Mina. 2021.
+“Estimating Epidemiologic Dynamics from Cross-Sectional Viral Load
+Distributions.” Science 373 (6552). <a href="https://doi.org/10.1126/science.abh0635" class="uri">https://doi.org/10.1126/science.abh0635</a>.</li>
 </ul>
 </div>
 </div>

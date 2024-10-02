@@ -61,43 +61,121 @@ check_reports_valid <- function(data,
 #' @param dist A `dist_spec` object.`
 #' @importFrom checkmate assert_class
 #' @importFrom rlang arg_match
+#' @importFrom cli cli_abort col_blue
 #' @return Called for its side effects.
 #' @keywords internal
 check_stan_delay <- function(dist) {
   # Check that `dist` is a `dist_spec`
   assert_class(dist, "dist_spec")
   # Check that `dist` is lognormal or gamma or nonparametric
-  distributions <- vapply(dist, function(x) x$distribution, character(1))
+  distributions <- vapply(
+    seq_len(ndist(dist)), get_distribution, x = dist, FUN.VALUE = character(1)
+  )
   if (
     !all(distributions %in% c("lognormal", "gamma", "fixed", "nonparametric"))
   ) {
-    stop(
-      "Distributions passed to the model need to be lognormal, gamma, fixed ",
-      "or nonparametric."
+    cli_abort(
+      c(
+       "!" = "Distributions passed to the model need to be
+        {col_blue(\"lognormal\")}, {col_blue(\"gamma\")},
+        {col_blue(\"fixed\")}, or {col_blue(\"nonparametric\")}."
+      )
     )
   }
   # Check that `dist` has parameters that are either numeric or normal
   # distributions with numeric parameters and infinite maximum
-  numeric_parameters <- vapply(dist$parameters, is.numeric, logical(1))
-  normal_parameters <- vapply(
-    dist$parameters,
-    function(x) {
-      is(x, "dist_spec") &&
-        x$distribution == "normal" &&
-        all(vapply(x$parameters, is.numeric, logical(1))) &&
-        is.infinite(x$max)
-    },
-    logical(1)
-  )
-  if (!all(numeric_parameters | normal_parameters)) {
-    stop(
-      "Delay distributions passed to the model need to have parameters that ",
-      "are either numeric or normally distributed with numeric parameters ",
-      "and infinite maximum."
+  numeric_or_normal <- unlist(lapply(seq_len(ndist(dist)), function(id) {
+    if (get_distribution(dist, id) != "nonparametric") {
+      params <- get_parameters(dist, id)
+      vapply(params, function(x) {
+        is.numeric(x) ||
+          (is(x, "dist_spec") && get_distribution(x) == "normal" &&
+             is.infinite(max(x)))
+      }, logical(1))
+    }
+  }))
+  if (!all(numeric_or_normal)) {
+    cli_abort(
+      c(
+        "!" = "Delay distributions passed to the model need to have parameters
+        that are either {col_blue(\"numeric\")} or
+        {col_blue(\"normally distributed\")} with {col_blue(\"numeric\")}
+        parameters and {col_blue(\"infinite maximum\")}."
+      )
     )
   }
+  if (is.null(attr(dist, "cdf_cutoff"))) {
+    attr(dist, "cdf_cutoff") <- 0
+  }
+  assert_numeric(attr(dist, "cdf_cutoff"), lower = 0, upper = 1)
   # Check that `dist` has a finite maximum
-  if (any(is.infinite(max(dist)))) {
-    stop("All distribution passed to the model need to have a finite maximum")
+  if (any(is.infinite(max(dist))) && !(attr(dist, "cdf_cutoff") > 0)) {
+    cli_abort(
+      c(
+        "i" = "All distribution passed to the model need to have a
+      {col_blue(\"finite maximum\")}, which can be achieved either by
+      setting {.var max} or non-zero {.var cdf_cutoff}."
+      )
+    )
+  }
+}
+
+#' Validate probability distribution for using as generation time
+#'
+#' @description `r lifecycle::badge("stable")`
+#' does all the checks in`check_stan_delay()` and additionally makes sure
+#' that if `dist` is nonparametric,  its first element is zero.
+#'
+#' @importFrom lifecycle deprecate_warn
+#' @inheritParams check_stan_delay dist
+#' @return Called for its side effects.
+#' @keywords internal
+check_generation_time <- function(dist) {
+  # Do the standard delay checks
+  check_stan_delay(dist)
+  ## check for nonparametric with nonzero first element
+  nonzero_first_element <- vapply(seq_len(ndist(dist)), function(i) {
+    get_distribution(dist, i) == "nonparametric" && get_pmf(dist, i)[1] > 0
+  }, logical(1))
+  if (all(nonzero_first_element)) {
+    deprecate_warn(
+      "1.6.0",
+      I(
+        "Specifying nonparametric generation times with nonzero first element"
+      ),
+      details = c(
+        "Since zero generation times are not supported by the model, the
+         generation time will be left-truncated at one. ",
+        "In future versions this will cause an error. Please ensure that the
+         first element of the nonparametric generation interval is zero."
+      )
+    )
+  }
+}
+
+#' Check that PMF tail is not sparse
+#'
+#' @description Checks if the tail of a PMF vector has more than `span`
+#' consecutive values smaller than `tol` and throws a warning if so.
+#' @param pmf A probability mass function vector
+#' @param span The number of consecutive indices in the tail to check
+#' @param tol The value which to consider the tail as sparse
+#' @importFrom cli cli_warn col_blue
+#'
+#' @return Called for its side effects.
+#' @keywords internal
+check_sparse_pmf_tail <- function(pmf, span = 5, tol = 1e-6) {
+  if (all(tail(pmf, span) < tol)) {
+    cli_warn(
+      c(
+        "!" = "The PMF tail has {col_blue(span)} consecutive value{?s} smaller
+        than {col_blue(tol)}.",
+        "i" = "This will increase run times with very small increases in
+        accuracy. Consider using the `cdf_cutoff` argument when constructing
+        the distribution object, or using the `bound_dist()` function."
+      ),
+      .frequency = "regularly",
+      .frequency_id = "sparse_pmf_tail"
+    )
   }
 }

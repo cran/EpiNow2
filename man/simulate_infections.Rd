@@ -39,9 +39,9 @@ numerical vector of length specified in \code{\link[=obs_opts]{obs_opts()}} as \
 gives the weight given to reporting on this day (normalised to 1).
 The default is \code{NULL}.}
 
-\item{generation_time}{A call to \code{\link[=generation_time_opts]{generation_time_opts()}} defining the
-generation time distribution used. For backwards compatibility a list of
-summary parameters can also be passed.}
+\item{generation_time}{A call to \code{\link[=gt_opts]{gt_opts()}} (or its alias
+\code{\link[=generation_time_opts]{generation_time_opts()}}) defining the generation time distribution used.
+For backwards compatibility a list of summary parameters can also be passed.}
 
 \item{delays}{A call to \code{\link[=delay_opts]{delay_opts()}} defining delay distributions and
 options. See the documentation of \code{\link[=delay_opts]{delay_opts()}} and the examples below for
@@ -94,11 +94,6 @@ model can be specified using the same options as in \code{\link[=estimate_infect
 In order to simulate, all parameters that are specified such as the mean and
 standard deviation of delays or observation scaling, must be fixed.
 Uncertain parameters are not allowed.
-
-A previous function called \code{\link[=simulate_infections]{simulate_infections()}} that simulates from a
-given model fit has been renamed \code{\link[=forecast_infections]{forecast_infections()}}. Using
-\code{\link[=simulate_infections]{simulate_infections()}} with existing estimates is now deprecated. This
-option will be removed in the next version.
 }
 \examples{
 \donttest{
@@ -110,9 +105,9 @@ option will be removed in the next version.
     R = R,
     initial_infections = 100,
     generation_time = generation_time_opts(
-      fix_dist(example_generation_time)
+      fix_parameters(example_generation_time)
     ),
-    delays = delay_opts(fix_dist(example_reporting_delay)),
+    delays = delay_opts(fix_parameters(example_reporting_delay)),
     obs = obs_opts(family = "poisson")
   )
 }

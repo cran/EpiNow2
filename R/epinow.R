@@ -63,8 +63,8 @@
 #'
 #' # estimate Rt and nowcast/forecast cases by date of infection
 #' out <- epinow(
-#'   reported_cases = reported_cases,
-#'   generation_time = generation_time_opts(generation_time),
+#'   data = reported_cases,
+#'   generation_time = gt_opts(generation_time),
 #'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
 #'   delays = delay_opts(incubation_period + reporting_delay)
 #' )
@@ -80,7 +80,7 @@
 #' }
 # nolint start: cyclocomp_linter
 epinow <- function(data,
-                   generation_time = generation_time_opts(),
+                   generation_time = gt_opts(),
                    delays = delay_opts(),
                    truncation = trunc_opts(),
                    rt = rt_opts(),
@@ -92,26 +92,18 @@ epinow <- function(data,
                    CrIs = c(0.2, 0.5, 0.9),
                    filter_leading_zeros = TRUE,
                    zero_threshold = Inf,
-                   return_output = FALSE,
+                   return_output = is.null(target_folder),
                    output = c("samples", "plots", "latest", "fit", "timing"),
                    plot_args = list(),
                    target_folder = NULL, target_date,
                    logs = tempdir(), id = "epinow", verbose = interactive(),
                    reported_cases) {
-  # Warning for deprecated arguments
   if (!missing(reported_cases)) {
-    if (!missing(data)) {
-      stop("Can't have `reported_cases` and `data` arguments. ",
-           "Use `data` instead."
-      )
-    }
-    lifecycle::deprecate_warn(
+    lifecycle::deprecate_stop(
       "1.5.0",
       "epinow(reported_cases)",
-      "epinow(data)",
-      "The argument will be removed completely in the next version."
+      "epinow(data)"
     )
-    data <- reported_cases
   }
   # Check inputs
   assert_logical(return_output)
@@ -123,10 +115,6 @@ epinow <- function(data,
   }
   assert_string(id)
   assert_logical(verbose)
-
-  if (is.null(target_folder)) {
-    return_output <- TRUE
-  }
 
   if (is.null(CrIs) || length(CrIs) == 0 || !is.numeric(CrIs)) {
     futile.logger::flog.fatal(
@@ -294,7 +282,7 @@ epinow <- function(data,
 
   # log timing if specified
   if (output["timing"]) {
-    out$timing <- round(as.numeric(end_time - start_time), 1)
+    out$timing <- difftime(end_time, start_time)
     if (!is.null(target_folder)) {
       saveRDS(out$timing, file.path(target_folder, "runtime.rds"))
     }

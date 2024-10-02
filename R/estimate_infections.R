@@ -22,9 +22,9 @@
 #'
 #' @param reported_cases Deprecated; use `data` instead.
 #'
-#' @param generation_time A call to [generation_time_opts()] defining the
-#' generation time distribution used. For backwards compatibility a list of
-#' summary parameters can also be passed.
+#' @param generation_time A call to [gt_opts()] (or its alias
+#' [generation_time_opts()]) defining the generation time distribution used.
+#' For backwards compatibility a list of summary parameters can also be passed.
 #'
 #' @param delays A call to [delay_opts()] defining delay distributions and
 #' options. See the documentation of [delay_opts()] and the examples below for
@@ -99,10 +99,9 @@
 #'
 #' # for more examples, see the "estimate_infections examples" vignette
 #' def <- estimate_infections(reported_cases,
-#'   generation_time = generation_time_opts(generation_time),
+#'   generation_time = gt_opts(generation_time),
 #'   delays = delay_opts(incubation_period + reporting_delay),
-#'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
-#'   stan = stan_opts(control = list(adapt_delta = 0.95))
+#'   rt = rt_opts(prior = list(mean = 2, sd = 0.1))
 #' )
 #' # real time estimates
 #' summary(def)
@@ -111,7 +110,7 @@
 #' options(old_opts)
 #' }
 estimate_infections <- function(data,
-                                generation_time = generation_time_opts(),
+                                generation_time = gt_opts(),
                                 delays = delay_opts(),
                                 truncation = trunc_opts(),
                                 rt = rt_opts(),
@@ -129,18 +128,11 @@ estimate_infections <- function(data,
                                 reported_cases) {
   # Deprecate reported_cases in favour of data
   if (!missing(reported_cases)) {
-     if (!missing(data)) {
-      stop("Can't have `reported_cases` and `data` arguments. ",
-           "Use `data` instead."
-      )
-     }
-    lifecycle::deprecate_warn(
+    lifecycle::deprecate_stop(
       "1.5.0",
       "estimate_infections(reported_cases)",
-      "estimate_infections(data)",
-      "The argument will be removed completely in the next version."
+      "estimate_infections(data)"
     )
-    data <- reported_cases
   }
   # Validate inputs
   check_reports_valid(data, model = "estimate_infections")

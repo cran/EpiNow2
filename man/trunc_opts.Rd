@@ -4,7 +4,7 @@
 \alias{trunc_opts}
 \title{Truncation Distribution Options}
 \usage{
-trunc_opts(dist = Fixed(0), tolerance = 0.001, weight_prior = FALSE)
+trunc_opts(dist = Fixed(0), default_cdf_cutoff = 0.001, weight_prior = FALSE)
 }
 \arguments{
 \item{dist}{A delay distribution or series of delay distributions reflecting
@@ -14,7 +14,9 @@ interface in \code{EpiNow2} (See \code{?EpiNow2::Distributions}) or estimated us
 for use here out-of-box. Default is a fixed distribution with maximum 0, i.e.
 no truncation.}
 
-\item{tolerance}{Numeric; the desired tolerance level.}
+\item{default_cdf_cutoff}{Numeric; default CDF cutoff to be used if an
+unconstrained distribution is passed as \code{dist}. If \code{dist} is already
+constrained by having a maximum or CDF cutoff this is ignored.}
 
 \item{weight_prior}{Logical; if TRUE, the truncation prior will be weighted
 by the number of observation data points, in doing so approximately placing
@@ -41,5 +43,5 @@ trunc_opts(dist = LogNormal(mean = 3, sd = 2, max = 10))
 }
 \seealso{
 \code{\link[=convert_to_logmean]{convert_to_logmean()}} \code{\link[=convert_to_logsd]{convert_to_logsd()}}
-\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link[=dist_spec]{dist_spec()}}
+\code{\link[=bootstrapped_dist_fit]{bootstrapped_dist_fit()}} \code{\link{Distributions}}
 }
