@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', function(e) {
 </script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
@@ -43,25 +43,26 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
 
 <style type="text/css">
-/* for pandoc --citeproc since 2.11 */
+
 div.csl-bib-body { }
 div.csl-entry {
-  clear: both;
+clear: both;
+margin-bottom: 0em;
 }
 .hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+margin-left:2em;
+text-indent:-2em;
 }
 div.csl-left-margin {
-  min-width:2em;
-  float:left;
+min-width:2em;
+float:left;
 }
 div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
+margin-left:2em;
+padding-left:1em;
 }
 div.csl-indent {
-  margin-left: 2em;
+margin-left: 2em;
 }
 </style>
 
@@ -263,22 +264,20 @@ details</h1>
 
 <div id="TOC">
 <ul>
-<li><a href="#overview"><span class="toc-section-number">1</span>
-Overview</a></li>
-<li><a href="#definition"><span class="toc-section-number">2</span>
-Definition</a>
+<li><a href="#overview" id="toc-overview"><span class="toc-section-number">1</span> Overview</a></li>
+<li><a href="#definition" id="toc-definition"><span class="toc-section-number">2</span> Definition</a>
 <ul>
-<li><a href="#matérn-32-covariance-kernel-the-default"><span class="toc-section-number">2.1</span> Matérn 3/2 covariance kernel (the
+<li><a href="#mat%C3%A9rn-32-covariance-kernel-the-default" id="toc-matérn-32-covariance-kernel-the-default"><span class="toc-section-number">2.1</span> Matérn 3/2 covariance kernel (the
 default)</a></li>
-<li><a href="#squared-exponential-kernel"><span class="toc-section-number">2.2</span> Squared exponential
+<li><a href="#squared-exponential-kernel" id="toc-squared-exponential-kernel"><span class="toc-section-number">2.2</span> Squared exponential
 kernel</a></li>
-<li><a href="#ornstein-uhlenbeck-matérn-12-kernel"><span class="toc-section-number">2.3</span> Ornstein-Uhlenbeck (Matérn 1/2)
+<li><a href="#ornstein-uhlenbeck-mat%C3%A9rn-12-kernel" id="toc-ornstein-uhlenbeck-matérn-12-kernel"><span class="toc-section-number">2.3</span> Ornstein-Uhlenbeck (Matérn 1/2)
 kernel</a></li>
-<li><a href="#matérn-52-covariance-kernel"><span class="toc-section-number">2.4</span> Matérn 5/2 covariance
+<li><a href="#mat%C3%A9rn-52-covariance-kernel" id="toc-matérn-52-covariance-kernel"><span class="toc-section-number">2.4</span> Matérn 5/2 covariance
 kernel</a></li>
 </ul></li>
-<li><a href="#hilbert-space-approximation"><span class="toc-section-number">3</span> Hilbert space approximation</a></li>
-<li><a href="#references">References</a></li>
+<li><a href="#hilbert-space-approximation" id="toc-hilbert-space-approximation"><span class="toc-section-number">3</span> Hilbert space approximation</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
@@ -309,25 +308,28 @@ k(t,t&#39;) = k(|t - t&#39;|) = k(\Delta t)
 <h2><span class="header-section-number">2.1</span> Matérn 3/2 covariance
 kernel (the default)</h2>
 <p><span class="math display">\[\begin{equation}
-k(\Delta t) = \alpha \left( 1 + \frac{\sqrt{3} \Delta t}{l} \right) \exp
-\left( - \frac{\sqrt{3} \Delta t}{l}\right)
+k(\Delta t) = \alpha^2 \left( 1 + \frac{\sqrt{3} \Delta t}{l} \right)
+\exp \left( - \frac{\sqrt{3} \Delta t}{l}\right)
 \end{equation}\]</span></p>
 <p>with <span class="math inline">\(l&gt;0\)</span> and <span class="math inline">\(\alpha &gt; 0\)</span> the length scale and
-magnitude, respectively, of the kernel.</p>
+magnitude, respectively, of the kernel. Note that here and later we use
+a slightly different definition of <span class="math inline">\(\alpha\)</span> compared to Riutort-Mayol et
+al.<span class="citation"><sup>[1]</sup></span>, where this is defined
+as our <span class="math inline">\(\alpha^2\)</span>.</p>
 </div>
 <div id="squared-exponential-kernel" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Squared exponential
 kernel</h2>
 <p><span class="math display">\[\begin{equation}
-k(\Delta t) = \alpha \exp \left( - \frac{1}{2} \frac{(\Delta t^2)}{l^2}
-\right)
+k(\Delta t) = \alpha^2 \exp \left( - \frac{1}{2} \frac{(\Delta
+t^2)}{l^2} \right)
 \end{equation}\]</span></p>
 </div>
 <div id="ornstein-uhlenbeck-matérn-12-kernel" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Ornstein-Uhlenbeck
 (Matérn 1/2) kernel</h2>
 <p><span class="math display">\[\begin{equation}
-k(\Delta t) = \alpha \exp{\left( - \frac{\Delta t}{2 l^2}  \right)}
+k(\Delta t) = \alpha^2 \exp{\left( - \frac{\Delta t}{2 l^2}  \right)}
 \end{equation}\]</span></p>
 </div>
 <div id="matérn-52-covariance-kernel" class="section level2" number="2.4">
@@ -371,16 +373,38 @@ standard normal prior</p>
 \beta_j \sim \mathcal{Normal}(0, 1)
 \end{equation}\]</span></p>
 <p>The function <span class="math inline">\(S_k(x)\)</span> is the
-spectral density relating to a particular covariance function <span class="math inline">\(k\)</span>. In the case of the Matérn 3/2 kernel
-(the default in <code>EpiNow2</code>) this is given by</p>
+spectral density relating to a particular covariance function <span class="math inline">\(k\)</span>. In the case of the Matérn kernel of
+order <span class="math inline">\(\nu\)</span> this is given by</p>
 <p><span class="math display">\[\begin{equation}
-S_k(x) = 4 \alpha^2 \left( \frac{\sqrt{3}}{\rho}\right)^3 \left(\left(
-\frac{\sqrt{3}}{\rho} \right)^2 + w^2 \right)^{-2}
+S_k(x) = \alpha^2 \frac{2 \sqrt{\pi} \Gamma(\nu + 1/2)
+(2\nu)^\nu}{\Gamma(\nu) \rho^{2 \nu}} \left( \frac{2 \nu}{\rho^2} +
+\omega^2 \right)^{-\left( \nu + \frac{1}{2}\right )}
 \end{equation}\]</span></p>
-<p>and in the case of a squared exponential kernel by</p>
+<p>For <span class="math inline">\(\nu = 3 / 2\)</span> (the default in
+<code>EpiNow2</code>) this simplifies to</p>
 <p><span class="math display">\[\begin{equation}
-S_k(x) = \alpha^2 \sqrt{2\pi} \rho \exp \left( -\frac{1}{2} \rho^2 w^2
-\right)
+    S_k(\omega) =
+    \alpha^2 \frac{4 \left(\sqrt{3} / \rho
+\right)^3}{\left(\left(\sqrt{3} / \rho\right)^2 + \omega^2\right)^2} =
+    \left(\frac{2 \alpha \left(\sqrt{3} / \rho
+\right)^{\frac{3}{2}}}{\left(\sqrt{3} / \rho\right)^2 + \omega^2}
+\right)^2
+\end{equation}\]</span></p>
+<p>For <span class="math inline">\(\nu = 1 / 2\)</span> it is</p>
+<p><span class="math display">\[\begin{equation}
+S_k(\omega) = \alpha^2 \frac{2}{\rho \left(1 / \rho^2 + \omega^2\right)}
+\end{equation}\]</span></p>
+<p>and for <span class="math inline">\(\nu = 5 / 2\)</span> it is</p>
+<p><span class="math display">\[\begin{equation}
+S_k(\omega) =
+    \alpha^2 \frac{3 \left(\sqrt{5} / \rho \right)^5}{2
+\left(\left(\sqrt{5} / \rho\right)^2 + \omega^2\right)^3}
+\end{equation}\]</span></p>
+<p>In the case of a squared exponential the spectral kernel density is
+given by</p>
+<p><span class="math display">\[\begin{equation}
+S_k(\omega) = \alpha^2 \sqrt{2\pi} \rho \exp \left( -\frac{1}{2} \rho^2
+\omega^2 \right)
 \end{equation}\]</span></p>
 <p>The functions <span class="math inline">\(\phi_{j}(x)\)</span> are
 the eigenfunctions of the Laplace operator,</p>
@@ -394,7 +418,7 @@ t^* = \frac{t - \frac{1}{2}t_\mathrm{GP}}{\frac{1}{2}t_\mathrm{GP}}
 \end{equation}\]</span></p>
 <p>Relevant priors are</p>
 <p><span class="math display">\[\begin{align}
-\alpha &amp;\sim \mathcal{Normal}(0, \sigma_{\alpha}) \\
+\alpha &amp;\sim \mathcal{Normal}(\mu_\alpha, \sigma_{\alpha}) \\
 \rho   &amp;\sim \mathcal{LogNormal} (\mu_\rho, \sigma_\rho)\\
 \end{align}\]</span></p>
 <p>with <span class="math inline">\(\rho\)</span> additionally
@@ -409,12 +433,13 @@ m_\rho &amp;= 21 \\
 s_\rho &amp;= 7 \\
 \rho_\mathrm{min} &amp;= 0\\
 \rho_\mathrm{max} &amp;= 60\\
-\sigma_\alpha &amp;= 0.05\\
+\mu_\alpha &amp;= 0\\
+\sigma_\alpha &amp;= 0.01
 \end{align}\]</span></p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
 <div id="ref-approxGP" class="csl-entry">
 1. Riutort-Mayol, G., Bürkner, P.-C., Andersen, M. R., Solin, A., &amp;
 Vehtari, A. (2020). <em>Practical hilbert space approximate bayesian

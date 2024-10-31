@@ -182,15 +182,22 @@ estimate_secondary <- function(data,
   assert_logical(verbose)
 
   reports <- data.table::as.data.table(data)
-  secondary_reports <- reports[, list(date, confirm = secondary)]
+  # If the user is using the default treatment of NA's as missing and
+  # their data has implicit or explicit NA's, inform them of what's
+  # happening and provide alternatives.
+  obs <- check_na_setting_against_data(
+    obs = obs,
+    data = reports,
+    cols_to_check = c("date", "primary", "secondary")
+  )
+  secondary_reports_dirty <- reports[, list(date, confirm = secondary)]
   secondary_reports <- create_clean_reported_cases(
-    secondary_reports,
+    secondary_reports_dirty,
     filter_leading_zeros = filter_leading_zeros,
     zero_threshold = zero_threshold
   )
   ## fill in missing data (required if fitting to prevalence)
   complete_secondary <- create_complete_cases(secondary_reports)
-
   ## fill down
   secondary_reports[, confirm := nafill(confirm, type = "locf")]
   ## fill any early data up
@@ -362,7 +369,7 @@ plot.estimate_secondary <- function(x, primary = FALSE,
                                     from = NULL, to = NULL,
                                     new_obs = NULL,
                                     ...) {
-  predictions <- data.table::copy(x$predictions)[!is.na(secondary)]
+  predictions <- data.table::copy(x$predictions)
 
   if (!is.null(new_obs)) {
     new_obs <- data.table::as.data.table(new_obs)

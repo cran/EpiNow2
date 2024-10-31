@@ -44,21 +44,22 @@ with the following choices available for the kernel $k$
 ## Matérn 3/2 covariance kernel (the default)
 
 \begin{equation}
-k(\Delta t) = \alpha \left( 1 + \frac{\sqrt{3} \Delta t}{l} \right) \exp \left( - \frac{\sqrt{3} \Delta t}{l}\right)
+k(\Delta t) = \alpha^2 \left( 1 + \frac{\sqrt{3} \Delta t}{l} \right) \exp \left( - \frac{\sqrt{3} \Delta t}{l}\right)
 \end{equation}
 
 with $l>0$ and $\alpha > 0$ the length scale and magnitude, respectively, of the kernel.
+Note that here and later we use a slightly different definition of $\alpha$ compared to Riutort-Mayol et al. [@approxGP], where this is defined as our $\alpha^2$.
 
 ## Squared exponential kernel
 
 \begin{equation}
-k(\Delta t) = \alpha \exp \left( - \frac{1}{2} \frac{(\Delta t^2)}{l^2} \right)
+k(\Delta t) = \alpha^2 \exp \left( - \frac{1}{2} \frac{(\Delta t^2)}{l^2} \right)
 \end{equation}
 
 ## Ornstein-Uhlenbeck (Matérn 1/2) kernel
 
 \begin{equation}
-k(\Delta t) = \alpha \exp{\left( - \frac{\Delta t}{2 l^2}  \right)}
+k(\Delta t) = \alpha^2 \exp{\left( - \frac{\Delta t}{2 l^2}  \right)}
 \end{equation}
 
 ## Matérn 5/2 covariance kernel
@@ -93,16 +94,38 @@ where $L$ is a positive number termed boundary condition, and $\beta_{j}$ are re
 \beta_j \sim \mathcal{Normal}(0, 1)
 \end{equation}
 
-The function $S_k(x)$ is the spectral density relating to a particular covariance function $k$. In the case of the Matérn 3/2 kernel (the default in `EpiNow2`) this is given by
+The function $S_k(x)$ is the spectral density relating to a particular covariance function $k$.
+In the case of the Matérn kernel of order $\nu$ this is given by
 
 \begin{equation}
-S_k(x) = 4 \alpha^2 \left( \frac{\sqrt{3}}{\rho}\right)^3 \left(\left( \frac{\sqrt{3}}{\rho} \right)^2 + w^2 \right)^{-2}
+S_k(x) = \alpha^2 \frac{2 \sqrt{\pi} \Gamma(\nu + 1/2) (2\nu)^\nu}{\Gamma(\nu) \rho^{2 \nu}} \left( \frac{2 \nu}{\rho^2} + \omega^2 \right)^{-\left( \nu + \frac{1}{2}\right )}
 \end{equation}
 
-and in the case of a squared exponential kernel by
+For $\nu = 3 / 2$ (the default in `EpiNow2`) this simplifies to
 
 \begin{equation}
-S_k(x) = \alpha^2 \sqrt{2\pi} \rho \exp \left( -\frac{1}{2} \rho^2 w^2 \right)
+    S_k(\omega) =
+    \alpha^2 \frac{4 \left(\sqrt{3} / \rho \right)^3}{\left(\left(\sqrt{3} / \rho\right)^2 + \omega^2\right)^2} = 
+    \left(\frac{2 \alpha \left(\sqrt{3} / \rho \right)^{\frac{3}{2}}}{\left(\sqrt{3} / \rho\right)^2 + \omega^2} \right)^2
+\end{equation}
+
+For $\nu = 1 / 2$ it is
+
+\begin{equation}
+S_k(\omega) = \alpha^2 \frac{2}{\rho \left(1 / \rho^2 + \omega^2\right)}
+\end{equation}
+
+and for $\nu = 5 / 2$ it is
+
+\begin{equation}
+S_k(\omega) =
+    \alpha^2 \frac{3 \left(\sqrt{5} / \rho \right)^5}{2 \left(\left(\sqrt{5} / \rho\right)^2 + \omega^2\right)^3}
+\end{equation}
+
+In the case of a squared exponential the spectral kernel density is given by
+
+\begin{equation}
+S_k(\omega) = \alpha^2 \sqrt{2\pi} \rho \exp \left( -\frac{1}{2} \rho^2 \omega^2 \right)
 \end{equation}
 
 The functions $\phi_{j}(x)$ are the eigenfunctions of the Laplace operator,
@@ -120,7 +143,7 @@ t^* = \frac{t - \frac{1}{2}t_\mathrm{GP}}{\frac{1}{2}t_\mathrm{GP}}
 Relevant priors are
 
 \begin{align}
-\alpha &\sim \mathcal{Normal}(0, \sigma_{\alpha}) \\
+\alpha &\sim \mathcal{Normal}(\mu_\alpha, \sigma_{\alpha}) \\
 \rho   &\sim \mathcal{LogNormal} (\mu_\rho, \sigma_\rho)\\
 \end{align}
 
@@ -133,7 +156,8 @@ m_\rho &= 21 \\
 s_\rho &= 7 \\
 \rho_\mathrm{min} &= 0\\
 \rho_\mathrm{max} &= 60\\
-\sigma_\alpha &= 0.05\\
+\mu_\alpha &= 0\\
+\sigma_\alpha &= 0.01
 \end{align}
 
 # References

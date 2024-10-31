@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', function(e) {
 </script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
@@ -43,25 +43,26 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
 
 <style type="text/css">
-/* for pandoc --citeproc since 2.11 */
+
 div.csl-bib-body { }
 div.csl-entry {
-  clear: both;
+clear: both;
+margin-bottom: 0em;
 }
 .hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+margin-left:2em;
+text-indent:-2em;
 }
 div.csl-left-margin {
-  min-width:2em;
-  float:left;
+min-width:2em;
+float:left;
 }
 div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
+margin-left:2em;
+padding-left:1em;
 }
 div.csl-indent {
-  margin-left: 2em;
+margin-left: 2em;
 }
 </style>
 
@@ -263,37 +264,34 @@ estimate_infections()</h1>
 
 <div id="TOC">
 <ul>
-<li><a href="#infection-model"><span class="toc-section-number">1</span>
-Infection model</a>
+<li><a href="#infection-model" id="toc-infection-model"><span class="toc-section-number">1</span> Infection model</a>
 <ul>
-<li><a href="#renewal-equation-model"><span class="toc-section-number">1.1</span> Renewal equation model</a>
+<li><a href="#renewal-equation-model" id="toc-renewal-equation-model"><span class="toc-section-number">1.1</span> Renewal equation model</a>
 <ul>
-<li><a href="#initialisation"><span class="toc-section-number">1.1.1</span> Initialisation</a></li>
-<li><a href="#infections"><span class="toc-section-number">1.1.2</span>
-Infections</a></li>
-<li><a href="#time-varying-reproduction-number"><span class="toc-section-number">1.1.3</span> Time-varying reproduction
+<li><a href="#initialisation" id="toc-initialisation"><span class="toc-section-number">1.1.1</span> Initialisation</a></li>
+<li><a href="#infections" id="toc-infections"><span class="toc-section-number">1.1.2</span> Infections</a></li>
+<li><a href="#time-varying-reproduction-number" id="toc-time-varying-reproduction-number"><span class="toc-section-number">1.1.3</span> Time-varying reproduction
 number</a></li>
-<li><a href="#beyond-the-end-of-the-observation-period"><span class="toc-section-number">1.1.4</span> Beyond the end of the
+<li><a href="#beyond-the-end-of-the-observation-period" id="toc-beyond-the-end-of-the-observation-period"><span class="toc-section-number">1.1.4</span> Beyond the end of the
 observation period</a></li>
 </ul></li>
-<li><a href="#non-mechanistic-infection-model"><span class="toc-section-number">1.2</span> Non-Mechanistic infection
+<li><a href="#non-mechanistic-infection-model" id="toc-non-mechanistic-infection-model"><span class="toc-section-number">1.2</span> Non-Mechanistic infection
 model</a>
 <ul>
-<li><a href="#initialisation-1"><span class="toc-section-number">1.2.1</span> Initialisation</a></li>
-<li><a href="#infections-1"><span class="toc-section-number">1.2.2</span> Infections</a></li>
-<li><a href="#time-varying-reproduction-number-1"><span class="toc-section-number">1.2.3</span> Time-varying reproduction
+<li><a href="#initialisation-1" id="toc-initialisation-1"><span class="toc-section-number">1.2.1</span> Initialisation</a></li>
+<li><a href="#infections-1" id="toc-infections-1"><span class="toc-section-number">1.2.2</span> Infections</a></li>
+<li><a href="#time-varying-reproduction-number-1" id="toc-time-varying-reproduction-number-1"><span class="toc-section-number">1.2.3</span> Time-varying reproduction
 number</a></li>
-<li><a href="#beyond-the-end-of-the-observation-period-1"><span class="toc-section-number">1.2.4</span> Beyond the end of the
+<li><a href="#beyond-the-end-of-the-observation-period-1" id="toc-beyond-the-end-of-the-observation-period-1"><span class="toc-section-number">1.2.4</span> Beyond the end of the
 observation period</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#delays-and-scaling"><span class="toc-section-number">2</span> Delays and scaling</a></li>
-<li><a href="#observation-model"><span class="toc-section-number">3</span> Observation model</a>
+<li><a href="#delays-and-scaling" id="toc-delays-and-scaling"><span class="toc-section-number">2</span> Delays and scaling</a></li>
+<li><a href="#observation-model" id="toc-observation-model"><span class="toc-section-number">3</span> Observation model</a>
 <ul>
-<li><a href="#truncation"><span class="toc-section-number">3.1</span>
-Truncation</a></li>
+<li><a href="#truncation" id="toc-truncation"><span class="toc-section-number">3.1</span> Truncation</a></li>
 </ul></li>
-<li><a href="#references">References</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
@@ -595,7 +593,7 @@ counts before confronting them with observations <span class="math inline">\(C_{
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
 <div id="ref-renewal" class="csl-entry">
 1. Fraser, C. (2007). Estimating individual and household reproduction
 numbers in an emerging epidemic. <em>PLOS ONE</em>, <em>2</em>(8), 1–12.

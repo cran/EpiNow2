@@ -454,12 +454,13 @@ backcalc_opts <- function(prior = c("reports", "none", "infections"),
 #' this is smaller.
 #'
 #' @param alpha_mean Numeric, defaults to 0. The mean of the magnitude parameter
-#' of the Gaussian process kernel. Should be approximately the expected variance
-#' of the logged Rt.
+#' of the Gaussian process kernel. Should be approximately the expected standard
+#' deviation of the Gaussian process (logged Rt in case of the renewal model,
+#' logged infections in case of the nonmechanistic model).
 #'
-#' @param alpha_sd Numeric, defaults to 0.01. The standard deviation of the
-#' magnitude parameter of the Gaussian process kernel. Should be approximately
-#' the expected standard deviation of the logged Rt.
+#' @param alpha_sd Numeric, defaults to 0.05. The standard deviation of the
+#' magnitude parameter of the Gaussian process kernel. Can be tuned to adjust
+#' how far alpha is allowed to deviate form its prior mean (`alpha_mean`).
 #'
 #' @param kernel Character string, the type of kernel required. Currently
 #' supporting the Matern kernel ("matern"), squared exponential kernel ("se"),
@@ -508,7 +509,7 @@ gp_opts <- function(basis_prop = 0.2,
                     ls_min = 0,
                     ls_max = 60,
                     alpha_mean = 0,
-                    alpha_sd = 0.01,
+                    alpha_sd = 0.05,
                     kernel = c("matern", "se", "ou", "periodic"),
                     matern_order = 3 / 2,
                     matern_type,
@@ -628,6 +629,8 @@ obs_opts <- function(family = c("negbin", "poisson"),
                      na = c("missing", "accumulate"),
                      likelihood = TRUE,
                      return_likelihood = FALSE) {
+  # NB: This has to be checked first before the na argument is touched anywhere.
+  na_default_used <- missing(na)
   na <- arg_match(na)
   if (na == "accumulate") {
     #nolint start: duplicate_argument_linter
@@ -644,9 +647,8 @@ obs_opts <- function(family = c("negbin", "poisson"),
       .frequency = "regularly",
       .frequency_id = "obs_opts"
     )
-  #nolint end
   }
-
+  #nolint end
   if (length(phi) == 2 && is.numeric(phi)) {
     cli_abort(
       c(
@@ -664,7 +666,8 @@ obs_opts <- function(family = c("negbin", "poisson"),
     scale = scale,
     accumulate = as.integer(na == "accumulate"),
     likelihood = likelihood,
-    return_likelihood = return_likelihood
+    return_likelihood = return_likelihood,
+    na_as_missing_default_used = na_default_used
   )
 
   for (param in c("phi", "scale")) {
