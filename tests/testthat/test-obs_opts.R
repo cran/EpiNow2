@@ -1,12 +1,12 @@
 test_that("obs_opts returns expected default values", {
   result <- suppressWarnings(obs_opts())
-  
+
   expect_s3_class(result, "obs_opts")
   expect_equal(result$family, "negbin")
   expect_equal(result$weight, 1)
   expect_true(result$week_effect)
   expect_equal(result$week_length, 7L)
-  expect_equal(result$scale, list(mean = 1, sd = 0))
+  expect_equal(result$scale, Normal(mean = 1, sd = 0))
   expect_equal(result$accumulate, 0)
   expect_true(result$likelihood)
   expect_false(result$return_likelihood)
@@ -18,14 +18,16 @@ test_that("obs_opts returns expected messages", {
   # NB: We change the local setting here to throw the message on demand, rather
   # than every 8 hours, for the sake of multiple runs of the test within
   # 8 hours.
-  rlang::local_options(rlib_message_verbosity = "verbose")
-  expect_message(
-    obs_opts(na = "accumulate"),
-    "modelled values that correspond to NA values"
-  )
+  suppressMessages(expect_deprecated(obs_opts(na = "accumulate")))
 })
 
 test_that("obs_opts behaves as expected for user specified na treatment", {
-# If user explicitly specifies NA as missing, then don't throw message
-  expect_false(obs_opts(na = "missing")$na_as_missing_default_used)
+  # If user explicitly specifies NA as missing, then don't throw message
+  expect_false(
+    suppressWarnings(obs_opts(na = "missing"))$na_as_missing_default_used
+  )
+})
+
+test_that("using phi in obs_opts is deprecated", {
+  expect_deprecated(obs_opts(phi = Fixed(1)))
 })

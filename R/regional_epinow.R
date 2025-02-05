@@ -20,7 +20,7 @@
 #' using [progressr::handlers()] and enable it in batch by setting
 #' `R_PROGRESSR_ENABLE=TRUE` as an environment variable.
 #'
-#' @param data A `<data.frame>` of confirmed cases (confirm) by date
+#' @param data A `<data.frame>` of disease reports (confirm) by date
 #' (date), and region (`region`).
 #'
 #' @param reported_cases Deprecated; use `data` instead.
@@ -79,7 +79,7 @@
 #'   data = cases,
 #'   generation_time = gt_opts(example_generation_time),
 #'   delays = delay_opts(example_incubation_period + example_reporting_delay),
-#'   rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
+#'   rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.2)),
 #'   stan = stan_opts(
 #'     samples = 100, warmup = 200
 #'   ),
@@ -95,8 +95,9 @@ regional_epinow <- function(data,
                             backcalc = backcalc_opts(),
                             gp = gp_opts(),
                             obs = obs_opts(),
+                            forecast = forecast_opts(),
                             stan = stan_opts(),
-                            horizon = 7,
+                            horizon,
                             CrIs = c(0.2, 0.5, 0.9),
                             target_folder = NULL,
                             target_date,
@@ -117,6 +118,16 @@ regional_epinow <- function(data,
       "regional_epinow(data)"
     )
   }
+  if (!missing(horizon)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "regional_epinow(horizon)",
+      "regional_epinow(forecast)",
+      details = "The `horizon` argument passed to `regional_epinow()` will
+        override any `horizon` argument passed via `forecast_opts()`."
+    )
+  }
+
   # supported output
   output <- match_output_arguments(output,
     supported_args = c(
@@ -126,6 +137,11 @@ regional_epinow <- function(data,
     ),
     logger = "EpiNow2"
   )
+  ## deprecated
+  if (!missing(horizon)) {
+    assert_numeric(horizon, lower = 0)
+    forecast$horizon <- horizon
+  }
   # make timing compulsory
   output["timing"] <- TRUE
   if (missing(target_date)) {
@@ -168,8 +184,8 @@ regional_epinow <- function(data,
       backcalc = backcalc,
       gp = gp,
       obs = obs,
+      forecast = forecast,
       stan = stan,
-      horizon = horizon,
       CrIs = CrIs,
       data = reported_cases,
       target_folder = target_folder,
@@ -270,7 +286,9 @@ clean_regions <- function(data, non_zero_points) {
   reported_cases <- data.table::setDT(data)
   # check for regions more than required time points with cases
   eval_regions <- data.table::copy(reported_cases)[,
-    .(confirm = confirm > 0), by = c("region", "date")][,
+    .(confirm = confirm > 0),
+    by = c("region", "date")
+  ][,
     .(confirm = sum(confirm, na.rm = TRUE)),
     by = "region"
   ][confirm >= non_zero_points]$region
@@ -281,7 +299,7 @@ clean_regions <- function(data, non_zero_points) {
       "Producing estimates for: %s regions",
       length(eval_regions)
     )
-    #nolint start: undesirable_function_linter
+    # nolint start: undesirable_function_linter
     message <- ifelse(length(orig_regions) == 0, 0,
       length(orig_regions)
     )
@@ -289,13 +307,13 @@ clean_regions <- function(data, non_zero_points) {
       "Regions excluded: %s regions",
       message
     )
-    #nolint end
+    # nolint end
   } else {
     futile.logger::flog.info(
       "Producing estimates for: %s",
       toString(eval_regions)
     )
-    #nolint start: undesirable_function_linter
+    # nolint start: undesirable_function_linter
     message <- ifelse(length(orig_regions) == 0, "none",
       toString(orig_regions)
     )
@@ -303,7 +321,7 @@ clean_regions <- function(data, non_zero_points) {
       "Regions excluded: %s",
       message
     )
-    #nolint end
+    # nolint end
   }
   # exclude zero regions
   reported_cases <- reported_cases[!is.na(region)][region %in% eval_regions]

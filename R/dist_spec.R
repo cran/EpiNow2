@@ -71,7 +71,9 @@ discrete_pmf <- function(distribution =
     updist <- function(n) {
       as.integer(n > params[["value"]])
     }
-    qdist <- function(p, value) return(value)
+    qdist <- function(p, value) {
+      return(value)
+    }
   }
 
   ## apply CDF cutoff if given
@@ -116,13 +118,75 @@ discrete_pmf <- function(distribution =
 #' )
 #' dist1 + dist1
 #'
-#' # An uncertain gamma distribution with mean 3 and sd 2
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
 #' dist2 <- Gamma(
-#'   mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20
+#'   shape = Normal(3, 0.5),
+#'   rate = Normal(2, 0.5),
+#'   max = 20
 #' )
 #' dist1 + dist2
 `+.dist_spec` <- function(e1, e2) {
   c(e1, e2)
+}
+
+##' Compares two delay distributions
+##'
+##' @param e1 The first delay distribution (of type <dist_spec>) to
+##' combine.
+##'
+##' @param e2 The second delay distribution (of type <dist_spec>) to
+##' combine.
+##' @method == dist_spec
+##' @return TRUE or FALSE
+##' @export
+##' @examples
+##' Fixed(1) == Normal(1, 0.5)
+## nolint start: cyclocomp_linter
+`==.dist_spec` <- function(e1, e2) {
+  ## both must have same number of distributions
+  if (ndist(e1) != ndist(e2)) {
+    return(FALSE)
+  }
+  ## loop over constituent distributions
+  for (i in seq_len(ndist(e1))) {
+    ## distributions need to be the same
+    if (get_distribution(e1, i) != get_distribution(e2, i)) {
+      return(FALSE)
+    }
+    if (get_distribution(e1, i) == "nonparametric") {
+      ## if nonparametric then PMFs need to be the same
+      if (!identical(get_pmf(e1, i), get_pmf(e2, i))) {
+        return(FALSE)
+      }
+    } else {
+      ## if parametric then all parameters need to be the same
+      params1 <- get_parameters(e1, i)
+      params2 <- get_parameters(e2, i)
+      for (param in names(params1)) {
+        ## all parameters must be the same type
+        if ((is(params1[[param]], "dist_spec") &&
+          is(params2[[param]], "dist_spec")) ||
+          (is.numeric(params1[[param]]) && is.numeric(params2[[param]]))) {
+          ## if parameters are the same type they need to be same value
+          if (!(params1[[param]] == params2[[param]])) {
+            return(FALSE)
+          }
+        } else {
+          return(FALSE)
+        }
+      }
+    }
+  }
+  return(TRUE)
+}
+## nolint end: cyclocomp_linter
+
+##' @rdname equals-.dist_spec
+##' @method != dist_spec
+##' @export
+`!=.dist_spec` <- function(e1, e2) {
+  !(e1 == e2)
 }
 
 #' Combines multiple delay distributions for further processing
@@ -146,15 +210,20 @@ discrete_pmf <- function(distribution =
 #' )
 #' dist1 + dist1
 #'
-#' # An uncertain gamma distribution with mean 3 and sd 2
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
 #' dist2 <- Gamma(
-#'   mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20
+#'   shape = Normal(3, 0.5),
+#'   rate = Normal(2, 0.5),
+#'   max = 20
 #' )
 #' c(dist1, dist2)
 c.dist_spec <- function(...) {
   ## process delay distributions
   dist_specs <- list(...)
-  if (length(dist_specs) == 1) return(dist_specs[[1]])
+  if (length(dist_specs) == 1) {
+    return(dist_specs[[1]])
+  }
   if (!(all(vapply(dist_specs, is, "dist_spec", FUN.VALUE = logical(1))))) {
     cli_abort(
       c(
@@ -163,7 +232,8 @@ c.dist_spec <- function(...) {
     )
   }
   convolutions <- vapply(
-    dist_specs, is, "multi_dist_spec", FUN.VALUE = logical(1)
+    dist_specs, is, "multi_dist_spec",
+    FUN.VALUE = logical(1)
   )
   ## can only have one `multi_dist_spec`
   if (sum(convolutions) > 0) {
@@ -206,9 +276,12 @@ c.dist_spec <- function(...) {
 #' dist1 <- LogNormal(mean = 5, sd = 1, max = 20)
 #' mean(dist1)
 #'
-#' # An uncertain gamma distribution with mean 3 and sd 2
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
 #' dist2 <- Gamma(
-#'  mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20
+#'   shape = Normal(3, 0.5),
+#'   rate = Normal(2, 0.5),
+#'   max = 20
 #' )
 #' mean(dist2)
 #'
@@ -342,8 +415,13 @@ sd.default <- function(x, ...) {
 #' dist1 <- Gamma(mean = 5, sd = 1, max = 20)
 #' max(dist1)
 #'
-#' # An uncertain lognormal distribution with mean 3 and sd 2
-#' dist2 <- LogNormal(mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20)
+#' # An uncertain lognormal distribution with meanlog and sdlog normally
+#' # distributed as Normal(3, 0.5) and Normal(2, 0.5) respectively
+#' dist2 <- LogNormal(
+#'   meanlog = Normal(3, 0.5),
+#'   sdlog = Normal(2, 0.5),
+#'   max = 20
+#' )
 #' max(dist2)
 #'
 #' # The max the sum of two distributions
@@ -396,8 +474,13 @@ discretise <- function(x, ...) {
 #' # A fixed gamma distribution with mean 5 and sd 1.
 #' dist1 <- Gamma(mean = 5, sd = 1, max = 20)
 #'
-#' # An uncertain lognormal distribution with mean 3 and sd 2
-#' dist2 <- LogNormal(mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20)
+#' # An uncertain lognormal distribution with meanlog and sdlog normally
+#' # distributed as Normal(3, 0.5) and Normal(2, 0.5) respectively
+#' dist2 <- LogNormal(
+#'   meanlog = Normal(3, 0.5),
+#'   sdlog = Normal(2, 0.5),
+#'   max = 20
+#' )
 #'
 #' # The maxf the sum of two distributions
 #' discretise(dist1 + dist2, strict = FALSE)
@@ -415,17 +498,18 @@ discretise.dist_spec <- function(x, strict = TRUE, ...) {
     return(x)
   } else {
     if (!is.na(sd(x)) && is_constrained(x)) {
-        cdf_cutoff <- attr(x, "cdf_cutoff")
-        if (is.null(cdf_cutoff)) {
-          cdf_cutoff <- 0
-        }
-        max <- attr(x, "max")
-        if (is.null(max)) {
-          max <- Inf
-        }
+      cdf_cutoff <- attr(x, "cdf_cutoff")
+      if (is.null(cdf_cutoff)) {
+        cdf_cutoff <- 0
+      }
+      max <- attr(x, "max")
+      if (is.null(max)) {
+        max <- Inf
+      }
       y <- list(
         pmf = discrete_pmf(
-          get_distribution(x), get_parameters(x), max, cdf_cutoff, width = 1
+          get_distribution(x), get_parameters(x), max, cdf_cutoff,
+          width = 1
         )
       )
       y$distribution <- "nonparametric"
@@ -480,11 +564,16 @@ collapse <- function(x, ...) {
 #' # A fixed gamma distribution with mean 5 and sd 1.
 #' dist1 <- Gamma(mean = 5, sd = 1, max = 20)
 #'
-#' # An uncertain lognormal distribution with mean 3 and sd 2
-#' dist2 <- LogNormal(mean = 3, sd = 2, max = 20)
+#' # An uncertain lognormal distribution with meanlog and sdlog normally
+#' # distributed as Normal(3, 0.5) and Normal(2, 0.5) respectively
+#' dist2 <- LogNormal(
+#'   meanlog = Normal(3, 0.5),
+#'   sdlog = Normal(2, 0.5),
+#'   max = 20
+#' )
 #'
 #' # The maxf the sum of two distributions
-#' collapse(discretise(dist1 + dist2))
+#' collapse(discretise(dist1 + dist2, strict = FALSE))
 collapse.dist_spec <- function(x, ...) {
   return(x)
 }
@@ -493,7 +582,8 @@ collapse.dist_spec <- function(x, ...) {
 collapse.multi_dist_spec <- function(x, ...) {
   ## get nonparametric distributions
   nonparametric <- vapply(
-    seq_along(x), get_distribution, x = x, character(1)
+    seq_along(x), get_distribution,
+    x = x, character(1)
   ) == "nonparametric"
   ## find consecutive nonparametric distributions
   consecutive <- rle(nonparametric)
@@ -509,7 +599,8 @@ collapse.multi_dist_spec <- function(x, ...) {
     ## collapse distributions
     for (next_id in next_ids[id]) {
       x[[ids[id]]]$pmf <- convolve(
-        get_pmf(x[[ids[id]]]), rev(get_pmf(x[[next_id]])), type = "open"
+        get_pmf(x[[ids[id]]]), rev(get_pmf(x[[next_id]])),
+        type = "open"
       )
     }
   }
@@ -537,9 +628,10 @@ collapse.multi_dist_spec <- function(x, ...) {
 #' dist1 <- LogNormal(mean = 1.5, sd = 0.5, max = 20)
 #' print(dist1)
 #'
-#' # An uncertain gamma distribution with mean 3 and sd 2
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
 #' dist2 <- Gamma(
-#'   mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20
+#'   shape = Normal(3, 0.5), rate = Normal(2, 0.5), max = 20
 #' )
 #' print(dist2)
 print.dist_spec <- function(x, ...) {
@@ -569,7 +661,7 @@ print.dist_spec <- function(x, ...) {
       }
     } else {
       ## parametric
-      cat(indent_str, "- ",  get_distribution(x, i), " distribution", sep = "")
+      cat(indent_str, "- ", get_distribution(x, i), " distribution", sep = "")
       dist <- extract_single_dist(x, i)
       constrain_str <- character(0)
       if (!is.null(attr(dist, "max")) && is.finite(attr(dist, "max"))) {
@@ -586,7 +678,8 @@ print.dist_spec <- function(x, ...) {
       ## loop over natural parameters and print
       for (param in names(get_parameters(x, i))) {
         cat(
-          indent_str, "  ", param, ":\n", sep = ""
+          indent_str, "  ", param, ":\n",
+          sep = ""
         )
         if (is.numeric(get_parameters(x, i)[[param]])) {
           cat(
@@ -629,9 +722,12 @@ print.dist_spec <- function(x, ...) {
 #' # Plot discretised distribution with 0.01 day discretisation window
 #' plot(dist1, res = 0.01, cumulative = FALSE)
 #'
-#' # An uncertain gamma distribution with mean 3 and sd 2
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
 #' dist2 <- Gamma(
-#'   mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20
+#'   shape = Normal(3, 0.5),
+#'   rate = Normal(2, 0.5),
+#'   max = 20
 #' )
 #' plot(dist2)
 #'
@@ -652,7 +748,9 @@ plot.dist_spec <- function(x, samples = 50L, res = 1, cumulative = TRUE, ...) {
     } else {
       # parametric
       uncertain <- vapply(get_parameters(x, i), function(y) {
-        if (is.numeric(y)) return(FALSE)
+        if (is.numeric(y)) {
+          return(FALSE)
+        }
         sd_dist <- sd(y)
         return(is.na(sd_dist) || sd_dist > 0)
       }, logical(1))
@@ -667,13 +765,13 @@ plot.dist_spec <- function(x, samples = 50L, res = 1, cumulative = TRUE, ...) {
         cdf_cutoff <- 0
       }
       pmf_dt <- lapply(dists, function(y) {
-        if (is.infinite(attr(y, "max"))) {
+        if (is.infinite(max(y))) {
           cli_abort(
             c(
               "!" = "All distributions in {.var x} must have a finite
               maximum value.",
-              "i" = "You can set a finite maximum either as an
-              argument to {.fn plot} or when defining the distribution."
+              "i" = "You can set a finite maximum or CDF cutoff
+              when defining the distribution."
             )
           )
         }
@@ -700,7 +798,8 @@ plot.dist_spec <- function(x, samples = 50L, res = 1, cumulative = TRUE, ...) {
 
   # Plot PMF and CDF as facets in the same plot
   plot <- ggplot(
-    pmf_data, mapping = aes(x = x, y = p, group = sample, color = type)
+    pmf_data,
+    mapping = aes(x = x, y = p, group = sample, color = type)
   ) +
     geom_line() +
     facet_wrap(vars(distribution)) +
@@ -709,8 +808,10 @@ plot.dist_spec <- function(x, samples = 50L, res = 1, cumulative = TRUE, ...) {
     theme_bw()
   if (cumulative) {
     cmf_data <- pmf_data[,
-      list(x = x, p = cumsum(p)), by = list(sample, distribution)
-    ][,
+      list(x = x, p = cumsum(p)),
+      by = list(sample, distribution)
+    ][
+      ,
       type := factor("cmf", levels = c("pmf", "cmf"))
     ]
     plot <- plot +
@@ -730,15 +831,18 @@ plot.dist_spec <- function(x, samples = 50L, res = 1, cumulative = TRUE, ...) {
 #' @examples
 #' dist1 <- LogNormal(mean = 1.6, sd = 0.5, max = 20)
 #'
-#' # An uncertain gamma distribution with mean 3 and sd 2
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
 #' dist2 <- Gamma(
-#'   mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20
+#'   shape = Normal(3, 0.5),
+#'   rate = Normal(2, 0.5),
+#'   max = 20
 #' )
 #'
 #' # Multiple distributions
 #' \dontrun{
-#'   dist <- dist1 + dist2
-#'   extract_single_dist(dist, 2)
+#' dist <- dist1 + dist2
+#' extract_single_dist(dist, 2)
 #' }
 extract_single_dist <- function(x, i) {
   if (i > ndist(x)) {
@@ -777,9 +881,12 @@ fix_parameters <- function(x, ...) {
 #' @importFrom rlang arg_match
 #' @method fix_parameters dist_spec
 #' @examples
-#' # An uncertain gamma distribution with mean 3 and sd 2
-#' dist <- LogNormal(
-#'   meanlog = Normal(3, 0.5), sdlog = Normal(2, 0.5), max = 20
+#' # An uncertain gamma distribution with shape and rate normally distributed
+#' # as Normal(3, 0.5) and Normal(2, 0.5) respectively
+#' dist <- Gamma(
+#'   shape = Normal(3, 0.5),
+#'   rate = Normal(2, 0.5),
+#'   max = 20
 #' )
 #'
 #' fix_parameters(dist)
@@ -789,7 +896,7 @@ fix_parameters.dist_spec <- function(x, strategy = c("mean", "sample"), ...) {
 
   ## if x is fixed already we don't have to do anything
   if (get_distribution(x) == "nonparametric" ||
-      all(vapply(get_parameters(x), is.numeric, logical(1)))) {
+    all(vapply(get_parameters(x), is.numeric, logical(1)))) {
     return(x)
   }
   ## apply strategy depending on choice
@@ -814,7 +921,7 @@ fix_parameters.dist_spec <- function(x, strategy = c("mean", "sample"), ...) {
 #' @export
 #' @method fix_parameters multi_dist_spec
 fix_parameters.multi_dist_spec <- function(x, strategy =
-                                                c("mean", "sample"), ...) {
+                                             c("mean", "sample"), ...) {
   for (i in seq_len(ndist(x))) {
     x[[i]] <- fix_parameters(x[[i]])
   }
@@ -840,8 +947,13 @@ is_constrained <- function(x, ...) {
 #' # A fixed gamma distribution with mean 5 and sd 1.
 #' dist1 <- Gamma(mean = 5, sd = 1, max = 20)
 #'
-#' # An uncertain lognormal distribution with mean 3 and sd 2
-#' dist2 <- LogNormal(mean = Normal(3, 0.5), sd = Normal(2, 0.5), max = 20)
+#' # An uncertain lognormal distribution with meanlog and sdlog normally
+#' # distributed as Normal(3, 0.5) and Normal(2, 0.5) respectively
+#' dist2 <- LogNormal(
+#'   meanlog = Normal(3, 0.5),
+#'   sdlog = Normal(2, 0.5),
+#'   max = 20
+#' )
 #'
 #' # both distributions are constrained and therefore so is the sum
 #' is_constrained(dist1 + dist2)
@@ -901,7 +1013,8 @@ is_constrained.multi_dist_spec <- function(x, ...) {
 #' @examples
 #' LogNormal(mean = 4, sd = 1)
 #' LogNormal(mean = 4, sd = 1, max = 10)
-#' LogNormal(mean = Normal(4, 1), sd = 1, max = 10)
+#' # If specifying uncertain parameters, use the natural parameters
+#' LogNormal(meanlog = Normal(1.5, 0.5), sdlog = 0.25, max = 10)
 LogNormal <- function(meanlog, sdlog, mean, sd, ...) {
   params <- as.list(environment())
   return(new_dist_spec(params, "lognormal", ...))
@@ -916,7 +1029,6 @@ LogNormal <- function(meanlog, sdlog, mean, sd, ...) {
 #' Gamma(mean = 4, sd = 1)
 #' Gamma(shape = 16, rate = 4)
 #' Gamma(shape = Normal(16, 2), rate = Normal(4, 1))
-#' Gamma(shape = Normal(16, 2), scale = Normal(1/4, 1))
 Gamma <- function(shape, rate, scale, mean, sd, ...) {
   params <- as.list(environment())
   return(new_dist_spec(params, "gamma", ...))
@@ -1134,12 +1246,14 @@ new_dist_spec <- function(params, distribution, max = Inf, cdf_cutoff = 0) {
       if (length(unnatural_params) > 0) {
         ## sample parameters if they are uncertain
         uncertain <- vapply(params, function(x) {
-          if (is.numeric(x)) return(FALSE)
+          if (is.numeric(x)) {
+            return(FALSE)
+          }
           sd_dist <- sd(x)
           return(is.na(sd_dist) || sd_dist > 0)
         }, logical(1))
         if (any(uncertain)) {
-          #nolint start: duplicate_argument_linter
+          # nolint start: duplicate_argument_linter
           cli_warn(
             c(
               "!" = "Uncertain {distribution} distribution specified in
@@ -1151,7 +1265,7 @@ new_dist_spec <- function(params, distribution, max = Inf, cdf_cutoff = 0) {
             distribution directly in terms of the natural parameters."
             )
           )
-          #nolint end
+          # nolint end
         }
         ## generate natural parameters
         params <- convert_to_natural(params, distribution)
@@ -1281,7 +1395,7 @@ get_element <- function(x, id = NULL, element) {
     if (is.null(id)) {
       cli_abort(
         c(
-         "!" = "{.var id} must be specified when {.var x} is a composite
+          "!" = "{.var id} must be specified when {.var x} is a composite
           distribution."
         )
       )

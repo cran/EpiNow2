@@ -26,7 +26,13 @@
 #' respectively on the log scale).
 #'
 #' @param data A `<data.frame>` containing the `date` of report and both
-#' `primary` and `secondary` reports.
+#' `primary` and `secondary` reports. Optionally this can also have a logical
+#' `accumulate` column which indicates whether data should be added to the
+#' next data point. This is useful when modelling e.g. weekly incidence data.
+#' See also the [fill_missing()] function which helps add the `accumulate`
+#' column with the desired properties when dealing with non-daily data. If any
+#' accumulation is done this happens after truncation as specified by the
+#' `truncation` argument.
 #'
 #' @param reports Deprecated; use `data` instead.
 #'
@@ -51,8 +57,6 @@
 #'
 #' @param verbose Logical, should model fitting progress be returned. Defaults
 #' to [interactive()].
-#'
-#' @param ... Additional parameters to pass to [stan_opts()].
 #'
 #' @return A list containing: `predictions` (a `<data.frame>` ordered by date
 #' with the primary, and secondary observations, and a summary of the model
@@ -95,7 +99,7 @@
 #' # fit model to example data specifying a weak prior for fraction reported
 #' # with a secondary case
 #' inc <- estimate_secondary(cases[1:60],
-#'   obs = obs_opts(scale = list(mean = 0.2, sd = 0.2), week_effect = FALSE)
+#'   obs = obs_opts(scale = Normal(mean = 0.2, sd = 0.2), week_effect = FALSE)
 #' )
 #' plot(inc, primary = TRUE)
 #'
@@ -123,14 +127,14 @@
 #'   secondary = secondary_opts(type = "prevalence"),
 #'   obs = obs_opts(
 #'     week_effect = FALSE,
-#'     scale = list(mean = 0.4, sd = 0.1)
+#'     scale = Normal(mean = 0.4, sd = 0.1)
 #'   )
 #' )
 #' plot(prev, primary = TRUE)
 #'
 #' # forecast future secondary cases from primary
 #' prev_preds <- forecast_secondary(
-#'  prev, cases[seq(101, .N)][, value := primary]
+#'   prev, cases[seq(101, .N)][, value := primary]
 #' )
 #' plot(prev_preds, new_obs = cases, from = "2020-06-01")
 #'
@@ -143,7 +147,8 @@ estimate_secondary <- function(data,
                                    meanlog = Normal(2.5, 0.5),
                                    sdlog = Normal(0.47, 0.25),
                                    max = 30
-                                 ), weight_prior = FALSE
+                                 ),
+                                 weight_prior = FALSE
                                ),
                                truncation = trunc_opts(),
                                obs = obs_opts(),
@@ -156,7 +161,6 @@ estimate_secondary <- function(data,
                                model = NULL,
                                weigh_delay_priors = FALSE,
                                verbose = interactive(),
-                               ...,
                                reports) {
   # Deprecate reported_cases in favour of data
   if (!missing(reports)) {
@@ -164,6 +168,20 @@ estimate_secondary <- function(data,
       "1.5.0",
       "estimate_secondary(reports)",
       "estimate_secondary(data)"
+    )
+  }
+  if (!missing(filter_leading_zeros)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "estimate_secondary(filter_leading_zeros)",
+      "filter_leading_zeros()"
+    )
+  }
+  if (!missing(zero_threshold)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "estimate_secondary(zero_threshold)",
+      "apply_zero_threshold()"
     )
   }
   # Validate the inputs
@@ -190,14 +208,28 @@ estimate_secondary <- function(data,
     data = reports,
     cols_to_check = c("date", "primary", "secondary")
   )
-  secondary_reports_dirty <- reports[, list(date, confirm = secondary)]
+  reports <- default_fill_missing_obs(reports, obs, "secondary")
+
+  secondary_reports_dirty <-
+    reports[, list(date, confirm = secondary, accumulate)]
+  if (filter_leading_zeros &&
+    !is.na(secondary_reports_dirty[date == min(date), "confirm"]) &&
+    secondary_reports_dirty[date == min(date), "confirm"] == 0) {
+    cli_warn(c(
+      "!" = "Filtering initial zero observations in the data. This
+      functionality will be removed in future versions of EpiNow2. In order
+      to filter initial zero observations use the {.fn filter_leading_zeros}
+      function on the data before calling {.fn estimate_secondary}."
+    ))
+  }
   secondary_reports <- create_clean_reported_cases(
     secondary_reports_dirty,
     filter_leading_zeros = filter_leading_zeros,
     zero_threshold = zero_threshold
   )
   ## fill in missing data (required if fitting to prevalence)
-  complete_secondary <- create_complete_cases(secondary_reports)
+  secondary_reports[, lookup := seq_len(.N)]
+  complete_secondary <- secondary_reports[!is.na(confirm)]
   ## fill down
   secondary_reports[, confirm := nafill(confirm, type = "locf")]
   ## fill any early data up
@@ -205,7 +237,8 @@ estimate_secondary <- function(data,
 
   # Ensure that reports and secondary_reports are aligned
   reports <- merge.data.table(
-    reports, secondary_reports[, list(date)], by = "date"
+    reports, secondary_reports[, list(date)],
+    by = "date"
   )
 
   if (burn_in >= nrow(reports)) {
@@ -225,7 +258,9 @@ estimate_secondary <- function(data,
     obs_time = complete_secondary[lookup > burn_in]$lookup - burn_in,
     lt = sum(complete_secondary$lookup > burn_in),
     burn_in = burn_in,
-    seeding_time = 0
+    seeding_time = 0,
+    any_accumulate = as.integer(any(reports$accumulate > 0)),
+    accumulate = as.integer(reports$accumulate)
   )
   # secondary model options
   stan_data <- c(stan_data, secondary)
@@ -238,6 +273,15 @@ estimate_secondary <- function(data,
 
   # observation model data
   stan_data <- c(stan_data, create_obs_model(obs, dates = reports$date))
+
+  stan_data <- c(stan_data, create_stan_params(
+    frac_obs = obs$scale,
+    dispersion = obs$dispersion,
+    lower_bounds = c(
+      frac_obs = 0,
+      dispersion = 0
+    )
+  ))
 
   # update data to use specified priors rather than defaults
   stan_data <- update_secondary_args(stan_data,
@@ -328,10 +372,10 @@ update_secondary_args <- function(data, priors, verbose = TRUE) {
       data$delay_params_mean <- as.array(signif(delay_params$mean, 3))
       data$delay_params_sd <- as.array(signif(delay_params$sd, 3))
     }
-    phi <- priors[grepl("rep_phi", variable, fixed = TRUE)]
-    if (nrow(phi) > 0) {
-      data$phi_mean <- signif(phi$mean, 3)
-      data$phi_sd <- signif(phi$sd, 3)
+    dispersion <- priors[grepl("dispersion", variable, fixed = TRUE)]
+    if (nrow(dispersion) > 0) {
+      data$dispersion_mean <- signif(dispersion$mean, 3)
+      data$dispersion_sd <- signif(dispersion$sd, 3)
     }
   }
   return(data)
@@ -376,7 +420,8 @@ plot.estimate_secondary <- function(x, primary = FALSE,
     new_obs <- new_obs[, .(date, secondary)]
     predictions <- predictions[, secondary := NULL]
     predictions <- data.table::merge.data.table(
-      predictions, new_obs, all = TRUE, by = "date"
+      predictions, new_obs,
+      all = TRUE, by = "date"
     )
   }
   if (!is.null(from)) {
@@ -602,7 +647,8 @@ forecast_secondary <- function(estimate,
       }
       primary <- primary[, .(date, sample = list(1:samples), value)]
       primary <- primary[,
-       .(sample = as.numeric(unlist(sample))), by = c("date", "value")
+        .(sample = as.numeric(unlist(sample))),
+        by = c("date", "value")
       ]
     }
     primary <- primary[, .(date, sample, value)]
@@ -632,15 +678,18 @@ forecast_secondary <- function(estimate,
   data <- estimate$data
 
   # combined primary from data and input primary
-  primary_fit <- estimate$predictions[,
-   .(date, value = primary, sample = list(unique(updated_primary$sample)))
+  primary_fit <- estimate$predictions[
+    ,
+    .(date, value = primary, sample = list(unique(updated_primary$sample)))
   ]
   primary_fit <- primary_fit[date <= min(primary$date, na.rm = TRUE)]
   primary_fit <- primary_fit[,
-   .(sample = as.numeric(unlist(sample))), by = c("date", "value")
+    .(sample = as.numeric(unlist(sample))),
+    by = c("date", "value")
   ]
   primary_fit <- data.table::rbindlist(
-    list(primary_fit, updated_primary), use.names = TRUE
+    list(primary_fit, updated_primary),
+    use.names = TRUE
   )
   data.table::setorderv(primary_fit, c("sample", "date"))
 
@@ -663,7 +712,7 @@ forecast_secondary <- function(estimate,
 
   # allocate empty parameters
   data <- allocate_empty(
-    data, c("frac_obs", "delay_params", "rep_phi"),
+    data, c("params", "delay_params"),
     n = data$n
   )
   data$all_dates <- as.integer(all_dates)
@@ -684,7 +733,8 @@ forecast_secondary <- function(estimate,
   samples <- as.data.table(samples)
   colnames(samples) <- c("iterations", "sample", "time", "value")
   samples <- samples[, c("iterations", "time") := NULL]
-  samples <- samples[,
+  samples <- samples[
+    ,
     date := rep(tail(dates, ifelse(all_dates, data$t, data$h)), data$n)
   ]
 
@@ -710,7 +760,8 @@ forecast_secondary <- function(estimate,
   data.table::setorderv(forecast_obs, "date")
   # add in predictions in estimate_secondary format
   out$predictions <- data.table::merge.data.table(summarised,
-    forecast_obs, by = "date", all = TRUE
+    forecast_obs,
+    by = "date", all = TRUE
   )
   data.table::setcolorder(
     out$predictions, c("date", "primary", "secondary", "mean", "sd")

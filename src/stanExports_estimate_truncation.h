@@ -27,102 +27,102 @@ namespace model_estimate_truncation_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 363> locations_array__ =
+static constexpr std::array<const char*, 350> locations_array__ =
   {" (found before start of program)",
-  " (in 'estimate_truncation', line 510, column 2 to column 71)",
-  " (in 'estimate_truncation', line 511, column 2 to column 20)",
-  " (in 'estimate_truncation', line 512, column 2 to column 22)",
-  " (in 'estimate_truncation', line 515, column 2 to column 32)",
-  " (in 'estimate_truncation', line 516, column 2 to line 518, column 4)",
-  " (in 'estimate_truncation', line 519, column 2 to line 524, column 4)",
-  " (in 'estimate_truncation', line 554, column 2 to line 556, column 4)",
-  " (in 'estimate_truncation', line 557, column 2 to column 61)",
-  " (in 'estimate_truncation', line 526, column 9 to column 10)",
-  " (in 'estimate_truncation', line 526, column 2 to column 21)",
-  " (in 'estimate_truncation', line 528, column 2 to column 72)",
-  " (in 'estimate_truncation', line 532, column 4 to line 533, column 76)",
-  " (in 'estimate_truncation', line 531, column 30 to line 534, column 4)",
-  " (in 'estimate_truncation', line 531, column 2 to line 534, column 4)",
-  " (in 'estimate_truncation', line 525, column 2 to line 535, column 3)",
-  " (in 'estimate_truncation', line 560, column 4 to line 562, column 6)",
-  " (in 'estimate_truncation', line 559, column 24 to line 563, column 3)",
-  " (in 'estimate_truncation', line 559, column 2 to line 563, column 3)",
-  " (in 'estimate_truncation', line 570, column 8 to column 70)",
-  " (in 'estimate_truncation', line 569, column 13 to line 571, column 7)",
-  " (in 'estimate_truncation', line 568, column 8 to column 26)",
-  " (in 'estimate_truncation', line 567, column 32 to line 569, column 7)",
-  " (in 'estimate_truncation', line 567, column 6 to line 571, column 7)",
-  " (in 'estimate_truncation', line 566, column 48 to line 572, column 5)",
-  " (in 'estimate_truncation', line 566, column 4 to line 572, column 5)",
-  " (in 'estimate_truncation', line 565, column 30 to line 573, column 3)",
-  " (in 'estimate_truncation', line 565, column 2 to line 573, column 3)",
-  " (in 'estimate_truncation', line 539, column 2 to line 542, column 4)",
-  " (in 'estimate_truncation', line 543, column 2 to column 27)",
-  " (in 'estimate_truncation', line 543, column 23 to column 24)",
-  " (in 'estimate_truncation', line 544, column 2 to column 29)",
-  " (in 'estimate_truncation', line 544, column 25 to column 26)",
-  " (in 'estimate_truncation', line 549, column 6 to column 77)",
-  " (in 'estimate_truncation', line 548, column 45 to line 550, column 5)",
-  " (in 'estimate_truncation', line 548, column 4 to line 550, column 5)",
-  " (in 'estimate_truncation', line 547, column 30 to line 551, column 3)",
-  " (in 'estimate_truncation', line 547, column 2 to line 551, column 3)",
-  " (in 'estimate_truncation', line 468, column 2 to column 8)",
-  " (in 'estimate_truncation', line 469, column 2 to column 15)",
-  " (in 'estimate_truncation', line 470, column 8 to column 9)",
-  " (in 'estimate_truncation', line 470, column 11 to column 19)",
-  " (in 'estimate_truncation', line 470, column 2 to column 29)",
-  " (in 'estimate_truncation', line 471, column 8 to column 16)",
-  " (in 'estimate_truncation', line 471, column 2 to column 31)",
-  " (in 'estimate_truncation', line 473, column 2 to column 25)",
-  " (in 'estimate_truncation', line 474, column 2 to column 27)",
-  " (in 'estimate_truncation', line 475, column 2 to column 28)",
-  " (in 'estimate_truncation', line 476, column 8 to column 17)",
-  " (in 'estimate_truncation', line 476, column 2 to column 44)",
-  " (in 'estimate_truncation', line 477, column 8 to column 17)",
-  " (in 'estimate_truncation', line 477, column 2 to column 45)",
-  " (in 'estimate_truncation', line 479, column 2 to column 37)",
-  " (in 'estimate_truncation', line 480, column 31 to column 50)",
-  " (in 'estimate_truncation', line 480, column 2 to column 65)",
-  " (in 'estimate_truncation', line 481, column 8 to column 22)",
-  " (in 'estimate_truncation', line 481, column 2 to column 59)",
-  " (in 'estimate_truncation', line 483, column 2 to column 37)",
-  " (in 'estimate_truncation', line 484, column 9 to column 28)",
-  " (in 'estimate_truncation', line 484, column 2 to column 49)",
-  " (in 'estimate_truncation', line 485, column 37 to column 56)",
-  " (in 'estimate_truncation', line 485, column 2 to column 76)",
-  " (in 'estimate_truncation', line 486, column 20 to column 39)",
-  " (in 'estimate_truncation', line 486, column 2 to column 57)",
-  " (in 'estimate_truncation', line 487, column 8 to column 21)",
-  " (in 'estimate_truncation', line 487, column 2 to column 58)",
-  " (in 'estimate_truncation', line 489, column 8 to column 17)",
-  " (in 'estimate_truncation', line 489, column 2 to column 47)",
-  " (in 'estimate_truncation', line 490, column 2 to column 29)",
-  " (in 'estimate_truncation', line 491, column 8 to column 15)",
-  " (in 'estimate_truncation', line 491, column 2 to column 46)",
-  " (in 'estimate_truncation', line 492, column 8 to column 15)",
-  " (in 'estimate_truncation', line 492, column 2 to column 47)",
-  " (in 'estimate_truncation', line 493, column 8 to column 23)",
-  " (in 'estimate_truncation', line 493, column 2 to column 59)",
-  " (in 'estimate_truncation', line 496, column 2 to column 19)",
-  " (in 'estimate_truncation', line 497, column 8 to column 16)",
-  " (in 'estimate_truncation', line 497, column 2 to column 39)",
-  " (in 'estimate_truncation', line 498, column 8 to column 16)",
-  " (in 'estimate_truncation', line 498, column 2 to column 41)",
-  " (in 'estimate_truncation', line 499, column 8 to column 19)",
-  " (in 'estimate_truncation', line 499, column 2 to column 40)",
-  " (in 'estimate_truncation', line 500, column 2 to line 503, column 4)",
-  " (in 'estimate_truncation', line 505, column 4 to column 31)",
-  " (in 'estimate_truncation', line 506, column 4 to column 61)",
-  " (in 'estimate_truncation', line 504, column 24 to line 507, column 3)",
-  " (in 'estimate_truncation', line 504, column 2 to line 507, column 3)",
-  " (in 'estimate_truncation', line 510, column 37 to column 56)",
-  " (in 'estimate_truncation', line 516, column 9 to column 37)",
-  " (in 'estimate_truncation', line 516, column 39 to column 51)",
-  " (in 'estimate_truncation', line 519, column 9 to column 37)",
-  " (in 'estimate_truncation', line 554, column 9 to column 37)",
-  " (in 'estimate_truncation', line 554, column 39 to column 47)",
-  " (in 'estimate_truncation', line 557, column 9 to column 37)",
-  " (in 'estimate_truncation', line 557, column 39 to column 51)",
+  " (in 'estimate_truncation', line 561, column 2 to column 71)",
+  " (in 'estimate_truncation', line 562, column 2 to column 27)",
+  " (in 'estimate_truncation', line 563, column 2 to column 22)",
+  " (in 'estimate_truncation', line 566, column 2 to column 34)",
+  " (in 'estimate_truncation', line 567, column 2 to line 569, column 4)",
+  " (in 'estimate_truncation', line 570, column 2 to line 575, column 4)",
+  " (in 'estimate_truncation', line 605, column 2 to line 607, column 4)",
+  " (in 'estimate_truncation', line 608, column 2 to column 61)",
+  " (in 'estimate_truncation', line 577, column 11 to column 12)",
+  " (in 'estimate_truncation', line 577, column 4 to column 23)",
+  " (in 'estimate_truncation', line 579, column 4 to column 74)",
+  " (in 'estimate_truncation', line 583, column 6 to line 584, column 78)",
+  " (in 'estimate_truncation', line 582, column 32 to line 585, column 5)",
+  " (in 'estimate_truncation', line 582, column 4 to line 585, column 5)",
+  " (in 'estimate_truncation', line 576, column 2 to line 586, column 3)",
+  " (in 'estimate_truncation', line 611, column 4 to line 613, column 6)",
+  " (in 'estimate_truncation', line 610, column 24 to line 614, column 3)",
+  " (in 'estimate_truncation', line 610, column 2 to line 614, column 3)",
+  " (in 'estimate_truncation', line 621, column 8 to column 65)",
+  " (in 'estimate_truncation', line 620, column 13 to line 622, column 7)",
+  " (in 'estimate_truncation', line 619, column 8 to column 26)",
+  " (in 'estimate_truncation', line 618, column 32 to line 620, column 7)",
+  " (in 'estimate_truncation', line 618, column 6 to line 622, column 7)",
+  " (in 'estimate_truncation', line 617, column 48 to line 623, column 5)",
+  " (in 'estimate_truncation', line 617, column 4 to line 623, column 5)",
+  " (in 'estimate_truncation', line 616, column 30 to line 624, column 3)",
+  " (in 'estimate_truncation', line 616, column 2 to line 624, column 3)",
+  " (in 'estimate_truncation', line 590, column 2 to line 593, column 4)",
+  " (in 'estimate_truncation', line 594, column 2 to column 34)",
+  " (in 'estimate_truncation', line 594, column 30 to column 31)",
+  " (in 'estimate_truncation', line 595, column 2 to column 29)",
+  " (in 'estimate_truncation', line 595, column 25 to column 26)",
+  " (in 'estimate_truncation', line 600, column 6 to column 72)",
+  " (in 'estimate_truncation', line 599, column 45 to line 601, column 5)",
+  " (in 'estimate_truncation', line 599, column 4 to line 601, column 5)",
+  " (in 'estimate_truncation', line 598, column 30 to line 602, column 3)",
+  " (in 'estimate_truncation', line 598, column 2 to line 602, column 3)",
+  " (in 'estimate_truncation', line 509, column 2 to column 8)",
+  " (in 'estimate_truncation', line 510, column 2 to column 15)",
+  " (in 'estimate_truncation', line 511, column 8 to column 9)",
+  " (in 'estimate_truncation', line 511, column 11 to column 19)",
+  " (in 'estimate_truncation', line 511, column 2 to column 29)",
+  " (in 'estimate_truncation', line 512, column 8 to column 16)",
+  " (in 'estimate_truncation', line 512, column 2 to column 31)",
+  " (in 'estimate_truncation', line 514, column 0 to column 23)",
+  " (in 'estimate_truncation', line 515, column 0 to column 25)",
+  " (in 'estimate_truncation', line 516, column 0 to column 26)",
+  " (in 'estimate_truncation', line 517, column 6 to column 15)",
+  " (in 'estimate_truncation', line 517, column 0 to column 42)",
+  " (in 'estimate_truncation', line 518, column 6 to column 15)",
+  " (in 'estimate_truncation', line 518, column 0 to column 43)",
+  " (in 'estimate_truncation', line 520, column 0 to column 35)",
+  " (in 'estimate_truncation', line 522, column 29 to column 48)",
+  " (in 'estimate_truncation', line 522, column 0 to column 63)",
+  " (in 'estimate_truncation', line 524, column 6 to column 20)",
+  " (in 'estimate_truncation', line 524, column 0 to column 57)",
+  " (in 'estimate_truncation', line 527, column 0 to column 35)",
+  " (in 'estimate_truncation', line 529, column 7 to column 26)",
+  " (in 'estimate_truncation', line 529, column 0 to column 47)",
+  " (in 'estimate_truncation', line 531, column 35 to column 54)",
+  " (in 'estimate_truncation', line 531, column 0 to column 74)",
+  " (in 'estimate_truncation', line 533, column 18 to column 37)",
+  " (in 'estimate_truncation', line 533, column 0 to column 55)",
+  " (in 'estimate_truncation', line 535, column 6 to column 19)",
+  " (in 'estimate_truncation', line 535, column 0 to column 56)",
+  " (in 'estimate_truncation', line 537, column 6 to column 15)",
+  " (in 'estimate_truncation', line 537, column 0 to column 45)",
+  " (in 'estimate_truncation', line 538, column 0 to column 27)",
+  " (in 'estimate_truncation', line 540, column 6 to column 13)",
+  " (in 'estimate_truncation', line 540, column 0 to column 44)",
+  " (in 'estimate_truncation', line 542, column 6 to column 13)",
+  " (in 'estimate_truncation', line 542, column 0 to column 45)",
+  " (in 'estimate_truncation', line 544, column 6 to column 21)",
+  " (in 'estimate_truncation', line 544, column 0 to column 57)",
+  " (in 'estimate_truncation', line 547, column 2 to column 19)",
+  " (in 'estimate_truncation', line 548, column 8 to column 16)",
+  " (in 'estimate_truncation', line 548, column 2 to column 39)",
+  " (in 'estimate_truncation', line 549, column 8 to column 16)",
+  " (in 'estimate_truncation', line 549, column 2 to column 41)",
+  " (in 'estimate_truncation', line 550, column 8 to column 19)",
+  " (in 'estimate_truncation', line 550, column 2 to column 40)",
+  " (in 'estimate_truncation', line 551, column 2 to line 554, column 4)",
+  " (in 'estimate_truncation', line 556, column 4 to column 31)",
+  " (in 'estimate_truncation', line 557, column 4 to column 61)",
+  " (in 'estimate_truncation', line 555, column 24 to line 558, column 3)",
+  " (in 'estimate_truncation', line 555, column 2 to line 558, column 3)",
+  " (in 'estimate_truncation', line 561, column 37 to column 56)",
+  " (in 'estimate_truncation', line 567, column 9 to column 37)",
+  " (in 'estimate_truncation', line 567, column 39 to column 51)",
+  " (in 'estimate_truncation', line 570, column 9 to column 37)",
+  " (in 'estimate_truncation', line 605, column 9 to column 37)",
+  " (in 'estimate_truncation', line 605, column 39 to column 47)",
+  " (in 'estimate_truncation', line 608, column 9 to column 37)",
+  " (in 'estimate_truncation', line 608, column 39 to column 51)",
   " (in 'estimate_truncation', line 12, column 2 to column 30)",
   " (in 'estimate_truncation', line 13, column 2 to column 41)",
   " (in 'estimate_truncation', line 14, column 2 to column 16)",
@@ -197,200 +197,187 @@ static constexpr std::array<const char*, 363> locations_array__ =
   " (in 'estimate_truncation', line 123, column 2 to line 133, column 3)",
   " (in 'estimate_truncation', line 134, column 2 to column 20)",
   " (in 'estimate_truncation', line 108, column 55 to line 135, column 1)",
-  " (in 'estimate_truncation', line 149, column 2 to column 32)",
-  " (in 'estimate_truncation', line 150, column 9 to column 11)",
-  " (in 'estimate_truncation', line 150, column 2 to column 41)",
-  " (in 'estimate_truncation', line 151, column 2 to column 47)",
-  " (in 'estimate_truncation', line 148, column 82 to line 152, column 1)",
-  " (in 'estimate_truncation', line 165, column 2 to column 32)",
-  " (in 'estimate_truncation', line 166, column 9 to column 10)",
-  " (in 'estimate_truncation', line 166, column 2 to column 27)",
-  " (in 'estimate_truncation', line 167, column 2 to column 38)",
-  " (in 'estimate_truncation', line 168, column 2 to column 25)",
-  " (in 'estimate_truncation', line 164, column 48 to line 169, column 1)",
-  " (in 'estimate_truncation', line 183, column 2 to column 32)",
-  " (in 'estimate_truncation', line 184, column 2 to column 46)",
-  " (in 'estimate_truncation', line 185, column 9 to column 10)",
-  " (in 'estimate_truncation', line 185, column 2 to column 36)",
-  " (in 'estimate_truncation', line 187, column 2 to column 36)",
-  " (in 'estimate_truncation', line 188, column 2 to column 34)",
+  " (in 'estimate_truncation', line 151, column 2 to column 32)",
+  " (in 'estimate_truncation', line 152, column 9 to column 11)",
+  " (in 'estimate_truncation', line 152, column 2 to column 41)",
+  " (in 'estimate_truncation', line 153, column 2 to column 47)",
+  " (in 'estimate_truncation', line 150, column 41 to line 154, column 1)",
+  " (in 'estimate_truncation', line 167, column 2 to column 32)",
+  " (in 'estimate_truncation', line 168, column 9 to column 10)",
+  " (in 'estimate_truncation', line 168, column 2 to column 27)",
+  " (in 'estimate_truncation', line 169, column 2 to column 38)",
+  " (in 'estimate_truncation', line 170, column 2 to column 25)",
+  " (in 'estimate_truncation', line 166, column 48 to line 171, column 1)",
+  " (in 'estimate_truncation', line 188, column 2 to column 32)",
   " (in 'estimate_truncation', line 189, column 2 to column 46)",
-  " (in 'estimate_truncation', line 195, column 4 to column 70)",
-  " (in 'estimate_truncation', line 194, column 9 to line 196, column 3)",
-  " (in 'estimate_truncation', line 193, column 4 to column 70)",
-  " (in 'estimate_truncation', line 192, column 19 to line 194, column 3)",
-  " (in 'estimate_truncation', line 192, column 2 to line 196, column 3)",
-  " (in 'estimate_truncation', line 197, column 2 to column 24)",
-  " (in 'estimate_truncation', line 182, column 75 to line 198, column 1)",
-  " (in 'estimate_truncation', line 215, column 2 to column 49)",
-  " (in 'estimate_truncation', line 219, column 6 to column 63)",
-  " (in 'estimate_truncation', line 217, column 30 to line 220, column 5)",
-  " (in 'estimate_truncation', line 217, column 4 to line 220, column 5)",
-  " (in 'estimate_truncation', line 223, column 6 to column 57)",
-  " (in 'estimate_truncation', line 221, column 28 to line 224, column 5)",
-  " (in 'estimate_truncation', line 221, column 4 to line 224, column 5)",
-  " (in 'estimate_truncation', line 216, column 18 to line 225, column 3)",
-  " (in 'estimate_truncation', line 216, column 2 to line 225, column 3)",
-  " (in 'estimate_truncation', line 214, column 73 to line 226, column 1)",
-  " (in 'estimate_truncation', line 246, column 2 to column 48)",
-  " (in 'estimate_truncation', line 247, column 9 to column 10)",
-  " (in 'estimate_truncation', line 247, column 2 to column 24)",
-  " (in 'estimate_truncation', line 248, column 8 to column 9)",
-  " (in 'estimate_truncation', line 248, column 2 to column 25)",
-  " (in 'estimate_truncation', line 265, column 4 to column 38)",
-  " (in 'estimate_truncation', line 266, column 4 to column 22)",
-  " (in 'estimate_truncation', line 264, column 9 to line 267, column 3)",
-  " (in 'estimate_truncation', line 250, column 4 to column 34)",
-  " (in 'estimate_truncation', line 251, column 4 to column 14)",
-  " (in 'estimate_truncation', line 252, column 4 to column 24)",
-  " (in 'estimate_truncation', line 253, column 4 to column 35)",
-  " (in 'estimate_truncation', line 256, column 8 to column 47)",
-  " (in 'estimate_truncation', line 255, column 27 to line 257, column 7)",
-  " (in 'estimate_truncation', line 255, column 6 to line 257, column 7)",
-  " (in 'estimate_truncation', line 259, column 8 to column 25)",
-  " (in 'estimate_truncation', line 258, column 44 to line 260, column 7)",
-  " (in 'estimate_truncation', line 258, column 6 to line 260, column 7)",
-  " (in 'estimate_truncation', line 261, column 6 to column 13)",
-  " (in 'estimate_truncation', line 254, column 39 to line 262, column 5)",
-  " (in 'estimate_truncation', line 254, column 4 to line 262, column 5)",
-  " (in 'estimate_truncation', line 263, column 4 to column 33)",
-  " (in 'estimate_truncation', line 249, column 18 to line 264, column 3)",
-  " (in 'estimate_truncation', line 249, column 2 to line 267, column 3)",
-  " (in 'estimate_truncation', line 284, column 6 to column 63)",
-  " (in 'estimate_truncation', line 283, column 11 to line 285, column 5)",
-  " (in 'estimate_truncation', line 282, column 6 to column 39)",
-  " (in 'estimate_truncation', line 281, column 21 to line 283, column 5)",
-  " (in 'estimate_truncation', line 281, column 4 to line 285, column 5)",
-  " (in 'estimate_truncation', line 280, column 9 to line 286, column 3)",
-  " (in 'estimate_truncation', line 269, column 4 to column 78)",
-  " (in 'estimate_truncation', line 271, column 6 to column 59)",
-  " (in 'estimate_truncation', line 271, column 55 to column 56)",
-  " (in 'estimate_truncation', line 270, column 20 to line 272, column 5)",
-  " (in 'estimate_truncation', line 270, column 4 to line 272, column 5)",
-  " (in 'estimate_truncation', line 276, column 6 to line 278, column 17)",
-  " (in 'estimate_truncation', line 275, column 11 to line 279, column 5)",
-  " (in 'estimate_truncation', line 274, column 6 to column 58)",
-  " (in 'estimate_truncation', line 273, column 21 to line 275, column 5)",
-  " (in 'estimate_truncation', line 273, column 4 to line 279, column 5)",
-  " (in 'estimate_truncation', line 268, column 18 to line 280, column 3)",
-  " (in 'estimate_truncation', line 268, column 2 to line 286, column 3)",
-  " (in 'estimate_truncation', line 245, column 60 to line 287, column 1)",
-  " (in 'estimate_truncation', line 304, column 2 to column 32)",
-  " (in 'estimate_truncation', line 305, column 9 to column 10)",
-  " (in 'estimate_truncation', line 305, column 2 to column 20)",
-  " (in 'estimate_truncation', line 313, column 4 to column 54)",
-  " (in 'estimate_truncation', line 315, column 6 to column 83)",
-  " (in 'estimate_truncation', line 314, column 19 to line 316, column 5)",
-  " (in 'estimate_truncation', line 314, column 4 to line 316, column 5)",
-  " (in 'estimate_truncation', line 312, column 9 to line 317, column 3)",
-  " (in 'estimate_truncation', line 310, column 6 to column 64)",
-  " (in 'estimate_truncation', line 309, column 19 to line 311, column 5)",
-  " (in 'estimate_truncation', line 309, column 4 to line 311, column 5)",
-  " (in 'estimate_truncation', line 308, column 23 to line 312, column 3)",
-  " (in 'estimate_truncation', line 308, column 2 to line 317, column 3)",
-  " (in 'estimate_truncation', line 318, column 2 to column 18)",
-  " (in 'estimate_truncation', line 303, column 73 to line 319, column 1)",
-  " (in 'estimate_truncation', line 333, column 2 to column 32)",
-  " (in 'estimate_truncation', line 334, column 8 to column 9)",
-  " (in 'estimate_truncation', line 334, column 2 to column 31)",
-  " (in 'estimate_truncation', line 335, column 2 to column 24)",
-  " (in 'estimate_truncation', line 337, column 4 to column 49)",
-  " (in 'estimate_truncation', line 336, column 18 to line 338, column 3)",
-  " (in 'estimate_truncation', line 336, column 2 to line 338, column 3)",
-  " (in 'estimate_truncation', line 348, column 8 to column 97)",
-  " (in 'estimate_truncation', line 347, column 13 to line 349, column 7)",
-  " (in 'estimate_truncation', line 346, column 8 to column 78)",
-  " (in 'estimate_truncation', line 345, column 28 to line 347, column 7)",
-  " (in 'estimate_truncation', line 345, column 6 to line 349, column 7)",
-  " (in 'estimate_truncation', line 343, column 11 to line 350, column 5)",
-  " (in 'estimate_truncation', line 342, column 6 to column 29)",
-  " (in 'estimate_truncation', line 341, column 27 to line 343, column 5)",
-  " (in 'estimate_truncation', line 341, column 4 to line 350, column 5)",
-  " (in 'estimate_truncation', line 340, column 17 to line 351, column 3)",
-  " (in 'estimate_truncation', line 340, column 2 to line 351, column 3)",
-  " (in 'estimate_truncation', line 352, column 2 to column 26)",
-  " (in 'estimate_truncation', line 332, column 77 to line 353, column 1)",
-  " (in 'estimate_truncation', line 359, column 8 to column 19)",
-  " (in 'estimate_truncation', line 359, column 2 to column 29)",
-  " (in 'estimate_truncation', line 361, column 4 to column 15)",
-  " (in 'estimate_truncation', line 366, column 8 to line 367, column 53)",
-  " (in 'estimate_truncation', line 365, column 13 to line 368, column 7)",
-  " (in 'estimate_truncation', line 364, column 8 to column 47)",
-  " (in 'estimate_truncation', line 363, column 28 to line 365, column 7)",
-  " (in 'estimate_truncation', line 363, column 6 to line 368, column 7)",
-  " (in 'estimate_truncation', line 362, column 69 to line 369, column 5)",
-  " (in 'estimate_truncation', line 362, column 4 to line 369, column 5)",
-  " (in 'estimate_truncation', line 360, column 27 to line 370, column 3)",
-  " (in 'estimate_truncation', line 360, column 2 to line 370, column 3)",
-  " (in 'estimate_truncation', line 371, column 2 to column 13)",
-  " (in 'estimate_truncation', line 358, column 2 to line 372, column 1)",
-  " (in 'estimate_truncation', line 382, column 9 to column 12)",
-  " (in 'estimate_truncation', line 382, column 2 to column 39)",
-  " (in 'estimate_truncation', line 383, column 2 to column 22)",
-  " (in 'estimate_truncation', line 384, column 2 to column 14)",
-  " (in 'estimate_truncation', line 404, column 6 to column 57)",
-  " (in 'estimate_truncation', line 405, column 6 to column 63)",
-  " (in 'estimate_truncation', line 406, column 6 to column 42)",
-  " (in 'estimate_truncation', line 410, column 8 to line 412, column 10)",
-  " (in 'estimate_truncation', line 409, column 13 to line 413, column 7)",
-  " (in 'estimate_truncation', line 408, column 8 to column 49)",
-  " (in 'estimate_truncation', line 407, column 28 to line 409, column 7)",
-  " (in 'estimate_truncation', line 407, column 6 to line 413, column 7)",
-  " (in 'estimate_truncation', line 403, column 11 to line 414, column 5)",
-  " (in 'estimate_truncation', line 387, column 6 to column 57)",
-  " (in 'estimate_truncation', line 388, column 6 to column 63)",
-  " (in 'estimate_truncation', line 389, column 13 to column 45)",
-  " (in 'estimate_truncation', line 389, column 6 to line 394, column 8)",
-  " (in 'estimate_truncation', line 395, column 6 to column 59)",
-  " (in 'estimate_truncation', line 399, column 8 to line 401, column 10)",
-  " (in 'estimate_truncation', line 398, column 13 to line 402, column 7)",
-  " (in 'estimate_truncation', line 397, column 8 to column 42)",
-  " (in 'estimate_truncation', line 396, column 28 to line 398, column 7)",
-  " (in 'estimate_truncation', line 396, column 6 to line 402, column 7)",
-  " (in 'estimate_truncation', line 386, column 26 to line 403, column 5)",
-  " (in 'estimate_truncation', line 386, column 4 to line 414, column 5)",
-  " (in 'estimate_truncation', line 415, column 4 to column 26)",
-  " (in 'estimate_truncation', line 385, column 81 to line 416, column 3)",
-  " (in 'estimate_truncation', line 385, column 2 to line 416, column 3)",
-  " (in 'estimate_truncation', line 418, column 4 to line 421, column 6)",
-  " (in 'estimate_truncation', line 417, column 21 to line 422, column 3)",
-  " (in 'estimate_truncation', line 417, column 2 to line 422, column 3)",
-  " (in 'estimate_truncation', line 424, column 4 to column 30)",
-  " (in 'estimate_truncation', line 423, column 18 to line 425, column 3)",
-  " (in 'estimate_truncation', line 423, column 2 to line 425, column 3)",
-  " (in 'estimate_truncation', line 427, column 4 to column 23)",
-  " (in 'estimate_truncation', line 426, column 19 to line 428, column 3)",
-  " (in 'estimate_truncation', line 426, column 2 to line 428, column 3)",
-  " (in 'estimate_truncation', line 429, column 2 to column 13)",
-  " (in 'estimate_truncation', line 380, column 2 to line 430, column 1)",
-  " (in 'estimate_truncation', line 437, column 2 to column 55)",
-  " (in 'estimate_truncation', line 439, column 4 to column 11)",
-  " (in 'estimate_truncation', line 438, column 21 to line 440, column 3)",
-  " (in 'estimate_truncation', line 438, column 2 to line 440, column 3)",
-  " (in 'estimate_truncation', line 442, column 4 to column 39)",
-  " (in 'estimate_truncation', line 443, column 4 to column 45)",
-  " (in 'estimate_truncation', line 449, column 10 to column 77)",
-  " (in 'estimate_truncation', line 448, column 14 to line 450, column 9)",
-  " (in 'estimate_truncation', line 447, column 10 to column 104)",
-  " (in 'estimate_truncation', line 446, column 27 to line 448, column 9)",
-  " (in 'estimate_truncation', line 446, column 8 to line 450, column 9)",
-  " (in 'estimate_truncation', line 445, column 34 to line 451, column 7)",
+  " (in 'estimate_truncation', line 190, column 9 to column 10)",
+  " (in 'estimate_truncation', line 190, column 2 to column 36)",
+  " (in 'estimate_truncation', line 192, column 2 to column 36)",
+  " (in 'estimate_truncation', line 193, column 2 to column 34)",
+  " (in 'estimate_truncation', line 194, column 2 to column 46)",
+  " (in 'estimate_truncation', line 200, column 4 to column 70)",
+  " (in 'estimate_truncation', line 199, column 9 to line 201, column 3)",
+  " (in 'estimate_truncation', line 198, column 4 to column 70)",
+  " (in 'estimate_truncation', line 197, column 19 to line 199, column 3)",
+  " (in 'estimate_truncation', line 197, column 2 to line 201, column 3)",
+  " (in 'estimate_truncation', line 202, column 2 to column 24)",
+  " (in 'estimate_truncation', line 187, column 75 to line 203, column 1)",
+  " (in 'estimate_truncation', line 224, column 2 to column 49)",
+  " (in 'estimate_truncation', line 228, column 6 to column 63)",
+  " (in 'estimate_truncation', line 226, column 30 to line 229, column 5)",
+  " (in 'estimate_truncation', line 226, column 4 to line 229, column 5)",
+  " (in 'estimate_truncation', line 232, column 6 to column 57)",
+  " (in 'estimate_truncation', line 230, column 28 to line 233, column 5)",
+  " (in 'estimate_truncation', line 230, column 4 to line 233, column 5)",
+  " (in 'estimate_truncation', line 225, column 18 to line 234, column 3)",
+  " (in 'estimate_truncation', line 225, column 2 to line 234, column 3)",
+  " (in 'estimate_truncation', line 223, column 73 to line 235, column 1)",
+  " (in 'estimate_truncation', line 255, column 2 to column 35)",
+  " (in 'estimate_truncation', line 256, column 9 to column 10)",
+  " (in 'estimate_truncation', line 256, column 2 to column 46)",
+  " (in 'estimate_truncation', line 270, column 6 to column 59)",
+  " (in 'estimate_truncation', line 269, column 11 to line 271, column 5)",
+  " (in 'estimate_truncation', line 268, column 6 to column 35)",
+  " (in 'estimate_truncation', line 267, column 21 to line 269, column 5)",
+  " (in 'estimate_truncation', line 267, column 4 to line 271, column 5)",
+  " (in 'estimate_truncation', line 266, column 9 to line 272, column 3)",
+  " (in 'estimate_truncation', line 258, column 4 to column 38)",
+  " (in 'estimate_truncation', line 262, column 6 to line 264, column 17)",
+  " (in 'estimate_truncation', line 261, column 11 to line 265, column 5)",
+  " (in 'estimate_truncation', line 260, column 6 to column 47)",
+  " (in 'estimate_truncation', line 259, column 21 to line 261, column 5)",
+  " (in 'estimate_truncation', line 259, column 4 to line 265, column 5)",
+  " (in 'estimate_truncation', line 257, column 18 to line 266, column 3)",
+  " (in 'estimate_truncation', line 257, column 2 to line 272, column 3)",
+  " (in 'estimate_truncation', line 254, column 61 to line 273, column 1)",
+  " (in 'estimate_truncation', line 288, column 2 to column 35)",
+  " (in 'estimate_truncation', line 289, column 9 to column 13)",
+  " (in 'estimate_truncation', line 289, column 2 to column 45)",
+  " (in 'estimate_truncation', line 292, column 6 to column 59)",
+  " (in 'estimate_truncation', line 291, column 23 to line 293, column 5)",
+  " (in 'estimate_truncation', line 291, column 4 to line 293, column 5)",
+  " (in 'estimate_truncation', line 290, column 26 to line 294, column 3)",
+  " (in 'estimate_truncation', line 290, column 2 to line 294, column 3)",
+  " (in 'estimate_truncation', line 295, column 2 to column 29)",
+  " (in 'estimate_truncation', line 287, column 66 to line 296, column 1)",
+  " (in 'estimate_truncation', line 315, column 2 to column 32)",
+  " (in 'estimate_truncation', line 316, column 9 to column 10)",
+  " (in 'estimate_truncation', line 316, column 2 to column 20)",
+  " (in 'estimate_truncation', line 324, column 4 to column 38)",
+  " (in 'estimate_truncation', line 326, column 6 to line 328, column 17)",
+  " (in 'estimate_truncation', line 325, column 19 to line 329, column 5)",
+  " (in 'estimate_truncation', line 325, column 4 to line 329, column 5)",
+  " (in 'estimate_truncation', line 323, column 9 to line 330, column 3)",
+  " (in 'estimate_truncation', line 321, column 6 to column 64)",
+  " (in 'estimate_truncation', line 320, column 19 to line 322, column 5)",
+  " (in 'estimate_truncation', line 320, column 4 to line 322, column 5)",
+  " (in 'estimate_truncation', line 319, column 23 to line 323, column 3)",
+  " (in 'estimate_truncation', line 319, column 2 to line 330, column 3)",
+  " (in 'estimate_truncation', line 331, column 2 to column 18)",
+  " (in 'estimate_truncation', line 314, column 68 to line 332, column 1)",
+  " (in 'estimate_truncation', line 359, column 4 to column 47)",
+  " (in 'estimate_truncation', line 360, column 4 to column 61)",
+  " (in 'estimate_truncation', line 358, column 9 to line 361, column 3)",
+  " (in 'estimate_truncation', line 357, column 4 to column 45)",
+  " (in 'estimate_truncation', line 356, column 24 to line 358, column 3)",
+  " (in 'estimate_truncation', line 356, column 9 to line 361, column 3)",
+  " (in 'estimate_truncation', line 355, column 4 to column 14)",
+  " (in 'estimate_truncation', line 354, column 17 to line 356, column 3)",
+  " (in 'estimate_truncation', line 354, column 2 to line 361, column 3)",
+  " (in 'estimate_truncation', line 353, column 47 to line 362, column 1)",
+  " (in 'estimate_truncation', line 378, column 2 to column 32)",
+  " (in 'estimate_truncation', line 379, column 8 to column 9)",
+  " (in 'estimate_truncation', line 379, column 2 to column 31)",
+  " (in 'estimate_truncation', line 380, column 2 to column 17)",
+  " (in 'estimate_truncation', line 382, column 4 to column 33)",
+  " (in 'estimate_truncation', line 381, column 18 to line 383, column 3)",
+  " (in 'estimate_truncation', line 381, column 2 to line 383, column 3)",
+  " (in 'estimate_truncation', line 386, column 4 to column 66)",
+  " (in 'estimate_truncation', line 385, column 17 to line 387, column 3)",
+  " (in 'estimate_truncation', line 385, column 2 to line 387, column 3)",
+  " (in 'estimate_truncation', line 388, column 2 to column 26)",
+  " (in 'estimate_truncation', line 377, column 72 to line 389, column 1)",
+  " (in 'estimate_truncation', line 396, column 8 to column 19)",
+  " (in 'estimate_truncation', line 396, column 2 to column 29)",
+  " (in 'estimate_truncation', line 398, column 4 to column 15)",
+  " (in 'estimate_truncation', line 403, column 8 to line 404, column 53)",
+  " (in 'estimate_truncation', line 402, column 13 to line 405, column 7)",
+  " (in 'estimate_truncation', line 401, column 8 to column 47)",
+  " (in 'estimate_truncation', line 400, column 28 to line 402, column 7)",
+  " (in 'estimate_truncation', line 400, column 6 to line 405, column 7)",
+  " (in 'estimate_truncation', line 399, column 69 to line 406, column 5)",
+  " (in 'estimate_truncation', line 399, column 4 to line 406, column 5)",
+  " (in 'estimate_truncation', line 397, column 27 to line 407, column 3)",
+  " (in 'estimate_truncation', line 397, column 2 to line 407, column 3)",
+  " (in 'estimate_truncation', line 408, column 2 to column 13)",
+  " (in 'estimate_truncation', line 395, column 2 to line 409, column 1)",
+  " (in 'estimate_truncation', line 419, column 9 to column 12)",
+  " (in 'estimate_truncation', line 419, column 2 to column 39)",
+  " (in 'estimate_truncation', line 420, column 2 to column 22)",
+  " (in 'estimate_truncation', line 421, column 2 to column 14)",
+  " (in 'estimate_truncation', line 442, column 6 to column 57)",
+  " (in 'estimate_truncation', line 443, column 6 to column 63)",
+  " (in 'estimate_truncation', line 444, column 6 to column 42)",
+  " (in 'estimate_truncation', line 448, column 8 to line 450, column 10)",
+  " (in 'estimate_truncation', line 447, column 13 to line 451, column 7)",
+  " (in 'estimate_truncation', line 446, column 8 to column 49)",
+  " (in 'estimate_truncation', line 445, column 28 to line 447, column 7)",
   " (in 'estimate_truncation', line 445, column 6 to line 451, column 7)",
-  " (in 'estimate_truncation', line 444, column 25 to line 452, column 5)",
-  " (in 'estimate_truncation', line 444, column 4 to line 452, column 5)",
-  " (in 'estimate_truncation', line 441, column 24 to line 453, column 3)",
-  " (in 'estimate_truncation', line 441, column 2 to line 453, column 3)",
-  " (in 'estimate_truncation', line 436, column 59 to line 454, column 1)",
-  " (in 'estimate_truncation', line 457, column 2 to column 29)",
-  " (in 'estimate_truncation', line 458, column 9 to column 12)",
-  " (in 'estimate_truncation', line 458, column 2 to column 18)",
-  " (in 'estimate_truncation', line 460, column 4 to column 49)",
-  " (in 'estimate_truncation', line 461, column 4 to column 31)",
-  " (in 'estimate_truncation', line 462, column 4 to column 45)",
-  " (in 'estimate_truncation', line 459, column 19 to line 463, column 3)",
-  " (in 'estimate_truncation', line 459, column 2 to line 463, column 3)",
-  " (in 'estimate_truncation', line 464, column 2 to column 13)",
-  " (in 'estimate_truncation', line 456, column 57 to line 465, column 1)"};
+  " (in 'estimate_truncation', line 441, column 11 to line 452, column 5)",
+  " (in 'estimate_truncation', line 425, column 6 to column 57)",
+  " (in 'estimate_truncation', line 426, column 6 to column 63)",
+  " (in 'estimate_truncation', line 427, column 13 to column 45)",
+  " (in 'estimate_truncation', line 427, column 6 to line 432, column 8)",
+  " (in 'estimate_truncation', line 433, column 6 to column 59)",
+  " (in 'estimate_truncation', line 437, column 8 to line 439, column 10)",
+  " (in 'estimate_truncation', line 436, column 13 to line 440, column 7)",
+  " (in 'estimate_truncation', line 435, column 8 to column 42)",
+  " (in 'estimate_truncation', line 434, column 28 to line 436, column 7)",
+  " (in 'estimate_truncation', line 434, column 6 to line 440, column 7)",
+  " (in 'estimate_truncation', line 424, column 26 to line 441, column 5)",
+  " (in 'estimate_truncation', line 424, column 4 to line 452, column 5)",
+  " (in 'estimate_truncation', line 453, column 4 to column 26)",
+  " (in 'estimate_truncation', line 423, column 78 to line 454, column 3)",
+  " (in 'estimate_truncation', line 422, column 2 to line 454, column 3)",
+  " (in 'estimate_truncation', line 456, column 4 to line 459, column 6)",
+  " (in 'estimate_truncation', line 455, column 21 to line 460, column 3)",
+  " (in 'estimate_truncation', line 455, column 2 to line 460, column 3)",
+  " (in 'estimate_truncation', line 462, column 4 to column 30)",
+  " (in 'estimate_truncation', line 461, column 18 to line 463, column 3)",
+  " (in 'estimate_truncation', line 461, column 2 to line 463, column 3)",
+  " (in 'estimate_truncation', line 465, column 4 to column 23)",
+  " (in 'estimate_truncation', line 464, column 19 to line 466, column 3)",
+  " (in 'estimate_truncation', line 464, column 2 to line 466, column 3)",
+  " (in 'estimate_truncation', line 467, column 2 to column 13)",
+  " (in 'estimate_truncation', line 417, column 2 to line 468, column 1)",
+  " (in 'estimate_truncation', line 475, column 2 to column 55)",
+  " (in 'estimate_truncation', line 477, column 4 to column 11)",
+  " (in 'estimate_truncation', line 476, column 21 to line 478, column 3)",
+  " (in 'estimate_truncation', line 476, column 2 to line 478, column 3)",
+  " (in 'estimate_truncation', line 480, column 4 to column 39)",
+  " (in 'estimate_truncation', line 481, column 4 to column 45)",
+  " (in 'estimate_truncation', line 490, column 10 to column 77)",
+  " (in 'estimate_truncation', line 489, column 15 to line 491, column 9)",
+  " (in 'estimate_truncation', line 485, column 10 to line 488, column 14)",
+  " (in 'estimate_truncation', line 484, column 27 to line 489, column 9)",
+  " (in 'estimate_truncation', line 484, column 8 to line 491, column 9)",
+  " (in 'estimate_truncation', line 483, column 34 to line 492, column 7)",
+  " (in 'estimate_truncation', line 483, column 6 to line 492, column 7)",
+  " (in 'estimate_truncation', line 482, column 25 to line 493, column 5)",
+  " (in 'estimate_truncation', line 482, column 4 to line 493, column 5)",
+  " (in 'estimate_truncation', line 479, column 24 to line 494, column 3)",
+  " (in 'estimate_truncation', line 479, column 2 to line 494, column 3)",
+  " (in 'estimate_truncation', line 474, column 59 to line 495, column 1)",
+  " (in 'estimate_truncation', line 498, column 2 to column 29)",
+  " (in 'estimate_truncation', line 499, column 9 to column 12)",
+  " (in 'estimate_truncation', line 499, column 2 to column 18)",
+  " (in 'estimate_truncation', line 501, column 4 to column 49)",
+  " (in 'estimate_truncation', line 502, column 4 to column 31)",
+  " (in 'estimate_truncation', line 503, column 4 to column 45)",
+  " (in 'estimate_truncation', line 500, column 19 to line 504, column 3)",
+  " (in 'estimate_truncation', line 500, column 2 to line 504, column 3)",
+  " (in 'estimate_truncation', line 505, column 2 to column 13)",
+  " (in 'estimate_truncation', line 497, column 57 to line 506, column 1)"};
 std::vector<int>
 calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
                        std::ostream* pstream__);
@@ -465,21 +452,23 @@ truncation_lp(const std::vector<T0__>& truncation_mean,
               const std::vector<T4__>& trunc_sd_mean,
               const std::vector<T5__>& trunc_sd_sd, T_lp__& lp__,
               T_lp_accum__& lp_accum__, std::ostream* pstream__);
-template <bool propto__, typename T2__, typename T3__, typename T4__,
-          typename T5__, typename T7__, typename T_lp__,
-          typename T_lp_accum__,
+template <bool propto__, typename T2__, typename T3__, typename T5__,
+          typename T_lp__, typename T_lp_accum__,
           stan::require_all_t<stan::is_col_vector<T2__>,
                               stan::is_vt_not_complex<T2__>,
                               stan::is_stan_scalar<T3__>,
-                              stan::is_stan_scalar<T4__>,
-                              stan::is_stan_scalar<T5__>,
-                              stan::is_stan_scalar<T7__>>* = nullptr>
+                              stan::is_stan_scalar<T5__>>* = nullptr>
 void
-report_lp(const std::vector<int>& cases, const std::vector<int>& cases_time,
-          const T2__& reports_arg__, const std::vector<T3__>& rep_phi,
-          const T4__& phi_mean, const T5__& phi_sd, const int& model_type,
-          const T7__& weight, const int& accumulate, T_lp__& lp__,
-          T_lp_accum__& lp_accum__, std::ostream* pstream__);
+report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
+          const T2__& reports_arg__, const T3__& dispersion, const int&
+          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
+          lp_accum__, std::ostream* pstream__);
+template <typename T0__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>>,-1,1>
+accumulate_reports(const T0__& reports_arg__, const std::vector<int>&
+                   accumulate, std::ostream* pstream__);
 template <typename T1__, typename T2__, typename T4__,
           stan::require_all_t<stan::is_col_vector<T1__>,
                               stan::is_vt_not_complex<T1__>,
@@ -487,15 +476,21 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const std::vector<T2__>& rep_phi, const int& model_type,
-               const T4__& weight, std::ostream* pstream__);
+               const T2__& dispersion, const int& model_type, const T4__&
+               weight, std::ostream* pstream__);
+template <typename T0__, typename T1__, typename RNG,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>>* = nullptr>
+int
+neg_binomial_2_safe_rng(const T0__& mu, const T1__& phi, RNG& base_rng__,
+                        std::ostream* pstream__);
 template <typename T0__, typename T1__, typename RNG,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const std::vector<T1__>& rep_phi,
-           const int& model_type, RNG& base_rng__, std::ostream* pstream__);
+report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
+           model_type, RNG& base_rng__, std::ostream* pstream__);
 std::vector<int>
 get_delay_type_max(const int& delay_types, const std::vector<int>&
                    delay_types_p, const std::vector<int>& delay_types_id,
@@ -1061,23 +1056,19 @@ truncation_lp(const std::vector<T0__>& truncation_mean,
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
 }
-template <bool propto__, typename T2__, typename T3__, typename T4__,
-          typename T5__, typename T7__, typename T_lp__,
-          typename T_lp_accum__,
+template <bool propto__, typename T2__, typename T3__, typename T5__,
+          typename T_lp__, typename T_lp_accum__,
           stan::require_all_t<stan::is_col_vector<T2__>,
                               stan::is_vt_not_complex<T2__>,
                               stan::is_stan_scalar<T3__>,
-                              stan::is_stan_scalar<T4__>,
-                              stan::is_stan_scalar<T5__>,
-                              stan::is_stan_scalar<T7__>>*>
+                              stan::is_stan_scalar<T5__>>*>
 void
-report_lp(const std::vector<int>& cases, const std::vector<int>& cases_time,
-          const T2__& reports_arg__, const std::vector<T3__>& rep_phi,
-          const T4__& phi_mean, const T5__& phi_sd, const int& model_type,
-          const T7__& weight, const int& accumulate, T_lp__& lp__,
-          T_lp_accum__& lp_accum__, std::ostream* pstream__) {
+report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
+          const T2__& reports_arg__, const T3__& dispersion, const int&
+          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
+          lp_accum__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T2__>,
-                             T3__, T4__, T5__, T7__>;
+                             T3__, T5__>;
   int current_statement__ = 0;
   const auto& reports = stan::math::to_ref(reports_arg__);
   local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
@@ -1086,117 +1077,90 @@ report_lp(const std::vector<int>& cases, const std::vector<int>& cases_time,
   try {
     int n = std::numeric_limits<int>::min();
     current_statement__ = 204;
-    n = (stan::math::num_elements(cases_time) - accumulate);
+    n = stan::math::num_elements(case_times);
     current_statement__ = 205;
     stan::math::validate_non_negative_index("obs_reports", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> obs_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 207;
-    stan::math::validate_non_negative_index("obs_cases", "n", n);
-    std::vector<int> obs_cases =
-      std::vector<int>(n, std::numeric_limits<int>::min());
-    current_statement__ = 227;
-    if (accumulate) {
-      int t = std::numeric_limits<int>::min();
-      current_statement__ = 212;
-      t = stan::math::num_elements(reports);
-      int i = std::numeric_limits<int>::min();
-      current_statement__ = 213;
-      i = 0;
-      int current_obs = std::numeric_limits<int>::min();
-      current_statement__ = 214;
-      current_obs = 0;
-      current_statement__ = 215;
-      stan::model::assign(obs_reports, stan::math::rep_vector(0, n),
-        "assigning variable obs_reports");
-      current_statement__ = 224;
-      while ((stan::math::primitive_value(stan::math::logical_lte(i, t)) &&
-             stan::math::primitive_value(
-               stan::math::logical_lte(current_obs, n)))) {
-        current_statement__ = 218;
-        if (stan::math::logical_gt(current_obs, 0)) {
-          current_statement__ = 216;
-          stan::model::assign(obs_reports,
-            (stan::model::rvalue(obs_reports, "obs_reports",
-               stan::model::index_uni(current_obs)) +
-            stan::model::rvalue(reports, "reports", stan::model::index_uni(i))),
-            "assigning variable obs_reports",
-            stan::model::index_uni(current_obs));
-        }
-        current_statement__ = 221;
-        if (stan::math::logical_eq(i,
-              stan::model::rvalue(cases_time, "cases_time",
-                stan::model::index_uni((current_obs + 1))))) {
-          current_statement__ = 219;
-          current_obs = (current_obs + 1);
-        }
-        current_statement__ = 222;
-        i = (i + 1);
-      }
-      current_statement__ = 225;
-      stan::model::assign(obs_cases,
-        stan::model::rvalue(cases, "cases",
-          stan::model::index_min_max(2, (n + 1))),
-        "assigning variable obs_cases");
-    } else {
-      current_statement__ = 209;
-      stan::model::assign(obs_reports,
-        stan::model::rvalue(reports, "reports",
-          stan::model::index_multi(cases_time)),
-        "assigning variable obs_reports");
-      current_statement__ = 210;
-      stan::model::assign(obs_cases, cases, "assigning variable obs_cases");
-    }
-    current_statement__ = 245;
+    current_statement__ = 206;
+    stan::model::assign(obs_reports,
+      stan::model::rvalue(reports, "reports",
+        stan::model::index_multi(case_times)),
+      "assigning variable obs_reports");
+    current_statement__ = 220;
     if (model_type) {
-      local_scalar_t__ dispersion = DUMMY_VAR__;
-      current_statement__ = 234;
-      dispersion = stan::math::inv_square(
-                     (stan::math::logical_gt(phi_sd, 0) ? stan::model::rvalue(
-                                                            rep_phi,
-                                                            "rep_phi",
-                                                            stan::model::index_uni(
-                                                              model_type)) : phi_mean));
-      current_statement__ = 238;
-      if (stan::math::logical_gt(phi_sd, 0)) {
-        current_statement__ = 235;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(
-                         stan::model::rvalue(rep_phi, "rep_phi",
-                           stan::model::index_uni(model_type)), phi_mean,
-                         phi_sd));
-        current_statement__ = 236;
-        if (stan::math::logical_lt(
-              stan::model::rvalue(rep_phi, "rep_phi",
-                stan::model::index_uni(model_type)), 0)) {
-          current_statement__ = 236;
-          lp_accum__.add(stan::math::negative_infinity());
-        } else {
-          current_statement__ = 236;
-          lp_accum__.add(-stan::math::normal_lccdf(0, phi_mean, phi_sd));
-        }
-      }
-      current_statement__ = 243;
+      local_scalar_t__ phi = DUMMY_VAR__;
+      current_statement__ = 213;
+      phi = stan::math::inv_square(dispersion);
+      current_statement__ = 218;
       if (stan::math::logical_eq(weight, 1)) {
-        current_statement__ = 241;
-        lp_accum__.add(stan::math::neg_binomial_2_lpmf<propto__>(obs_cases,
-                         obs_reports, dispersion));
+        current_statement__ = 216;
+        lp_accum__.add(stan::math::neg_binomial_2_lpmf<propto__>(cases,
+                         obs_reports, phi));
       } else {
-        current_statement__ = 239;
-        lp_accum__.add((stan::math::neg_binomial_2_lpmf<false>(obs_cases,
-                          obs_reports, dispersion) * weight));
+        current_statement__ = 214;
+        lp_accum__.add((stan::math::neg_binomial_2_lpmf<false>(cases,
+                          obs_reports, phi) * weight));
       }
     } else {
-      current_statement__ = 232;
+      current_statement__ = 211;
       if (stan::math::logical_eq(weight, 1)) {
-        current_statement__ = 230;
-        lp_accum__.add(stan::math::poisson_lpmf<propto__>(obs_cases,
-                         obs_reports));
+        current_statement__ = 209;
+        lp_accum__.add(stan::math::poisson_lpmf<propto__>(cases, obs_reports));
       } else {
-        current_statement__ = 228;
-        lp_accum__.add((stan::math::poisson_lpmf<false>(obs_cases,
-                          obs_reports) * weight));
+        current_statement__ = 207;
+        lp_accum__.add((stan::math::poisson_lpmf<false>(cases, obs_reports) *
+          weight));
       }
     }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>>*>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>>,-1,1>
+accumulate_reports(const T0__& reports_arg__, const std::vector<int>&
+                   accumulate, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>>;
+  int current_statement__ = 0;
+  const auto& reports = stan::math::to_ref(reports_arg__);
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    int ot_h = std::numeric_limits<int>::min();
+    current_statement__ = 222;
+    ot_h = stan::math::num_elements(reports);
+    current_statement__ = 223;
+    stan::math::validate_non_negative_index("accumulated_reports", "ot_h",
+      ot_h);
+    Eigen::Matrix<local_scalar_t__,-1,1> accumulated_reports =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot_h, DUMMY_VAR__);
+    current_statement__ = 224;
+    stan::model::assign(accumulated_reports, reports,
+      "assigning variable accumulated_reports");
+    current_statement__ = 229;
+    for (int i = 1; i <= (ot_h - 1); ++i) {
+      current_statement__ = 227;
+      if (stan::model::rvalue(accumulate, "accumulate",
+            stan::model::index_uni(i))) {
+        current_statement__ = 225;
+        stan::model::assign(accumulated_reports,
+          (stan::model::rvalue(accumulated_reports, "accumulated_reports",
+             stan::model::index_uni((i + 1))) +
+          stan::model::rvalue(accumulated_reports, "accumulated_reports",
+            stan::model::index_uni(i))),
+          "assigning variable accumulated_reports",
+          stan::model::index_uni((i + 1)));
+      }
+    }
+    current_statement__ = 230;
+    return accumulated_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -1208,8 +1172,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const std::vector<T2__>& rep_phi, const int& model_type,
-               const T4__& weight, std::ostream* pstream__) {
+               const T2__& dispersion, const int& model_type, const T4__&
+               weight, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T1__>,
                              T2__, T4__>;
   int current_statement__ = 0;
@@ -1222,17 +1186,17 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 247;
+    current_statement__ = 232;
     t = stan::math::num_elements(reports);
-    current_statement__ = 248;
+    current_statement__ = 233;
     stan::math::validate_non_negative_index("log_lik", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> log_lik =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 259;
+    current_statement__ = 244;
     if (stan::math::logical_eq(model_type, 0)) {
-      current_statement__ = 257;
+      current_statement__ = 242;
       for (int i = 1; i <= t; ++i) {
-        current_statement__ = 255;
+        current_statement__ = 240;
         stan::model::assign(log_lik,
           (stan::math::poisson_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
@@ -1241,14 +1205,12 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
           "assigning variable log_lik", stan::model::index_uni(i));
       }
     } else {
-      local_scalar_t__ dispersion = DUMMY_VAR__;
-      current_statement__ = 250;
-      dispersion = stan::math::inv_square(
-                     stan::model::rvalue(rep_phi, "rep_phi",
-                       stan::model::index_uni(model_type)));
-      current_statement__ = 253;
+      local_scalar_t__ phi = DUMMY_VAR__;
+      current_statement__ = 235;
+      phi = stan::math::inv_square(dispersion);
+      current_statement__ = 238;
       for (int i = 1; i <= t; ++i) {
-        current_statement__ = 251;
+        current_statement__ = 236;
         stan::model::assign(log_lik,
           (stan::math::neg_binomial_2_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
@@ -1257,8 +1219,47 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
           "assigning variable log_lik", stan::model::index_uni(i));
       }
     }
-    current_statement__ = 260;
+    current_statement__ = 245;
     return log_lik;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T1__, typename RNG,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>>*>
+int
+neg_binomial_2_safe_rng(const T0__& mu, const T1__& phi, RNG& base_rng__,
+                        std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T1__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 255;
+    if (stan::math::logical_lt(mu, 1e-8)) {
+      current_statement__ = 253;
+      return 0;
+    } else {
+      current_statement__ = 252;
+      if (stan::math::logical_gt(phi, 1e4)) {
+        current_statement__ = 250;
+        return stan::math::poisson_rng(
+                 (stan::math::logical_gt(mu, 1e8) ? 1e8 : mu), base_rng__);
+      } else {
+        local_scalar_t__ gamma_rate = DUMMY_VAR__;
+        current_statement__ = 247;
+        gamma_rate = stan::math::gamma_rng(phi, (phi / mu), base_rng__);
+        current_statement__ = 248;
+        return stan::math::poisson_rng(
+                 (stan::math::logical_gt(gamma_rate, 1e8) ? 1e8 : gamma_rate),
+                 base_rng__);
+      }
+    }
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -1268,8 +1269,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const std::vector<T1__>& rep_phi,
-           const int& model_type, RNG& base_rng__, std::ostream* pstream__) {
+report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
+           model_type, RNG& base_rng__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -1282,63 +1283,30 @@ report_rng(const T0__& reports_arg__, const std::vector<T1__>& rep_phi,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 262;
+    current_statement__ = 257;
     t = stan::math::num_elements(reports);
-    current_statement__ = 263;
+    current_statement__ = 258;
     stan::math::validate_non_negative_index("sampled_reports", "t", t);
     std::vector<int> sampled_reports =
       std::vector<int>(t, std::numeric_limits<int>::min());
-    local_scalar_t__ dispersion = DUMMY_VAR__;
-    current_statement__ = 265;
-    dispersion = 1e5;
-    current_statement__ = 268;
+    local_scalar_t__ phi = DUMMY_VAR__;
+    current_statement__ = 260;
+    phi = 1e5;
+    current_statement__ = 263;
     if (model_type) {
-      current_statement__ = 266;
-      dispersion = stan::math::inv_square(
-                     stan::model::rvalue(rep_phi, "rep_phi",
-                       stan::model::index_uni(model_type)));
+      current_statement__ = 261;
+      phi = stan::math::inv_square(dispersion);
     }
-    current_statement__ = 279;
+    current_statement__ = 266;
     for (int s = 1; s <= t; ++s) {
-      current_statement__ = 277;
-      if (stan::math::logical_lt(
-            stan::model::rvalue(reports, "reports", stan::model::index_uni(s)),
-            1e-8)) {
-        current_statement__ = 275;
-        stan::model::assign(sampled_reports, 0,
-          "assigning variable sampled_reports", stan::model::index_uni(s));
-      } else {
-        current_statement__ = 273;
-        if (stan::math::logical_gt(dispersion, 1e4)) {
-          current_statement__ = 271;
-          stan::model::assign(sampled_reports,
-            stan::math::poisson_rng(
-              (stan::math::logical_gt(
-                 stan::model::rvalue(reports, "reports",
-                   stan::model::index_uni(s)), 1e8) ? 1e8 : stan::model::rvalue(
-                                                              reports,
-                                                              "reports",
-                                                              stan::model::index_uni(
-                                                                s))),
-              base_rng__), "assigning variable sampled_reports",
-            stan::model::index_uni(s));
-        } else {
-          current_statement__ = 269;
-          stan::model::assign(sampled_reports,
-            stan::math::neg_binomial_2_rng(
-              (stan::math::logical_gt(
-                 stan::model::rvalue(reports, "reports",
-                   stan::model::index_uni(s)), 1e8) ? 1e8 : stan::model::rvalue(
-                                                              reports,
-                                                              "reports",
-                                                              stan::model::index_uni(
-                                                                s))),
-              dispersion, base_rng__), "assigning variable sampled_reports",
-            stan::model::index_uni(s));
-        }
-      }
+      current_statement__ = 264;
+      stan::model::assign(sampled_reports,
+        neg_binomial_2_safe_rng(
+          stan::model::rvalue(reports, "reports", stan::model::index_uni(s)),
+          phi, base_rng__, pstream__), "assigning variable sampled_reports",
+        stan::model::index_uni(s));
     }
-    current_statement__ = 280;
+    current_statement__ = 267;
     return sampled_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1359,25 +1327,25 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 282;
+    current_statement__ = 269;
     stan::math::validate_non_negative_index("ret", "delay_types", delay_types);
     std::vector<int> ret =
       std::vector<int>(delay_types, std::numeric_limits<int>::min());
-    current_statement__ = 293;
+    current_statement__ = 280;
     for (int i = 1; i <= delay_types; ++i) {
-      current_statement__ = 284;
+      current_statement__ = 271;
       stan::model::assign(ret, 0, "assigning variable ret",
         stan::model::index_uni(i));
-      current_statement__ = 291;
+      current_statement__ = 278;
       for (int j =
              stan::model::rvalue(delay_types_groups, "delay_types_groups",
                stan::model::index_uni(i)); j <=
            (stan::model::rvalue(delay_types_groups, "delay_types_groups",
               stan::model::index_uni((i + 1))) - 1); ++j) {
-        current_statement__ = 289;
+        current_statement__ = 276;
         if (stan::model::rvalue(delay_types_p, "delay_types_p",
               stan::model::index_uni(j))) {
-          current_statement__ = 287;
+          current_statement__ = 274;
           stan::model::assign(ret,
             (stan::model::rvalue(ret, "ret", stan::model::index_uni(i)) +
             stan::model::rvalue(delay_max, "delay_max",
@@ -1386,7 +1354,7 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
                   stan::model::index_uni(j))))), "assigning variable ret",
             stan::model::index_uni(i));
         } else {
-          current_statement__ = 285;
+          current_statement__ = 272;
           stan::model::assign(ret,
             (stan::model::rvalue(ret, "ret", stan::model::index_uni(i)) +
             ((stan::model::rvalue(delay_np_pmf_groups, "delay_np_pmf_groups",
@@ -1401,7 +1369,7 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
         }
       }
     }
-    current_statement__ = 294;
+    current_statement__ = 281;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1437,42 +1405,42 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 296;
+    current_statement__ = 283;
     stan::math::validate_non_negative_index("pmf", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> pmf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 297;
+    current_statement__ = 284;
     stan::model::assign(pmf, stan::math::rep_vector(0, len),
       "assigning variable pmf");
     int current_len = std::numeric_limits<int>::min();
-    current_statement__ = 298;
+    current_statement__ = 285;
     current_len = 1;
     int new_len = std::numeric_limits<int>::min();
-    current_statement__ = 323;
+    current_statement__ = 310;
     for (int i =
            stan::model::rvalue(delay_types_groups, "delay_types_groups",
              stan::model::index_uni(delay_id)); i <=
          (stan::model::rvalue(delay_types_groups, "delay_types_groups",
             stan::model::index_uni((delay_id + 1))) - 1); ++i) {
-      current_statement__ = 320;
+      current_statement__ = 307;
       if (stan::model::rvalue(delay_types_p, "delay_types_p",
             stan::model::index_uni(i))) {
         int start = std::numeric_limits<int>::min();
-        current_statement__ = 309;
+        current_statement__ = 296;
         start = stan::model::rvalue(delay_params_groups,
                   "delay_params_groups",
                   stan::model::index_uni(
                     stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i))));
         int end = std::numeric_limits<int>::min();
-        current_statement__ = 310;
+        current_statement__ = 297;
         end = (stan::model::rvalue(delay_params_groups,
                  "delay_params_groups",
                  stan::model::index_uni(
                    (stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i)) + 1)))
           - 1);
-        current_statement__ = 311;
+        current_statement__ = 298;
         stan::math::validate_non_negative_index("new_variable_pmf",
           "delay_max[delay_types_id[i]] + 1",
           (stan::model::rvalue(delay_max, "delay_max",
@@ -1490,7 +1458,7 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                                                                 stan::model::index_uni(
                                                                   i)))) + 1),
             DUMMY_VAR__);
-        current_statement__ = 312;
+        current_statement__ = 299;
         stan::model::assign(new_variable_pmf,
           discretised_pmf(
             stan::model::rvalue(delay_params, "delay_params",
@@ -1504,19 +1472,19 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                 stan::model::rvalue(delay_types_id, "delay_types_id",
                   stan::model::index_uni(i)))), pstream__),
           "assigning variable new_variable_pmf");
-        current_statement__ = 313;
+        current_statement__ = 300;
         new_len = (current_len +
           stan::model::rvalue(delay_max, "delay_max",
             stan::model::index_uni(
               stan::model::rvalue(delay_types_id, "delay_types_id",
                 stan::model::index_uni(i)))));
-        current_statement__ = 318;
+        current_statement__ = 305;
         if (stan::math::logical_eq(current_len, 1)) {
-          current_statement__ = 316;
+          current_statement__ = 303;
           stan::model::assign(pmf, new_variable_pmf,
             "assigning variable pmf", stan::model::index_min_max(1, new_len));
         } else {
-          current_statement__ = 314;
+          current_statement__ = 301;
           stan::model::assign(pmf,
             convolve_with_rev_pmf(
               stan::model::deep_copy(
@@ -1527,31 +1495,31 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
         }
       } else {
         int start = std::numeric_limits<int>::min();
-        current_statement__ = 300;
+        current_statement__ = 287;
         start = stan::model::rvalue(delay_np_pmf_groups,
                   "delay_np_pmf_groups",
                   stan::model::index_uni(
                     stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i))));
         int end = std::numeric_limits<int>::min();
-        current_statement__ = 301;
+        current_statement__ = 288;
         end = (stan::model::rvalue(delay_np_pmf_groups,
                  "delay_np_pmf_groups",
                  stan::model::index_uni(
                    (stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i)) + 1)))
           - 1);
-        current_statement__ = 302;
+        current_statement__ = 289;
         new_len = ((current_len + end) - start);
-        current_statement__ = 307;
+        current_statement__ = 294;
         if (stan::math::logical_eq(current_len, 1)) {
-          current_statement__ = 305;
+          current_statement__ = 292;
           stan::model::assign(pmf,
             stan::model::rvalue(delay_np_pmf, "delay_np_pmf",
               stan::model::index_min_max(start, end)),
             "assigning variable pmf", stan::model::index_min_max(1, new_len));
         } else {
-          current_statement__ = 303;
+          current_statement__ = 290;
           stan::model::assign(pmf,
             convolve_with_rev_pmf(
               stan::model::deep_copy(
@@ -1564,12 +1532,12 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
             stan::model::index_min_max(1, new_len));
         }
       }
-      current_statement__ = 321;
+      current_statement__ = 308;
       current_len = new_len;
     }
-    current_statement__ = 326;
+    current_statement__ = 313;
     if (left_truncate) {
-      current_statement__ = 324;
+      current_statement__ = 311;
       stan::model::assign(pmf,
         stan::math::append_row(stan::math::rep_vector(0, left_truncate),
           stan::math::divide(
@@ -1581,21 +1549,21 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                 stan::model::index_min_max((left_truncate + 1), len))))),
         "assigning variable pmf");
     }
-    current_statement__ = 329;
+    current_statement__ = 316;
     if (cumulative) {
-      current_statement__ = 327;
+      current_statement__ = 314;
       stan::model::assign(pmf,
         stan::math::cumulative_sum(stan::model::deep_copy(pmf)),
         "assigning variable pmf");
     }
-    current_statement__ = 332;
+    current_statement__ = 319;
     if (reverse_pmf) {
-      current_statement__ = 330;
+      current_statement__ = 317;
       stan::model::assign(pmf,
         stan::math::reverse(stan::model::deep_copy(pmf)),
         "assigning variable pmf");
     }
-    current_statement__ = 333;
+    current_statement__ = 320;
     return pmf;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1627,35 +1595,35 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int n_delays = std::numeric_limits<int>::min();
-    current_statement__ = 335;
+    current_statement__ = 322;
     n_delays = (stan::math::num_elements(delay_params_groups) - 1);
-    current_statement__ = 338;
+    current_statement__ = 325;
     if (stan::math::logical_eq(n_delays, 0)) {
-      current_statement__ = 336;
+      current_statement__ = 323;
       return ;
     }
-    current_statement__ = 351;
+    current_statement__ = 338;
     for (int d = 1; d <= n_delays; ++d) {
       int start = std::numeric_limits<int>::min();
-      current_statement__ = 339;
+      current_statement__ = 326;
       start = stan::model::rvalue(delay_params_groups, "delay_params_groups",
                 stan::model::index_uni(d));
       int end = std::numeric_limits<int>::min();
-      current_statement__ = 340;
+      current_statement__ = 327;
       end = (stan::model::rvalue(delay_params_groups, "delay_params_groups",
                stan::model::index_uni((d + 1)))
         - 1);
-      current_statement__ = 349;
+      current_statement__ = 336;
       for (int s = start; s <= end; ++s) {
-        current_statement__ = 347;
+        current_statement__ = 334;
         if (stan::math::logical_gt(
               stan::model::rvalue(delay_params_sd, "delay_params_sd",
                 stan::model::index_uni(s)), 0)) {
-          current_statement__ = 345;
+          current_statement__ = 332;
           if (stan::math::logical_gt(
                 stan::model::rvalue(weight, "weight",
                   stan::model::index_uni(d)), 1)) {
-            current_statement__ = 343;
+            current_statement__ = 330;
             lp_accum__.add((stan::model::rvalue(weight, "weight",
                               stan::model::index_uni(d)) *
               stan::math::normal_lpdf<false>(
@@ -1666,7 +1634,7 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
                 stan::model::rvalue(delay_params_sd, "delay_params_sd",
                   stan::model::index_uni(s)))));
           } else {
-            current_statement__ = 341;
+            current_statement__ = 328;
             lp_accum__.add(stan::math::normal_lpdf<propto__>(
                              stan::model::rvalue(delay_params,
                                "delay_params", stan::model::index_uni(s)),
@@ -1708,31 +1676,31 @@ normal_lb_rng(const T0__& mu_arg__, const T1__& sigma_arg__, const T2__&
   (void) DUMMY_VAR__;
   try {
     int len = std::numeric_limits<int>::min();
-    current_statement__ = 353;
+    current_statement__ = 340;
     len = stan::math::num_elements(mu);
-    current_statement__ = 354;
+    current_statement__ = 341;
     stan::math::validate_non_negative_index("ret", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> ret =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 360;
+    current_statement__ = 347;
     for (int i = 1; i <= len; ++i) {
       local_scalar_t__ p = DUMMY_VAR__;
-      current_statement__ = 356;
+      current_statement__ = 343;
       p = stan::math::normal_cdf(
             stan::model::rvalue(lb, "lb", stan::model::index_uni(i)),
             stan::model::rvalue(mu, "mu", stan::model::index_uni(i)),
             stan::model::rvalue(sigma, "sigma", stan::model::index_uni(i)));
       local_scalar_t__ u = DUMMY_VAR__;
-      current_statement__ = 357;
+      current_statement__ = 344;
       u = stan::math::uniform_rng(p, 1, base_rng__);
-      current_statement__ = 358;
+      current_statement__ = 345;
       stan::model::assign(ret,
         ((stan::model::rvalue(sigma, "sigma", stan::model::index_uni(i)) *
         stan::math::inv_Phi(u)) +
         stan::model::rvalue(mu, "mu", stan::model::index_uni(i))),
         "assigning variable ret", stan::model::index_uni(i));
     }
-    current_statement__ = 361;
+    current_statement__ = 348;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2276,17 +2244,17 @@ public:
       current_statement__ = 1;
       stan::math::check_matching_dims("constraint", "delay_params",
         delay_params, "lower", delay_params_lower);
-      local_scalar_t__ phi = DUMMY_VAR__;
+      local_scalar_t__ dispersion = DUMMY_VAR__;
       current_statement__ = 2;
-      phi = in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
-              lp__);
+      dispersion = in__.template read_constrain_lb<local_scalar_t__,
+                     jacobian__>(0, lp__);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      local_scalar_t__ sqrt_phi = DUMMY_VAR__;
+      local_scalar_t__ phi = DUMMY_VAR__;
       current_statement__ = 4;
-      sqrt_phi = (1 / stan::math::sqrt(phi));
+      phi = (1 / stan::math::sqrt(dispersion));
       Eigen::Matrix<local_scalar_t__,-1,-1> trunc_obs =
         Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(trunc_obs_1dim__,
           trunc_obs_2dim__, DUMMY_VAR__);
@@ -2345,9 +2313,9 @@ public:
           delay_params_groups, delay_dist, delay_weight, lp__, lp_accum__,
           pstream__);
         current_statement__ = 29;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(phi, 0, 1));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(dispersion, 0, 1));
         current_statement__ = 30;
-        if (stan::math::logical_lt(phi, 0)) {
+        if (stan::math::logical_lt(dispersion, 0)) {
           current_statement__ = 30;
           lp_accum__.add(stan::math::negative_infinity());
         } else {
@@ -2381,7 +2349,7 @@ public:
                                stan::model::index_uni(i)),
                              stan::model::rvalue(trunc_obs, "trunc_obs",
                                stan::model::index_uni(j),
-                               stan::model::index_uni(i)), sqrt_phi));
+                               stan::model::index_uni(i)), phi));
           }
         }
       }
@@ -2433,15 +2401,15 @@ public:
       current_statement__ = 1;
       stan::math::check_matching_dims("constraint", "delay_params",
         delay_params, "lower", delay_params_lower);
-      double phi = std::numeric_limits<double>::quiet_NaN();
+      double dispersion = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 2;
-      phi = in__.template read_constrain_lb<local_scalar_t__, jacobian__>(0,
-              lp__);
+      dispersion = in__.template read_constrain_lb<local_scalar_t__,
+                     jacobian__>(0, lp__);
       double sigma = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      double sqrt_phi = std::numeric_limits<double>::quiet_NaN();
+      double phi = std::numeric_limits<double>::quiet_NaN();
       Eigen::Matrix<double,-1,-1> trunc_obs =
         Eigen::Matrix<double,-1,-1>::Constant(trunc_obs_1dim__,
           trunc_obs_2dim__, std::numeric_limits<double>::quiet_NaN());
@@ -2449,7 +2417,7 @@ public:
         Eigen::Matrix<double,-1,1>::Constant(trunc_rev_cmf_1dim__,
           std::numeric_limits<double>::quiet_NaN());
       out__.write(delay_params);
-      out__.write(phi);
+      out__.write(dispersion);
       out__.write(sigma);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
@@ -2457,7 +2425,7 @@ public:
         return ;
       }
       current_statement__ = 4;
-      sqrt_phi = (1 / stan::math::sqrt(phi));
+      phi = (1 / stan::math::sqrt(dispersion));
       current_statement__ = 5;
       stan::model::assign(trunc_obs,
         stan::math::rep_matrix(0,
@@ -2506,7 +2474,7 @@ public:
         }
       }
       if (emit_transformed_parameters__) {
-        out__.write(sqrt_phi);
+        out__.write(phi);
         out__.write(trunc_obs);
         out__.write(trunc_rev_cmf);
       }
@@ -2562,8 +2530,8 @@ public:
             stan::model::assign(gen_obs,
               stan::math::neg_binomial_2_rng(
                 stan::model::rvalue(trunc_obs, "trunc_obs",
-                  stan::model::index_uni(j), stan::model::index_uni(i)),
-                sqrt_phi, base_rng__), "assigning variable gen_obs",
+                  stan::model::index_uni(j), stan::model::index_uni(i)), phi,
+                base_rng__), "assigning variable gen_obs",
               stan::model::index_uni(j), stan::model::index_uni(i));
           }
         }
@@ -2598,10 +2566,10 @@ public:
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(delay_params_length),
         "assigning variable delay_params");
       out__.write_free_lb(delay_params_lower, delay_params);
-      local_scalar_t__ phi = DUMMY_VAR__;
+      local_scalar_t__ dispersion = DUMMY_VAR__;
       current_statement__ = 2;
-      phi = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, phi);
+      dispersion = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, dispersion);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.read<local_scalar_t__>();
@@ -2626,8 +2594,8 @@ public:
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_params_length)});
       current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "phi", "double",
-        std::vector<size_t>{});
+      context__.validate_dims("parameter initialization", "dispersion",
+        "double", std::vector<size_t>{});
       current_statement__ = 3;
       context__.validate_dims("parameter initialization", "sigma", "double",
         std::vector<size_t>{});
@@ -2652,10 +2620,10 @@ public:
         }
       }
       out__.write_free_lb(delay_params_lower, delay_params);
-      local_scalar_t__ phi = DUMMY_VAR__;
+      local_scalar_t__ dispersion = DUMMY_VAR__;
       current_statement__ = 2;
-      phi = context__.vals_r("phi")[(1 - 1)];
-      out__.write_free_lb(0, phi);
+      dispersion = context__.vals_r("dispersion")[(1 - 1)];
+      out__.write_free_lb(0, dispersion);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = context__.vals_r("sigma")[(1 - 1)];
@@ -2668,9 +2636,9 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"delay_params", "phi", "sigma"};
+    names__ = std::vector<std::string>{"delay_params", "dispersion", "sigma"};
     if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"sqrt_phi", "trunc_obs", "trunc_rev_cmf"};
+      std::vector<std::string> temp{"phi", "trunc_obs", "trunc_rev_cmf"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -2715,10 +2683,10 @@ public:
       param_names__.emplace_back(std::string() + "delay_params" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "phi");
+    param_names__.emplace_back(std::string() + "dispersion");
     param_names__.emplace_back(std::string() + "sigma");
     if (emit_transformed_parameters__) {
-      param_names__.emplace_back(std::string() + "sqrt_phi");
+      param_names__.emplace_back(std::string() + "phi");
       for (int sym1__ = 1; sym1__ <= trunc_obs_2dim__; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= trunc_obs_1dim__; ++sym2__) {
           param_names__.emplace_back(std::string() + "trunc_obs" + '.' +
@@ -2753,10 +2721,10 @@ public:
       param_names__.emplace_back(std::string() + "delay_params" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "phi");
+    param_names__.emplace_back(std::string() + "dispersion");
     param_names__.emplace_back(std::string() + "sigma");
     if (emit_transformed_parameters__) {
-      param_names__.emplace_back(std::string() + "sqrt_phi");
+      param_names__.emplace_back(std::string() + "phi");
       for (int sym1__ = 1; sym1__ <= trunc_obs_2dim__; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= trunc_obs_1dim__; ++sym2__) {
           param_names__.emplace_back(std::string() + "trunc_obs" + '.' +
@@ -2784,10 +2752,10 @@ public:
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sqrt_phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"dispersion\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sqrt_phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"dispersion\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void

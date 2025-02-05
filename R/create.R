@@ -1,5 +1,5 @@
 #' Create Clean Reported Cases
-#' @description `r lifecycle::badge("stable")`
+#' @description `r lifecycle::badge("deprecated")`
 #' Filters leading zeros, completes dates, and applies an optional threshold at
 #' which point 0 cases are replaced with a user supplied value (defaults to
 #' `NA`).
@@ -12,88 +12,31 @@
 #' number of cases based on the 7-day average. If the average is above this
 #' threshold then the zero is replaced using `fill`.
 #'
-#' @param fill Numeric, defaults to NA. Value to use to replace NA values or
-#' zeroes that are flagged because the 7-day average is above the
-#' `zero_threshold`. If the default NA is used then dates with NA values or with
-#' 7-day averages above the `zero_threshold` will be skipped in model fitting.
-#' If this is set to 0 then the only effect is to replace NA values with 0.
+#' @param fill Deprecated; zero dates with  7-day averages above the
+#'   `zero_threshold` will be skipped in model fitting.
 #' @param add_breakpoints Logical, defaults to TRUE. Should a breakpoint column
 #' be added to the data frame if it does not exist.
 #'
 #' @inheritParams estimate_infections
-#' @importFrom data.table copy merge.data.table setorder setDT frollsum
 #' @return A cleaned data frame of reported cases
 #' @keywords internal
 #' @examples
 #' \dontrun{
 #' create_clean_reported_cases(example_confirmed, 7)
 #' }
-create_clean_reported_cases <- function(data, horizon = 0,
+create_clean_reported_cases <- function(data,
                                         filter_leading_zeros = TRUE,
                                         zero_threshold = Inf,
                                         fill = NA_integer_,
                                         add_breakpoints = TRUE) {
-  reported_cases <- data.table::setDT(data)
-  reported_cases_grid <- data.table::copy(reported_cases)[,
-   .(date = seq(min(date), max(date) + horizon, by = "days"))
-  ]
-
-  reported_cases <- data.table::merge.data.table(
-    reported_cases, reported_cases_grid,
-    by = "date", all.y = TRUE
-  )
-
-  if (is.null(reported_cases$breakpoint) && add_breakpoints) {
-    reported_cases$breakpoint <- 0
+  if (add_breakpoints) {
+    data <- add_breakpoints(data)
   }
-  if (!is.null(reported_cases$breakpoint)) {
-    reported_cases[is.na(breakpoint), breakpoint := 0]
-  }
-  reported_cases <- data.table::setorder(reported_cases, date)
-  ## Filter out 0 reported cases from the beginning of the data
   if (filter_leading_zeros) {
-    reported_cases <- reported_cases[order(date)][
-      date >= min(date[confirm[!is.na(confirm)] > 0])
-    ]
+    data <- filter_leading_zeros(data)
   }
-  # Calculate `average_7_day` which for rows with `confirm == 0`
-  # (the only instance where this is being used) equates to the 7-day
-  # right-aligned moving average at the previous data point.
-  reported_cases <-
-    reported_cases[
-      ,
-      `:=`(average_7_day = (
-          data.table::frollsum(confirm, n = 8, na.rm = TRUE)
-        ) / 7
-      )
-    ]
-  # Check case counts preceding zero case counts and set to 7 day average if
-  # average over last 7 days is greater than a threshold
-  if (!is.infinite(zero_threshold)) {
-    reported_cases <- reported_cases[
-      confirm == 0 & average_7_day > zero_threshold,
-      confirm := NA_integer_
-    ]
-  }
-  reported_cases[is.na(confirm), confirm := fill]
-  reported_cases[, "average_7_day" := NULL]
-  return(reported_cases)
-}
-
-#' Create complete cases
-#' @description `r lifecycle::badge("stable")`
-#' Creates a complete data set without NA values and appropriate indices
-#'
-#' @param cases data frame with a column "confirm" that may contain NA values
-#'
-#' @return A data frame without NA values, with two columns: confirm (number)
-#' @importFrom data.table setDT
-#' @keywords internal
-create_complete_cases <- function(cases) {
-  cases <- setDT(cases)
-  cases[, lookup := seq_len(.N)]
-  cases <- cases[!is.na(cases$confirm)]
-  return(cases[])
+  data <- apply_zero_threshold(data, zero_threshold)
+  return(data[])
 }
 
 #' Create Delay Shifted Cases
@@ -135,19 +78,20 @@ create_complete_cases <- function(cases) {
 #' horizon <- 7
 #' smoothing_window <- 14
 #' ## add NAs for horizon
-#' cases <- create_clean_reported_cases(example_confirmed, horizon = horizon)
+#' cases <- create_clean_reported_cases(example_confirmed[1:30])
+#' cases <- add_horizon(cases, horizon)
 #' ## add zeroes initially
 #' cases <- data.table::rbindlist(list(
-#'    data.table::data.table(
-#'      date = seq(
-#'        min(cases$date) - smoothing_window,
-#'        min(cases$date) - 1,
-#'        by = "days"
-#'      ),
-#'      confirm = 0, breakpoint = 0
-#'    ),
-#'    cases
-#'  ))
+#'   data.table::data.table(
+#'     date = seq(
+#'       min(cases$date) - 10,
+#'       min(cases$date) - 1,
+#'       by = "days"
+#'     ),
+#'     confirm = 0, breakpoint = 0
+#'   ),
+#'   cases
+#' ))
 #' create_shifted_cases(cases, shift, smoothing_window, horizon)
 #' }
 create_shifted_cases <- function(data, shift,
@@ -161,39 +105,35 @@ create_shifted_cases <- function(data, shift,
   ][
     ,
     confirm := runner::mean_run(
-      confirm, k = smoothing_window, lag = -floor(smoothing_window / 2)
+      confirm,
+      k = smoothing_window, lag = -floor(smoothing_window / 2)
     )
   ]
 
   ## Forecast trend on reported cases using the last week of data
-  final_period <- data.table::data.table(
-    confirm =
-      shifted_reported_cases[!is.na(confirm)][
-        max(1, .N - smoothing_window):.N
-      ]$confirm
-  )[,
+  final_period <- shifted_reported_cases[!is.na(confirm)][
+    max(1, .N - smoothing_window):.N
+  ][
+    ,
     t := seq_len(.N)
   ]
   lm_model <- stats::lm(log(confirm + 1) ~ t, data = final_period)
   ## Estimate unreported future infections using a log linear model
   shifted_reported_cases <- shifted_reported_cases[
-    ,
-    t := seq_len(.N)
-  ][
-    ,
-    t := t - (.N - horizon - shift - 6)
+    date >= min(final_period$date), t := seq_len(.N)
   ][
     ,
     confirm := data.table::fifelse(
-      t >= 7,
+      !is.na(t) & t >= 0,
       exp(lm_model$coefficients[1] + lm_model$coefficients[2] * t) - 1,
       confirm
     )
   ][, t := NULL]
 
   ## Drop median generation interval initial values
-  shifted_reported_cases <- shifted_reported_cases[,
-   confirm := ceiling(confirm)
+  shifted_reported_cases <- shifted_reported_cases[
+    ,
+    confirm := ceiling(confirm)
   ]
   shifted_reported_cases <- shifted_reported_cases[-(1:smoothing_window)]
   return(shifted_reported_cases)
@@ -270,7 +210,6 @@ create_future_rt <- function(future = c("latest", "project", "estimate"),
 #' }
 create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
                            delay = 0, horizon = 0) {
-
   # Define if GP is on or off
   if (is.null(rt)) {
     rt <- rt_opts(
@@ -303,7 +242,7 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
         breakpoints[(max_bps + 1):length(breakpoints)] <- breakpoints[max_bps]
       }
     }
-  }else {
+  } else {
     breakpoints <- cumsum(breakpoints)
   }
 
@@ -315,15 +254,13 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
 
   # map settings to underlying gp stan requirements
   rt_data <- list(
-    r_mean = rt$prior$mean,
-    r_sd = rt$prior$sd,
     estimate_r = as.numeric(rt$use_rt),
     bp_n = ifelse(rt$use_breakpoints, max(breakpoints) - 1, 0),
     breakpoints = breakpoints,
-    future_fixed =  as.numeric(future_rt$fixed),
+    future_fixed = as.numeric(future_rt$fixed),
     fixed_from = future_rt$from,
     pop = rt$pop,
-    stationary =  as.numeric(rt$gp_on == "R0"),
+    stationary = as.numeric(rt$gp_on == "R0"),
     future_time = horizon - future_rt$from
   )
   return(rt_data)
@@ -343,15 +280,15 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
 #' @keywords internal
 create_backcalc_data <- function(backcalc = backcalc_opts()) {
   data <- list(
-   rt_half_window = as.integer((backcalc$rt_window - 1) / 2),
-   backcalc_prior = data.table::fcase(
-     backcalc$prior == "none", 0,
-     backcalc$prior == "reports", 1,
-     backcalc$prior == "infections", 2,
-     default = 0
-   )
- )
- return(data)
+    rt_half_window = as.integer((backcalc$rt_window - 1) / 2),
+    backcalc_prior = data.table::fcase(
+      backcalc$prior == "none", 0,
+      backcalc$prior == "reports", 1,
+      backcalc$prior == "infections", 2,
+      default = 0
+    )
+  )
+  return(data)
 }
 
 #' Create Gaussian Process Data
@@ -404,19 +341,6 @@ create_gp_data <- function(gp = gp_opts(), data) {
     time <- time - 1
   }
 
-  obs_time <- data$t - data$seeding_time
-  if (gp$ls_max > obs_time) {
-    gp$ls_max <- obs_time
-  }
-
-  times <- seq_len(time)
-
-  rescaled_times <- (times - mean(times)) / sd(times)
-  gp$ls_mean <- gp$ls_mean / sd(times)
-  gp$ls_sd <- gp$ls_sd / sd(times)
-  gp$ls_min <- gp$ls_min / sd(times)
-  gp$ls_max <- gp$ls_max /  sd(times)
-
   # basis functions
   M <- ceiling(time * gp$basis_prop)
 
@@ -424,13 +348,7 @@ create_gp_data <- function(gp = gp_opts(), data) {
   gp_data <- list(
     fixed = as.numeric(fixed),
     M = M,
-    L = gp$boundary_scale * max(rescaled_times),
-    ls_meanlog = convert_to_logmean(gp$ls_mean, gp$ls_sd),
-    ls_sdlog = convert_to_logsd(gp$ls_mean, gp$ls_sd),
-    ls_min = gp$ls_min,
-    ls_max = gp$ls_max,
-    alpha_mean = gp$alpha_mean,
-    alpha_sd = gp$alpha_sd,
+    L = gp$boundary_scale,
     gp_type = data.table::fcase(
       gp$kernel == "se", 0,
       gp$kernel == "periodic", 1,
@@ -468,7 +386,8 @@ create_gp_data <- function(gp = gp_opts(), data) {
 #'
 #' # Applying a observation scaling to the data
 #' create_obs_model(
-#'  obs_opts(scale = list(mean = 0.4, sd = 0.01)), dates = dates
+#'   obs_opts(scale = Normal(mean = 0.4, sd = 0.01)),
+#'   dates = dates
 #' )
 #'
 #' # Apply a custom week week length
@@ -477,14 +396,9 @@ create_gp_data <- function(gp = gp_opts(), data) {
 create_obs_model <- function(obs = obs_opts(), dates) {
   data <- list(
     model_type = as.numeric(obs$family == "negbin"),
-    phi_mean = obs$phi$mean,
-    phi_sd = obs$phi$sd,
     week_effect = ifelse(obs$week_effect, obs$week_length, 1),
     obs_weight = obs$weight,
-    obs_scale = as.integer(obs$scale$sd > 0 || obs$scale$mean != 1),
-    obs_scale_mean = obs$scale$mean,
-    obs_scale_sd = obs$scale$sd,
-    accumulate = obs$accumulate,
+    obs_scale = as.integer(obs$scale != Fixed(1)),
     likelihood = as.numeric(obs$likelihood),
     return_likelihood = as.numeric(obs$return_likelihood)
   )
@@ -493,6 +407,7 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 
   return(data)
 }
+
 #' Create Stan Data Required for estimate_infections
 #'
 #' @description`r lifecycle::badge("stable")`
@@ -518,27 +433,32 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 #' @examples
 #' \dontrun{
 #' create_stan_data(
-#'  example_confirmed, 7, rt_opts(), gp_opts(), obs_opts(), 7,
-#'  backcalc_opts(), create_shifted_cases(example_confirmed, 7, 14, 7)
+#'   example_confirmed, 7, rt_opts(), gp_opts(), obs_opts(), 7,
+#'   backcalc_opts(), create_shifted_cases(example_confirmed, 7, 14, 7)
 #' )
 #' }
-create_stan_data <- function(data, seeding_time,
-                             rt, gp, obs, horizon,
-                             backcalc, shifted_cases) {
-
-  cases <- data[(seeding_time + 1):(.N - horizon)]
-  complete_cases <- create_complete_cases(cases)
-  cases <- cases$confirm
+create_stan_data <- function(data, seeding_time, rt, gp, obs, backcalc,
+                             shifted_cases, forecast) {
+  cases <- data[(seeding_time + 1):.N]
+  cases[, lookup := seq_len(.N)]
+  case_times <- cases[!is.na(confirm), lookup]
+  imputed_times <- cases[!(accumulate), lookup]
+  accumulate <- cases$accumulate
+  confirmed_cases <- cases[1:(.N - forecast$horizon)]$confirm
 
   stan_data <- list(
-    cases = complete_cases$confirm,
-    cases_time = complete_cases$lookup,
-    lt = nrow(complete_cases),
+    cases = confirmed_cases[!is.na(confirmed_cases)],
+    any_accumulate = as.integer(any(accumulate)),
+    case_times = as.integer(case_times),
+    imputed_times = as.integer(imputed_times),
+    accumulate = as.integer(accumulate),
+    lt = length(case_times),
+    it = length(imputed_times),
     shifted_cases = shifted_cases,
     t = length(data$date),
-    horizon = horizon,
     burn_in = 0,
-    seeding_time = seeding_time
+    seeding_time = seeding_time,
+    horizon = forecast$horizon
   )
   # add Rt data
   stan_data <- c(
@@ -548,28 +468,6 @@ create_stan_data <- function(data, seeding_time,
       delay = stan_data$seeding_time, horizon = stan_data$horizon
     )
   )
-  # initial estimate of growth
-  first_week <- data.table::data.table(
-    confirm = cases[seq_len(min(7, length(cases)))],
-    t = seq_len(min(7, length(cases)))
-  )[!is.na(confirm)]
-  stan_data$prior_infections <- log(mean(first_week$confirm, na.rm = TRUE))
-  stan_data$prior_infections <- ifelse(
-    is.na(stan_data$prior_infections) || is.null(stan_data$prior_infections),
-    0, stan_data$prior_infections
-  )
-  if (stan_data$seeding_time > 1 && nrow(first_week) > 1) {
-    safe_lm <- purrr::safely(stats::lm)
-    stan_data$prior_growth <- safe_lm(log(confirm) ~ t,
-      stan_data = first_week
-    )[[1]]
-    stan_data$prior_growth <- ifelse(is.null(stan_data$prior_growth), 0,
-      stan_data$prior_growth$coefficients[2]
-    )
-  } else {
-    stan_data$prior_growth <- 0
-  }
-
   # backcalculation settings
   stan_data <- c(stan_data, create_backcalc_data(backcalc))
   # gaussian process data
@@ -584,15 +482,29 @@ create_stan_data <- function(data, seeding_time,
     )
   )
 
+  # parameters
+  stan_data <- c(
+    stan_data,
+    create_stan_params(
+      alpha = gp$alpha,
+      rho = gp$ls,
+      R0 = rt$prior,
+      frac_obs = obs$scale,
+      dispersion = obs$dispersion,
+      lower_bounds = c(
+        alpha = 0,
+        rho = 0,
+        R0 = 0,
+        frac_obs = 0,
+        dispersion = 0
+      )
+    )
+  )
+
   # rescale mean shifted prior for back calculation if observation scaling is
   # used
-  if (stan_data$obs_scale == 1) {
-    stan_data$shifted_cases <-
-      stan_data$shifted_cases / stan_data$obs_scale_mean
-    stan_data$prior_infections <- log(
-      exp(stan_data$prior_infections) / stan_data$obs_scale_mean
-    )
-  }
+  stan_data$shifted_cases <-
+    stan_data$shifted_cases / mean(obs$scale)
   return(stan_data)
 }
 
@@ -632,44 +544,16 @@ create_initial_conditions <- function(data) {
 
     if (data$fixed == 0) {
       out$eta <- array(rnorm(
-        ifelse(data$gp_type == 1, data$M * 2, data$M), mean = 0, sd = 0.1))
-      out$rescaled_rho <- array(rlnorm(1,
-        meanlog = data$ls_meanlog,
-        sdlog = ifelse(data$ls_sdlog > 0, data$ls_sdlog, 0.01)
+        ifelse(data$gp_type == 1, data$M * 2, data$M),
+        mean = 0, sd = 0.1
       ))
-      out$rescaled_rho <- array(data.table::fcase(
-        out$rescaled_rho > data$ls_max, data$ls_max - 0.001,
-        out$rescaled_rho < data$ls_min, data$ls_min + 0.001,
-        default = out$rescaled_rho
-      ))
-
-      out$alpha <- array(
-        truncnorm::rtruncnorm(
-          1, a = 0, mean = data$alpha_mean, sd = data$alpha_sd
-        )
-      )
     } else {
       out$eta <- array(numeric(0))
-      out$rescaled_rho <- array(numeric(0))
-      out$alpha <- array(numeric(0))
-    }
-    if (data$model_type == 1) {
-      out$rep_phi <- array(
-        truncnorm::rtruncnorm(
-          1,
-          a = 0, mean = data$phi_mean, sd = data$phi_sd
-        )
-      )
     }
     if (data$estimate_r == 1) {
-      out$initial_infections <- array(rnorm(1, data$prior_infections, 0.2))
-      if (data$seeding_time > 1) {
-        out$initial_growth <- array(rnorm(1, data$prior_growth, 0.02))
-      }
-      out$log_R <- array(rnorm(
-        n = 1, mean = convert_to_logmean(data$r_mean, data$r_sd),
-        sd = convert_to_logsd(data$r_mean, data$r_sd)
-      ))
+      out$initial_infections <- array(rnorm(1))
+    } else {
+      out$initial_infections <- array(numeric(0))
     }
 
     if (data$bp_n > 0) {
@@ -679,20 +563,17 @@ create_initial_conditions <- function(data) {
       out$bp_sd <- array(numeric(0))
       out$bp_effects <- array(numeric(0))
     }
-    if (data$obs_scale_sd > 0) {
-      out$frac_obs <- array(truncnorm::rtruncnorm(1,
-        a = 0, b = 1,
-        mean = data$obs_scale_mean,
-        sd = data$obs_scale_sd
-      ))
-    } else {
-      out$frac_obs <- array(numeric(0))
-    }
     if (data$week_effect > 0) {
       out$day_of_week_simplex <- array(
         rep(1 / data$week_effect, data$week_effect)
       )
     }
+    out$params <- array(truncnorm::rtruncnorm(
+      data$n_params_variable,
+      a = data$params_lower,
+      b = data$params_upper,
+      mean = 0, sd = 1
+    ))
     return(out)
   }
   return(init_fun)
@@ -758,7 +639,7 @@ create_stan_args <- function(stan = stan_opts(),
   }
   # cmdstanr doesn't have an init = "random" argument
   if (is.character(init) && init == "random" &&
-      inherits(stan$object, "CmdStanModel")) {
+    inherits(stan$object, "CmdStanModel")) {
     init <- 2
   }
   # set up shared default arguments
@@ -860,7 +741,8 @@ create_stan_delays <- function(..., time_points = 1L) {
   ))))
   ## assign prior weights
   weight_priors <- vapply(
-    delays[parametric], attr, "weight_prior", FUN.VALUE = logical(1)
+    delays[parametric], attr, "weight_prior",
+    FUN.VALUE = logical(1)
   )
   ret$weight <- array(rep(1, ret$n_p))
   ret$weight[weight_priors] <- time_points
@@ -870,5 +752,96 @@ create_stan_delays <- function(..., time_points = 1L) {
   names(ret) <- paste("delay", names(ret), sep = "_")
   ret <- c(ret, ids)
 
+  return(ret)
+}
+
+##' Create parameters for stan
+##'
+##' @param ... Named delay distributions. The names are assigned to IDs
+##' @param lower_bounds Named vector of lower bounds for any delay(s). The names
+##' have to correspond to the names given to the delay distributions passed.
+##' If `NULL` (default) no parameters are given a lower bound.
+##' @return A list of variables as expected by the stan model
+##' @importFrom data.table fcase
+##' @keywords internal
+create_stan_params <- function(..., lower_bounds = NULL) {
+  params <- list(...)
+
+  ## set IDs of any parameters that is NULL to 0 and remove
+  null_params <- vapply(params, is.null, logical(1))
+  null_ids <- rep(0, sum(null_params))
+  if (length(null_ids) > 0) {
+    names(null_ids) <- paste(names(null_params)[null_params], "id", sep = "_")
+    params <- params[!null_params]
+  }
+
+  ## initialise variables
+  params_fixed_lookup <- rep(0L, length(params))
+  params_variable_lookup <- rep(0L, length(params))
+
+  ## identify fixed/variable parameters
+  fixed <- vapply(params, get_distribution, character(1)) == "fixed"
+  params_fixed_lookup[fixed] <- seq_along(which(fixed))
+  params_variable_lookup[!fixed] <- seq_along(which(!fixed))
+
+  ## lower bounds
+  params_lower <- rep(-Inf, length(params[!fixed]))
+  names(params_lower) <- names(params[!fixed])
+  lower_bounds <- lower_bounds[names(params_lower)]
+  params_lower[names(lower_bounds)] <- lower_bounds
+
+  ## upper bounds
+  params_upper <- vapply(params[!fixed], max, numeric(1))
+
+  ## prior distributions
+  prior_dist_name <- vapply(params[!fixed], get_distribution, character(1))
+  prior_dist <- fcase(
+    prior_dist_name == "lognormal", 0L,
+    prior_dist_name == "gamma", 1L,
+    prior_dist_name == "normal", 2L
+  )
+  ## parameters
+  prior_dist_params <- lapply(params[!fixed], get_parameters)
+  prior_dist_params_lengths <- lengths(prior_dist_params)
+
+  ## check none of the parameters are uncertain
+  prior_uncertain <- vapply(prior_dist_params, function(x) {
+    !all(vapply(x, is.numeric, logical(1)))
+  }, logical(1))
+  if (any(prior_uncertain)) {
+    uncertain_priors <- names(params[!fixed])[prior_uncertain] # nolint: object_usage_linter
+    cli_abort(
+      c(
+        "!" = "Parameter prior distribution{?s} for {.var {uncertain_priors}}
+        cannot have uncertain parameters."
+      )
+    )
+  }
+
+  prior_dist_params <- unlist(prior_dist_params)
+  if (is.null(prior_dist_params)) {
+    prior_dist_params <- numeric(0)
+  }
+
+  ## extract distributions and parameters
+  ret <- list(
+    n_params_variable = length(params) - sum(fixed),
+    n_params_fixed = sum(fixed),
+    params_lower = array(params_lower),
+    params_upper = array(params_upper),
+    params_fixed_lookup = array(params_fixed_lookup),
+    params_variable_lookup = array(params_variable_lookup),
+    params_value = array(vapply(
+      params[fixed], function(x) get_parameters(x)$value, numeric(1)
+    )),
+    prior_dist = array(prior_dist),
+    prior_dist_params_length = sum(prior_dist_params_lengths),
+    prior_dist_params = array(prior_dist_params)
+  )
+  ids <- seq_along(params)
+  if (length(ids) > 0) {
+    names(ids) <- paste(names(params), "id", sep = "_")
+  }
+  ret <- c(ret, as.list(ids), as.list(null_ids))
   return(ret)
 }

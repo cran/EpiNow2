@@ -292,26 +292,26 @@ Gaussian Process used in <code>EpiNow2</code>.</p>
 </div>
 <div id="definition" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Definition</h1>
-<p>The single dimension Gaussian Processes (<span class="math inline">\(\mathrm{GP}_t\)</span>) we use can be written
+<p>The one-dimensional Gaussian Processes (<span class="math inline">\(\mathrm{GP}_t\)</span>) we use can be written
 as</p>
 <p><span class="math display">\[\begin{equation}
-\mathcal{GP}(\mu(t), k(t, t&#39;))
+\mathrm{GP}(\mu(t), k(t, t&#39;))
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(\mu(t)\)</span> and <span class="math inline">\(k(t,t&#39;)\)</span> are the mean and covariance
 functions, respectively. In our case as set out above, we have</p>
-<p><span class="math display">\[\begin{equation}
-\mu(t) \equiv 0 \\
-k(t,t&#39;) = k(|t - t&#39;|) = k(\Delta t)
-\end{equation}\]</span></p>
+<p><span class="math display">\[\begin{align}
+\mu(t) &amp;\equiv 0 \\
+k(t,t&#39;) &amp;= k(|t - t&#39;|) = k(\Delta t)
+\end{align}\]</span></p>
 <p>with the following choices available for the kernel <span class="math inline">\(k\)</span></p>
 <div id="matérn-32-covariance-kernel-the-default" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Matérn 3/2 covariance
 kernel (the default)</h2>
 <p><span class="math display">\[\begin{equation}
-k(\Delta t) = \alpha^2 \left( 1 + \frac{\sqrt{3} \Delta t}{l} \right)
-\exp \left( - \frac{\sqrt{3} \Delta t}{l}\right)
+k(\Delta t) = \alpha^2 \left( 1 + \frac{\sqrt{3} \Delta t}{\rho} \right)
+\exp \left( - \frac{\sqrt{3} \Delta t}{\rho}\right)
 \end{equation}\]</span></p>
-<p>with <span class="math inline">\(l&gt;0\)</span> and <span class="math inline">\(\alpha &gt; 0\)</span> the length scale and
+<p>with <span class="math inline">\(\rho&gt;0\)</span> and <span class="math inline">\(\alpha &gt; 0\)</span> the length scale and
 magnitude, respectively, of the kernel. Note that here and later we use
 a slightly different definition of <span class="math inline">\(\alpha\)</span> compared to Riutort-Mayol et
 al.<span class="citation"><sup>[1]</sup></span>, where this is defined
@@ -329,16 +329,16 @@ t^2)}{l^2} \right)
 <h2><span class="header-section-number">2.3</span> Ornstein-Uhlenbeck
 (Matérn 1/2) kernel</h2>
 <p><span class="math display">\[\begin{equation}
-k(\Delta t) = \alpha^2 \exp{\left( - \frac{\Delta t}{2 l^2}  \right)}
+k(\Delta t) = \alpha^2 \exp{\left( - \frac{\Delta t}{2 \rho^2}  \right)}
 \end{equation}\]</span></p>
 </div>
 <div id="matérn-52-covariance-kernel" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Matérn 5/2 covariance
 kernel</h2>
 <p><span class="math display">\[\begin{equation}
-k(\Delta t) = \alpha \left( 1 + \frac{\sqrt{5} \Delta t}{l} +
+k(\Delta t) = \alpha \left( 1 + \frac{\sqrt{5} \Delta t}{\rho} +
 \frac{5}{3} \left(\frac{\Delta t}{l} \right)^2 \right) \exp \left( -
-\frac{\sqrt{5} \Delta t}{l}\right)
+\frac{\sqrt{5} \Delta t}{\rho}\right)
 \end{equation}\]</span></p>
 </div>
 </div>
@@ -350,7 +350,7 @@ the Gaussian Process using a Hilbert space approximation to the Gaussian
 Process<span class="citation"><sup>[1]</sup></span>, centered around
 mean zero.</p>
 <p><span class="math display">\[\begin{equation}
-\mathcal{GP}(0, k(\Delta t)) \approx \sum_{j=1}^m
+\mathrm{GP}(0, k(\Delta t)) \approx \sum_{j=1}^m
 \left(S_k(\sqrt{\lambda_j}) \right)^\frac{1}{2} \phi_j(t) \beta_j
 \end{equation}\]</span></p>
 <p>with <span class="math inline">\(m\)</span> the number of basis
@@ -370,7 +370,7 @@ by</p>
 termed boundary condition, and <span class="math inline">\(\beta_{j}\)</span> are regression weights with
 standard normal prior</p>
 <p><span class="math display">\[\begin{equation}
-\beta_j \sim \mathcal{Normal}(0, 1)
+\beta_j \sim \mathrm{Normal}(0, 1)
 \end{equation}\]</span></p>
 <p>The function <span class="math inline">\(S_k(x)\)</span> is the
 spectral density relating to a particular covariance function <span class="math inline">\(k\)</span>. In the case of the Matérn kernel of
@@ -416,26 +416,21 @@ L)\right)
 <p><span class="math display">\[\begin{equation}
 t^* = \frac{t - \frac{1}{2}t_\mathrm{GP}}{\frac{1}{2}t_\mathrm{GP}}
 \end{equation}\]</span></p>
-<p>Relevant priors are</p>
+<p>Relevant default priors are</p>
 <p><span class="math display">\[\begin{align}
-\alpha &amp;\sim \mathcal{Normal}(\mu_\alpha, \sigma_{\alpha}) \\
-\rho   &amp;\sim \mathcal{LogNormal} (\mu_\rho, \sigma_\rho)\\
+\alpha &amp;\sim \mathrm{HalfNormal}(0, 0.01) \\
+\rho   &amp;\sim \mathrm{LogNormal} (\mu_\rho, \sigma_\rho)\\
 \end{align}\]</span></p>
 <p>with <span class="math inline">\(\rho\)</span> additionally
-constrained to be between <span class="math inline">\(\rho_\mathrm{min}\)</span> and <span class="math inline">\(\rho_\mathrm{max}\)</span>, <span class="math inline">\(\mu_{\rho}\)</span> and <span class="math inline">\(\sigma_\rho\)</span> calculated from given mean
-<span class="math inline">\(m_{\rho}\)</span> and standard deviation
-<span class="math inline">\(s_\rho\)</span>, and default values (all of
-which can be changed by the user):</p>
+constrained with an upper bound of <span class="math inline">\(60\)</span> and <span class="math inline">\(\mu_{\rho}\)</span> and <span class="math inline">\(\sigma_\rho\)</span> calculated using a mean of 21
+and standard deviation of 7.</p>
+<p>Furthermore, by default we set.</p>
 <p><span class="math display">\[\begin{align}
 b &amp;= 0.2 \\
-L &amp;= 1.5 \\
-m_\rho &amp;= 21 \\
-s_\rho &amp;= 7 \\
-\rho_\mathrm{min} &amp;= 0\\
-\rho_\mathrm{max} &amp;= 60\\
-\mu_\alpha &amp;= 0\\
-\sigma_\alpha &amp;= 0.01
+L &amp;= 1.5
 \end{align}\]</span></p>
+<p>These values as well as the prior distributions of relevant
+parameters can all be changed by the user.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>

@@ -46,10 +46,12 @@ extract_parameter <- function(param, samples, dates) {
 #' value
 #' @keywords internal
 extract_static_parameter <- function(param, samples) {
+  id <- samples[[paste(param, "id", sep = "_")]]
+  lookup <- samples[["params_variable_lookup"]][id]
   data.table::data.table(
     parameter = param,
-    sample = seq_along(samples[[param]]),
-    value = samples[[param]]
+    sample = seq_along(samples[["params"]][, lookup]),
+    value = samples[["params"]][, lookup]
   )
 }
 
@@ -76,7 +78,7 @@ extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
     return(do.call(rstan::extract, args))
   }
   if (!inherits(stan_fit, "CmdStanMCMC") &&
-      !inherits(stan_fit, "CmdStanFit")) {
+    !inherits(stan_fit, "CmdStanFit")) {
     cli_abort(
       "{.var stan_fit} must be a {.cls stanfit}, {.cls CmdStanMCMC} or
       {.cls CmdStanFit} object."
@@ -89,21 +91,25 @@ extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
     pars <- setdiff(all_pars, pars)
   }
   samples_df <- data.table::data.table(stan_fit$draws(
-    variables = pars, format = "df")
-  )
+    variables = pars, format = "df"
+  ))
   # convert to rstan format
   samples_df <- suppressWarnings(data.table::melt(
-    samples_df, id.vars = c(".chain", ".iteration", ".draw")
+    samples_df,
+    id.vars = c(".chain", ".iteration", ".draw")
   ))
-  samples_df <- samples_df[,
+  samples_df <- samples_df[
+    ,
     index := sub("^.*\\[([0-9,]+)\\]$", "\\1", variable)
-  ][,
+  ][
+    ,
     variable := sub("\\[.*$", "", variable)
   ]
   samples <- split(samples_df, by = "variable")
-  samples <- purrr::map(samples, \(df) {
+  samples <- purrr::map(samples, function(df) {
     permutation <- sample(
-      seq_len(max(df$.draw)), max(df$.draw), replace = FALSE
+      seq_len(max(df$.draw)), max(df$.draw),
+      replace = FALSE
     )
     df <- df[, new_draw := permutation[.draw]]
     setkey(df, new_draw)
@@ -137,7 +143,9 @@ extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
 #'
 #' @param reported_dates A vector of dates to report estimates for.
 #'
-#' @param reported_inf_dates A vector of dates to report infection estimates
+#' @param imputed_dates A vector of dates to report imputed reports for.
+#'
+##' @param reported_inf_dates A vector of dates to report infection estimates
 #' for.
 #'
 #' @param drop_length_1 Logical; whether the first dimension should be dropped
@@ -153,7 +161,7 @@ extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
 #' @importFrom data.table data.table
 #' @keywords internal
 extract_parameter_samples <- function(stan_fit, data, reported_dates,
-                                      reported_inf_dates,
+                                      imputed_dates, reported_inf_dates,
                                       drop_length_1 = FALSE, merge = FALSE) {
   # extract sample from stan object
   samples <- extract_samples(stan_fit)
@@ -184,7 +192,7 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
   out$reported_cases <- extract_parameter(
     "imputed_reports",
     samples,
-    reported_dates
+    imputed_dates
   )
   if ("estimate_r" %in% names(data)) {
     if (data$estimate_r == 1) {
@@ -224,8 +232,9 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
       1:data$week_effect
     )
     out$day_of_week <- out$day_of_week[, value := value * data$week_effect]
-    out$day_of_week <- out$day_of_week[, strat := date][,
-     c("time", "date") := NULL
+    out$day_of_week <- out$day_of_week[, strat := date][
+      ,
+      c("time", "date") := NULL
     ]
   }
   if (data$delay_n_p > 0) {
@@ -233,22 +242,18 @@ extract_parameter_samples <- function(stan_fit, data, reported_dates,
       "delay_params", samples, seq_len(data$delay_params_length)
     )
     out$delay_params <-
-      out$delay_params[, strat := as.character(time)][, time := NULL][,
+      out$delay_params[, strat := as.character(time)][, time := NULL][
+        ,
         date := NULL
       ]
   }
   if (data$model_type == 1) {
-    out$reporting_overdispersion <- extract_static_parameter("rep_phi", samples)
-    out$reporting_overdispersion <- out$reporting_overdispersion[,
-     value := value.V1][,
-      value.V1 := NULL
-    ]
+    out$reporting_overdispersion <- extract_static_parameter(
+      "dispersion", samples
+    )
   }
   if ("obs_scale_sd" %in% names(data) && data$obs_scale_sd > 0) {
     out$fraction_observed <- extract_static_parameter("frac_obs", samples)
-    out$fraction_observed <- out$fraction_observed[, value := value.V1][,
-      value.V1 := NULL
-    ]
   }
   return(out)
 }
@@ -307,7 +312,7 @@ extract_stan_param <- function(fit, params = NULL,
   } else if (inherits(fit, "CmdStanMCMC")) { # cmdstanr backend
     summary <- fit$summary(
       variable = params,
-      mean, mcse_mean, sd, ~quantile(.x, probs = sym_CrIs)
+      mean, mcse_mean, sd, ~ quantile(.x, probs = sym_CrIs)
     )
     if (!var_names) summary$variable <- NULL
     summary <- data.table::as.data.table(summary)

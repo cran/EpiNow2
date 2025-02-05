@@ -65,7 +65,8 @@ vector diagSPD_Matern32(real alpha, real rho, real L, int M) {
 vector diagSPD_Matern52(real alpha, real rho, real L, int M) {
   vector[M] indices = linspaced_vector(M, 1, M);
   real factor = 3 * pow(sqrt(5) / rho, 5);
-  vector[M] denom = 2 * pow((sqrt(5) / rho)^2 + pow((pi() / 2 / L) * indices, 2), 3);
+  vector[M] denom =
+    2 * pow((sqrt(5) / rho)^2 + pow((pi() / 2 / L) * indices, 2), 3);
   return alpha * sqrt(factor * inv(denom));
 }
 
@@ -80,7 +81,10 @@ vector diagSPD_Matern52(real alpha, real rho, real L, int M) {
 vector diagSPD_Periodic(real alpha, real rho, int M) {
   real a = inv_square(rho);
   vector[M] indices = linspaced_vector(M, 1, M);
-  vector[M] q = exp(log(alpha) + 0.5 * (log(2) - a + to_vector(log_modified_bessel_first_kind(indices, a))));
+  vector[M] q = exp(
+    log(alpha) + 0.5 *
+      (log(2) - a + to_vector(log_modified_bessel_first_kind(indices, a)))
+  );
   return append_row(q, q);
 }
 
@@ -94,7 +98,11 @@ vector diagSPD_Periodic(real alpha, real rho, int M) {
   * @return A matrix of basis functions
   */
 matrix PHI(int N, int M, real L, vector x) {
-  matrix[N, M] phi = sin(diag_post_multiply(rep_matrix(pi() / (2 * L) * (x + L), M), linspaced_vector(M, 1, M))) / sqrt(L);
+  matrix[N, M] phi = sin(
+    diag_post_multiply(
+      rep_matrix(pi() / (2 * L) * (x + L), M), linspaced_vector(M, 1, M)
+    )
+  ) / sqrt(L);
   return phi;
 }
 
@@ -108,7 +116,9 @@ matrix PHI(int N, int M, real L, vector x) {
   * @return A matrix of basis functions
   */
 matrix PHI_periodic(int N, int M, real w0, vector x) {
-  matrix[N, M] mw0x = diag_post_multiply(rep_matrix(w0 * x, M), linspaced_vector(M, 1, M));
+  matrix[N, M] mw0x = diag_post_multiply(
+    rep_matrix(w0 * x, M), linspaced_vector(M, 1, M)
+  );
   return append_col(cos(mw0x), sin(mw0x));
 }
 
@@ -127,7 +137,8 @@ matrix PHI_periodic(int N, int M, real w0, vector x) {
 int setup_noise(int ot_h, int t, int horizon, int estimate_r,
                 int stationary, int future_fixed, int fixed_from) {
   int noise_time = estimate_r > 0 ? (stationary > 0 ? ot_h : ot_h - 1) : t;
-  int noise_terms = future_fixed > 0 ? (noise_time - horizon + fixed_from) : noise_time;
+  int noise_terms =
+    future_fixed > 0 ? (noise_time - horizon + fixed_from) : noise_time;
   return noise_terms;
 }
 
@@ -143,7 +154,7 @@ int setup_noise(int ot_h, int t, int horizon, int estimate_r,
   */
 matrix setup_gp(int M, real L, int dimension, int is_periodic, real w0) {
   vector[dimension] x = linspaced_vector(dimension, 1, dimension);
-  x = (x - mean(x)) / sd(x);
+  x = 2 * (x - mean(x)) / (max(x) - 1);
   if (is_periodic) {
     return PHI_periodic(dimension, M, w0, x);
   } else {
@@ -165,21 +176,21 @@ matrix setup_gp(int M, real L, int dimension, int is_periodic, real w0) {
   * @return A vector of updated noise terms
   */
 vector update_gp(matrix PHI, int M, real L, real alpha,
-                  array[] real rho, vector eta, int type, real nu) {
+                 real rho, vector eta, int type, real nu) {
   vector[type == 1 ? 2 * M : M] diagSPD;    // spectral density
 
   // GP in noise - spectral densities
   if (type == 0) {
-    diagSPD = diagSPD_EQ(alpha, rho[1], L, M);
+    diagSPD = diagSPD_EQ(alpha, rho, L, M);
   } else if (type == 1) {
-    diagSPD = diagSPD_Periodic(alpha, rho[1], M);
+    diagSPD = diagSPD_Periodic(alpha, rho, M);
   } else if (type == 2) {
     if (nu == 0.5) {
-      diagSPD = diagSPD_Matern12(alpha, rho[1], L, M);
+      diagSPD = diagSPD_Matern12(alpha, rho, L, M);
     } else if (nu == 1.5) {
-      diagSPD = diagSPD_Matern32(alpha, rho[1], L, M);
+      diagSPD = diagSPD_Matern32(alpha, rho, L, M);
     } else if (nu == 2.5) {
-      diagSPD = diagSPD_Matern52(alpha, rho[1], L, M);
+      diagSPD = diagSPD_Matern52(alpha, rho, L, M);
     } else {
       reject("nu must be one of 1/2, 3/2 or 5/2; found nu=", nu);
     }
@@ -188,33 +199,10 @@ vector update_gp(matrix PHI, int M, real L, real alpha,
 }
 
 /**
-  * Prior for Gaussian process length scale
-  *
-  * @param rho Length scale parameter
-  * @param ls_meanlog Mean of the log of the length scale
-  * @param ls_sdlog Standard deviation of the log of the length scale
-  * @param ls_min Minimum length scale
-  * @param ls_max Maximum length scale
-  */
-void lengthscale_lp(real rho, real ls_meanlog, real ls_sdlog,
-                    real ls_min, real ls_max) {
-  if (ls_sdlog > 0) {
-    rho ~ lognormal(ls_meanlog, ls_sdlog) T[ls_min, ls_max];
-  } else {
-    rho ~ inv_gamma(1.499007, 0.057277 * ls_max) T[ls_min, ls_max];
-  }
-}
-
-/**
   * Priors for Gaussian process (excluding length scale)
   *
-  * @param alpha Scaling parameter
   * @param eta Vector of noise terms
-  * @param alpha_mean Mean of alpha
-  * @param alpha_sd Standard deviation of alpha
   */
-void gaussian_process_lp(real alpha, vector eta, real alpha_mean, 
-                         real alpha_sd) {
-  alpha ~ normal(alpha_mean, alpha_sd) T[0,];
+void gaussian_process_lp(vector eta) {
   eta ~ std_normal();
 }

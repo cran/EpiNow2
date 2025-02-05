@@ -97,7 +97,7 @@ example_generation_time
 Lastly we need to choose a prior for the initial value of the reproduction number. This is assumed by the model to be normally distributed and we can set the mean and the standard deviation. We decide to set the mean to 2 and the standard deviation to 1.
 
 ```{r initial_r}
-rt_prior <- list(mean = 2, sd = 0.1)
+rt_prior <- LogNormal(mean = 2, sd = 0.1)
 ```
 
 # Running the model
@@ -172,8 +172,8 @@ Here, instead of doing so we assume that we know about truncation with mean of 1
 
 ```{r define_truncation}
 trunc_dist <- LogNormal(
-  mean = Normal(0.5, 0.1),
-  sd = Normal(0.5, 0.1),
+  mean = 0.5,
+  sd = 0.5,
   max = 3
 )
 trunc_dist
@@ -315,7 +315,7 @@ non_parametric <- estimate_infections(reported_cases,
   delays = delay_opts(delay),
   rt = NULL,
   backcalc = backcalc_opts(),
-  horizon = 0
+  forecast = forecast_opts(horizon = 0)
 )
 # summarise results
 summary(non_parametric)

@@ -46,19 +46,19 @@
 #' @export
 #' @examples
 #' \donttest{
-#'   R <- data.frame(
-#'     date = seq.Date(as.Date("2023-01-01"), length.out = 14, by = "day"),
-#'     R = c(rep(1.2, 7), rep(0.8, 7))
-#'   )
-#'   sim <- simulate_infections(
-#'     R = R,
-#'     initial_infections = 100,
-#'     generation_time = generation_time_opts(
-#'       fix_parameters(example_generation_time)
-#'     ),
-#'     delays = delay_opts(fix_parameters(example_reporting_delay)),
-#'     obs = obs_opts(family = "poisson")
-#'   )
+#' R <- data.frame(
+#'   date = seq.Date(as.Date("2023-01-01"), length.out = 14, by = "day"),
+#'   R = c(rep(1.2, 7), rep(0.8, 7))
+#' )
+#' sim <- simulate_infections(
+#'   R = R,
+#'   initial_infections = 100,
+#'   generation_time = generation_time_opts(
+#'     fix_parameters(example_generation_time)
+#'   ),
+#'   delays = delay_opts(fix_parameters(example_reporting_delay)),
+#'   obs = obs_opts(family = "poisson")
+#' )
 #' }
 simulate_infections <- function(estimates, R, initial_infections,
                                 day_of_week_effect = NULL,
@@ -105,25 +105,14 @@ simulate_infections <- function(estimates, R, initial_infections,
   if (missing(seeding_time)) {
     seeding_time <- sum(max(generation_time))
   }
-  if (seeding_time > 1) {
-    ## estimate initial growth from initial reproduction number if seeding time
-    ## is greater than 1
-    initial_growth <- (R$R[1] - 1) / mean(generation_time)
-    ## adjust initial infections for initial exponential growth
-    log_initial_infections <- log(initial_infections) -
-      (seeding_time - 1) * initial_growth
-  } else {
-    initial_growth <- numeric(0)
-    log_initial_infections <- log(initial_infections)
-  }
 
   data <- list(
     n = 1,
     t = nrow(R) + seeding_time,
     seeding_time = seeding_time,
     future_time = 0,
-    initial_infections = array(log_initial_infections, dim = c(1, 1)),
-    initial_growth = array(initial_growth, dim = c(1, length(initial_growth))),
+    initial_infections = array(log(initial_infections), dim = c(1, 1)),
+    initial_as_scale = 0,
     R = array(R$R, dim = c(1, nrow(R))),
     pop = pop
   )
@@ -144,15 +133,17 @@ simulate_infections <- function(estimates, R, initial_infections,
     )
   }
   data$delay_params <- array(
-    data$delay_params_mean, dim = c(1, length(data$delay_params_mean))
+    data$delay_params_mean,
+    dim = c(1, length(data$delay_params_mean))
   )
   data$delay_params_sd <- NULL
 
   data <- c(data, create_obs_model(
-    obs, dates = R$date
+    obs,
+    dates = R$date
   ))
 
-  if (data$obs_scale_sd > 0) {
+  if (get_distribution(obs$scale) != "fixed") {
     cli_abort(
       c(
         "!" = "Cannot simulate from uncertain observation scaling.",
@@ -160,29 +151,29 @@ simulate_infections <- function(estimates, R, initial_infections,
       )
     )
   }
-  if (data$obs_scale) {
-    data$frac_obs <- array(data$obs_scale_mean, dim = c(1, 1))
-  } else {
-    data$frac_obs <- array(dim = c(1, 0))
-  }
-  data$obs_scale_mean <- NULL
-  data$obs_scale_sd <- NULL
 
   if (obs$family == "negbin") {
-    if (data$phi_sd > 0) {
+    if (get_distribution(obs$dispersion) != "fixed") {
       cli_abort(
         c(
-          "!" = "Cannot simulate from uncertain overdispersion.",
-          "i" = "Use fixed overdispersion instead."
+          "!" = "Cannot simulate from uncertain dispersion.",
+          "i" = "Use fixed dispersion instead."
         )
       )
     }
-    data$rep_phi <- array(data$phi_mean, dim = c(1, 1))
   } else {
-    data$rep_phi <- array(dim = c(1, 0))
+    obs$dispersion <- NULL
   }
-  data$phi_mean <- NULL
-  data$phi_sd <- NULL
+
+  data <- c(data, create_stan_params(
+    alpha = NULL,
+    rho = NULL,
+    R0 = NULL,
+    frac_obs = obs$scale,
+    dispersion = obs$dispersion
+  ))
+  ## set empty params matrix - variable parameters not supported here
+  data$params <- array(dim = c(1, 0))
 
   ## day of week effect
   if (is.null(day_of_week_effect)) {
@@ -191,13 +182,15 @@ simulate_infections <- function(estimates, R, initial_infections,
 
   day_of_week_effect <- day_of_week_effect / sum(day_of_week_effect)
   data$day_of_week_simplex <- array(
-    day_of_week_effect, dim = c(1, data$week_effect)
+    day_of_week_effect,
+    dim = c(1, data$week_effect)
   )
 
   # Create stan arguments
   stan <- stan_opts(backend = backend, chains = 1, samples = 1, warmup = 1)
   args <- create_stan_args(
-    stan, data = data, fixed_param = TRUE, model = "simulate_infections",
+    stan,
+    data = data, fixed_param = TRUE, model = "simulate_infections",
     verbose = FALSE
   )
 
@@ -212,11 +205,12 @@ simulate_infections <- function(estimates, R, initial_infections,
   out <- extract_parameter_samples(sim, data,
     reported_inf_dates = dates,
     reported_dates = dates[-(1:seeding_time)],
+    imputed_dates = dates[-(1:seeding_time)],
     drop_length_1 = TRUE
   )
 
   out <- rbindlist(out[c("infections", "reported_cases")], idcol = "variable")
-  out <- out[, c("sample", "parameter", "time") :=  NULL]
+  out <- out[, c("sample", "parameter", "time") := NULL]
 
   return(out[])
 }
@@ -278,9 +272,10 @@ simulate_infections <- function(estimates, R, initial_infections,
 #' est <- estimate_infections(reported_cases,
 #'   generation_time = generation_time_opts(example_generation_time),
 #'   delays = delay_opts(example_incubation_period + example_reporting_delay),
-#'   rt = rt_opts(prior = list(mean = 2, sd = 0.1), rw = 7),
-#'   obs = obs_opts(scale = list(mean = 0.1, sd = 0.01)),
-#'   gp = NULL, horizon = 0
+#'   rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1), rw = 7),
+#'   obs = obs_opts(scale = Normal(mean = 0.1, sd = 0.01)),
+#'   gp = NULL,
+#'   forecast = forecast_opts(horizon = 0)
 #' )
 #'
 #' # update Rt trajectory and simulate new infections using it
@@ -301,9 +296,10 @@ simulate_infections <- function(estimates, R, initial_infections,
 #'
 #' #' # with a data.frame input of samples
 #' R_samples <- summary(est, type = "samples", param = "R")
-#' R_samples <- R_samples[,
-#'  .(date, sample, value)][sample <= 1000][date <= "2020-04-10"
-#' ]
+#' R_samples <- R_samples[
+#'   ,
+#'   .(date, sample, value)
+#' ][sample <= 1000][date <= "2020-04-10"]
 #' R_samples <- R_samples[date >= "2020-04-01", value := 1.1]
 #' sims <- forecast_infections(est, R_samples)
 #' plot(sims)
@@ -382,7 +378,8 @@ forecast_infections <- function(estimates,
   if (posterior_sample < samples) {
     # nolint start
     posterior_samples <- sample(
-      seq_len(posterior_sample), samples, replace = TRUE
+      seq_len(posterior_sample), samples,
+      replace = TRUE
     )
     R_draws <- draws$R
     draws <- map(draws, ~ as.matrix(.[posterior_samples, ]))
@@ -432,16 +429,19 @@ forecast_infections <- function(estimates,
     draws <- map(draws, ~ as.matrix(.[nstart:nend, ]))
 
     ## prepare data for stan command
-    data <- c(list(n = dim(draws$R)[1]), draws, estimates$args)
+    data <- c(
+      list(n = dim(draws$R)[1], initial_as_scale = 1), draws, estimates$args
+    )
 
     ## allocate empty parameters
     data <- allocate_empty(
-      data, c("frac_obs", "delay_params", "rep_phi"),
+      data, c("delay_params", "params"),
       n = data$n
     )
 
     args <- create_stan_args(
-      stan, data = data, fixed_param = TRUE, model = "simulate_infections",
+      stan,
+      data = data, fixed_param = TRUE, model = "simulate_infections",
       verbose = FALSE
     )
 
@@ -451,6 +451,7 @@ forecast_infections <- function(estimates,
     out <- extract_parameter_samples(sims, data,
       reported_inf_dates = dates,
       reported_dates = dates[-(1:shift)],
+      imputed_dates = dates[-(1:shift)],
       drop_length_1 = TRUE, merge = TRUE
     )
     return(out)

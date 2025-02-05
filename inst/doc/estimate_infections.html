@@ -320,25 +320,30 @@ with delay distributions.</p>
 assuming constant exponential growth for the mean of modelled delays
 from infection to case report (called <code>seeding_time</code> <span class="math inline">\(t_\mathrm{seed}\)</span> in the model):</p>
 <p><span class="math display">\[\begin{align}
-  I_0  &amp;\sim \mathcal{LogNormal}(I_\mathrm{obs}, 0.2) \\
-  r &amp;\sim \mathcal{Normal}(r_\mathrm{obs}, 0.2)\\
-  I_{0 &lt; t \leq t_\mathrm{seed}} &amp;= I_0 \exp  \left(r t \right)
+  I_{-t_\mathrm{seed}}  &amp; \exp(\iota - r t_\mathrm{seed}) / \xi\\
+  \iota ~ \mathrm{Normal}(\iota_0, 2)\\
+  \iota_0 = \max(0, \log(C_\mathrm{init}))
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(I_{t}\)</span> is the number of
-latent infections on day <span class="math inline">\(t\)</span>, <span class="math inline">\(r\)</span> is the estimate of the initial growth
-rate, and <span class="math inline">\(I_\mathrm{obs}\)</span> and <span class="math inline">\(r_\mathrm{obs}\)</span> are estimated from the
-first week of observed data: <span class="math inline">\(I_\mathrm{obs}\)</span> as the mean of reported
-cases in the first 7 days (or the mean of all cases if fewer than 7 days
-of data are given), divided by the prior mean reporting fraction if less
-than 1 (see <a href="#delays-and-scaling">Delays and scaling</a>); and
-<span class="math inline">\(r_\mathrm{obs}\)</span> as the point
-estimate from fitting a linear regression model to the first 7 days of
-data (or all data if fewer than 7 days of data are given),</p>
-<p><span class="math display">\[\begin{equation}
-log(C_t) = a + r_\mathrm{obs} t + \epsilon_t
-\end{equation}\]</span> where <span class="math inline">\(C_{t}\)</span>
-is the number of reported cases on day <span class="math inline">\(t\)</span>, <span class="math inline">\(a\)</span>
-an estimated intercept, and <span class="math inline">\(\epsilon_{t}\)</span> the error term.</p>
+latent infections on day <span class="math inline">\(t\)</span>, <span class="math inline">\(r\)</span> is an estimate of the initial growth
+rate, <span class="math inline">\(\xi\)</span> is the proportion
+reported (see <a href="#delays-and-scaling">Delays and scaling</a>), is
+a scaling factor and <span class="math inline">\(C_\mathrm{init}\)</span> is the mean of the first
+7 days of cases (or all cases if fewer than 7 days of data are
+available).</p>
+<p>The initial growth rate <span class="math inline">\(r\)</span> is
+estimated from the first estimated value of the reproduction number
+<span class="math inline">\(R_t\)</span> by solving the linear system
+[wallinga2006how]</p>
+<p><span class="math display">\[
+M(-r) - 1 / R_0 = 0.
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+M(r) = \sum_{i=1}^n g_i e^{r i}.
+\]</span></p>
+<p>is the moment generating function of the discretised generation time
+distribution (see <a href="#infections">Infections</a>).</p>
 </div>
 <div id="infections" class="section level3" number="1.1.2">
 <h3><span class="header-section-number">1.1.2</span> Infections</h3>
@@ -346,21 +351,20 @@ an estimated intercept, and <span class="math inline">\(\epsilon_{t}\)</span> th
 then modelled by weighting previous infections with the generation time
 and scaling by the instantaneous reproduction number:</p>
 <p><span class="math display">\[\begin{equation}
-  I_t = R_t \sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \mu_{g},
-\sigma_{g}) I_{t - \tau}
+  I_t = R_t \sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \theta_g) I_{t -
+\tau}
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(g(\tau|\mu_{g},
-\sigma_{g})\)</span> is the distribution of generation times (with
-discretised gamma or discretised log normal distributions available as
-options) with mean (or log mean in the case of lognormal distributions)
-<span class="math inline">\(\mu_g\)</span>, standard deviation (or log
-standard deviation in the case of lognormal distributions) <span class="math inline">\(\sigma_g\)</span> and maximum <span class="math inline">\(g_\mathrm{max}\)</span>. Generation times can
-either be specified as coming from a distribution with uncertainty by
-giving mean and standard deviations of normal priors, weighted by
-default by the number of observations (although this can be changed by
-the user) and truncated to be positive where relevant for the given
-distribution; or they can be specified as the parameters of a fixed
-distribution, or as fixed values.</p>
+<p>where <span class="math inline">\(g_\tau = g(\tau |
+\theta_g)\)</span> is the discretised distribution of generation times
+with parameters <span class="math inline">\(\theta_g\)</span> and
+maximum <span class="math inline">\(g_\mathrm{max}\)</span>. Generation
+times can be specified as coming from a distribution with uncertainty by
+giving mean and standard deviations of normal priors of the
+distributional parameters. By default this prior is weighted by default
+by the number of observations although this can be changed by the user.
+It is truncated to be positive where relevant for the given
+distribution. Alternatively, generation times can be specified as coming
+from a given distribution with set parameters.</p>
 <p>The distribution of generation times <span class="math inline">\(g\)</span> here represents the probability that
 somebody who became infectious on day 0 and who infects someone else
 during their course of infection does so on day <span class="math inline">\(\tau &gt; 0\)</span>, assuming that infection
@@ -392,9 +396,9 @@ the data).</p>
 <p>or, as a specific case of a Gaussian Process, a random walk of
 arbitrary length <span class="math inline">\(w\)</span>.</p>
 <p><span class="math display">\[\begin{align}
-  \log R_{t \div w} &amp;\sim \mathcal{Normal} (R_{t \div (w - 1)},
+  \log R_{t \div w} &amp;\sim \mathrm{Normal} (R_{t \div (w - 1)},
 \sigma_R)\\
-  \sigma_R &amp;\sim \mathcal{HalfNormal}(0, 0.1)
+  \sigma_R &amp;\sim \mathrm{HalfNormal}(0, 0.1)
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(\div\)</span> indicates
 interval-valued division (i.e. the floor of the division), such that for
@@ -403,12 +407,11 @@ example <span class="math inline">\(w=1\)</span> indicates a daily and
 <p>The choice of prior for the time-varying reproduction number impact
 run-time, smoothness of the estimates and real-time behaviour and may
 alter the best use-case for the model.</p>
-<p>The initial reproduction number <span class="math inline">\(R_{0}\)</span> has a log-normal prior with a given
-log mean <span class="math inline">\(\mu_{R}\)</span> and log standard
-deviation <span class="math inline">\(\sigma_{R}\)</span>, calculated
-from a given mean (default: 1) and standard deviation (default: 1).</p>
+<p>The prior distribution of the initial reproduction number <span class="math inline">\(R_{0}\)</span> can be set by the user. By default
+this is a log-normal distribution with mean 1 and standard deviation
+1.</p>
 <p><span class="math display">\[\begin{equation}
-  R_0 \sim \mathcal{LogNormal}(\mu_R, \sigma_R)
+  R_0 \sim \mathrm{LogNormal}(-1/2 \log(2), \sqrt{\log(2)})
 \end{equation}\]</span></p>
 <p>The simplest possible process model option is to use no time-varying
 prior and rely on just the intial fixed reproduction number <span class="math inline">\(R_0\)</span>.</p>
@@ -527,33 +530,25 @@ or a less recent, more certain estimate.</p>
 period if based on symptomatic cases, and any delay from onset to
 report), they are convolved in the model to infections at the time scale
 of observations <span class="math inline">\(D_{t}\)</span> using delay
-distributions (with lognormal and gamma parameterisations available)
-<span class="math inline">\(\xi\)</span>, scaled by an underreporting
-factor <span class="math inline">\(\alpha\)</span> (which is 1 if all
-infections are observed). This model can be defined mathematically as
-follows,</p>
+distributions <span class="math inline">\(\xi\)</span>, scaled by an
+underreporting factor $(which is 1 if all infections are observed). This
+model can be defined mathematically as follows,</p>
 <p><span class="math display">\[\begin{equation}
-  D_t = \alpha \sum_{\tau = 0}^{\xi_\mathrm{max}} \xi (\tau | \mu_{\xi},
+  D_t = \xi \sum_{\tau = 0}^{\xi_\mathrm{max}} \xi (\tau | \mu_{\xi},
 \sigma_{\xi}) I_{t-\tau}
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(\xi(\tau|\mu_{\xi},
-\sigma_{\xi})\)</span> is the combined discrete distribution of delays
-(with discretised gamma or discretised log normal distributions
-available as options) with mean (or log mean in the case of lognormal
-distributions) <span class="math inline">\(\mu_\xi\)</span>, standard
-deviation (or log standard deviation in the case of lognormal
-distributions) <span class="math inline">\(\sigma_\xi\)</span> and
-maximum <span class="math inline">\(\xi_\mathrm{max}\)</span>.</p>
+<p>where <span class="math inline">\(\xi(\tau| \theta_\tau)\)</span> is
+the combined discrete distribution of delays with parameters <span class="math inline">\(\theta_\xi\)</span> and maximum <span class="math inline">\(\xi_\mathrm{max}\)</span>.</p>
 <p>Delays can either be specified as coming from a distribution with
-uncertainty by giving mean and standard deviations of normal priors,
-weighted by the number of observations and truncated to be positive
-where relevant for the given distribution; or they can be specified as
-the parameters of a fixed distribution, or as fixed values.</p>
-<p>The scaling factor <span class="math inline">\(\alpha\)</span>
-represents the proportion of cases that are ultimately reported, which
-by default is set to 1 (i.e. no underreporting) but can instead be set
-to come from a normal prior with given mean and standard deviation,
-truncated to be between 0 and 1.</p>
+uncertainty by giving mean and standard deviations of normal priors for
+the distributional parameters, weighted by default by the number of
+observations and truncated to be positive where relevant for the given
+distribution; or they can be specified as coming from a distribution
+with given parameters, or as fixed values.</p>
+<p>The scaling factor $represents the proportion of cases that are
+ultimately reported, which by default is set to 1 (i.e. no
+underreporting) but can instead be estimated with a given prior
+distribution.</p>
 </div>
 <div id="observation-model" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Observation model</h1>
@@ -563,17 +558,19 @@ default this is assumed to follow a negative binomial distribution with
 overdispersion <span class="math inline">\(\varphi\)</span>
 (alternatively it can be modelled as a Poisson, in which case <span class="math inline">\(\varphi\)</span> is not used):</p>
 <p><span class="math display">\[\begin{align}
-  C_t &amp;\sim \mathcal{NegBinom}\left(\omega_{(t \mod n_\omega)}D_t,
+  C_t &amp;\sim \mathrm{NegBinom}\left(\omega_{(t \mod n_\omega)}D_t,
 \varphi\right)
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(\omega_{t \mod n_\omega}\)</span>
 is a daily reporting effect of cyclicity <span class="math inline">\(n_{\omega}\)</span>. If <span class="math inline">\(n_{\omega}=7\)</span> this corresponds to a
 day-of-the-week reporting effect.</p>
-<p>This model uses the following priors for the observation model,</p>
+<p>In the model overdispersion is characterised by a “dispersion”
+parameter, which is defined as one over the square root of <span class="math inline">\(varphi\)</span>. With this, the priors for the
+observation model are</p>
 <p><span class="math display">\[\begin{align}
-    \frac{\omega}{n_\omega} &amp;\sim \mathcal{Dirichlet}(1, \ldots, 1)
+    \frac{\omega}{n_\omega} &amp;\sim \mathrm{Dirichlet}(1, \ldots, 1)
 \\
-    \frac{1}{\sqrt{\varphi}} &amp;\sim \mathcal{HalfNormal}(0, 1)
+    \frac{1}{\sqrt{\varphi}} &amp;\sim \mathrm{HalfNormal}(0, 1)
 \end{align}\]</span></p>
 <div id="truncation" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Truncation</h2>
@@ -585,7 +582,7 @@ applying a given discrete truncation distribution <span class="math inline">\(\z
 with cumulative mass function <span class="math inline">\(Z(\tau |
 \mu_{\zeta})\)</span>:</p>
 <p><span class="math display">\[\begin{equation}
-  D^ast_t = Z(T - t | \mu_{Z}, \sigma_{Z}) D_{t}
+  D^\ast_t = Z(T - t | \mu_{Z}, \sigma_{Z}) D_{t}
 \end{equation}\]</span></p>
 <p>If truncation is applied, the modelled cases <span class="math inline">\(D_{t}\)</span> are replaced by the truncated
 counts before confronting them with observations <span class="math inline">\(C_{t}\)</span> as described above.</p>

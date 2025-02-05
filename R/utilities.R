@@ -83,7 +83,6 @@ make_conf <- function(value, CrI = 90, reverse = FALSE) {
 #'
 #' map_prob_change(var)
 map_prob_change <- function(var) {
-
   var <- data.table::fcase(
     var < 0.05, "Increasing",
     var < 0.4, "Likely increasing",
@@ -110,7 +109,7 @@ map_prob_change <- function(var) {
 #' @param gamma_mean Numeric, mean of the gamma distribution
 #'
 #' @param gamma_sd Numeric, standard deviation of the gamma distribution
-#'.
+#' .
 #' @return Numeric vector of reproduction number estimates
 #' @export
 #' @examples
@@ -317,7 +316,8 @@ discretised_lognormal_pmf <- function(meanlog, sdlog, max_d, reverse = FALSE) {
 
 discretised_lognormal_pmf_conv <- function(x, meanlog, sdlog) {
   pmf <- discretised_lognormal_pmf(
-    meanlog, sdlog, length(x) - 1, reverse = TRUE
+    meanlog, sdlog, length(x) - 1,
+    reverse = TRUE
   )
   conv <- sum(x * pmf, na.rm = TRUE)
   return(conv)
@@ -417,6 +417,23 @@ lapply_func <- function(..., backend = "rstan", future.opts = list()) {
   }
 }
 
+#' Ensure forecast is properly set up
+#' @inheritParams estimate_infections
+#' @keywords internal
+setup_forecast <- function(forecast, horizon = NULL) {
+  if (!is.null(horizon)) {
+    assert_numeric(horizon, lower = 0)
+    if (!is.null(forecast)) {
+      forecast$horizon <- horizon
+    } else {
+      forecast <- forecast_opts(horizon = horizon)
+    }
+  } else if (is.null(forecast)) {
+    forecast <- forecast_opts(horizon = 0)
+  }
+  return(forecast)
+}
+
 #' @importFrom stats glm median na.omit pexp pgamma plnorm quasipoisson rexp
 #' @importFrom stats rlnorm rnorm rpois runif sd var rgamma pnorm
 globalVariables(
@@ -426,7 +443,7 @@ globalVariables(
     "date_onset_sample", "date_onset_symptoms", "date_onset.x", "date_onset.y",
     "date_report", "day", "doubling_time", "effect",
     "Effective reproduction no.", "estimates",
-    "Expected change in daily reports", "fit_meas", "goodness_of_fit",
+    "Expected change in reports", "fit_meas", "goodness_of_fit",
     "gt_sample", "import_status", "imported", "index", "latest", "little_r",
     "lower", "max_time", "mean_R", "Mean(R)", "metric", "mid_lower",
     "mid_upper", "min_time", "model", "modifier", "n", "New", "params",
@@ -441,6 +458,7 @@ globalVariables(
     "central_lower", "central_upper", "mean_sd", "sd_sd", "average_7_day",
     "..lowers", "..upper_CrI", "..uppers", "timing", "dataset", "last_confirm",
     "report_date", "secondary", "id", "conv", "meanlog", "primary", "scaled",
-    "scaling", "sdlog", "lookup", "new_draw", ".draw", "p", "distribution"
+    "scaling", "sdlog", "lookup", "new_draw", ".draw", "p", "distribution",
+    "accumulate", "..present", "reported_cases", "counter", "future_accumulate"
   )
 )

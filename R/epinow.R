@@ -50,9 +50,9 @@
 #' # set an example incubation period. In practice this should use an estimate
 #' # from the literature or be estimated from data
 #' incubation_period <- LogNormal(
-#'    meanlog = Normal(1.6, 0.06),
-#'    sdlog = Normal(0.4, 0.07),
-#'    max = 14
+#'   meanlog = Normal(1.6, 0.06),
+#'   sdlog = Normal(0.4, 0.07),
+#'   max = 14
 #' )
 #' # set an example reporting delay. In practice this should use an estimate
 #' # from the literature or be estimated from data
@@ -65,7 +65,7 @@
 #' out <- epinow(
 #'   data = reported_cases,
 #'   generation_time = gt_opts(generation_time),
-#'   rt = rt_opts(prior = list(mean = 2, sd = 0.1)),
+#'   rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1)),
 #'   delays = delay_opts(incubation_period + reporting_delay)
 #' )
 #' # summary of the latest estimates
@@ -87,8 +87,9 @@ epinow <- function(data,
                    backcalc = backcalc_opts(),
                    gp = gp_opts(),
                    obs = obs_opts(),
+                   forecast = forecast_opts(),
                    stan = stan_opts(),
-                   horizon = 7,
+                   horizon,
                    CrIs = c(0.2, 0.5, 0.9),
                    filter_leading_zeros = TRUE,
                    zero_threshold = Inf,
@@ -105,11 +106,37 @@ epinow <- function(data,
       "epinow(data)"
     )
   }
+  if (!missing(filter_leading_zeros)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "estimate_infections(filter_leading_zeros)",
+      "filter_leading_zeros()"
+    )
+  }
+  if (!missing(zero_threshold)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "estimate_infections(zero_threshold)",
+      "apply_zero_threshold()"
+    )
+  }
+  if (!missing(horizon)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "epinow(horizon)",
+      "epinow(forecast)",
+      details = "The `horizon` argument passed to `epinow()` will
+        override any `horizon` argument passed via `forecast_opts()`."
+    )
+  }
   # Check inputs
+  ## horizon is deprecated so should be setup via forecast_opts
+  forecast <- setup_forecast(forecast, if (!missing(horizon)) horizon else NULL)
   assert_logical(return_output)
-  stopifnot("target_folder is not a directory" =
-              !is.null(target_folder) || isDirectory(target_folder)
-            )
+  stopifnot(
+    "target_folder is not a directory" =
+      !is.null(target_folder) || isDirectory(target_folder)
+  )
   if (!missing(target_date)) {
     assert_string(target_date)
   }
@@ -159,6 +186,9 @@ epinow <- function(data,
   latest_folder <- target_folders$latest
 
   # specify internal functions
+  # temporary vars while argument not deprecated
+  filter_leading_zeros_missing <- missing(filter_leading_zeros)
+  zero_threshold_missing <- missing(zero_threshold)
   epinow_internal <- function() {
     # check verbose settings and set logger to match---------------------------
     if (verbose) {
@@ -174,10 +204,12 @@ epinow <- function(data,
     save_input(reported_cases, target_folder)
 
     # make sure the horizon is as specified from the target date --------------
-    horizon <- update_horizon(horizon, target_date, reported_cases)
+    horizon <- update_horizon(forecast$horizon, target_date, reported_cases)
 
     # estimate infections and Reproduction no ---------------------------------
-    estimates <- estimate_infections(
+    # use do.call until filter_leading_zeros and zero_threshold are fully
+    # deprecated
+    estimate_infection_args <- list(
       data = reported_cases,
       generation_time = generation_time,
       delays = delays,
@@ -186,14 +218,20 @@ epinow <- function(data,
       backcalc = backcalc,
       gp = gp,
       obs = obs,
+      forecast = forecast,
       stan = stan,
       CrIs = CrIs,
-      filter_leading_zeros = filter_leading_zeros,
-      zero_threshold = zero_threshold,
-      horizon = horizon,
       verbose = verbose,
       id = id
     )
+    if (!filter_leading_zeros_missing) {
+      estimate_infection_args$filter_leading_zeros <- filter_leading_zeros
+    }
+    if (!zero_threshold_missing) {
+      estimate_infection_args$zero_threshold <- zero_threshold
+    }
+
+    estimates <- do.call(estimate_infections, estimate_infection_args)
 
     if (!output["fit"]) {
       estimates$fit <- NULL

@@ -4,7 +4,7 @@
  * process.
  *
  * @param t Length of the time series
- * @param log_R Logarithm of the base reproduction number
+ * @param R0 Initial reproduction number
  * @param noise Vector of Gaussian process noise values
  * @param bps Array of breakpoint indices
  * @param bp_effects Vector of breakpoint effects
@@ -12,19 +12,19 @@
  * (1) or non-stationary (0)
  * @return A vector of length t containing the updated Rt values
  */
-vector update_Rt(int t, real log_R, vector noise, array[] int bps,
+vector update_Rt(int t, real R0, vector noise, array[] int bps,
                  vector bp_effects, int stationary) {
   // define control parameters
   int bp_n = num_elements(bp_effects);
   int gp_n = num_elements(noise);
   // initialise intercept
-  vector[t] R = rep_vector(log_R, t);
+  vector[t] logR = rep_vector(log(R0), t);
   //initialise breakpoints + rw
   if (bp_n) {
     vector[bp_n + 1] bp0;
     bp0[1] = 0;
     bp0[2:(bp_n + 1)] = cumulative_sum(bp_effects);
-    R = R + bp0[bps];
+    logR = logR + bp0[bps];
   }
   //initialise gaussian process
   if (gp_n) {
@@ -39,41 +39,73 @@ vector update_Rt(int t, real log_R, vector noise, array[] int bps,
       gp[2:(gp_n + 1)] = noise;
       gp = cumulative_sum(gp);
     }
-    R = R + gp;
+    logR = logR + gp;
   }
   
-  return exp(R);
+  return exp(logR);
 }
 
 /**
  * Calculate the log-probability of the reproduction number (Rt) priors
  *
- * @param log_R Logarithm of the base reproduction number
- * @param initial_infections Array of initial infection values
- * @param initial_growth Array of initial growth rates
+ * @param initial_infections_scale Array of initial infection values
  * @param bp_effects Vector of breakpoint effects
  * @param bp_sd Array of breakpoint standard deviations
  * @param bp_n Number of breakpoints
- * @param seeding_time Time point at which seeding occurs
- * @param r_logmean Log-mean of the prior distribution for the base reproduction number
- * @param r_logsd Log-standard deviation of the prior distribution for the base reproduction number
- * @param prior_infections Prior mean for initial infections
- * @param prior_growth Prior mean for initial growth rates
  */
-void rt_lp(vector log_R, array[] real initial_infections, array[] real initial_growth,
-           vector bp_effects, array[] real bp_sd, int bp_n, int seeding_time,
-           real r_logmean, real r_logsd, real prior_infections,
-           real prior_growth) {
-  log_R ~ normal(r_logmean, r_logsd);
+void rt_lp(array[] real initial_infections_scale, vector bp_effects,
+           array[] real bp_sd, int bp_n, array[] int cases,
+           real initial_infections_guess) {
   //breakpoint effects on Rt
   if (bp_n > 0) {
     bp_sd[1] ~ normal(0, 0.1) T[0,];
     bp_effects ~ normal(0, bp_sd[1]);
   }
-  // initial infections
-  initial_infections ~ normal(prior_infections, 0.2);
-  
-  if (seeding_time > 1) {
-    initial_growth ~ normal(prior_growth, 0.2);
+  initial_infections_scale ~ normal(initial_infections_guess, 2);
+}
+
+/**
+ * Helper function for calculating r from R using Newton's method
+ *
+ * Code is based on Julia code from
+ * https://github.com/CDCgov/Rt-without-renewal/blob/d6344cc6e451e3e6c4188e4984247f890ae60795/EpiAware/test/predictive_checking/fast_approx_for_r.jl
+ * under Apache license 2.0.
+ *
+ * @param R Reproduction number
+ * @param r growth rate
+ * @param pmf generation time probability mass function (first index: 0)
+ */
+real R_to_r_newton_step(real R, real r, vector pmf) {
+  int len = num_elements(pmf);
+  vector[len] zero_series = linspaced_vector(len, 0, len - 1);
+  vector[len] exp_r = exp(-r * zero_series);
+  real ret = (R * dot_product(pmf, exp_r) - 1) /
+    (- R * dot_product(pmf .* zero_series, exp_r));
+  return(ret);
+}
+
+/**
+ * Estimate the growth rate r from reproduction number R. Used in the model to
+ * estimate the initial growth rate using Newton's method.
+ *
+ * Code is based on Julia code from
+ * https://github.com/CDCgov/Rt-without-renewal/blob/d6344cc6e451e3e6c4188e4984247f890ae60795/EpiAware/test/predictive_checking/fast_approx_for_r.jl
+ * under Apache license 2.0.
+ *
+ * @param R reproduction number
+ * @param gt_rev_pmf reverse probability mass function of the generation time
+ * @param abs_tol absolute tolerance of the solver
+ */
+real R_to_r(real R, vector gt_rev_pmf, real abs_tol) {
+  int gt_len = num_elements(gt_rev_pmf);
+  vector[gt_len] gt_pmf = reverse(gt_rev_pmf);
+  real mean_gt = dot_product(gt_pmf, linspaced_vector(gt_len, 0, gt_len - 1));
+  real r = fmax((R - 1) / (R * mean_gt), -1);
+  real step = abs_tol + 1;
+  while (abs(step) > abs_tol) {
+    step = R_to_r_newton_step(R, r, gt_pmf);
+    r -= step;
   }
+
+  return(r);
 }

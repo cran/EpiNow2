@@ -11,12 +11,14 @@ gp_opts(
   ls_sd = 7,
   ls_min = 0,
   ls_max = 60,
-  alpha_mean = 0,
-  alpha_sd = 0.05,
+  ls = LogNormal(mean = 21, sd = 7, max = 60),
+  alpha = Normal(mean = 0, sd = 0.01),
   kernel = c("matern", "se", "ou", "periodic"),
   matern_order = 3/2,
   matern_type,
-  w0 = 1
+  w0 = 1,
+  alpha_mean,
+  alpha_sd
 )
 }
 \arguments{
@@ -31,28 +33,27 @@ proportion of basis functions. See (Riutort-Mayol et al. 2020
 approximate Gaussian process. See (Riutort-Mayol et al. 2020
 \url{https://arxiv.org/abs/2004.11408}) for advice on updating this default.}
 
-\item{ls_mean}{Numeric, defaults to 21 days. The mean of the lognormal
-length scale.}
+\item{ls_mean}{Deprecated; use \code{ls} instead.}
 
-\item{ls_sd}{Numeric, defaults to 7 days. The standard deviation of the log
-normal length scale. If \code{ls_sd = 0}, inverse-gamma prior on Gaussian
-process length scale will be used with recommended parameters
-\code{inv_gamma(1.499007, 0.057277 * ls_max)}.}
+\item{ls_sd}{Deprecated; use \code{ls} instead.}
 
-\item{ls_min}{Numeric, defaults to 0. The minimum value of the length scale.}
+\item{ls_min}{Deprecated; use \code{ls} instead.}
 
-\item{ls_max}{Numeric, defaults to 60. The maximum value of the length
-scale. Updated in \code{\link[=create_gp_data]{create_gp_data()}} to be the length of the input data if
-this is smaller.}
+\item{ls_max}{Deprecated; use \code{ls} instead.}
 
-\item{alpha_mean}{Numeric, defaults to 0. The mean of the magnitude parameter
-of the Gaussian process kernel. Should be approximately the expected standard
-deviation of the Gaussian process (logged Rt in case of the renewal model,
-logged infections in case of the nonmechanistic model).}
+\item{ls}{A \verb{<dist_spec>} giving the prior distribution of the lengthscale
+parameter of the Gaussian process kernel on the scale of days. Defaults to
+a Lognormal distribution with mean 21 days, sd 7 days and maximum 60 days:
+\code{LogNormal(mean = 21, sd = 7, max = 60)} (a lower limit of 0 will be
+enforced automatically to ensure positivity)}
 
-\item{alpha_sd}{Numeric, defaults to 0.05. The standard deviation of the
-magnitude parameter of the Gaussian process kernel. Can be tuned to adjust
-how far alpha is allowed to deviate form its prior mean (\code{alpha_mean}).}
+\item{alpha}{A \verb{<dist_spec>} giving the prior distribution of the magnitude
+parameter of the Gaussian process kernel. Should be approximately the
+expected standard deviation of the Gaussian process (logged Rt in case of
+the renewal model, logged infections in case of the nonmechanistic model).
+Defaults to a half-normal distribution with mean 0 and sd 0.01:
+\code{Normal(mean = 0, sd = 0.01)} (a lower limit of 0 will be enforced
+automatically to ensure positivity)}
 
 \item{kernel}{Character string, the type of kernel required. Currently
 supporting the Matern kernel ("matern"), squared exponential kernel ("se"),
@@ -69,6 +70,10 @@ Kernel to use. Currently, the orders 1/2, 3/2, 5/2 and Inf are supported.}
 
 \item{w0}{Numeric, defaults to 1.0. Fundamental frequency for periodic
 kernel. They are only used if \code{kernel} is set to "periodic".}
+
+\item{alpha_mean}{Deprecated; use \code{alpha} instead.}
+
+\item{alpha_sd}{Deprecated; use \code{alpha} instead.}
 }
 \value{
 A \verb{<gp_opts>} object of settings defining the Gaussian process
@@ -83,7 +88,7 @@ process. Custom settings can be supplied which override the defaults.
 gp_opts()
 
 # add a custom length scale
-gp_opts(ls_mean = 4)
+gp_opts(ls = LogNormal(mean = 4, sd = 1, max = 20))
 
 # use linear kernel
 gp_opts(kernel = "periodic")

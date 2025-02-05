@@ -20,13 +20,18 @@ estimate_secondary(
   model = NULL,
   weigh_delay_priors = FALSE,
   verbose = interactive(),
-  ...,
   reports
 )
 }
 \arguments{
 \item{data}{A \verb{<data.frame>} containing the \code{date} of report and both
-\code{primary} and \code{secondary} reports.}
+\code{primary} and \code{secondary} reports. Optionally this can also have a logical
+\code{accumulate} column which indicates whether data should be added to the
+next data point. This is useful when modelling e.g. weekly incidence data.
+See also the \code{\link[=fill_missing]{fill_missing()}} function which helps add the \code{accumulate}
+column with the desired properties when dealing with non-daily data. If any
+accumulation is done this happens after truncation as specified by the
+\code{truncation} argument.}
 
 \item{secondary}{A call to \code{\link[=secondary_opts]{secondary_opts()}} or a list containing the
 following  binary variables: cumulative, historic, primary_hist_additive,
@@ -85,8 +90,6 @@ parameters.}
 \item{verbose}{Logical, should model fitting progress be returned. Defaults
 to \code{\link[=interactive]{interactive()}}.}
 
-\item{...}{Additional parameters to pass to \code{\link[=stan_opts]{stan_opts()}}.}
-
 \item{reports}{Deprecated; use \code{data} instead.}
 }
 \value{
@@ -136,7 +139,7 @@ cases <- convolve_and_scale(cases, type = "incidence")
 # fit model to example data specifying a weak prior for fraction reported
 # with a secondary case
 inc <- estimate_secondary(cases[1:60],
-  obs = obs_opts(scale = list(mean = 0.2, sd = 0.2), week_effect = FALSE)
+  obs = obs_opts(scale = Normal(mean = 0.2, sd = 0.2), week_effect = FALSE)
 )
 plot(inc, primary = TRUE)
 
@@ -164,14 +167,14 @@ prev <- estimate_secondary(cases[1:100],
   secondary = secondary_opts(type = "prevalence"),
   obs = obs_opts(
     week_effect = FALSE,
-    scale = list(mean = 0.4, sd = 0.1)
+    scale = Normal(mean = 0.4, sd = 0.1)
   )
 )
 plot(prev, primary = TRUE)
 
 # forecast future secondary cases from primary
 prev_preds <- forecast_secondary(
- prev, cases[seq(101, .N)][, value := primary]
+  prev, cases[seq(101, .N)][, value := primary]
 )
 plot(prev_preds, new_obs = cases, from = "2020-06-01")
 

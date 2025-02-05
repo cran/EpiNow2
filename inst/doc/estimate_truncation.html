@@ -261,7 +261,7 @@ with corresponding probability mass function <span class="math inline">\(Z(\tau 
 <p>The model assumes that final counts <span class="math inline">\(D_{t}\)</span> are related to observed snapshots
 via the truncation distribution such that</p>
 <p><span class="math display">\[\begin{equation}
-C^{i &lt; S)_{t}_\sim \mathcal{NegBinom}\left(Z (T_i - t | \mu_{Z},
+C^{i &lt; S)_{t}_\sim \mathrm{NegBinom}\left(Z (T_i - t | \mu_{Z},
 \sigma_{Z}) D(t) + \sigma, \varphi\right)
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(T_i\)</span> is the date of the
@@ -277,7 +277,7 @@ D_t = \frac{C^{S}}{Z (T_\mathrm{S} - t | \mu_{Z}, \sigma_{Z})}
 <p><span class="math display">\[\begin{align}
 \mu_\zeta &amp;\sim \mathrm{Normal}(0, 1)\\
 \sigma_\zeta &amp;\sim \mathrm{HalfNormal}(0, 1)\\
-\varphi &amp;\sim \mathrm{HalfNormal}(0, 1)\\
+\frac{1}{\sqrt{\varphi}} &amp;\sim \mathrm{HalfNormal}(0, 0.25)\\
 \sigma &amp;\sim \mathrm{HalfNormal}(0, 1)
 \end{align}\]</span></p>
 

@@ -65,12 +65,12 @@ observation model. Defaults to \code{\link[=obs_opts]{obs_opts()}}.}
 to \code{\link[=stan_opts]{stan_opts()}}. Can be used to override \code{data}, \code{init}, and \code{verbose}
 settings if desired.}
 
-\item{horizon}{Numeric, defaults to 7. Number of days into the future to
-forecast.}
+\item{horizon}{Deprecated; use \code{forecast} instead to specify the predictive
+horizon}
 
 \item{CrIs}{Numeric vector of credible intervals to calculate.}
 
-\item{data}{A \verb{<data.frame>} of confirmed cases (confirm) by date
+\item{data}{A \verb{<data.frame>} of disease reports (confirm) by date
 (date), and region (\code{region}).}
 
 \item{target_folder}{Character string specifying where to save results (will

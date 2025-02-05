@@ -132,7 +132,8 @@ test_that("epinow can produce partial output as specified", {
     out <- epinow(
       data = reported_cases,
       generation_time = gt_opts(
-        example_generation_time, weight_prior = FALSE
+        example_generation_time,
+        weight_prior = FALSE
       ),
       delays = delay_opts(example_incubation_period + reporting_delay),
       stan = stan_opts(
@@ -197,4 +198,57 @@ test_that("epinow fails if given variational inference arguments when using NUTs
       logs = NULL, verbose = FALSE
     )
   ))))
+})
+
+test_that("epinow produces works as expected when forecast=NULL with defaults", {
+  suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = gt_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(method = "vb"), # vb used for speed
+      forecast = NULL
+    )
+  ))
+  # expect no forecasts
+  expect_true(!"forecast" %in% unique(out$estimates$summarised$type))
+  # horizon should be zero if forecast = NULL
+  expect_true(out$estimates$args$horizon == 0)
+})
+
+test_that("epinow works as expected when forecast_opts horizon is 0 with defaults", {
+  suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = gt_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(method = "vb"), # vb used for speed
+      forecast = forecast_opts(horizon = 0)
+    )
+  ))
+  # expect no forecasts if horizon is 0
+  expect_true(!"forecast" %in% unique(out$estimates$summarised$type))
+  expect_true(out$estimates$args$horizon == 0)
+})
+
+test_that("horizon overrides forecast$horizon if both specified", {
+  horizon <- 14
+  suppressMessages(suppressWarnings(
+    out <- epinow(
+      data = reported_cases,
+      generation_time = gt_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + reporting_delay),
+      stan = stan_opts(method = "vb"), # vb used for speed
+      forecast = forecast_opts(horizon = 7),
+      horizon = horizon
+    )
+  ))
+  # extract forecasts for testing
+  forecast_dt <- out$estimates$summarised[
+    variable == "reported_cases"
+  ][
+    type == "forecast"
+  ]
+  expect_true(out$estimates$args$horizon == horizon)
+  expect_true(nrow(forecast_dt) == horizon)
 })

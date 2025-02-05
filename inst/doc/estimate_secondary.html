@@ -281,14 +281,12 @@ expectation of secondary notifications but does not account for
 potential observation noise or reporting patterns. Here we assume a
 negative binomial observation model (though our implementation also
 supports a Poisson observation model) in order to capture potential
-reporting overdispersion <span class="math inline">\(\phi\)</span> and
-adjust expected counts using an optional day of the week effect based on
-a simplex <span class="math inline">\(\omega_{(t \mod 7)}\)</span> (such
-that <span class="math inline">\(\sum^6_{t=0}{w_t} = 7\)</span> so the
-total effect over a week is balanced). This gives the following
-observation process,</p>
+reporting overdispersion via <span class="math inline">\(\varphi\)</span> and adjust expected counts using
+an optional day of the week effect based on a simplex <span class="math inline">\(\omega_{(t \mod 7)}\)</span> (such that <span class="math inline">\(\sum^6_{t=0}{w_t} = 7\)</span> so the total effect
+over a week is balanced). This gives the following observation
+process,</p>
 <p><span class="math display">\[\begin{equation}
-    S_{t} \sim \mathrm{NB}\left(\omega_{t \mod 7} \hat{S}_t,  \phi
+    S_{t} \sim \mathrm{NB}\left(\omega_{t \mod 7} \hat{S}_t,  \varphi
 \right).
 \end{equation}\]</span></p>
 
