@@ -320,9 +320,10 @@ with delay distributions.</p>
 assuming constant exponential growth for the mean of modelled delays
 from infection to case report (called <code>seeding_time</code> <span class="math inline">\(t_\mathrm{seed}\)</span> in the model):</p>
 <p><span class="math display">\[\begin{align}
-  I_{-t_\mathrm{seed}}  &amp; \exp(\iota - r t_\mathrm{seed}) / \xi\\
-  \iota ~ \mathrm{Normal}(\iota_0, 2)\\
-  \iota_0 = \max(0, \log(C_\mathrm{init}))
+  I_{-t_\mathrm{seed}} &amp;= \frac{1}{\xi} \exp(\iota - r
+t_\mathrm{seed})
+  \iota &amp; \sim \mathrm{Normal}(\iota_0, 2)\\
+  \iota_0 &amp; = \max(0, \log(C_\mathrm{init}))
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(I_{t}\)</span> is the number of
 latent infections on day <span class="math inline">\(t\)</span>, <span class="math inline">\(r\)</span> is an estimate of the initial growth
