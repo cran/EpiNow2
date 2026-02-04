@@ -38,13 +38,14 @@ out <- readRDS(system.file(
 
 # plot infections
 plots <- report_plots(
-  summarised_estimates = out$summarised,
+  summarised_estimates = summary(out, type = "parameters"),
   reported = out$observations
 )
 plots
 }
 \seealso{
-\code{\link[=plot_estimates]{plot_estimates()}} of
+\code{\link[=plot_estimates]{plot_estimates()}}
+
 \code{summarised_estimates[variable == "infections"]},
 \code{summarised_estimates[variable == "reported_cases"]},
 \code{summarised_estimates[variable == "R"]}, and

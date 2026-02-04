@@ -28,10 +28,10 @@ report_summary <- function(summarised_estimates,
   CrIs <- extract_CrIs(summarised_estimates)
   max_CrI <- max(CrIs)
 
-  # extract values of interest
+  # extract values of interest (exclude non-numeric columns)
   summarised_estimates <- summarised_estimates[, setdiff(
     colnames(summarised_estimates),
-    c("strat", "type", "date")
+    c("strat", "type", "date", "parameter")
   ),
   with = FALSE
   ]
@@ -76,7 +76,7 @@ report_summary <- function(summarised_estimates,
   ]
 
   # regional summary
-  summary <- data.table::data.table(
+  summary_estimates <- data.table::data.table(
     measure = c(
       "New infections per day",
       "Expected change in reports",
@@ -94,7 +94,7 @@ report_summary <- function(summarised_estimates,
   )
 
   if (return_numeric) {
-    summary$numeric_estimate <- list(
+    summary_estimates$numeric_estimate <- list(
       current_cases,
       prob_control,
       R_latest,
@@ -104,9 +104,9 @@ report_summary <- function(summarised_estimates,
   }
 
   if (!is.null(target_folder)) {
-    saveRDS(summary, file.path(target_folder, "summary.rds"))
+    saveRDS(summary_estimates, file.path(target_folder, "summary.rds"))
   }
-  return(summary)
+  summary_estimates
 }
 
 
@@ -135,7 +135,8 @@ report_summary <- function(summarised_estimates,
 #' growth_rate, summary)`, which correspond to a summary combination (last
 #' item) and for the leading items.
 #'
-#' @seealso [plot_estimates()] of
+#' @seealso [plot_estimates()]
+#'
 #' `summarised_estimates[variable == "infections"]`,
 #' `summarised_estimates[variable == "reported_cases"]`,
 #' `summarised_estimates[variable == "R"]`, and
@@ -149,7 +150,7 @@ report_summary <- function(summarised_estimates,
 #'
 #' # plot infections
 #' plots <- report_plots(
-#'   summarised_estimates = out$summarised,
+#'   summarised_estimates = summary(out, type = "parameters"),
 #'   reported = out$observations
 #' )
 #' plots
@@ -175,7 +176,7 @@ report_plots <- function(summarised_estimates, reported,
   )
 
   # Rt plot ------------------------------------------------------------------
-  R <- plot_estimates(
+  R_plot <- plot_estimates(
     estimate = summarised_estimates[variable == "R"],
     ylab = "Effective \n reproduction no.", hline = 1,
     ...
@@ -188,7 +189,7 @@ report_plots <- function(summarised_estimates, reported,
   )
 
   # summary plot ------------------------------------------------------------
-  summary <- suppressWarnings(
+  plot_summary <- suppressWarnings(
     suppressMessages(
       reports +
         ggplot2::theme(legend.position = "none") +
@@ -206,7 +207,7 @@ report_plots <- function(summarised_estimates, reported,
           axis.ticks.x = ggplot2::element_blank()
         ) +
         ggplot2::labs(tag = "B") +
-        R +
+        R_plot +
         ggplot2::labs(tag = "C") +
         patchwork::plot_layout(ncol = 1) &
         ggplot2::scale_x_date(
@@ -224,9 +225,9 @@ report_plots <- function(summarised_estimates, reported,
   plots <- list(
     infections = infections,
     reports = reports,
-    R = R,
+    R = R_plot,
     growth_rate = growth_rate,
-    summary = summary
+    summary = plot_summary
   )
 
   if (!is.null(target_folder)) {
@@ -248,5 +249,5 @@ report_plots <- function(summarised_estimates, reported,
       )
     }))
   }
-  return(plots)
+  plots
 }

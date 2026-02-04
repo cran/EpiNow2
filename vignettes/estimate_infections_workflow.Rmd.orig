@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   fig.height = 6.5,
   fig.path = "estimate_infections_workflow-"
 )
-set.seed(9876)
+set.seed(42)
 ```
 
 This vignette describes the typical workflow for estimating reproduction numbers and performing short-term forecasts for a disease spreading in a given setting using _EpiNow2_.
@@ -106,8 +106,8 @@ There are various ways the specific delay distributions mentioned below might be
 Often, they will come directly from the existing literature reviewed by the user and studies conducted elsewhere.
 Sometimes it might be possible to obtain them from existing databases, e.g. using the [epiparameter](https://github.com/epiverse-trace/epiparameter) R package.
 Alternatively they might be obtainable from raw data, e.g. line-listed individual-level records.
-The _EpiNow2_ package contains functionality for estimating delay distributions from observed delays in the `estimate_delays()` function.
-For a more comprehensive treatment of delays and their estimation avoiding common biases one can consider, for example, the [dynamicaltruncation](https://github.com/parksw3/epidist-paper) R package and associated paper.
+The _EpiNow2_ package contains functionality for estimating delay distributions from observed delays in the `estimate_delay()` function.
+For a more comprehensive treatment of delays and their estimation avoiding common biases one can also consider the [epidist](https://epidist.epinowcast.org/index.html) R package.
 
 ### Generation intervals
 
@@ -221,11 +221,13 @@ All the options are combined in a call to the `estimate_infections()` function.
 For example, using some of the options described above one could call
 
 ```{r}
+reported_cases <- example_confirmed[1:60]
 def <- estimate_infections(
-  example_confirmed, 
+  reported_cases,
   generation_time = gt_opts(generation_time),
   delays = delay_opts(delay),
-  rt = rt_opts(prior = rt_prior)
+  rt = rt_opts(prior = rt_prior),
+  forecast = forecast_opts(horizon = 7)
 )
 ```
 
@@ -248,3 +250,31 @@ plot(def)
 The results returned by the `estimate_infections` model depend on the values assigned to all to parameters discussed in this vignette, i.e. delays, scaling, and reproduction numbers, as well as the model variant used and its parameters.
 Any interpretation of the results will therefore need to bear these in mind, as well as any properties of the data and/or the subpopulations that it represents.
 See the [Model options](estimate_infections_options.html) vignette for an illustration of the impact of model choice.
+
+## Evaluating forecasts with scoringutils
+
+Forecast evaluation is useful for comparing the predictive performance of different models or assessing how accuracy changes at different forecast horizons.
+The `get_predictions()` function supports a `format = "sample"` argument to return raw posterior samples compatible with the [scoringutils](https://epiforecasts.io/scoringutils/) package.
+
+Since we fitted on only the first 60 days of `example_confirmed`, we can score the 7-day forecast against the full dataset.
+Here we show forecast scores by horizon:
+
+```{r scoringutils}
+library(scoringutils)
+
+# Get sample-based predictions for the forecast period
+preds <- get_predictions(def, format = "sample")
+forecasts <- preds[horizon > 0]
+
+# Add observed data
+forecasts <- merge(forecasts, example_confirmed, by = "date")
+
+# Score forecasts by horizon
+forecast_obj <- as_forecast_sample(
+  forecasts,
+  forecast_unit = "horizon",
+  observed = "confirm",
+  sample_id = "sample"
+)
+score(forecast_obj)
+```

@@ -31,7 +31,8 @@
 #' options are the individual regional estimates ("regions"),  samples
 #' ("samples"), plots ("plots"), copying the individual region dated folder into
 #' a latest folder (if `target_folder` is not null, set using "latest"), the
-#' stan fit of the underlying model ("fit"), and an overall summary across
+#' stan fit of the underlying model ("fit"), the full [estimate_infections()]
+#' return object ("estimate_infections"), and an overall summary across
 #' regions ("summary"). The default is to return samples and plots alongside
 #' summarised estimates and summary statistics. If `target_folder` is not NULL
 #' then the default is also to copy all results into a latest folder.
@@ -64,7 +65,7 @@
 #' options(mc.cores = ifelse(interactive(), 4, 1))
 #'
 #' # uses example case vector
-#' cases <- example_confirmed[1:60]
+#' cases <- example_confirmed[1:40]
 #' cases <- data.table::rbindlist(list(
 #'   data.table::copy(cases)[, region := "testland"],
 #'   cases[, region := "realland"]
@@ -107,8 +108,8 @@ regional_epinow <- function(data,
                             return_output = is.null(target_folder),
                             summary_args = list(),
                             verbose = FALSE,
-                            logs = tempdir(check = TRUE), ...
-                            ) {
+                            logs = tempdir(check = TRUE),
+                            ...) {
   if (!missing(horizon)) {
     lifecycle::deprecate_stop(
       "1.7.0",
@@ -124,7 +125,7 @@ regional_epinow <- function(data,
     supported_args = c(
       "plots", "samples", "fit",
       "regions", "summary",
-      "timing", "latest"
+      "timing", "latest", "estimate_infections"
     ),
     logger = "EpiNow2"
   )
@@ -251,9 +252,9 @@ regional_epinow <- function(data,
   }
 
   if (return_output) {
-    return(out)
+    out
   } else {
-    return(invisible(NULL))
+    invisible(NULL)
   }
 }
 
@@ -310,8 +311,7 @@ clean_regions <- function(data, non_zero_points) {
     # nolint end
   }
   # exclude zero regions
-  reported_cases <- reported_cases[!is.na(region)][region %in% eval_regions]
-  return(reported_cases)
+  reported_cases[!is.na(region)][region %in% eval_regions]
 }
 
 #' Run epinow with Regional Processing Code
@@ -403,7 +403,7 @@ run_region <- function(target_region,
   if (!is.null(progress_fn)) {
     progress_fn(sprintf("Region: %s", target_region))
   }
-  return(out)
+  out
 }
 
 #' Process regional estimate
@@ -426,22 +426,30 @@ run_region <- function(target_region,
 process_region <- function(out, target_region, timing,
                            return_output = TRUE, return_timing = TRUE,
                            complete_logger = "EpiNow2.epinow") {
-  if (!is.null(out[["estimates"]]) && !return_output) {
-    out$estimates$samples <- NULL
-  }
-  if (!is.null(out[["estimated_reported_cases"]]) && !return_output) {
-    out$estimated_reported_cases$samples <- NULL
-  }
-  if (!is.null(out[["plots"]]) && !return_output) {
-    out$estimated_reported_cases$plots <- NULL
+
+  # Skip processing for failed runs (which have an error field)
+  # Use .subset2 to bypass S3 method dispatch
+  if (!is.null(.subset2(out, "error"))) {
+    return(out)
   }
 
-  if (!is.null(out[["summary"]])) {
+  # Use names() and [[ to avoid triggering $.epinow deprecation warnings
+  if ("estimates" %in% names(out) && !return_output) {
+    out[["estimates"]][["samples"]] <- NULL
+  }
+  if ("estimated_reported_cases" %in% names(out) && !return_output) {
+    out[["estimated_reported_cases"]][["samples"]] <- NULL
+  }
+  if ("plots" %in% names(out) && !return_output) {
+    out[["estimated_reported_cases"]][["plots"]] <- NULL
+  }
+
+  if ("summary" %in% names(out)) {
     futile.logger::flog.info("Completed estimates for: %s", target_region,
       name = complete_logger
     )
   }
-  return(out)
+  out
 }
 
 #' Process all Region Estimates
@@ -476,7 +484,7 @@ process_regions <- function(regional_out, regions) {
     )
   }
   sucessful_regional_out <- purrr::keep(
-    purrr::compact(regional_out), ~ is.finite(.$timing)
+    purrr::compact(regional_out), ~ is.null(.$error) && is.finite(.$timing)
   )
-  return(list(all = regional_out, successful = sucessful_regional_out))
+  list(all = regional_out, successful = sucessful_regional_out)
 }

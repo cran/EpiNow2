@@ -11,10 +11,10 @@ data {
   // dimensions
   int n; // number of samples
   int t; // time
-  int h; // forecast horizon
+  int horizon; // forecast horizon
   int all_dates; // should all dates have simulations returned
   // secondary model specific data
-  array[t - h] int<lower = 0> obs;         // observed secondary data
+  array[t - horizon] int<lower = 0> obs;         // observed secondary data
   matrix[n, t] primary;              // observed primary data
 #include data/secondary.stan
 #include data/simulation_delays.stan
@@ -32,14 +32,14 @@ transformed data {
 }
 
 generated quantities {
-  array[n, all_dates ? t : h] int sim_secondary;
+  array[n, all_dates ? t : horizon] int sim_secondary;
   {
-    vector[n] dispersion = get_param(
-      dispersion_id, params_fixed_lookup, params_variable_lookup,
+    vector[n] reporting_overdispersion = get_param(
+      param_id_reporting_overdispersion, params_fixed_lookup, params_variable_lookup,
       params_value, params
     );
-    vector[n] frac_obs = get_param(
-      frac_obs_id, params_fixed_lookup, params_variable_lookup,
+    vector[n] fraction_observed = get_param(
+      param_id_fraction_observed, params_fixed_lookup, params_variable_lookup,
       params_value, params
     );
     for (i in 1:n) {
@@ -48,19 +48,20 @@ generated quantities {
       vector[t] convolved = rep_vector(1e-5, t);
 
       if (obs_scale) {
-        scaled = scale_obs(to_vector(primary[i]), frac_obs[i]);
+        scaled = scale_obs(to_vector(primary[i]), fraction_observed[i]);
       } else {
         scaled = to_vector(primary[i]);
       }
 
-      if (delay_id) {
-        vector[delay_type_max[delay_id] + 1] delay_rev_pmf = get_delay_rev_pmf(
-          delay_id, delay_type_max[delay_id] + 1, delay_types_p, delay_types_id,
-          delay_types_groups, delay_max, delay_np_pmf,
-          delay_np_pmf_groups, delay_params[i], delay_params_groups, delay_dist,
-          0, 1, 0
-        );
-        convolved = convolved + convolve_to_report(scaled, delay_rev_pmf, 0);
+      if (delay_id_reporting) {
+        vector[delay_type_max[delay_id_reporting] + 1] reporting_rev_pmf =
+          get_delay_rev_pmf(
+            delay_id_reporting, delay_type_max[delay_id_reporting] + 1,
+            delay_types_p, delay_types_id, delay_types_groups, delay_max,
+            delay_np_pmf, delay_np_pmf_groups, delay_params[i],
+            delay_params_groups, delay_dist, 0, 1, 0
+          );
+        convolved = convolved + convolve_to_report(scaled, reporting_rev_pmf, 0);
       } else {
         convolved = convolved + scaled;
       }
@@ -68,7 +69,7 @@ generated quantities {
       // calculate secondary reports from primary
       secondary = calculate_secondary(
         scaled, convolved, obs, cumulative, historic, primary_hist_additive,
-        current, primary_current_additive, t - h + 1
+        current, primary_current_additive, t - horizon + 1
       );
 
       // weekly reporting effect
@@ -77,13 +78,14 @@ generated quantities {
       }
 
       // truncate near time cases to observed reports
-      if (trunc_id) {
-        vector[delay_type_max[trunc_id] + 1] trunc_rev_cmf = get_delay_rev_pmf(
-          trunc_id, delay_type_max[trunc_id] + 1, delay_types_p, delay_types_id,
-          delay_types_groups, delay_max, delay_np_pmf,
-          delay_np_pmf_groups, delay_params[i], delay_params_groups, delay_dist,
-          0, 1, 1
-        );
+      if (delay_id_truncation) {
+        vector[delay_type_max[delay_id_truncation] + 1] trunc_rev_cmf =
+          get_delay_rev_pmf(
+            delay_id_truncation, delay_type_max[delay_id_truncation] + 1,
+            delay_types_p, delay_types_id, delay_types_groups, delay_max,
+            delay_np_pmf, delay_np_pmf_groups, delay_params[i],
+            delay_params_groups, delay_dist, 0, 1, 1
+          );
         secondary = truncate_obs(
           secondary, trunc_rev_cmf, 0
         );
@@ -91,7 +93,7 @@ generated quantities {
 
       // simulate secondary reports
       sim_secondary[i] = report_rng(
-        tail(secondary, all_dates ? t : h), dispersion[i], model_type
+        tail(secondary, all_dates ? t : horizon), reporting_overdispersion[i], model_type
       );
     }
   }

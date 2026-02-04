@@ -38,16 +38,14 @@ summarise_results <- function(regions,
         )
       )
     }
-  } else {
-    if (!is.null(summaries)) {
-      cli_abort(
-        c(
-          "!" = "Cannot supply both {.var results_dir} and {.var summary}.",
-          "i" = "Only one of {.var results_dir} or {.var summary} should be
+  } else if (!is.null(summaries)) {
+    cli_abort(
+      c(
+        "!" = "Cannot supply both {.var results_dir} and {.var summary}.",
+        "i" = "Only one of {.var results_dir} or {.var summary} should be
         supplied."
-        )
       )
-    }
+    )
   }
 
   if (is.null(summaries)) {
@@ -135,7 +133,7 @@ summarise_results <- function(regions,
 
   out <- list(estimates, numeric_estimates, high_inc_regions)
   names(out) <- c("table", "data", "regions_by_inc")
-  return(out)
+  out
 }
 
 
@@ -156,7 +154,7 @@ summarise_results <- function(regions,
 #' @param ... Additional arguments passed to `report_plots`.
 #' @return A list of summary measures and plots
 #' @export
-#' @seealso regional_epinow
+#' @seealso [regional_epinow()]
 #' @inheritParams summarise_results
 #' @inheritParams plot_summary
 #' @inheritParams plot_estimates
@@ -176,10 +174,11 @@ summarise_results <- function(regions,
 #'   package = "EpiNow2", "extdata", "example_regional_epinow.rds"
 #' ))
 #'
-#' regional_summary(
+#' summary <- regional_summary(
 #'   regional_output = regional_out$regional,
 #'   data = regional_out$summary$reported_cases
 #' )
+#' names(summary)
 regional_summary <- function(regional_output = NULL,
                              data,
                              results_dir = NULL,
@@ -248,7 +247,13 @@ regional_summary <- function(regional_output = NULL,
   }
 
   if (!is.null(regional_output)) {
-    regional_summaries <- purrr::map(regional_output, ~ .$summary)
+    regional_summaries <- purrr::map(regional_output, function(x) {
+      latest_date <- max(x$observations$date, na.rm = TRUE)
+      summarised <- summary(x, type = "parameters")
+      summarised <- summarised[date == latest_date]
+      rt_samples <- get_samples(x)[variable == "R" & date == latest_date]
+      report_summary(summarised, rt_samples, return_numeric = TRUE)
+    })
   } else {
     regional_summaries <- NULL
   }
@@ -299,7 +304,7 @@ regional_summary <- function(regional_output = NULL,
   uppers <- grepl("upper_", colnames(current_inf), fixed = TRUE) # nolint
   lowers <- grepl("lower_", colnames(current_inf), fixed = TRUE) # nolint
   log_cases <- (max(current_inf[, ..uppers], na.rm = TRUE) /
-    (min(current_inf[, ..lowers], na.rm = TRUE) + 1)) > 1000
+                  (min(current_inf[, ..lowers], na.rm = TRUE) + 1)) > 1000
 
   max_reported_cases <- round(
     max(reported_cases$confirm, na.rm = TRUE) * max_plot, 0
@@ -328,7 +333,7 @@ regional_summary <- function(regional_output = NULL,
       save_ggplot(summary_plot, "summary_plot.png",
         width = data.table::fcase(
           length(regions) > 60 & length(regions) > 120, 36,
-          length(regions) > 60 & !(length(regions) > 120), 24,
+          length(regions) > 60 & length(regions) <= 120, 24,
           default = 12
         )
       )
@@ -363,7 +368,7 @@ regional_summary <- function(regional_output = NULL,
     if (all_regions) {
       plots_per_row <- data.table::fcase(
         length(regions) > 60 & length(regions) > 120, 8,
-        length(regions) > 60 & !(length(regions) > 120), 5,
+        length(regions) > 60 & length(regions) <= 120, 5,
         default = 3
       )
 
@@ -413,9 +418,9 @@ regional_summary <- function(regional_output = NULL,
     if (all_regions && plot) {
       out$plots <- plots
     }
-    return(out)
+    out
   } else {
-    return(invisible(NULL))
+    invisible(NULL)
   }
 }
 
@@ -439,7 +444,7 @@ regional_summary <- function(regional_output = NULL,
 #'
 #' @inheritParams get_regional_results
 #' @importFrom cli cli_abort
-#' @seealso regional_summary
+#' @seealso [regional_summary()]
 #' @return A list of summarised Rt, cases by date of infection and cases by
 #' date of report
 #' @keywords internal
@@ -464,13 +469,16 @@ summarise_key_measures <- function(regional_results = NULL,
     timeseries <- regional_results
   }
   summarise_variable <- function(df, dof = Inf) {
-    cols <- setdiff(names(df), c("region", "date", "type", "strat"))
+    # Exclude non-numeric columns from rounding
+    cols <- setdiff(
+      names(df), c("region", "date", "type", "strat", "variable")
+    )
     if (!is.null(dof)) {
       df[, (cols) := round(.SD, dof), .SDcols = cols]
     }
     data.table::setorderv(df, cols = c("region", "date", "type", "strat"))
     data.table::setnames(df, "region", type)
-    return(df)
+    df
   }
 
   save_variable <- function(df, name) {
@@ -508,7 +516,7 @@ summarise_key_measures <- function(regional_results = NULL,
     ], 1
   )
   save_variable(out$cases_by_report, "cases_by_report")
-  return(out)
+  out
 }
 
 #' Summarise Regional Runtimes
@@ -516,7 +524,7 @@ summarise_key_measures <- function(regional_results = NULL,
 #' @description `r lifecycle::badge("maturing")`
 #' Used internally by `regional_epinow` to summarise region run times.
 #'
-#' @seealso regional_summary regional_epinow
+#' @seealso [regional_summary()] [regional_epinow()]
 #' @inheritParams regional_summary
 #' @inheritParams epinow
 #' @return A data.table of region run times
@@ -576,9 +584,9 @@ regional_runtimes <- function(regional_output = NULL,
     data.table::fwrite(timings, file.path(target_folder, "runtimes.csv"))
   }
   if (return_output) {
-    return(timings)
+    timings
   } else {
-    return(invisible(NULL))
+    invisible(NULL)
   }
 }
 
@@ -614,7 +622,7 @@ calc_CrI <- function(samples, summarise_by = NULL, CrI = 0.9) {
     ),
     by = summarise_by
     ]
-  return(with_CrI)
+  with_CrI
 }
 
 
@@ -658,7 +666,7 @@ calc_CrIs <- function(samples, summarise_by = NULL, CrIs = c(0.2, 0.5, 0.9)) {
     with_CrIs, ... ~ factor(CrI, levels = order_CrIs),
     value.var = "value"
   )
-  return(with_CrIs)
+  with_CrIs
 }
 
 #' Extract Credible Intervals Present
@@ -680,8 +688,7 @@ calc_CrIs <- function(samples, summarise_by = NULL, CrIs = c(0.2, 0.5, 0.9)) {
 extract_CrIs <- function(summarised) {
   CrIs <- grep("lower_", colnames(summarised), value = TRUE, fixed = TRUE)
   CrIs <- gsub("lower_", "", CrIs, fixed = TRUE)
-  CrIs <- as.numeric(CrIs)
-  return(CrIs)
+  as.numeric(CrIs)
 }
 
 #' Calculate Summary Statistics
@@ -710,7 +717,7 @@ calc_summary_stats <- function(samples, summarise_by = NULL) {
     ),
     by = summarise_by
     ]
-  return(sum_stats)
+  sum_stats
 }
 
 #' Calculate All Summary Measures
@@ -756,53 +763,98 @@ calc_summary_measures <- function(samples,
 
   summarised <- sum_stats[CrIs, on = summarise_by]
   data.table::setorderv(summarised, cols = order_by)
-  return(summarised)
+  summarised
 }
 
 
 #' Summary output from epinow
 #'
 #' @description `r lifecycle::badge("stable")`
-#'  \code{summary} method for class "epinow".
-#' @param object A list of output as produced by "epinow".
+#' \code{summary} method for class "epinow". This method inherits from
+#' [summary.estimate_infections()] and supports the same arguments.
 #'
-#' @param output A character string of output to summarise. Defaults to
-#' "estimates" but also supports "forecast", and "estimated_reported_cases".
+#' @param object An `<epinow>` object as produced by [epinow()].
+#'
+#' @param output `r lifecycle::badge("deprecated")` Use the `type` argument
+#' instead. Previously supported "estimates", "forecast", and
+#' "estimated_reported_cases".
 #'
 #' @inheritParams summary.estimate_infections
 #'
 #' @importFrom rlang arg_match
 #'
-#' @param ... Pass additional summary arguments to lower level methods
+#' @param ... Pass additional summary arguments to
+#'   [summary.estimate_infections()]
 #'
-#' @seealso summary.estimate_infections epinow
+#' @seealso [summary.estimate_infections()] [epinow()]
 #' @aliases summary
 #' @method summary epinow
 #' @return Returns a `<data.frame>` of summary output
 #' @export
 summary.epinow <- function(object,
-                           output = c(
-                             "estimates", "forecast", "estimated_reported_cases"
-                           ),
-                           date = NULL, params = NULL,
+                           output = NULL,
+                           type = c("snapshot", "parameters"),
+                           target_date = NULL, params = NULL,
+                           CrIs = c(0.2, 0.5, 0.9),
                            ...) {
-  output <- arg_match(output)
-  if (output == "estimates") {
-    out <- summary(object$estimates,
-      date = date,
-      params = params, ...
-    )
-  } else {
-    out <- object[[output]]$summarised
-    if (!is.null(date)) {
-      target_date <- as.Date(date)
-      out <- out[date == target_date]
-    }
-    if (!is.null(params)) {
-      out <- out[variable == params]
-    }
+  # Check for failed runs
+  if (!is.null(object$error)) {
+    cli_abort(c(
+      "Cannot summarise a failed epinow run.",
+      "i" = "The run failed with error: {object$error}"
+    ))
   }
-  return(out)
+
+  # Handle deprecated output argument
+  if (!is.null(output)) {
+    lifecycle::deprecate_warn(
+      "1.8.0",
+      "summary.epinow(output)",
+      "summary.epinow(type)",
+      details = paste(
+        "The epinow object now inherits from estimate_infections.",
+        "Use type = 'snapshot' or type = 'parameters'.",
+        "For predictions, use get_predictions()."
+      )
+    )
+    # Provide backward compatibility
+    out <- switch(output,
+      estimates = {
+        # Compute on-the-fly like the deprecated $summary accessor
+        latest_date <- max(object$observations$date, na.rm = TRUE)
+        summarised <- summary(object, type = "parameters", CrIs = CrIs)
+        summarised <- summarised[date == latest_date]
+        rt_samples <- get_samples(object)[variable == "R" & date == latest_date]
+        report_summary(summarised, rt_samples, return_numeric = TRUE)
+      },
+      forecast = {
+        out <- summary(object, type = "parameters", CrIs = CrIs)
+        if (!is.null(target_date)) {
+          out <- out[date == as.Date(target_date)]
+        }
+        if (!is.null(params)) {
+          out <- out[variable == params]
+        }
+        out
+      },
+      estimated_reported_cases = {
+        out <- estimates_by_report_date(object, CrIs = CrIs)
+        if (!is.null(out)) {
+          if (!is.null(target_date)) {
+            out <- out[date == as.Date(target_date)]
+          }
+          if (!is.null(params)) {
+            out <- out[variable == params]
+          }
+        }
+        out
+      }
+    )
+    return(out)
+  }
+
+  # Forward to estimate_infections summary
+  NextMethod("summary")
 }
 
 #' Summary output from estimate_infections
@@ -813,56 +865,195 @@ summary.epinow <- function(object,
 #' @param object A list of output as produced by "estimate_infections".
 #'
 #' @param type A character vector of data types to return. Defaults to
-#' "snapshot" but also supports "parameters", and "samples". "snapshot" return
-#' a summary at a given date (by default the latest date informed by data).
-#' "parameters" returns summarised parameter estimates that can be further
-#' filtered using `params` to show just the parameters of interest and date.
-#' "samples" similarly returns posterior
-#' samples.
+#' "snapshot" but also supports "parameters". "snapshot" returns a summary at
+#' a given date (by default the latest date informed by data). "parameters"
+#' returns summarised parameter estimates that can be further filtered using
+#' `params` to show just the parameters of interest and date.
 #'
-#' @param date A date in the form "yyyy-mm-dd" to inspect estimates for.
+#' Note: `type = "samples"` is deprecated. Use [get_samples()] instead.
+#'
+#' @inheritParams setup_target_folder
 #'
 #' @param params A character vector of parameters to filter for.
 #'
-#' @param ... Pass additional arguments to `report_summary`
+#' @param ... Pass additional arguments to `report_summary` when
+#'   `type = "snapshot"`.
 #' @importFrom rlang arg_match
-#' @seealso summary estimate_infections report_summary
+#' @inheritParams calc_summary_measures
+#' @seealso [summary.epinow()] [estimate_infections()] [report_summary()]
 #' @method summary estimate_infections
 #' @return Returns a `<data.frame>` of summary output
 #' @export
 summary.estimate_infections <- function(object,
-                                        type = c(
-                                          "snapshot", "parameters", "samples"
-                                        ),
-                                        date = NULL, params = NULL, ...) {
-  type <- arg_match(type)
-  if (is.null(date)) {
-    target_date <- unique(
-      object$summarised[type != "forecast"][date == max(date)]$date
+                                        type = c("snapshot", "parameters"),
+                                        target_date = NULL, params = NULL,
+                                        CrIs = c(0.2, 0.5, 0.9), ...) {
+  # Handle deprecated type = "samples" before arg_match
+  if (length(type) == 1 && type == "samples") {
+    lifecycle::deprecate_warn(
+      "1.8.0",
+      "summary.estimate_infections(type = 'samples')",
+      "get_samples()"
     )
-  } else {
-    target_date <- as.Date(date)
+    return(get_samples(object))
   }
 
-  if (type == "snapshot") {
-    out <- report_summary(
-      summarised_estimates = object$summarised[date == target_date],
-      rt_samples = object$samples[variable == "R"][
-        date == target_date, .(sample, value)
-      ],
-      ...
-    )
-  } else if (type %in% c("parameters", "samples")) {
-    if (type == "parameters") {
-      type <- "summarised"
-    }
-    out <- object[[type]]
-    if (!is.null(date)) {
-      out <- out[date == target_date]
-    }
-    if (!is.null(params)) {
-      out <- out[variable %in% params]
-    }
+  create_infection_summary(object, type, target_date, params, CrIs, ...)
+}
+
+#' Summary output from forecast_infections
+#'
+#' @description `r lifecycle::badge("stable")`
+#' \code{summary} method for class "forecast_infections".
+#'
+#' @param object A list of output as produced by "forecast_infections".
+#'
+#' @param type A character vector of data types to return. Defaults to
+#' "snapshot" but also supports "parameters". "snapshot" returns
+#' a summary at a given date (by default the latest date informed by data).
+#' "parameters" returns summarised parameter estimates that can be further
+#' filtered using `params` to show just the parameters of interest and date.
+#'
+#' @inheritParams summary.estimate_infections
+#' @importFrom rlang arg_match
+#' @inheritParams calc_summary_measures
+#' @seealso [summary.estimate_infections()] [forecast_infections()]
+#'   [report_summary()]
+#' @method summary forecast_infections
+#' @return Returns a `<data.frame>` of summary output
+#' @export
+summary.forecast_infections <- function(object,
+                                        type = c("snapshot", "parameters"),
+                                        target_date = NULL, params = NULL,
+                                        CrIs = c(0.2, 0.5, 0.9), ...) {
+  create_infection_summary(object, type, target_date, params, CrIs, ...)
+}
+
+##' Print information about an object that has resulted from a model fit.
+##'
+##' @param x The object containing fit results.
+##' @param ... Ignored
+##' @method print epinowfit
+##' @return Invisible
+##' @export
+print.epinowfit <- function(x, ...) {
+  print(summary(x))
+}
+
+#' Summarise results from estimate_secondary
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Returns a summary of the fitted secondary model including posterior
+#' parameter estimates with credible intervals.
+#'
+#' @param object A fitted model object from `estimate_secondary()`
+#' @param type Character string indicating the type of summary to return.
+#'   Options are "compact" (default) which returns delay distribution
+#'   parameters and scaling factors, or "parameters" for all parameters
+#'   or a filtered set.
+#' @param params Character vector of parameter names to include. Only used
+#'   when `type = "parameters"`. If NULL (default), returns all parameters.
+#' @inheritParams calc_summary_measures
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A `<data.table>` with summary statistics (mean, sd, median,
+#'   credible intervals) for model parameters. When `type = "compact"`,
+#'   returns only key parameters (delay distribution parameters and scaling
+#'   factors). When `type = "parameters"`, returns all or filtered parameters.
+#' @importFrom rlang arg_match
+#' @method summary estimate_secondary
+#' @export
+summary.estimate_secondary <- function(object,
+                                       type = c("compact", "parameters"),
+                                       params = NULL,
+                                       CrIs = c(0.2, 0.5, 0.9), ...) {
+  type <- arg_match(type)
+
+  # Get all posterior samples
+  samples <- get_samples(object)
+
+  # Filter to non-time-varying parameters (delay_params and params)
+  # Time-varying parameters like secondary and sim_secondary have dates
+  param_samples <- samples[is.na(date)]
+
+  # Calculate summary statistics grouped by variable
+  out <- calc_summary_measures(
+    param_samples,
+    summarise_by = "variable",
+    order_by = "variable",
+    CrIs = CrIs
+  )
+
+  if (type == "compact") {
+    # Return only key parameters for a compact summary
+    # Filter to delay distribution and scaling parameters
+    key_patterns <- c("reporting\\[", "fraction_observed")
+    out <- out[grepl(paste(key_patterns, collapse = "|"), variable)]
+  } else if (type == "parameters" && !is.null(params)) {
+    # Optional filtering by parameter name
+    out <- out[variable %in% params]
   }
-  return(out)
+
+  out[]
+}
+
+#' Summarise results from estimate_truncation
+#'
+#' @description `r lifecycle::badge("stable")`
+#' Returns parameter summary statistics for the fitted truncation model.
+#'
+#' @param object A fitted model object from `estimate_truncation()`
+#' @inheritParams calc_summary_measures
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A `<data.table>` with summary statistics for the truncation
+#'   distribution parameters.
+#' @method summary estimate_truncation
+#' @export
+summary.estimate_truncation <- function(object, CrIs = c(0.2, 0.5, 0.9), ...) {
+  # Extract delay parameters directly from fit (avoids rbindlist warning)
+  raw_samples <- extract_samples(object$fit)
+  param_samples <- extract_delays(raw_samples, args = object$args)
+
+  # Calculate summary statistics
+  out <- calc_summary_measures(
+    param_samples,
+    summarise_by = "variable",
+    order_by = "variable",
+    CrIs = CrIs
+  )
+
+  # Map generic parameter names to distribution-specific names
+  dist_idx <- object$args$delay_dist[1] + 1
+  dist_type <- dist_spec_distributions()[dist_idx]
+  param_names <- natural_params(dist_type)
+  idx <- suppressWarnings(
+    as.integer(gsub(".*\\[(\\d+)\\]", "\\1", out$variable))
+  )
+  if (anyNA(idx)) {
+    cli::cli_warn("Could not parse parameter indices from variable names")
+    return(out)
+  }
+  out[, variable := param_names[idx]]
+
+  # Add distribution info as attribute
+  attr(out, "distribution") <- dist_type
+  attr(out, "max") <- object$args$delay_max[1]
+  class(out) <- c("summary.estimate_truncation", class(out))
+
+  out
+}
+
+#' @export
+print.summary.estimate_truncation <- function(x, ...) {
+  dist_type <- attr(x, "distribution")
+  dist_max <- attr(x, "max")
+  cat(
+    "Truncation distribution:", dist_type,
+    paste0("(max: ", dist_max, ")"), "\n\n"
+  )
+  cat("Parameter estimates:\n")
+  # Print as regular data.table
+  print(as.data.table(x), ...)
+  invisible(x)
 }

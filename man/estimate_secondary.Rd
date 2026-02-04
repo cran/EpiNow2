@@ -61,7 +61,8 @@ settings if desired.}
 use for estimation but not to fit to at the beginning of the time series.
 This must be less than the number of observations.}
 
-\item{CrIs}{Numeric vector of credible intervals to calculate.}
+\item{CrIs}{Deprecated; specify credible intervals when using \code{\link[=summary]{summary()}} or
+\code{\link[=plot]{plot()}}}
 
 \item{priors}{A \verb{<data.frame>} of named priors to be used in model fitting
 rather than the defaults supplied from other arguments. This is typically
@@ -90,11 +91,12 @@ number of cases based on the 7-day average. If the average is above this
 threshold then the zero is replaced using \code{fill}.}
 }
 \value{
-A list containing: \code{predictions} (a \verb{<data.frame>} ordered by date
-with the primary, and secondary observations, and a summary of the model
-estimated secondary observations), \code{posterior} which contains a summary of
-the entire model posterior, \code{data} (a list of data used to fit the
-model), and \code{fit} (the \code{stanfit} object).
+An \verb{<estimate_secondary>} object containing:
+\itemize{
+\item \code{fit}: The stan fit object.
+\item \code{args}: A list of arguments used for fitting (stan data).
+\item \code{observations}: The input data (\verb{<data.frame>}).
+}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -177,4 +179,7 @@ plot(prev_preds, new_obs = cases, from = "2020-06-01")
 
 options(old_opts)
 }
+}
+\seealso{
+\code{\link[=get_samples]{get_samples()}} \code{\link[=get_predictions]{get_predictions()}} \code{\link[=get_parameters]{get_parameters()}}
 }

@@ -17,7 +17,7 @@ epinow(
   stan = stan_opts(),
   CrIs = c(0.2, 0.5, 0.9),
   return_output = is.null(target_folder),
-  output = c("samples", "plots", "latest", "fit", "timing"),
+  output = c("samples", "plots", "latest", "fit", "timing", "estimate_infections"),
   plot_args = list(),
   target_folder = NULL,
   target_date,
@@ -31,13 +31,15 @@ epinow(
 }
 \arguments{
 \item{data}{A \verb{<data.frame>} of disease reports (confirm) by date (date).
-\code{confirm} must be numeric and \code{date} must be in date format. Optionally
-this can also have a logical \code{accumulate} column which indicates whether
+\code{confirm} must be numeric and \code{date} must be in date format. Optionally,
+\code{data} can also have a logical \code{accumulate} column which indicates whether
 data should be added to the next data point. This is useful when modelling
 e.g. weekly incidence data. See also the \code{\link[=fill_missing]{fill_missing()}} function which
 helps add the \code{accumulate} column with the desired properties when dealing
 with non-daily data. If any accumulation is done this happens after
-truncation as specified by the \code{truncation} argument.}
+truncation as specified by the \code{truncation} argument. If all entries
+of \code{confirm} are missing (\code{NA}) the returned estimates will represent the
+prior distributions.}
 
 \item{generation_time}{A call to \code{\link[=gt_opts]{gt_opts()}} (or its alias
 \code{\link[=generation_time_opts]{generation_time_opts()}}) defining the generation time distribution used.
@@ -86,10 +88,12 @@ this automatically updates to TRUE if no directory for saving is specified.}
 \item{output}{A character vector of optional output to return. Supported
 options are samples ("samples"), plots ("plots"), the run time ("timing"),
 copying the dated folder into a latest folder (if \code{target_folder} is not
-null, set using "latest"), and the stan fit ("fit"). The default is to
-return all options.}
+null, set using "latest"), the stan fit ("fit"), and the full
+\code{\link[=estimate_infections]{estimate_infections()}} return object ("estimate_infections"). The default
+is to return all options.}
 
-\item{plot_args}{A list of optional arguments passed to \code{\link[=plot.epinow]{plot.epinow()}}.}
+\item{plot_args}{A list of optional arguments passed to
+\code{\link[=plot.estimate_infections]{plot.estimate_infections()}}.}
 
 \item{target_folder}{Character string specifying where to save results (will
 create if not present).}
@@ -124,8 +128,14 @@ threshold then the zero is replaced using \code{fill}.}
 horizon}
 }
 \value{
-A list of output from estimate_infections with additional elements
-summarising results and reporting errors if they have occurred.
+An \verb{<epinow>} object (inheriting from \verb{<estimate_infections>})
+containing:
+\itemize{
+\item \code{fit}: The stan fit object.
+\item \code{args}: A list of arguments used for fitting (stan data).
+\item \code{observations}: The input data (\verb{<data.frame>}).
+\item \code{timing}: The run time (if \code{output} includes "timing").
+}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
@@ -165,11 +175,14 @@ reporting_delay <- LogNormal(mean = 2, sd = 1, max = 10)
 reported_cases <- example_confirmed[1:40]
 
 # estimate Rt and nowcast/forecast cases by date of infection
+# samples and calculation time have been reduced for this example
+# for real analyses, use at least samples = 2000
 out <- epinow(
   data = reported_cases,
   generation_time = gt_opts(generation_time),
   rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1)),
-  delays = delay_opts(incubation_period + reporting_delay)
+  delays = delay_opts(incubation_period + reporting_delay),
+  stan = stan_opts(samples = 100, warmup = 200)
 )
 # summary of the latest estimates
 summary(out)
@@ -183,5 +196,6 @@ options(old_opts)
 }
 }
 \seealso{
+\code{\link[=get_samples]{get_samples()}} \code{\link[=get_predictions]{get_predictions()}} \code{\link[=get_parameters]{get_parameters()}}
 \code{\link[=estimate_infections]{estimate_infections()}} \code{\link[=forecast_infections]{forecast_infections()}} \code{\link[=regional_epinow]{regional_epinow()}}
 }

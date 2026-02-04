@@ -274,6 +274,8 @@ estimate_infections()</h1>
 number</a></li>
 <li><a href="#beyond-the-end-of-the-observation-period" id="toc-beyond-the-end-of-the-observation-period"><span class="toc-section-number">1.1.4</span> Beyond the end of the
 observation period</a></li>
+<li><a href="#adjusting-for-susceptible-population-depletion" id="toc-adjusting-for-susceptible-population-depletion"><span class="toc-section-number">1.1.5</span> Adjusting for susceptible
+population depletion</a></li>
 </ul></li>
 <li><a href="#non-mechanistic-infection-model" id="toc-non-mechanistic-infection-model"><span class="toc-section-number">1.2</span> Non-Mechanistic infection
 model</a>
@@ -353,19 +355,21 @@ then modelled by weighting previous infections with the generation time
 and scaling by the instantaneous reproduction number:</p>
 <p><span class="math display">\[\begin{equation}
   I_t = R_t \sum_{\tau = 1}^{g_\mathrm{max}} g(\tau | \theta_g) I_{t -
-\tau}
+\tau} = R_t \lambda_t
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(g_\tau = g(\tau |
 \theta_g)\)</span> is the discretised distribution of generation times
 with parameters <span class="math inline">\(\theta_g\)</span> and
-maximum <span class="math inline">\(g_\mathrm{max}\)</span>. Generation
-times can be specified as coming from a distribution with uncertainty by
-giving mean and standard deviations of normal priors of the
-distributional parameters. By default this prior is weighted by default
-by the number of observations although this can be changed by the user.
-It is truncated to be positive where relevant for the given
-distribution. Alternatively, generation times can be specified as coming
-from a given distribution with set parameters.</p>
+maximum <span class="math inline">\(g_\mathrm{max}\)</span>, and <span class="math inline">\(\lambda_t = \sum_{\tau = 1}^{g_\mathrm{max}}
+g(\tau | \theta_g) I_{t - \tau}\)</span> is the total infectiousness at
+time <span class="math inline">\(t\)</span>. Generation times can be
+specified as coming from a distribution with uncertainty by giving mean
+and standard deviations of normal priors of the distributional
+parameters. By default this prior is weighted by default by the number
+of observations although this can be changed by the user. It is
+truncated to be positive where relevant for the given distribution.
+Alternatively, generation times can be specified as coming from a given
+distribution with set parameters.</p>
 <p>The distribution of generation times <span class="math inline">\(g\)</span> here represents the probability that
 somebody who became infectious on day 0 and who infects someone else
 during their course of infection does so on day <span class="math inline">\(\tau &gt; 0\)</span>, assuming that infection
@@ -422,18 +426,54 @@ prior and rely on just the intial fixed reproduction number <span class="math in
 the observation period</h3>
 <p>Beyond the end of the observation period (<span class="math inline">\(T\)</span>), by default, the Gaussian process is
 assumed to continue. However, here again there are a range of options.
-These included fixing transmission dynamics (optionally this can also be
-done before the end of the observation period), and scaling <span class="math inline">\(R_t\)</span> based on the proportion of the
-population that remain susceptible. This is defined as followed,</p>
+These include fixing transmission dynamics (optionally this can also be
+done before the end of the observation period), and adjusting for
+depletion of the susceptible population.</p>
+</div>
+<div id="adjusting-for-susceptible-population-depletion" class="section level3" number="1.1.5">
+<h3><span class="header-section-number">1.1.5</span> Adjusting for
+susceptible population depletion</h3>
+<p>The model can account for the depletion of susceptible individuals
+over time, which reduces transmission potential even if the intrinsic
+reproduction number remains constant. This is controlled via the
+<code>pop</code>, <code>pop_period</code>, and <code>pop_floor</code>
+parameters in <code>rt_opts()</code>.</p>
+<p>When a population size is specified (via the <code>pop</code>
+parameter), the model adjusts both infections and the reproduction
+number estimates to account for susceptible depletion. The adjustment
+uses the following formula for infections:</p>
 <p><span class="math display">\[\begin{equation}
-    I_t = (N - I^c_{t-1}) \left(1 - \exp \left(\frac{-I&#39;_t}{N -
-I^c_{T}}\right)\right),
+    I_t = S_t \left(1 - \exp \left(\frac{-R_t
+\lambda_t}{S_t}\right)\right),
 \end{equation}\]</span></p>
-<p>where <span class="math inline">\(I^c_t = \sum_{s&lt; t} I_s\)</span>
-are cumulative infections by <span class="math inline">\(t-1\)</span>
-and <span class="math inline">\(I&#39;_t\)</span> are the unadjusted
-infections defined above. This adjustment is based on the one
-implemented in the <code>epidemia</code> R package<span class="citation"><sup>[2]</sup></span>.</p>
+<p>where <span class="math inline">\(S_t = \max(N_{\text{floor}}, N -
+I^c_{t-1})\)</span> is the susceptible population at time <span class="math inline">\(t\)</span>, <span class="math inline">\(N\)</span>
+is the initial population size, <span class="math inline">\(I^c_t =
+\sum_{s&lt; t} I_s\)</span> are cumulative infections by <span class="math inline">\(t-1\)</span>, <span class="math inline">\(R_t\)</span> is the unadjusted reproduction
+number, and <span class="math inline">\(\lambda_t\)</span> is the total
+infectiousness. The parameter <span class="math inline">\(N_{\text{floor}}\)</span> (controlled by
+<code>pop_floor</code>, default 1.0) provides a numerical stability
+floor and can be interpreted as representing ongoing importation.</p>
+<p>The adjustment can be applied in two ways, controlled by the
+<code>pop_period</code> parameter: - <code>&quot;forecast&quot;</code> (default):
+adjustment applied only to forecasts beyond the observation period -
+<code>&quot;all&quot;</code>: adjustment applied to both the observation period
+and forecasts</p>
+<p>When population adjustment is enabled, the returned reproduction
+number estimates (<code>R</code>) are back-calculated from the adjusted
+infections to reflect the effective reproduction occurring given the
+current susceptible population:</p>
+<p><span class="math display">\[\begin{equation}
+    R^{\text{adjusted}}_t = \frac{I_t}{\lambda_t}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(I_t\)</span> are the adjusted
+infections and <span class="math inline">\(\lambda_t\)</span> is the
+total infectiousness. This gives an effective reproduction number that
+is consistent with the infection dynamics. The unadjusted reproduction
+number (representing transmission in a fully susceptible population) is
+also returned as <code>R_unadjusted</code> for reference. This
+adjustment approach is based on the one implemented in the
+<code>epidemia</code> R package<span class="citation"><sup>[2]</sup></span>.</p>
 </div>
 </div>
 <div id="non-mechanistic-infection-model" class="section level2" number="1.2">
@@ -591,16 +631,17 @@ counts before confronting them with observations <span class="math inline">\(C_{
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="refs" class="references csl-bib-body" entry-spacing="0" line-spacing="2">
 <div id="ref-renewal" class="csl-entry">
-1. Fraser, C. (2007). Estimating individual and household reproduction
-numbers in an emerging epidemic. <em>PLOS ONE</em>, <em>2</em>(8), 1–12.
-<a href="https://doi.org/10.1371/journal.pone.0000758">https://doi.org/10.1371/journal.pone.0000758</a>
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Fraser, C. (2007). Estimating individual and
+household reproduction numbers in an emerging epidemic. <em>PLOS
+ONE</em>, <em>2</em>(8), 1–12. <a href="https://doi.org/10.1371/journal.pone.0000758">https://doi.org/10.1371/journal.pone.0000758</a></div>
 </div>
 <div id="ref-bhattSemiMechanisticBayesianModeling" class="csl-entry">
-2. Bhatt, S., Ferguson, N., Flaxman, S., Gandy, A., Mishra, S., &amp;
-Scott, J. A. (n.d.). <em>Semi-<span>Mechanistic Bayesian</span> modeling
-of <span>COVID-19</span> with <span>Renewal Processes</span></em>. 14.
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Bhatt, S., Ferguson, N., Flaxman, S., Gandy,
+A., Mishra, S., &amp; Scott, J. A. (n.d.). <em>Semi-<span>Mechanistic
+Bayesian</span> modeling of <span>COVID-19</span> with <span>Renewal
+Processes</span></em>. 14.</div>
 </div>
 </div>
 </div>

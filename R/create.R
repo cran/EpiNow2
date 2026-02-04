@@ -54,7 +54,19 @@
 #' }
 create_shifted_cases <- function(data, shift,
                                  smoothing_window, horizon) {
-  shifted_reported_cases <- data.table::copy(data)[
+  shifted_reported_cases <- copy(data)
+  ## turn initial NAs into zeroes
+  shifted_reported_cases[cumsum(!is.na(confirm)) == 0L, confirm := 0.0]
+  ## pad with additional zeroes
+  shifted_reported_cases <- pad_reported_cases(data, smoothing_window, 0.0)
+
+  if ("accumulate" %in% colnames(data)) {
+    shifted_reported_cases[
+      is.na(confirm) & accumulate,
+      confirm := 0
+    ]
+  }
+  shifted_reported_cases[
     ,
     confirm := data.table::shift(confirm,
       n = shift,
@@ -94,7 +106,16 @@ create_shifted_cases <- function(data, shift,
     confirm := ceiling(confirm)
   ]
   shifted_reported_cases <- shifted_reported_cases[-(1:smoothing_window)]
-  return(shifted_reported_cases)
+  if (anyNA(shifted_reported_cases$confirm)) {
+    cli::cli_abort(
+      c(
+        "!" = "Some values are missing after prior smoothing. Consider
+        increasing the smoothing using the {.var prior_window} argument in
+        {.fn backcalc_opts}."
+      )
+    )
+  }
+  shifted_reported_cases
 }
 
 #' Construct the Required Future Rt assumption
@@ -120,7 +141,7 @@ create_future_rt <- function(future = c("latest", "project", "estimate"),
   out <- list(fixed = FALSE, from = 0)
   if (is.character(future)) {
     future <- arg_match(future)
-    if (!(future == "project")) {
+    if (future != "project") {
       out$fixed <- TRUE
       out$from <- ifelse(future == "latest", 0, -delay)
     }
@@ -128,7 +149,7 @@ create_future_rt <- function(future = c("latest", "project", "estimate"),
     out$fixed <- TRUE
     out$from <- as.integer(future)
   }
-  return(out)
+  out
 }
 
 #' Create Time-varying Reproduction Number Data
@@ -147,9 +168,13 @@ create_future_rt <- function(future = c("latest", "project", "estimate"),
 #' breakpoints.
 #'
 #' @param horizon Numeric, forecast horizon.
-#' @importFrom cli cli_abort
 #'
-#' @seealso rt_settings
+#' @param data A `data.table` of case data (optional). Used for validation
+#' checks.
+#'
+#' @importFrom cli cli_abort cli_warn
+#'
+#' @seealso [rt_opts()]
 #' @return A list of settings defining the time-varying reproduction number
 #' @inheritParams create_future_rt
 #' @keywords internal
@@ -168,7 +193,7 @@ create_future_rt <- function(future = c("latest", "project", "estimate"),
 #' create_rt_data(rt_opts(rw = 7), breakpoints = rep(1, 10))
 #' }
 create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
-                           delay = 0, horizon = 0) {
+                           delay = 0, horizon = 0, data = NULL) {
   # Define if GP is on or off
   if (is.null(rt)) {
     rt <- rt_opts(
@@ -195,7 +220,7 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
 
     breakpoints <- seq_along(breakpoints)
     breakpoints <- floor(breakpoints / rt$rw)
-    if (!(rt$future == "project")) {
+    if (rt$future != "project") {
       max_bps <- length(breakpoints) - horizon + future_rt$from
       if (max_bps < length(breakpoints)) {
         breakpoints[(max_bps + 1):length(breakpoints)] <- breakpoints[max_bps]
@@ -211,6 +236,29 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
   # add a shift for 0 effect in breakpoints
   breakpoints <- breakpoints + 1
 
+  # Get pop_floor value
+  pop_floor_value <- rt$pop_floor
+
+  # Warn if fixed population is smaller than cumulative cases
+  if (rt$pop != Fixed(0) && !is.null(data) &&
+        get_distribution(rt$pop) == "fixed") {
+    pop_value <- mean(rt$pop, ignore_uncertainty = TRUE)
+    total_cases <- sum(data[!is.na(confirm)]$confirm, na.rm = TRUE)
+
+    if (pop_value < total_cases) {
+      # nolint start: duplicate_argument_linter
+      cli_warn(
+        c(
+          "!" = "Population ({pop_value}) is smaller than cumulative cases",
+          "!" = "({total_cases}).",
+          "i" = "This suggests the population value is incorrect.",
+          "i" = "Consider using the total at-risk population, not a subset."
+        )
+      )
+      # nolint end
+    }
+  }
+
   # map settings to underlying gp stan requirements
   rt_data <- list(
     estimate_r = as.numeric(rt$use_rt),
@@ -218,11 +266,16 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
     breakpoints = breakpoints,
     future_fixed = as.numeric(future_rt$fixed),
     fixed_from = future_rt$from,
-    pop = rt$pop,
+    use_pop =
+      as.integer(rt$pop != Fixed(0)) + as.integer(rt$pop_period == "all"),
+    pop_floor = pop_floor_value,
     stationary = as.numeric(rt$gp_on == "R0"),
-    future_time = horizon - future_rt$from
+    future_time = horizon - future_rt$from,
+    growth_method = list(
+      "infections" = 0, "infectiousness" = 1
+    )[[rt$growth_method]]
   )
-  return(rt_data)
+  rt_data
 }
 #' Create Back Calculation Data
 #'
@@ -233,12 +286,12 @@ create_rt_data <- function(rt = rt_opts(), breakpoints = NULL,
 #' @param backcalc A list of options as generated by [backcalc_opts()] to
 #' define the back calculation. Defaults to [backcalc_opts()].
 #'
-#' @seealso backcalc_opts
+#' @seealso [backcalc_opts()]
 #' @importFrom data.table fcase
 #' @return A list of settings defining the Gaussian process
 #' @keywords internal
 create_backcalc_data <- function(backcalc = backcalc_opts()) {
-  data <- list(
+  list(
     rt_half_window = as.integer((backcalc$rt_window - 1) / 2),
     backcalc_prior = data.table::fcase(
       backcalc$prior == "none", 0,
@@ -247,7 +300,6 @@ create_backcalc_data <- function(backcalc = backcalc_opts()) {
       default = 0
     )
   )
-  return(data)
 }
 
 #' Create Gaussian Process Data
@@ -292,16 +344,16 @@ create_gp_data <- function(gp = gp_opts(), data) {
     fixed <- FALSE
   }
 
-  time <- data$t - data$seeding_time
+  est_time <- data$t - data$seeding_time
   if (data$future_fixed > 0) {
-    time <- time + data$fixed_from - data$horizon
+    est_time <- est_time + data$fixed_from - data$horizon
   }
   if (data$stationary == 1) {
-    time <- time - 1
+    est_time <- est_time - 1
   }
 
   # basis functions
-  M <- ceiling(time * gp$basis_prop)
+  M <- ceiling(est_time * gp$basis_prop)
 
   # map settings to underlying gp stan requirements
   gp_data <- list(
@@ -319,7 +371,7 @@ create_gp_data <- function(gp = gp_opts(), data) {
   )
 
   gp_data <- c(data, gp_data)
-  return(gp_data)
+  gp_data
 }
 
 #' Create Observation Model Settings
@@ -353,7 +405,7 @@ create_gp_data <- function(gp = gp_opts(), data) {
 #' create_obs_model(obs_opts(week_length = 3), dates = dates)
 #' }
 create_obs_model <- function(obs = obs_opts(), dates) {
-  data <- list(
+  opts <- list(
     model_type = as.numeric(obs$family == "negbin"),
     week_effect = ifelse(obs$week_effect, obs$week_length, 1),
     obs_weight = obs$weight,
@@ -362,9 +414,9 @@ create_obs_model <- function(obs = obs_opts(), dates) {
     return_likelihood = as.numeric(obs$return_likelihood)
   )
 
-  data$day_of_week <- add_day_of_week(dates, data$week_effect)
+  opts$day_of_week <- add_day_of_week(dates, opts$week_effect)
 
-  return(data)
+  opts
 }
 
 #' Create Stan Data Required for estimate_infections
@@ -375,8 +427,6 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 #' construct a single list for input into stan with all data required
 #' present.
 #'
-#' @param shifted_cases A `<data.frame>` of delay shifted cases
-#'
 #' @param seeding_time Integer; seeding time, usually obtained using
 #' [get_seeding_time()].
 #'
@@ -385,6 +435,7 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 #' @inheritParams create_obs_model
 #' @inheritParams create_rt_data
 #' @inheritParams create_backcalc_data
+#' @inheritParams create_stan_params
 #' @importFrom stats lm
 #' @importFrom purrr safely
 #' @return A list of stan data
@@ -397,13 +448,25 @@ create_obs_model <- function(obs = obs_opts(), dates) {
 #' )
 #' }
 create_stan_data <- function(data, seeding_time, rt, gp, obs, backcalc,
-                             shifted_cases, forecast) {
+                             forecast, params) {
   cases <- data[(seeding_time + 1):.N]
   cases[, lookup := seq_len(.N)]
   case_times <- cases[!is.na(confirm), lookup]
   imputed_times <- cases[!(accumulate), lookup]
   accumulate <- cases$accumulate
   confirmed_cases <- cases[1:(.N - forecast$horizon)]$confirm
+  if (is.null(rt)) {
+    shifted_cases <- create_shifted_cases(
+      data,
+      shift = seeding_time,
+      smoothing_window = backcalc$prior_window,
+      horizon = forecast$horizon
+    )
+    shifted_confirmed_cases <- shifted_cases$confirm
+  } else {
+    shifted_confirmed_cases <- array(numeric(0))
+  }
+
 
   stan_data <- list(
     cases = confirmed_cases[!is.na(confirmed_cases)],
@@ -413,8 +476,8 @@ create_stan_data <- function(data, seeding_time, rt, gp, obs, backcalc,
     accumulate = as.integer(accumulate),
     lt = length(case_times),
     it = length(imputed_times),
-    shifted_cases = shifted_cases,
     t = length(data$date),
+    shifted_cases = shifted_confirmed_cases,
     burn_in = 0,
     seeding_time = seeding_time,
     horizon = forecast$horizon
@@ -423,8 +486,9 @@ create_stan_data <- function(data, seeding_time, rt, gp, obs, backcalc,
   stan_data <- c(
     stan_data,
     create_rt_data(rt,
-      breakpoints = data[(stan_data$seeding_time + 1):.N]$breakpoint,
-      delay = stan_data$seeding_time, horizon = stan_data$horizon
+      breakpoints = cases$breakpoint,
+      delay = stan_data$seeding_time, horizon = stan_data$horizon,
+      data = data
     )
   )
   # backcalculation settings
@@ -435,36 +499,20 @@ create_stan_data <- function(data, seeding_time, rt, gp, obs, backcalc,
   # observation model data
   stan_data <- c(
     stan_data,
-    create_obs_model(
-      obs,
-      dates = data[(stan_data$seeding_time + 1):.N]$date
-    )
+    create_obs_model(obs, dates = cases$date)
   )
 
   # parameters
   stan_data <- c(
     stan_data,
-    create_stan_params(
-      alpha = gp$alpha,
-      rho = gp$ls,
-      R0 = rt$prior,
-      frac_obs = obs$scale,
-      dispersion = obs$dispersion,
-      lower_bounds = c(
-        alpha = 0,
-        rho = 0,
-        R0 = 0,
-        frac_obs = 0,
-        dispersion = 0
-      )
-    )
+    create_stan_params(params)
   )
 
   # rescale mean shifted prior for back calculation if observation scaling is
   # used
   stan_data$shifted_cases <-
     stan_data$shifted_cases / mean(obs$scale)
-  return(stan_data)
+  stan_data
 }
 
 ##' Create initial conditions for delays
@@ -472,17 +520,17 @@ create_stan_data <- function(data, seeding_time, rt, gp, obs, backcalc,
 ##' @inheritParams create_initial_conditions
 ##' @return A list of initial conditions for delays
 ##' @keywords internal
-create_delay_inits <- function(data) {
+create_delay_inits <- function(stan_data) {
   out <- list()
-  if (data$delay_n_p > 0) {
+  if (stan_data$delay_n_p > 0) {
     out$delay_params <- array(truncnorm::rtruncnorm(
-      n = data$delay_params_length, a = data$delay_params_lower,
-      mean = data$delay_params_mean, sd = data$delay_params_sd * 0.1
+      n = stan_data$delay_params_length, a = stan_data$delay_params_lower,
+      mean = stan_data$delay_params_mean, sd = stan_data$delay_params_sd * 0.1
     ))
   } else {
     out$delay_params <- array(numeric(0))
   }
-  return(out)
+  out
 }
 
 #' Create Initial Conditions Generating Function
@@ -491,51 +539,68 @@ create_delay_inits <- function(data) {
 #' used to sample from the prior distributions (or as close as possible) for
 #' parameters. Used in order to initialise each stan chain within a range of
 #' plausible values.
-#' @param data A list of data as produced by [create_stan_data()].
+#' @param stan_data A list of data as produced by [create_stan_data()].
+#' @inheritParams create_stan_params
 #' @return An initial condition generating function
-#' @importFrom purrr map2_dbl
+#' @importFrom purrr map2_dbl transpose
 #' @importFrom truncnorm rtruncnorm
 #' @importFrom data.table fcase
 #' @keywords internal
-create_initial_conditions <- function(data) {
-  init_fun <- function() {
-    out <- create_delay_inits(data)
+create_initial_conditions <- function(stan_data, params) {
+  function() {
+    out <- create_delay_inits(stan_data)
 
-    if (data$fixed == 0) {
+    if (stan_data$fixed == 0) {
       out$eta <- array(rnorm(
-        ifelse(data$gp_type == 1, data$M * 2, data$M),
+        ifelse(stan_data$gp_type == 1, stan_data$M * 2, stan_data$M),
         mean = 0, sd = 0.1
       ))
     } else {
       out$eta <- array(numeric(0))
     }
-    if (data$estimate_r == 1) {
+    if (stan_data$estimate_r == 1) {
       out$initial_infections <- array(rnorm(1))
     } else {
       out$initial_infections <- array(numeric(0))
     }
 
-    if (data$bp_n > 0) {
+    if (stan_data$bp_n > 0) {
       out$bp_sd <- array(truncnorm::rtruncnorm(1, a = 0, mean = 0, sd = 0.1))
-      out$bp_effects <- array(rnorm(data$bp_n, 0, 0.1))
+      out$bp_effects <- array(rnorm(stan_data$bp_n, 0, 0.1))
     } else {
       out$bp_sd <- array(numeric(0))
       out$bp_effects <- array(numeric(0))
     }
-    if (data$week_effect > 0) {
+    if (stan_data$week_effect > 0) {
       out$day_of_week_simplex <- array(
-        rep(1 / data$week_effect, data$week_effect)
+        rep(1 / stan_data$week_effect, stan_data$week_effect)
       )
     }
+    tparams <- transpose(params)
+    null <- vapply(tparams$dist, is.null, logical(1))
+    fixed <- vapply(
+      tparams$dist[!null], get_distribution, character(1)
+    ) == "fixed"
+    param_means <- vapply(
+      tparams$dist[!null][!fixed],
+      mean,
+      ignore_uncertainty = FALSE,
+      FUN.VALUE = numeric(1)
+    )
+    param_sds <- vapply(
+      tparams$dist[!null][!fixed],
+      sd,
+      ignore_uncertainty = FALSE,
+      FUN.VALUE = numeric(1)
+    )
     out$params <- array(truncnorm::rtruncnorm(
-      data$n_params_variable,
-      a = data$params_lower,
-      b = data$params_upper,
-      mean = 0, sd = 1
+      stan_data$n_params_variable,
+      a = stan_data$params_lower,
+      b = stan_data$params_upper,
+      mean = param_means, sd = param_sds
     ))
-    return(out)
+    out
   }
-  return(init_fun)
 }
 
 #' Create a List of Stan Arguments
@@ -598,18 +663,18 @@ create_stan_args <- function(stan = stan_opts(),
   }
   # cmdstanr doesn't have an init = "random" argument
   if (is.character(init) && init == "random" &&
-    inherits(stan$object, "CmdStanModel")) {
+        inherits(stan$object, "CmdStanModel")) {
     init <- 2
   }
   # set up shared default arguments
-  args <- list(
+  stan_args <- list(
     data = data,
     init = init,
     refresh = ifelse(verbose, 50, 0)
   )
-  args <- modifyList(args, stan)
-  args$return_fit <- NULL
-  return(args)
+  stan_args <- modifyList(stan_args, stan)
+  stan_args$return_fit <- NULL
+  stan_args
 }
 
 ##' Create delay variables for stan
@@ -622,6 +687,8 @@ create_stan_args <- function(stan = stan_opts(),
 ##' @keywords internal
 create_stan_delays <- function(..., time_points = 1L) {
   delays <- list(...)
+  delay_names <- names(delays)
+
   ## discretise
   delays <- map(delays, discretise, strict = FALSE)
   delays <- map(delays, collapse)
@@ -630,10 +697,12 @@ create_stan_delays <- function(..., time_points = 1L) {
   max_delay <- unname(as.numeric(flatten(map(bounded_delays, max))))
   ## number of different non-empty types
   type_n <- vapply(delays, ndist, integer(1))
-  ## assign ID values to each type
-  ids <- rep(0L, length(type_n))
-  ids[type_n > 0] <- seq_len(sum(type_n > 0))
-  names(ids) <- paste(names(type_n), "id", sep = "_")
+
+  ## Create delay_id_* variables pointing to delay_types_groups index
+  ## Similar to param_id_* in create_stan_params()
+  delay_ids <- rep(0L, length(type_n))
+  delay_ids[type_n > 0] <- seq_len(sum(type_n > 0))
+  names(delay_ids) <- paste("delay_id", delay_names, sep = "_")
 
   ## create "flat version" of delays, i.e. a list of all the delays (including
   ## elements of composite delays)
@@ -642,9 +711,9 @@ create_stan_delays <- function(..., time_points = 1L) {
   } else {
     flat_delays <- delays
   }
-  parametric <- unname(vapply(
-    flat_delays, function(x) get_distribution(x) != "nonparametric", logical(1)
-  ))
+  parametric <- unname(
+    vapply(flat_delays, get_distribution, character(1)) != "nonparametric"
+  )
   param_length <- unname(vapply(flat_delays[parametric], function(x) {
     length(get_parameters(x))
   }, numeric(1)))
@@ -706,32 +775,33 @@ create_stan_delays <- function(..., time_points = 1L) {
   ret$weight <- array(rep(1, ret$n_p))
   ret$weight[weight_priors] <- time_points
   ## assign distribution
-  ret$dist <- array(match(distributions, c("lognormal", "gamma")) - 1L)
+  ret$dist <- array(match(distributions, dist_spec_distributions()) - 1L)
 
   names(ret) <- paste("delay", names(ret), sep = "_")
-  ret <- c(ret, ids)
+  ret <- c(ret, as.list(delay_ids))
 
-  return(ret)
+  ret
 }
 
 ##' Create parameters for stan
 ##'
-##' @param ... Named delay distributions. The names are assigned to IDs
-##' @param lower_bounds Named vector of lower bounds for any delay(s). The names
-##' have to correspond to the names given to the delay distributions passed.
-##' If `NULL` (default) no parameters are given a lower bound.
+##' @param params A list of `<EpiNow2.params>` as created by [make_param()]
+##'
 ##' @return A list of variables as expected by the stan model
 ##' @importFrom data.table fcase
+##' @importFrom purrr transpose
 ##' @keywords internal
-create_stan_params <- function(..., lower_bounds = NULL) {
-  params <- list(...)
-
+create_stan_params <- function(params) {
+  tparams <- transpose(params)
   ## set IDs of any parameters that is NULL to 0 and remove
-  null_params <- vapply(params, is.null, logical(1))
+  null_params <- vapply(tparams$dist, is.null, logical(1))
   null_ids <- rep(0, sum(null_params))
   if (length(null_ids) > 0) {
-    names(null_ids) <- paste(names(null_params)[null_params], "id", sep = "_")
+    names(null_ids) <- paste(
+      "param_id", tparams$name[null_params], sep = "_"
+    )
     params <- params[!null_params]
+    tparams <- transpose(params)
   }
 
   ## initialise variables
@@ -739,28 +809,32 @@ create_stan_params <- function(..., lower_bounds = NULL) {
   params_variable_lookup <- rep(0L, length(params))
 
   ## identify fixed/variable parameters
-  fixed <- vapply(params, get_distribution, character(1)) == "fixed"
+  fixed <- vapply(tparams$dist, get_distribution, character(1)) == "fixed"
   params_fixed_lookup[fixed] <- seq_along(which(fixed))
   params_variable_lookup[!fixed] <- seq_along(which(!fixed))
 
   ## lower bounds
-  params_lower <- rep(-Inf, length(params[!fixed]))
-  names(params_lower) <- names(params[!fixed])
-  lower_bounds <- lower_bounds[names(params_lower)]
-  params_lower[names(lower_bounds)] <- lower_bounds
+  lower_bounds <- unlist(tparams$lower_bound[!fixed])
+  if (is.null(lower_bounds)) {
+    params_lower <- array(numeric(0))
+  } else {
+    params_lower <- lower_bounds
+  }
 
   ## upper bounds
-  params_upper <- vapply(params[!fixed], max, numeric(1))
+  params_upper <- vapply(tparams$dist[!fixed], max, numeric(1))
 
   ## prior distributions
-  prior_dist_name <- vapply(params[!fixed], get_distribution, character(1))
+  prior_dist_name <- vapply(
+    tparams$dist[!fixed], get_distribution, character(1)
+  )
   prior_dist <- fcase(
     prior_dist_name == "lognormal", 0L,
     prior_dist_name == "gamma", 1L,
     prior_dist_name == "normal", 2L
   )
   ## parameters
-  prior_dist_params <- lapply(params[!fixed], get_parameters)
+  prior_dist_params <- lapply(tparams$dist[!fixed], get_parameters)
   prior_dist_params_lengths <- lengths(prior_dist_params)
 
   ## check none of the parameters are uncertain
@@ -768,7 +842,7 @@ create_stan_params <- function(..., lower_bounds = NULL) {
     !all(vapply(x, is.numeric, logical(1)))
   }, logical(1))
   if (any(prior_uncertain)) {
-    uncertain_priors <- names(params[!fixed])[prior_uncertain] # nolint: object_usage_linter
+    uncertain_priors <- tparams$name[!fixed][prior_uncertain] # nolint: object_usage_linter
     cli_abort(
       c(
         "!" = "Parameter prior distribution{?s} for {.var {uncertain_priors}}
@@ -791,7 +865,7 @@ create_stan_params <- function(..., lower_bounds = NULL) {
     params_fixed_lookup = array(params_fixed_lookup),
     params_variable_lookup = array(params_variable_lookup),
     params_value = array(vapply(
-      params[fixed], function(x) get_parameters(x)$value, numeric(1)
+      tparams$dist[fixed], function(x) get_parameters(x)$value, numeric(1)
     )),
     prior_dist = array(prior_dist),
     prior_dist_params_length = sum(prior_dist_params_lengths),
@@ -799,8 +873,80 @@ create_stan_params <- function(..., lower_bounds = NULL) {
   )
   ids <- seq_along(params)
   if (length(ids) > 0) {
-    names(ids) <- paste(names(params), "id", sep = "_")
+    names(ids) <- paste("param_id", tparams$name, sep = "_")
   }
-  ret <- c(ret, as.list(ids), as.list(null_ids))
-  return(ret)
+  c(ret, as.list(ids), as.list(null_ids))
+}
+
+#' Create summary output from infection estimation objects
+#'
+#' @description `r lifecycle::badge("stable")`
+#'
+#' This function creates summary output from infection estimation objects
+#' (either `estimate_infections` or `forecast_infections`). It is used
+#' internally by [summary.estimate_infections()] and
+#' [summary.forecast_infections()] to provide a consistent summary interface.
+#'
+#' @param object An infection estimation object (either from
+#'   [estimate_infections()] or [forecast_infections()]).
+#'
+#' @param type A character vector of data types to return. Defaults to
+#'   "snapshot" but also supports "parameters". "snapshot" returns
+#'   a summary at a given date (by default the latest date informed by data).
+#'   "parameters" returns summarised parameter estimates that can be further
+#'   filtered using `params` to show just the parameters of interest and date.
+#'
+#' @inheritParams summary.estimate_infections
+#'
+#' @param CrIs Numeric vector of credible intervals to calculate. Defaults
+#'   to c(0.2, 0.5, 0.9).
+#'
+#' @param ... Additional arguments passed to [report_summary()].
+#'
+#' @return A `<data.frame>` of summary output, either a snapshot summary
+#'   (via [report_summary()]) or parameter summaries (via
+#'   [calc_summary_measures()]).
+#'
+#' @importFrom rlang arg_match
+#' @seealso [summary.estimate_infections()] [summary.forecast_infections()]
+#'   [report_summary()] [calc_summary_measures()]
+#' @keywords internal
+create_infection_summary <- function(object,
+                                     type = c("snapshot", "parameters"),
+                                     target_date = NULL, params = NULL,
+                                     CrIs = c(0.2, 0.5, 0.9), ...) {
+  type <- arg_match(type)
+
+  samples <- get_samples(object)
+
+  summarised <- calc_summary_measures(
+    samples,
+    summarise_by = c("date", "variable", "strat", "type"),
+    order_by = c("variable", "date"),
+    CrIs = CrIs
+  )
+
+  if (type == "snapshot") {
+    if (is.null(target_date)) {
+      target_date <- max(object$observations$date)
+    } else {
+      target_date <- as.Date(target_date)
+    }
+    out <- report_summary(
+      summarised_estimates = summarised[date == target_date],
+      rt_samples = samples[variable == "R"][
+        date == target_date, .(sample, value)
+      ],
+      ...
+    )
+  } else if (type == "parameters") {
+    out <- summarised
+    if (!is.null(target_date)) {
+      out <- out[date == as.Date(target_date)]
+    }
+    if (!is.null(params)) {
+      out <- out[variable %in% params]
+    }
+  }
+  out[]
 }

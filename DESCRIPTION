@@ -1,8 +1,7 @@
 Type: Package
 Package: EpiNow2
-Title: Estimate Real-Time Case Counts and Time-Varying Epidemiological
-        Parameters
-Version: 1.7.1
+Title: Estimate and Forecast Real-Time Infection Dynamics
+Version: 1.8.0
 Authors@R: 
     c(person(given = "Sam",
              family = "Abbott",
@@ -41,6 +40,11 @@ Authors@R:
              role = "aut",
              email = "james.azam@lshtm.ac.uk",
              comment = c(ORCID = "0000-0001-5782-7330")),
+      person(given = "Adrian",
+             family = "Lison",
+             role = "aut",
+             email = "adrian.lison@bsse.ethz.ch",
+             comment = c(ORCID = "0000-0002-6822-8437")),
       person(given = "Robin",
              family = "Thompson",
              role = "ctb",
@@ -48,7 +52,7 @@ Authors@R:
       person(given = "Sophie",
              family = "Meakin",
              role = "ctb",
-             email = "sophie.meaking@lshtm.ac.uk"),
+             email = "sophie.meakin@lshtm.ac.uk"),
       person(given = "James",
              family = "Munday",
              role = "ctb",
@@ -71,66 +75,77 @@ Authors@R:
       person(given = "Lloyd",
              family = "Chapman",
              role = "ctb",
-             email = "lloyd.chapman1@lshtm.ac.uk "),
+             email = "lloyd.chapman1@lshtm.ac.uk"),
       person(given = "Andrew",
              family = "Johnson",
              role = "ctb",
              email = "andrew.johnson@arjohnsonau.com"),
-       person(given = "Kaitlyn",
-           family = "Johnson",
-           role = "ctb",
-           email = "johnsonkaitlyne9@gmail.com",
-           comment = c(ORCID = "0000-0001-8011-0012")),
-      person(given = "EpiForecasts",
-             role = "aut"),
+      person(given = "Kaitlyn",
+             family = "Johnson",
+             role = "ctb",
+             email = "johnsonkaitlyne9@gmail.com",
+             comment = c(ORCID = "0000-0001-8011-0012")),
+      person(given = "Adam",
+             family = "Howes",
+             role = "ctb",
+             email = "adamthowes@gmail.com",
+             comment = c(ORCID = "0000-0003-2386-4031")),
       person(given = "Sebastian",
              family = "Funk",
              role = c("aut", "cre"),
              email = "sebastian.funk@lshtm.ac.uk",
              comment = c(ORCID = "0000-0002-2842-3406"))
     )
-Description: Estimates the time-varying reproduction number,
-    rate of spread, and doubling time using a range of open-source tools
-    (Abbott et al. (2020) <doi:10.12688/wellcomeopenres.16006.1>), and
-    current best practices (Gostic et al. (2020)
-    <doi:10.1101/2020.06.18.20134858>).  It aims to help users avoid some
-    of the limitations of naive implementations in a framework that is
-    informed by community feedback and is actively supported.
+Description: Estimates the time-varying reproduction number, rate of
+    spread, and doubling time using a renewal equation approach combined
+    with Bayesian inference via Stan. Supports Gaussian process and
+    random walk priors for modelling changes in
+    transmission over time. Accounts for delays between infection and
+    observation (incubation period, reporting delays), right-truncation
+    in recent data, day-of-week effects, and observation overdispersion.
+    Can estimate relationships between primary and secondary outcomes
+    (e.g., cases to hospitalisations or deaths) and forecast both. Runs
+    across multiple regions in parallel. Based on
+    Abbott et al. (2020) <doi:10.12688/wellcomeopenres.16006.1> and
+    Gostic et al. (2020) <doi:10.1101/2020.06.18.20134858>.
 License: MIT + file LICENSE
 URL: https://epiforecasts.io/EpiNow2/,
         https://epiforecasts.io/EpiNow2/dev/,
         https://github.com/epiforecasts/EpiNow2
 BugReports: https://github.com/epiforecasts/EpiNow2/issues
 Depends: R (>= 3.5.0)
-Imports: checkmate, cli, data.table, futile.logger (>= 1.4), ggplot2,
-        lifecycle, lubridate, methods, patchwork, posterior, purrr,
-        R.utils (>= 2.0.0), Rcpp (>= 0.12.0), rlang (>= 0.4.7), rstan
-        (>= 2.26.0), rstantools (>= 2.2.0), runner, scales, stats,
-        truncnorm, utils
-Suggests: cmdstanr, covr, future, future.apply, here, knitr, precommit,
-        progressr, rmarkdown, spelling, testthat, usethis, withr
+Imports: checkmate, cli, data.table (>= 1.15.0), futile.logger (>=
+        1.4), ggplot2, lifecycle, lubridate, methods, patchwork,
+        posterior, primarycensored, purrr, R.utils (>= 2.0.0), Rcpp (>=
+        0.12.0), rlang (>= 0.4.7), rstan (>= 2.26.0), rstantools (>=
+        2.2.0), runner, scales, stats, truncnorm, utils
+Suggests: cmdstanr, future, future.apply, knitr, parallelly, progressr,
+        rmarkdown, scoringutils, spelling, testthat, withr
 LinkingTo: BH (>= 1.66.0), Rcpp (>= 0.12.0), RcppEigen (>= 0.3.3.3.0),
         RcppParallel (>= 5.0.1), rstan (>= 2.26.0), StanHeaders (>=
         2.26.0)
-Additional_repositories: https://stan-dev.r-universe.dev
+Additional_repositories: https://production.r-multiverse.org/2025-12-15
 Biarch: true
 Config/testthat/edition: 3
+Config/Needs/dev: covr, here, hexSticker, lintr, magick, pkgdown,
+        precommit, styler, usethis
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-RoxygenNote: 7.3.2.9000
-NeedsCompilation: yes
+RoxygenNote: 7.3.3
 SystemRequirements: GNU make C++17
 VignetteBuilder: knitr
-Packaged: 2025-02-19 16:50:44 UTC; eidesfun
-Author: Sam Abbott [aut] (<https://orcid.org/0000-0001-8057-8037>),
-  Joel Hellewell [aut] (<https://orcid.org/0000-0003-2683-0849>),
+NeedsCompilation: yes
+Packaged: 2026-02-04 22:49:39 UTC; eidesfun
+Author: Sam Abbott [aut] (ORCID: <https://orcid.org/0000-0001-8057-8037>),
+  Joel Hellewell [aut] (ORCID: <https://orcid.org/0000-0003-2683-0849>),
   Katharine Sherratt [aut],
   Katelyn Gostic [aut],
   Joe Hickson [aut],
-  Hamada S. Badr [aut] (<https://orcid.org/0000-0002-9808-2344>),
-  Michael DeWitt [aut] (<https://orcid.org/0000-0001-8940-1967>),
-  James M. Azam [aut] (<https://orcid.org/0000-0001-5782-7330>),
+  Hamada S. Badr [aut] (ORCID: <https://orcid.org/0000-0002-9808-2344>),
+  Michael DeWitt [aut] (ORCID: <https://orcid.org/0000-0001-8940-1967>),
+  James M. Azam [aut] (ORCID: <https://orcid.org/0000-0001-5782-7330>),
+  Adrian Lison [aut] (ORCID: <https://orcid.org/0000-0002-6822-8437>),
   Robin Thompson [ctb],
   Sophie Meakin [ctb],
   James Munday [ctb],
@@ -140,9 +155,10 @@ Author: Sam Abbott [aut] (<https://orcid.org/0000-0001-8057-8037>),
   Pietro Monticone [ctb],
   Lloyd Chapman [ctb],
   Andrew Johnson [ctb],
-  Kaitlyn Johnson [ctb] (<https://orcid.org/0000-0001-8011-0012>),
-  EpiForecasts [aut],
-  Sebastian Funk [aut, cre] (<https://orcid.org/0000-0002-2842-3406>)
+  Kaitlyn Johnson [ctb] (ORCID: <https://orcid.org/0000-0001-8011-0012>),
+  Adam Howes [ctb] (ORCID: <https://orcid.org/0000-0003-2386-4031>),
+  Sebastian Funk [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-2842-3406>)
 Maintainer: Sebastian Funk <sebastian.funk@lshtm.ac.uk>
 Repository: CRAN
-Date/Publication: 2025-02-19 23:40:09 UTC
+Date/Publication: 2026-02-04 23:30:02 UTC

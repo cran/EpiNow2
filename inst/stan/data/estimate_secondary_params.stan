@@ -1,2 +1,2 @@
-int<lower = 0> frac_obs_id; // parameter id of frac_obs
-int<lower = 0> dispersion_id; // parameter id of dispersion
+int<lower = 0> param_id_fraction_observed; // parameter id of fraction_observed
+int<lower = 0> param_id_reporting_overdispersion; // parameter id of reporting_overdispersion

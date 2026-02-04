@@ -27,13 +27,15 @@ estimate_infections(
 }
 \arguments{
 \item{data}{A \verb{<data.frame>} of disease reports (confirm) by date (date).
-\code{confirm} must be numeric and \code{date} must be in date format. Optionally
-this can also have a logical \code{accumulate} column which indicates whether
+\code{confirm} must be numeric and \code{date} must be in date format. Optionally,
+\code{data} can also have a logical \code{accumulate} column which indicates whether
 data should be added to the next data point. This is useful when modelling
 e.g. weekly incidence data. See also the \code{\link[=fill_missing]{fill_missing()}} function which
 helps add the \code{accumulate} column with the desired properties when dealing
 with non-daily data. If any accumulation is done this happens after
-truncation as specified by the \code{truncation} argument.}
+truncation as specified by the \code{truncation} argument. If all entries
+of \code{confirm} are missing (\code{NA}) the returned estimates will represent the
+prior distributions.}
 
 \item{generation_time}{A call to \code{\link[=gt_opts]{gt_opts()}} (or its alias
 \code{\link[=generation_time_opts]{generation_time_opts()}}) defining the generation time distribution used.
@@ -74,13 +76,12 @@ forecasting will be done.}
 to \code{\link[=stan_opts]{stan_opts()}}. Can be used to override \code{data}, \code{init}, and \code{verbose}
 settings if desired.}
 
-\item{CrIs}{Numeric vector of credible intervals to calculate.}
+\item{CrIs}{Deprecated; specify credible intervals when using \code{\link[=summary]{summary()}} or
+\code{\link[=plot]{plot()}}}
 
-\item{weigh_delay_priors}{Logical. If TRUE (default), all delay distribution
-priors will be weighted by the number of observation data points, in doing so
-approximately placing an independent prior at each time step and usually
-preventing the posteriors from shifting. If FALSE, no weight will be applied,
-i.e. delay distributions will be treated as a single parameters.}
+\item{weigh_delay_priors}{Deprecated; this is now specified at the
+distribution level in \code{generation_time_opts()}, \code{delay_opts()} and
+\code{trunc_opts()} using the \code{weight_prior} argument.}
 
 \item{id}{A character string used to assign logging information on error.
 Used by \code{\link[=regional_epinow]{regional_epinow()}} to assign errors to regions. Alter the default to
@@ -103,8 +104,12 @@ threshold then the zero is replaced using \code{fill}.}
 horizon}
 }
 \value{
-A list of output including: posterior samples, summarised posterior
-samples, data used to fit the model, and the fit object itself.
+An \verb{<estimate_infections>} object containing:
+\itemize{
+\item \code{fit}: The stan fit object.
+\item \code{args}: A list of arguments used for fitting (stan data).
+\item \code{observations}: The input data (\verb{<data.frame>}).
+}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
@@ -130,7 +135,7 @@ old_opts <- options()
 options(mc.cores = ifelse(interactive(), 4, 1))
 
 # get example case counts
-reported_cases <- example_confirmed[1:60]
+reported_cases <- example_confirmed[1:40]
 
 # set an example generation time. In practice this should use an estimate
 # from the literature or be estimated from data
@@ -151,10 +156,13 @@ incubation_period <- LogNormal(
 reporting_delay <- LogNormal(mean = 2, sd = 1, max = 10)
 
 # for more examples, see the "estimate_infections examples" vignette
+# samples and calculation time have been reduced for this example
+# for real analyses, use at least samples = 2000
 def <- estimate_infections(reported_cases,
   generation_time = gt_opts(generation_time),
   delays = delay_opts(incubation_period + reporting_delay),
-  rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1))
+  rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1)),
+  stan = stan_opts(samples = 100, warmup = 200)
 )
 # real time estimates
 summary(def)
@@ -164,6 +172,7 @@ options(old_opts)
 }
 }
 \seealso{
+\code{\link[=get_samples]{get_samples()}} \code{\link[=get_predictions]{get_predictions()}} \code{\link[=get_parameters]{get_parameters()}}
 \code{\link[=epinow]{epinow()}} \code{\link[=regional_epinow]{regional_epinow()}} \code{\link[=forecast_infections]{forecast_infections()}}
 \code{\link[=estimate_truncation]{estimate_truncation()}}
 }

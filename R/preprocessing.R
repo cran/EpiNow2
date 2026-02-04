@@ -133,9 +133,8 @@ fill_missing <- function(data,
       data[is.na(..present), paste(col) := 0]
     }
   }
-  if (missing(initial_accumulate) &&
-    isFALSE(data$accumulate[1]) &&
-    any(data$accumulate)) {
+  if (missing(initial_accumulate) && isFALSE(data$accumulate[1]) &&
+        any(data$accumulate)) {
     # nolint start: duplicate_argument_linter
     cli_warn(
       c(
@@ -165,7 +164,7 @@ fill_missing <- function(data,
 
   data[, ..present := NULL]
 
-  return(data[])
+  data[]
 }
 
 ##' Temporary function to support the transition to full support of missing
@@ -188,7 +187,7 @@ default_fill_missing_obs <- function(data, obs, obs_column) {
       ))
     }
   }
-  return(data)
+  data
 }
 
 ##' Add missing values for future dates
@@ -254,6 +253,7 @@ add_horizon <- function(data, horizon, accumulate = 1L,
           accumulate := FALSE,
           env = list(future_accumulate = accumulate)
         ]
+        reported_cases_future[, counter := NULL]
       }
     }
     ## fill any missing columns
@@ -262,7 +262,7 @@ add_horizon <- function(data, horizon, accumulate = 1L,
       fill = TRUE
     )
   }
-  return(reported_cases[])
+  reported_cases[]
 }
 
 ##' Add breakpoints to certain dates in a data set.
@@ -290,7 +290,7 @@ add_breakpoints <- function(data, dates = as.Date(character(0))) {
   }
   reported_cases[date %in% dates, breakpoint := 1]
   reported_cases[is.na(breakpoint), breakpoint := 0]
-  return(reported_cases)
+  reported_cases
 }
 
 ##' Filter leading zeros from a data set.
@@ -318,7 +318,7 @@ filter_leading_zeros <- function(data, obs_column = "confirm", by = NULL) {
   reported_cases <- reported_cases[order(date)][
     date >= min(date[get(obs_column)[!is.na(get(obs_column))] > 0])
   ]
-  return(reported_cases[])
+  reported_cases[]
 }
 
 ##' Convert zero case counts to `NA` (missing) if the 7-day average is above a
@@ -364,5 +364,5 @@ apply_zero_threshold <- function(data, threshold = Inf,
   }
   reported_cases[is.na(get(obs_column)), paste(obs_column) := NA_integer_]
   reported_cases[, "average_7_day" := NULL]
-  return(reported_cases[])
+  reported_cases[]
 }

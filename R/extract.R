@@ -1,21 +1,33 @@
-#' Extract Samples for a Parameter from a Stan model
+#' Extract samples for a latent state from a Stan model
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Extracts a single from a list of stan output and returns it as a
-#' `<data.table>`.
+#' Extracts a time-varying latent state from a list of stan output and returns
+#' it as a `<data.table>`.
 #
-#' @param param Character string indicating the parameter to extract
+#' @param param Character string indicating the latent state to extract
 #'
 #' @param samples Extracted stan model (using [rstan::extract()])
 #'
-#' @param dates A vector identifying the dimensionality of the parameter to
+#' @param dates A vector identifying the dimensionality of the latent state to
 #' extract. Generally this will be a date.
 #'
-#' @return A `<data.frame>` containing the parameter name, date, sample id and
-#' sample value.
+#' @return A `<data.frame>` containing the following columns:
+#' \describe{
+#'   \item{time}{Integer index (1..N) corresponding to the position in the
+#'     supplied dates vector. This is the row/time-step index that maps to the
+#'     date column}
+#'   \item{date}{The date corresponding to this time step}
+#'   \item{sample}{Integer sample ID from the posterior}
+#'   \item{value}{Numeric value of the parameter sample}
+#' }
 #' @importFrom data.table melt as.data.table
 #' @keywords internal
-extract_parameter <- function(param, samples, dates) {
+extract_latent_state <- function(param, samples, dates) {
+  # Return NULL if parameter doesn't exist
+  if (!(param %in% names(samples))) {
+    return(NULL)
+  }
+
   param_df <- data.table::as.data.table(
     t(
       data.table::as.data.table(
@@ -31,29 +43,176 @@ extract_parameter <- function(param, samples, dates) {
 
   param_df <- param_df[, var := NULL][, sample := seq_len(.N), by = .(time)]
   param_df <- param_df[, date := dates, by = .(sample)]
-  param_df <- param_df[, .(
-    parameter = param, time, date,
-    sample, value
-  )]
-  return(param_df)
+  param_df[, .(time, date, sample, value)]
 }
 
 
-#' Extract Samples from a Parameter with a Single Dimension
+#' Extract samples from all parameters
 #'
-#' @inheritParams extract_parameter
-#' @return A `<data.frame>` containing the parameter name, sample id and sample
-#' value
+#' @param samples Extracted stan model (using [rstan::extract()])
+#' @param args Stan data list containing param_id_* and params_variable_lookup
+#'   for parameter naming.
+#' @return A `<data.table>` with columns: variable, sample, value,
+#'   or NULL if parameters don't exist in the samples
 #' @keywords internal
-extract_static_parameter <- function(param, samples) {
-  id <- samples[[paste(param, "id", sep = "_")]]
-  lookup <- samples[["params_variable_lookup"]][id]
-  data.table::data.table(
-    parameter = param,
-    sample = seq_along(samples[["params"]][, lookup]),
-    value = samples[["params"]][, lookup]
-  )
+extract_parameters <- function(samples, args) {
+  # Check if params exist
+  if (!("params" %in% names(samples))) {
+    return(NULL)
+  }
+
+  # Extract all parameters
+  param_array <- samples[["params"]]
+  n_cols <- ncol(param_array)
+
+  # Build reverse lookup: column index -> parameter name
+  param_names <- rep(NA_character_, n_cols)
+
+  # Check all param_id_* variables to build the mapping
+  id_vars <- grep("^param_id_", names(args), value = TRUE)
+  for (id_var in id_vars) {
+    param_name <- sub("^param_id_", "", id_var)
+    id <- args[[id_var]]
+    if (!is.na(id) && id > 0) {
+      lookup_idx <- args[["params_variable_lookup"]][id]
+      if (!is.na(lookup_idx) && lookup_idx > 0 && lookup_idx <= n_cols) {
+        param_names[lookup_idx] <- param_name
+      }
+    }
+  }
+
+  # Extract all columns
+  samples_list <- lapply(seq_len(n_cols), function(i) {
+    # Use named parameter if available, otherwise use indexed name
+    par_name <- if (!is.na(param_names[i])) {
+      param_names[i]
+    } else {
+      paste0("params[", i, "]")
+    }
+
+    data.table::data.table(
+      variable = par_name,
+      sample = seq_along(param_array[, i]),
+      value = param_array[, i]
+    )
+  })
+
+  data.table::rbindlist(samples_list)
 }
+
+#' Name delay parameters for a single delay type
+#'
+#' @param delay_names Current delay names vector (modified in place via env)
+#' @param delay_name Name prefix for this delay type
+#' @param flat_range Indices of flat delays for this type
+#' @param types_p Vector indicating parametric (1) or not (0)
+#' @param types_id Vector of parametric delay indices
+#' @param params_groups Parameter column groupings
+#' @param n_cols Total number of parameter columns
+#' @return Updated delay_names vector
+#' @keywords internal
+#' @noRd
+name_delay_type_params <- function(delay_names, delay_name, flat_range,
+                                   types_p, types_id, params_groups, n_cols) {
+  param_idx <- 1
+  for (flat_i in flat_range) {
+    if (types_p[flat_i] != 1) next
+    p_idx <- types_id[flat_i]
+    col_start <- params_groups[p_idx]
+    col_end <- params_groups[p_idx + 1] - 1
+    for (col in col_start:col_end) {
+      if (col <= n_cols) {
+        delay_names[col] <- paste0(delay_name, "[", param_idx, "]")
+        param_idx <- param_idx + 1
+      }
+    }
+  }
+  delay_names
+}
+
+#' Build delay name lookup from args
+#'
+#' Helper function to map parameter column indices to delay names.
+#'
+#' @param args Stan data list with delay lookup variables
+#' @param n_cols Number of parameter columns
+#' @return Character vector mapping column indices to delay names
+#' @keywords internal
+#' @noRd
+build_delay_name_lookup <- function(args, n_cols) {
+  delay_names <- rep(NA_character_, n_cols)
+
+  id_vars <- grep("^delay_id_", names(args), value = TRUE)
+  required <- c(
+    "delay_types_groups", "delay_types_p",
+    "delay_types_id", "delay_params_groups"
+  )
+  if (length(id_vars) == 0 || !all(required %in% names(args))) {
+    return(delay_names)
+  }
+
+  types_groups <- args[["delay_types_groups"]]
+  types_p <- args[["delay_types_p"]]
+  types_id <- args[["delay_types_id"]]
+  params_groups <- args[["delay_params_groups"]]
+
+  for (id_var in id_vars) {
+    delay_name <- sub("^delay_id_", "", id_var)
+    id_val <- args[[id_var]]
+    id <- if (length(id_val) > 1) id_val[1] else id_val
+
+    if (is.na(id) || id <= 0 || id >= length(types_groups)) next
+
+    flat_start <- types_groups[id]
+    flat_end <- types_groups[id + 1] - 1
+    delay_names <- name_delay_type_params(
+      delay_names, delay_name, flat_start:flat_end,
+      types_p, types_id, params_groups, n_cols
+    )
+  }
+  delay_names
+}
+
+#' Extract samples from all delay parameters
+#'
+#' Extracts samples from all delay parameters using the delay ID lookup system.
+#' Similar to extract_parameters(), this extracts all delay distribution
+#' parameters and uses the *_id variables (e.g., delay_id, trunc_id) to assign
+#' meaningful names.
+#'
+#' @param samples Extracted stan model (using [rstan::extract()])
+#' @param args Stan data list with delay_id_* and related lookup variables.
+#' @return A `<data.table>` with columns: variable, sample, value,
+#'   or NULL if delay parameters don't exist in the samples
+#' @keywords internal
+extract_delays <- function(samples, args) {
+  if (!("delay_params" %in% names(samples))) {
+    return(NULL)
+  }
+
+  delay_params <- samples[["delay_params"]]
+  n_cols <- ncol(delay_params)
+  delay_names <- build_delay_name_lookup(args, n_cols)
+
+  # Extract all columns
+  samples_list <- lapply(seq_len(n_cols), function(i) {
+    # Use named delay if available, otherwise use indexed name
+    par_name <- if (!is.na(delay_names[i])) {
+      delay_names[i]
+    } else {
+      paste0("delay_params[", i, "]")
+    }
+
+    data.table::data.table(
+      variable = par_name,
+      sample = seq_along(delay_params[, i]),
+      value = delay_params[, i]
+    )
+  })
+
+  data.table::rbindlist(samples_list)
+}
+
 
 #' Extract all samples from a stan fit
 #'
@@ -73,12 +232,12 @@ extract_static_parameter <- function(param, samples) {
 #' @importFrom rstan extract
 extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
   if (inherits(stan_fit, "stanfit")) {
-    args <- list(object = stan_fit, include = include)
-    if (!is.null(pars)) args <- c(args, list(pars = pars))
-    return(do.call(rstan::extract, args))
+    extract_args <- list(object = stan_fit, include = include)
+    if (!is.null(pars)) extract_args <- c(extract_args, list(pars = pars))
+    return(do.call(rstan::extract, extract_args))
   }
   if (!inherits(stan_fit, "CmdStanMCMC") &&
-    !inherits(stan_fit, "CmdStanFit")) {
+        !inherits(stan_fit, "CmdStanFit")) {
     cli_abort(
       "{.var stan_fit} must be a {.cls stanfit}, {.cls CmdStanMCMC} or
       {.cls CmdStanFit} object."
@@ -107,10 +266,7 @@ extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
   ]
   samples <- split(samples_df, by = "variable")
   samples <- purrr::map(samples, function(df) {
-    permutation <- sample(
-      seq_len(max(df$.draw)), max(df$.draw),
-      replace = FALSE
-    )
+    permutation <- sample(max(df$.draw), max(df$.draw), replace = FALSE)
     df <- df[, new_draw := permutation[.draw]]
     setkey(df, new_draw)
     max_indices <- strsplit(tail(df$index, 1), split = ",", fixed = TRUE)[[1]]
@@ -127,138 +283,42 @@ extract_samples <- function(stan_fit, pars = NULL, include = TRUE) {
     dimnames(ret) <- c(
       list(iterations = NULL), rep(list(NULL), length(max_indices))
     )
-    return(ret)
+    ret
   })
 
-  return(samples)
+  samples
 }
 
-#' Extract Parameter Samples from a Stan Model
+#' Extract parameter samples from a Stan model
 #'
-#' @description `r lifecycle::badge("stable")`
-#' Extracts a custom set of parameters from a stan object and adds
-#' stratification and dates where appropriate.
+#' @description `r lifecycle::badge("deprecated")`
+#' This function has been deprecated. Use [format_simulation_output()] for
+#' simulation outputs or [get_samples()] for estimation outputs instead.
 #'
-#' @param data A list of the data supplied to the [fit_model()] call.
-#'
-#' @param reported_dates A vector of dates to report estimates for.
-#'
-#' @param imputed_dates A vector of dates to report imputed reports for.
-#'
-##' @param reported_inf_dates A vector of dates to report infection estimates
-#' for.
-#'
-#' @param drop_length_1 Logical; whether the first dimension should be dropped
-#' if it is off length 1; this is necessary when processing simulation results.
-#'
-#' @param merge if TRUE, merge samples and data so that parameters can be
-#' extracted from data.
-#'
-#' @inheritParams extract_samples
+#' @inheritParams format_simulation_output
 #' @return A list of `<data.frame>`'s each containing the posterior of a
 #' parameter
-#' @importFrom rstan extract
-#' @importFrom data.table data.table
 #' @keywords internal
 extract_parameter_samples <- function(stan_fit, data, reported_dates,
                                       imputed_dates, reported_inf_dates,
                                       drop_length_1 = FALSE, merge = FALSE) {
-  # extract sample from stan object
-  samples <- extract_samples(stan_fit)
-
-  ## drop initial length 1 dimensions if requested
-  if (drop_length_1) {
-    samples <- lapply(samples, function(x) {
-      if (length(dim(x)) > 1 && dim(x)[1] == 1) dim(x) <- dim(x)[-1]
-      return(x)
-    })
-  }
-
-  for (data_name in names(data)) {
-    if (!(data_name %in% names(samples))) {
-      samples[[data_name]] <- data[[data_name]]
-    }
-  }
-
-  # construct reporting list
-  out <- list()
-  # report infections, and R
-  out$infections <- extract_parameter(
-    "infections",
-    samples,
-    reported_inf_dates
+  lifecycle::deprecate_warn(
+    "1.8.0",
+    "extract_parameter_samples()",
+    "format_simulation_output()"
   )
-  out$infections <- out$infections[date >= min(reported_dates)]
-  out$reported_cases <- extract_parameter(
-    "imputed_reports",
-    samples,
-    imputed_dates
+  format_simulation_output(
+    stan_fit = stan_fit,
+    data = data,
+    reported_dates = reported_dates,
+    imputed_dates = imputed_dates,
+    reported_inf_dates = reported_inf_dates,
+    drop_length_1 = drop_length_1,
+    merge = merge
   )
-  if ("estimate_r" %in% names(data)) {
-    if (data$estimate_r == 1) {
-      out$R <- extract_parameter(
-        "R",
-        samples,
-        reported_dates
-      )
-      if (data$bp_n > 0) {
-        out$breakpoints <- extract_parameter(
-          "bp_effects",
-          samples,
-          1:data$bp_n
-        )
-        out$breakpoints <- out$breakpoints[
-          ,
-          strat := date
-        ][, c("time", "date") := NULL]
-      }
-    } else {
-      out$R <- extract_parameter(
-        "gen_R",
-        samples,
-        reported_dates
-      )
-    }
-  }
-  out$growth_rate <- extract_parameter(
-    "r",
-    samples,
-    reported_dates[-1]
-  )
-  if (data$week_effect > 1) {
-    out$day_of_week <- extract_parameter(
-      "day_of_week_simplex",
-      samples,
-      1:data$week_effect
-    )
-    out$day_of_week <- out$day_of_week[, value := value * data$week_effect]
-    out$day_of_week <- out$day_of_week[, strat := date][
-      ,
-      c("time", "date") := NULL
-    ]
-  }
-  if (data$delay_n_p > 0) {
-    out$delay_params <- extract_parameter(
-      "delay_params", samples, seq_len(data$delay_params_length)
-    )
-    out$delay_params <-
-      out$delay_params[, strat := as.character(time)][, time := NULL][
-        ,
-        date := NULL
-      ]
-  }
-  if (data$model_type == 1) {
-    out$reporting_overdispersion <- extract_static_parameter(
-      "dispersion", samples
-    )
-  }
-  if ("obs_scale_sd" %in% names(data) && data$obs_scale_sd > 0) {
-    out$fraction_observed <- extract_static_parameter("frac_obs", samples)
-  }
-  return(out)
 }
 
-#' Extract a Parameter Summary from a Stan Object
+#' Extract a parameter summary from a Stan object
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Extracts summarised parameter posteriors from a `stanfit` object using
@@ -299,30 +359,30 @@ extract_stan_param <- function(fit, params = NULL,
     var_names <- TRUE
   }
   if (inherits(fit, "stanfit")) { # rstan backend
-    args <- list(object = fit, probs = sym_CrIs)
-    if (!is.null(params)) args <- c(args, list(pars = params))
-    summary <- do.call(rstan::summary, args)
-    summary <- data.table::as.data.table(summary$summary,
+    summary_args <- list(object = fit, probs = sym_CrIs)
+    if (!is.null(params)) summary_args <- c(summary_args, list(pars = params))
+    param_summary <- do.call(rstan::summary, summary_args)
+    param_summary <- data.table::as.data.table(param_summary$summary,
       keep.rownames = ifelse(var_names,
         "variable",
         FALSE
       )
     )
-    summary <- summary[, c("n_eff", "Rhat") := NULL]
+    param_summary <- param_summary[, c("n_eff", "Rhat") := NULL]
   } else if (inherits(fit, "CmdStanMCMC")) { # cmdstanr backend
-    summary <- fit$summary(
+    param_summary <- fit$summary(
       variable = params,
       mean, mcse_mean, sd, ~ quantile(.x, probs = sym_CrIs)
     )
-    if (!var_names) summary$variable <- NULL
-    summary <- data.table::as.data.table(summary)
+    if (!var_names) param_summary$variable <- NULL
+    param_summary <- data.table::as.data.table(param_summary)
   }
   cols <- c("mean", "se_mean", "sd", CrIs)
   if (var_names) {
     cols <- c("variable", cols)
   }
-  colnames(summary) <- cols
-  return(summary)
+  colnames(param_summary) <- cols
+  param_summary
 }
 
 #' Generate initial conditions from a Stan fit
@@ -385,7 +445,7 @@ extract_inits <- function(fit, current_inits,
     res$reports <- NULL
     res$obs_reports <- NULL
     res$imputed_reports <- NULL
-    return(res)
+    res
   }
   # extract samples
   fit_inits <- purrr::map(1:samples, init_fun) # nolint
@@ -404,7 +464,7 @@ extract_inits <- function(fit, current_inits,
     } else {
       new_inits <- fit_inits
     }
-    return(new_inits)
+    new_inits
   }
-  return(inits_sample)
+  inits_sample
 }

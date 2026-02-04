@@ -65,7 +65,7 @@ gt_opts <- function(dist = Fixed(1), default_cdf_cutoff = 0.001,
   attr(dist, "weight_prior") <- weight_prior
   attr(dist, "class") <- c("generation_time_opts", class(dist))
   check_generation_time(dist)
-  return(dist)
+  dist
 }
 
 #' @rdname generation_time_opts
@@ -119,7 +119,7 @@ generation_time_opts <- gt_opts
 secondary_opts <- function(type = c("incidence", "prevalence"), ...) {
   type <- arg_match(type)
   if (type == "incidence") {
-    data <- list(
+    opts <- list(
       cumulative = 0,
       historic = 1,
       primary_hist_additive = 1,
@@ -127,7 +127,7 @@ secondary_opts <- function(type = c("incidence", "prevalence"), ...) {
       primary_current_additive = 0
     )
   } else if (type == "prevalence") {
-    data <- list(
+    opts <- list(
       cumulative = 1,
       historic = 1,
       primary_hist_additive = 0,
@@ -135,9 +135,9 @@ secondary_opts <- function(type = c("incidence", "prevalence"), ...) {
       primary_current_additive = 1
     )
   }
-  data <- modifyList(data, list(...))
-  attr(data, "class") <- c("secondary_opts", class(data))
-  return(data)
+  opts <- modifyList(opts, list(...))
+  attr(opts, "class") <- c("secondary_opts", class(opts))
+  opts
 }
 
 #' Delay Distribution Options
@@ -181,7 +181,7 @@ delay_opts <- function(dist = Fixed(0), default_cdf_cutoff = 0.001,
   attr(dist, "weight_prior") <- weight_prior
   attr(dist, "class") <- c("delay_opts", class(dist))
   check_stan_delay(dist)
-  return(dist)
+  dist
 }
 
 #' Truncation Distribution Options
@@ -227,7 +227,7 @@ trunc_opts <- function(dist = Fixed(0), default_cdf_cutoff = 0.001,
   attr(dist, "weight_prior") <- weight_prior
   attr(dist, "class") <- c("trunc_opts", class(dist))
   check_stan_delay(dist)
-  return(dist)
+  dist
 }
 
 #' Time-Varying Reproduction Number Options
@@ -237,8 +237,8 @@ trunc_opts <- function(dist = Fixed(0), default_cdf_cutoff = 0.001,
 #' reproduction number. Custom settings can be supplied which override the
 #' defaults.
 #'
-#' @param prior A `<dist_spec>` giving the prior of the initial reproduciton
-#' number. Ignored if `use_rt` is `FALSE`. Defaults to a LogNormal distributin
+#' @param prior A `<dist_spec>` giving the prior of the initial reproduction
+#' number. Ignored if `use_rt` is `FALSE`. Defaults to a LogNormal distribution
 #' with mean of 1 and standard deviation of 1: `LogNormal(mean = 1, sd = 1)`.
 #' A lower limit of 0 will be enforced automatically.
 #'
@@ -256,12 +256,31 @@ trunc_opts <- function(dist = Fixed(0), default_cdf_cutoff = 0.001,
 #' conservative estimate of break point changes (alter this by setting
 #' `gp = NULL`).
 #'
-#' @param pop Integer, defaults to 0. Susceptible population initially present.
-#' Used to adjust Rt estimates when otherwise fixed based on the proportion of
-#' the population that is susceptible. When set to 0 no population adjustment
-#' is done.
+#' @param pop A `<dist_spec>` giving the initial susceptible population size.
+#' Used to adjust Rt estimates based on the proportion of the population that
+#' is susceptible. Defaults to `Fixed(0)` which means no population adjustment
+#' is done. See also `pop_floor` for the numerical stability floor used when
+#' population adjustment is enabled. When `pop` is specified, returned Rt
+#' estimates are adjusted for susceptible depletion (accounting for population
+#' immunity), and unadjusted Rt estimates are also provided in a separate
+#' output variable `R_unadjusted`. Adjusted Rt represents the effective
+#' reproduction number given the current susceptible population, whilst
+#' unadjusted Rt represents the reproduction number that would occur in a fully
+#' susceptible population.
 #'
-#' @param gp_on Character string, defaulting to  "R_t-1". Indicates how the
+#' @param pop_period Character string, defaulting to "forecast". Controls when
+#' susceptible population adjustment is applied. "forecast" only applies the
+#' adjustment to forecasts whilst "all" applies it to both data and forecasts.
+#'
+#' @param pop_floor Numeric. Minimum susceptible population used as a
+#' floor when adjusting for population depletion. This prevents numerical
+#' instability (division by zero) when the susceptible population approaches
+#' zero. Defaults to 1.0. Can be interpreted as representing a minimal
+#' ongoing import level. Note that if pop_floor > 0, cumulative infections
+#' can exceed the population size, though this effect is negligible when
+#' pop_floor is very small compared to the population size.
+#'
+#' @param gp_on Character string, defaulting to "R_t-1". Indicates how the
 #' Gaussian process, if in use, should be applied to Rt. Currently supported
 #' options are applying the Gaussian process to the last estimated Rt (i.e
 #' Rt = Rt-1 * GP), and applying the Gaussian process to a global mean (i.e Rt
@@ -269,11 +288,28 @@ trunc_opts <- function(dist = Fixed(0), default_cdf_cutoff = 0.001,
 #' but the method relying on a global mean will revert to this for real time
 #' estimates, which may not be desirable.
 #'
+#' @param growth_method Method used to compute growth rates from Rt. Options
+#' are "infections" (default) and "infectiousness". The option "infections"
+#' uses the classical approach, i.e. computing the log derivative on the number
+#' of new infections. The option "infectiousness" uses an alternative approach
+#' by Parag et al., which computes the log derivative of the infectiousness
+#' (i.e. the convolution of past infections with the generation time) and
+#' shifts it by the mean generation time. This can provide better stability
+#' and temporal matching with Rt. Note that, due to the temporal shift the
+#' "infectiousness" method results in undefined (NaN) growth rates for the most
+#' recent time points (equal to the mean generation time).
+#'
+#' @references Parag, K. V., Thompson, R. N. & Donnelly, C. A. Are epidemic
+#' growth rates more informative than reproduction numbers? Journal of the
+#' Royal Statistical Society: Series A (Statistics in Society) 185, S5–S15
+#' (2022).
+#'
 #' @return An `<rt_opts>` object with settings defining the time-varying
 #' reproduction number.
 #' @inheritParams create_future_rt
 #' @importFrom rlang arg_match
 #' @importFrom cli cli_abort
+#' @importFrom checkmate assert_number
 #' @export
 #' @examples
 #' # default settings
@@ -290,19 +326,24 @@ rt_opts <- function(prior = LogNormal(mean = 1, sd = 1),
                     use_breakpoints = TRUE,
                     future = "latest",
                     gp_on = c("R_t-1", "R0"),
-                    pop = 0) {
-  rt <- list(
+                    pop = Fixed(0),
+                    pop_period = c("forecast", "all"),
+                    pop_floor = 1.0,
+                    growth_method = c("infections", "infectiousness")) {
+  opts <- list(
     use_rt = use_rt,
     rw = rw,
     use_breakpoints = use_breakpoints,
     future = future,
-    pop = pop,
-    gp_on = arg_match(gp_on)
+    gp_on = arg_match(gp_on),
+    pop_period = arg_match(pop_period),
+    pop_floor = pop_floor,
+    growth_method = arg_match(growth_method)
   )
 
   # replace default settings with those specified by user
-  if (rt$rw > 0) {
-    rt$use_breakpoints <- TRUE
+  if (opts$rw > 0) {
+    opts$use_breakpoints <- TRUE
   }
 
   if (is.list(prior) && !is(prior, "dist_spec")) {
@@ -314,20 +355,37 @@ rt_opts <- function(prior = LogNormal(mean = 1, sd = 1),
     )
   }
 
-  if (rt$use_rt) {
-    rt$prior <- prior
-  } else {
-    if (!missing(prior)) {
-      cli_warn(
-        c(
-          "!" = "Rt {.var prior} is ignored if {.var use_rt} is FALSE."
-        )
+  if (is.numeric(pop)) {
+    lifecycle::deprecate_warn(
+      "1.7.0",
+      "rt_opts(pop = 'must be a `<dist_spec>`')",
+      details = "For specifying a fixed population size, use `Fixed(pop)`"
+    )
+    pop <- Fixed(pop)
+  }
+  opts$pop <- pop
+  if (opts$pop_period == "all" && pop == Fixed(0)) {
+    cli_abort(
+      c(
+        "!" = "pop_period = \"all\" but pop is fixed at 0."
       )
-    }
+    )
   }
 
-  attr(rt, "class") <- c("rt_opts", class(rt))
-  return(rt)
+  assert_number(pop_floor, lower = 0, finite = TRUE)
+
+  if (opts$use_rt) {
+    opts$prior <- prior
+  } else if (!missing(prior)) {
+    cli_warn(
+      c(
+        "!" = "Rt {.var prior} is ignored if {.var use_rt} is FALSE."
+      )
+    )
+  }
+
+  attr(opts, "class") <- c("rt_opts", class(opts))
+  opts
 }
 
 #' Back Calculation Options
@@ -382,7 +440,7 @@ backcalc_opts <- function(prior = c("reports", "none", "infections"),
     )
   }
   attr(backcalc, "class") <- c("backcalc_opts", class(backcalc))
-  return(backcalc)
+  backcalc
 }
 
 #' Approximate Gaussian Process Settings
@@ -427,9 +485,6 @@ backcalc_opts <- function(prior = c("reports", "none", "infections"),
 #' to "ou", `matern_order` will be automatically set to 1/2. Only used if
 #' the kernel is set to "matern".
 #'
-#' @param matern_type Deprecated; Numeric, defaults to 3/2. Order of Matérn
-#' Kernel to use. Currently, the orders 1/2, 3/2, 5/2 and Inf are supported.
-#'
 #' @param basis_prop Numeric, the proportion of time points to use as basis
 #' functions. Defaults to 0.2. Decreasing this value results in a decrease in
 #' accuracy but a faster compute time (with increasing it having the first
@@ -467,14 +522,8 @@ gp_opts <- function(basis_prop = 0.2,
                     alpha = Normal(mean = 0, sd = 0.01),
                     kernel = c("matern", "se", "ou", "periodic"),
                     matern_order = 3 / 2,
-                    matern_type,
                     w0 = 1.0,
                     alpha_mean, alpha_sd) {
-  if (!missing(matern_type)) {
-    lifecycle::deprecate_stop(
-      "1.6.0", "gp_opts(matern_type)", "gp_opts(matern_order)"
-    )
-  }
   if (!missing(alpha_mean)) {
     lifecycle::deprecate_stop(
       "1.7.0", "gp_opts(alpha_mean)", "gp_opts(alpha)"
@@ -486,7 +535,7 @@ gp_opts <- function(basis_prop = 0.2,
     )
   }
   if (!missing(ls_mean) || !missing(ls_sd) || !missing(ls_min) ||
-    !missing(ls_max)) {
+        !missing(ls_max)) {
     if (!missing(ls)) {
       cli_abort(
         c(
@@ -512,19 +561,6 @@ gp_opts <- function(basis_prop = 0.2,
       )
     }
     ls <- LogNormal(mean = ls_mean, sd = ls_sd, max = ls_max)
-  }
-
-  if (!missing(matern_type)) {
-    if (!missing(matern_order) && matern_type != matern_order) {
-      cli_abort(
-        c(
-          "!" = "{.var matern_order} and {.var matern_type} must be the same, if
-          both are supplied.",
-          "i" = "Rather only use {.var matern_order} only."
-        )
-      )
-    }
-    matern_order <- matern_type
   }
 
   kernel <- arg_match(kernel)
@@ -554,9 +590,10 @@ gp_opts <- function(basis_prop = 0.2,
   )
 
   attr(gp, "class") <- c("gp_opts", class(gp))
-  return(gp)
+  gp
 }
 
+# nolint start
 #' Observation Model Options
 #'
 #' @description `r lifecycle::badge("stable")`
@@ -568,7 +605,7 @@ gp_opts <- function(basis_prop = 0.2,
 #'   parameter of the reporting process, used only if `familiy` is "negbin".
 #'   Internally parameterised such that this parameter is one over the square
 #'   root of the `phi` parameter for overdispersion of the
-#'   [negative binomial distribution](https://mc-stan.org/docs/functions-reference/unbounded_discrete_distributions.html#neg-binom-2-log). # nolint
+#'   [negative binomial distribution](https://mc-stan.org/docs/functions-reference/unbounded_discrete_distributions.html#neg-binom-2-log).
 #'   Defaults to a half-normal distribution with mean of 0 and
 #'   standard deviation of 0.25: `Normal(mean = 0, sd = 0.25)`. A lower limit of
 #'   zero will be enforced automatically.
@@ -604,6 +641,7 @@ gp_opts <- function(basis_prop = 0.2,
 #'
 #' # Scale reported data
 #' obs_opts(scale = Normal(mean = 0.2, sd = 0.02))
+# nolint end
 obs_opts <- function(family = c("negbin", "poisson"),
                      dispersion = Normal(mean = 0, sd = 0.25),
                      weight = 1,
@@ -613,8 +651,7 @@ obs_opts <- function(family = c("negbin", "poisson"),
                      na = c("missing", "accumulate"),
                      likelihood = TRUE,
                      return_likelihood = FALSE,
-                     phi
-                     ) {
+                     phi) {
   if (!missing(phi)) {
     if (!missing(dispersion)) {
       cli::cli_abort(
@@ -700,7 +737,7 @@ obs_opts <- function(family = c("negbin", "poisson"),
   }
 
   attr(obs, "class") <- c("obs_opts", class(obs))
-  return(obs)
+  obs
 }
 
 #' Stan Sampling Options
@@ -778,10 +815,12 @@ stan_sampling_opts <- function(cores = getOption("mc.cores", 1L),
   control_def <- modifyList(control_def, control)
   if (any(c("iter", "iter_sampling") %in% names(dot_args))) {
     cli_warn(
-      "!" = "Number of samples must be specified using the {.var samples}
+      c(
+        "!" = "Number of samples must be specified using the {.var samples}
       and {.var warmup} arguments rather than {.var iter} or
       {.var iter_sampliing}.",
-      "i" = "Supplied {.var iter} or {.var iter_sampliing} will be ignored."
+        "i" = "Supplied {.var iter} or {.var iter_sampliing} will be ignored."
+      )
     )
   }
   dot_args$iter <- NULL
@@ -800,8 +839,7 @@ stan_sampling_opts <- function(cores = getOption("mc.cores", 1L),
       iter_sampling = ceiling(samples / opts$chains)
     ), control_def)
   }
-  opts <- c(opts, dot_args)
-  return(opts)
+  c(opts, dot_args)
 }
 
 #' Stan Variational Bayes Options
@@ -836,8 +874,7 @@ stan_vb_opts <- function(samples = 2000,
     iter = iter,
     output_samples = samples
   )
-  opts <- c(opts, ...)
-  return(opts)
+  c(opts, ...)
 }
 
 #' Stan Laplace algorithm Options
@@ -865,9 +902,7 @@ stan_laplace_opts <- function(backend = "cmdstanr",
       )
     )
   }
-  opts <- list(trials = trials)
-  opts <- c(opts, ...)
-  return(opts)
+  c(list(trials = trials), ...)
 }
 
 #' Stan pathfinder algorithm Options
@@ -900,8 +935,7 @@ stan_pathfinder_opts <- function(backend = "cmdstanr",
     trials = trials,
     draws = samples
   )
-  opts <- c(opts, ...)
-  return(opts)
+  c(opts, ...)
 }
 
 #' Stan Options
@@ -990,25 +1024,24 @@ stan_opts <- function(object = NULL,
     object = object,
     method = method
   ))
-  if (method == "sampling") {
-    opts <- c(
+  opts <- switch(method,
+    sampling = c(
       opts, stan_sampling_opts(samples = samples, backend = backend, ...)
-    )
-  } else if (method == "vb") {
-    opts <- c(opts, stan_vb_opts(samples = samples, ...))
-  } else if (method == "laplace") {
-    opts <- c(
+    ),
+    vb = c(
+      opts, stan_vb_opts(samples = samples, ...)
+    ),
+    laplace = c(
       opts, stan_laplace_opts(backend = backend, ...)
-    )
-  } else if (method == "pathfinder") {
-    opts <- c(
+    ),
+    pathfinder = c(
       opts, stan_pathfinder_opts(samples = samples, backend = backend, ...)
     )
-  }
+  )
 
   opts <- c(opts, list(return_fit = return_fit))
   attr(opts, "class") <- c("stan_opts", class(opts))
-  return(opts)
+  opts
 }
 
 #' Forecast options
@@ -1024,7 +1057,7 @@ stan_opts <- function(object = NULL,
 #'   the data used for fitting then the same accumulation will be used in
 #'   forecasts unless set explicitly here.
 #' @return A `<forecast_opts>` object of forecast setting.
-#' @seealso fill_missing
+#' @seealso [fill_missing()]
 #' @export
 #' @examples
 #' forecast_opts(horizon = 28, accumulate = 7)
@@ -1036,7 +1069,7 @@ forecast_opts <- function(horizon = 7, accumulate) {
     opts$accumulate <- accumulate
   }
   attr(opts, "class") <- c("forecast_opts", class(opts))
-  return(opts)
+  opts
 }
 
 #' Forecast optiong
@@ -1056,7 +1089,7 @@ forecast_opts <- function(horizon = 7, accumulate) {
 #' @param ... Optional override for region defaults. See the examples
 #' for use case.
 #'
-#' @importFrom utils modifyList
+#' @importFrom purrr list_assign
 #'
 #' @return A named list of options per region which can be passed to the `_opt`
 #' accepting arguments of `regional_epinow`.
@@ -1084,8 +1117,7 @@ opts_list <- function(opts, reported_cases, ...) {
   regions <- unique(reported_cases$region)
   default <- rep(list(opts), length(regions))
   names(default) <- regions
-  out <- modifyList(default, list(...))
-  return(out)
+  list_assign(default, ...)
 }
 
 #' Filter Options for a Target Region
@@ -1106,7 +1138,7 @@ filter_opts <- function(opts, region) {
   } else {
     out <- opts
   }
-  return(out)
+  out
 }
 
 #' Apply default CDF cutoff to a <dist_spec> if it is unconstrained
@@ -1144,5 +1176,5 @@ apply_default_cdf_cutoff <- function(dist, default_cdf_cutoff, cdf_cutoff_set) {
       )
     )
   }
-  return(dist)
+  dist
 }

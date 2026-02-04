@@ -62,7 +62,7 @@ setup_logging <- function(threshold = "INFO", file = NULL,
     )
     futile.logger::flog.appender(futile.logger::appender.console(), name = name)
   }
-  return(invisible(NULL))
+  invisible(NULL)
 }
 
 #' Setup Default Logging
@@ -114,8 +114,12 @@ setup_default_logging <- function(logs = tempdir(check = TRUE),
       mirror_to_console = mirror_epinow,
       name = "EpiNow2.epinow"
     )
+  } else {
+    # Suppress logging by setting threshold to FATAL
+    futile.logger::flog.threshold(futile.logger::FATAL)
+    futile.logger::flog.threshold(futile.logger::FATAL, name = "EpiNow2.epinow")
   }
-  return(invisible(NULL))
+  invisible(NULL)
 }
 
 #' Set up Future Backend
@@ -147,13 +151,16 @@ setup_default_logging <- function(logs = tempdir(check = TRUE),
 setup_future <- function(data,
                          strategies = c("multisession", "multisession"),
                          min_cores_per_worker = 4) {
-  if (!requireNamespace("future", quietly = TRUE)) {
-    futile.logger::flog.error(
-      "The future package is required for parallelisation"
-    )
+
+  required_pkgs <- c("future", "parallelly")
+  missing_pkgs <- required_pkgs[
+    !vapply(required_pkgs, requireNamespace, logical(1), quietly = TRUE)
+  ]
+  if (length(missing_pkgs) > 0) {
     cli_abort(
       c(
-        "!" = "The future package is required for parallelisation."
+        "!" = "{.pkg {missing_pkgs}} required for {.fn setup_future}.",
+        "i" = "Install with {.code install.packages({deparse(missing_pkgs)})}."
       )
     )
   }
@@ -174,23 +181,23 @@ setup_future <- function(data,
     )
   }
   if (length(strategies) == 1) {
-    workers <- future::availableCores()
+    workers <- parallelly::availableCores()
     futile.logger::flog.info(
       "Using %s workers with 1 core per worker",
       workers
     )
     future::plan(strategies,
       workers = workers,
-      gc = TRUE, earlySignal = TRUE
+      gc = TRUE
     )
     cores_per_worker <- 1
-    return(invisible(NULL))
+    invisible(NULL)
   } else {
     jobs <- length(unique(data$region))
     workers <- min(
-      ceiling(future::availableCores() / min_cores_per_worker), jobs
+      ceiling(parallelly::availableCores() / min_cores_per_worker), jobs
     )
-    cores_per_worker <- max(1, round(future::availableCores() / workers, 0))
+    cores_per_worker <- max(1, round(parallelly::availableCores() / workers, 0))
 
     futile.logger::flog.info(
       "Using %s workers with %s cores per worker",
@@ -200,11 +207,11 @@ setup_future <- function(data,
     future::plan(list(
       future::tweak(strategies[1],
         workers = workers,
-        gc = TRUE, earlySignal = TRUE
+        gc = TRUE
       ),
       future::tweak(strategies[2], workers = cores_per_worker)
     ))
-    return(cores_per_worker)
+    cores_per_worker
   }
 }
 
@@ -217,8 +224,7 @@ setup_future <- function(data,
 #' @keywords internal
 setup_dt <- function(data) {
   suppressMessages(data.table::setDTthreads(threads = 1))
-  data <- data.table::setDT(data)
-  return(data)
+  data.table::setDT(data)
 }
 
 #' Setup Target Folder for Saving
@@ -240,8 +246,8 @@ setup_target_folder <- function(target_folder = NULL, target_date) {
     if (!dir.exists(target_folder)) {
       dir.create(target_folder, recursive = TRUE)
     }
-    return(list(date = target_folder, latest = latest_folder))
+    list(date = target_folder, latest = latest_folder)
   } else {
-    return(invisible(NULL))
+    invisible(NULL)
   }
 }

@@ -1,42 +1,58 @@
 #' Plot EpiNow2 Credible Intervals
 #'
 #' @description `r lifecycle::badge("stable")`
-#' Adds lineranges for user specified credible intervals
+#' Adds credible intervals to a plot, either as ribbons or error bars.
 #' @param plot A `{ggplot2}` plot
 #'
 #' @param CrIs Numeric list of credible intervals present in the data. As
 #' produced by [extract_CrIs()].
 #'
-#' @param alpha Numeric, overall alpha of the target line range
+#' @param alpha Numeric, overall alpha of the target line range.
 #'
 #' @param linewidth Numeric, line width of the default line range.
 #'
+#' @param style Character string indicating the plot style. Options are
+#' "ribbon" (default) for shaded ribbon plots or "linerange" for error bars.
+#'
 #' @return A `{ggplot2}` plot.
-plot_CrIs <- function(plot, CrIs, alpha, linewidth) {
+plot_CrIs <- function(plot, CrIs, alpha, linewidth,
+                      style = c("ribbon", "linerange")) {
+  style <- match.arg(style)
   index <- 1
   alpha_per_CrI <- alpha / (length(CrIs) - 1)
+  p <- plot
   for (CrI in CrIs) {
     bottom <- paste0("lower_", CrI)
     top <- paste0("upper_", CrI)
-    if (index == 1) {
-      plot <- plot +
-        ggplot2::geom_ribbon(
-          ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]]),
-          alpha = 0.2, linewidth = linewidth
-        )
+    if (style == "ribbon") {
+      if (index == 1) {
+        p <- p +
+          ggplot2::geom_ribbon(
+            ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]]),
+            alpha = 0.2, linewidth = linewidth
+          )
+      } else {
+        p <- p +
+          ggplot2::geom_ribbon(
+            ggplot2::aes(
+              ymin = .data[[bottom]], ymax = .data[[top]],
+              col = NULL
+            ),
+            alpha = alpha_per_CrI
+          )
+      }
     } else {
-      plot <- plot +
-        ggplot2::geom_ribbon(
-          ggplot2::aes(
-            ymin = .data[[bottom]], ymax = .data[[top]],
-            col = NULL
-          ),
-          alpha = alpha_per_CrI
+      # linerange style - graduated linewidths (narrower CrIs drawn thicker)
+      lw <- c(6, 4, 1.5)[min(index, 3)]
+      p <- p +
+        ggplot2::geom_linerange(
+          ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]]),
+          linewidth = lw
         )
     }
     index <- index + 1
   }
-  return(plot)
+  p
 }
 
 #' Plot Estimates
@@ -70,6 +86,11 @@ plot_CrIs <- function(plot, CrIs, alpha, linewidth) {
 #' Default to all types with supported options being: "Estimate", "Estimate
 #' based on partial data", and "Forecast".
 #'
+#' @param style Character string indicating the plot style for credible
+#' intervals. Options are "ribbon" (default) for shaded ribbon plots or
+#' "linerange" for error bars. Error bars can be clearer for weekly or
+#' aggregated data.
+#'
 #' @return A `ggplot2` object
 #' @export
 #' @importFrom ggplot2 ggplot aes geom_col geom_line geom_point geom_vline
@@ -86,37 +107,45 @@ plot_CrIs <- function(plot, CrIs, alpha, linewidth) {
 #'
 #' # plot infections
 #' plot_estimates(
-#'   estimate = out$summarised[variable == "infections"],
+#'   estimate = summary(out, type = "parameters", param = "infections"),
 #'   reported = out$observations,
 #'   ylab = "Cases", max_plot = 2
 #' ) + ggplot2::facet_wrap(~type, scales = "free_y")
 #'
 #' # plot reported cases estimated via Rt
 #' plot_estimates(
-#'   estimate = out$summarised[variable == "reported_cases"],
+#'   estimate = summary(out, type = "parameters", param = "reported_cases"),
 #'   reported = out$observations,
 #'   ylab = "Cases"
 #' )
 #'
 #' # plot Rt estimates
 #' plot_estimates(
-#'   estimate = out$summarised[variable == "R"],
+#'   estimate = summary(out, type = "parameters", param = "R"),
 #'   ylab = "Effective Reproduction No.",
 #'   hline = 1
 #' )
 #'
 #' #' # plot Rt estimates without forecasts
 #' plot_estimates(
-#'   estimate = out$summarised[variable == "R"],
+#'   estimate = summary(out, type = "parameters", param = "R"),
 #'   ylab = "Effective Reproduction No.",
 #'   hline = 1, estimate_type = "Estimate"
+#' )
+#'
+#' # plot with error bars instead of ribbons
+#' plot_estimates(
+#'   estimate = summary(out, type = "parameters", param = "R"),
+#'   ylab = "Effective Reproduction No.",
+#'   hline = 1, style = "linerange"
 #' )
 plot_estimates <- function(estimate, reported, ylab, hline,
                            obs_as_col = TRUE, max_plot = 10,
                            estimate_type = c(
                              "Estimate", "Estimate based on partial data",
                              "Forecast"
-                           )) {
+                           ),
+                           style = c("ribbon", "linerange")) {
   # convert input to data.table
   estimate <- data.table::as.data.table(estimate)
   if (!missing(reported)) {
@@ -132,6 +161,7 @@ plot_estimates <- function(estimate, reported, ylab, hline,
 
   orig_estimate <- copy(estimate)
   estimate_type <- arg_match(estimate_type, multiple = TRUE)
+  style <- match.arg(style)
   # scale plot values based on reported cases
   if (!missing(reported) && !is.na(max_plot)) {
     sd_cols <- c(
@@ -140,40 +170,44 @@ plot_estimates <- function(estimate, reported, ylab, hline,
     )
     cols <- setdiff(colnames(reported), c("date", "confirm", "breakpoint"))
 
-    if (length(cols) > 1) {
-      max_cases_to_plot <- data.table::copy(reported)[,
-        .(max = round(max(confirm, na.rm = TRUE) * max_plot, 0)),
-        by = cols
+    if (!all(is.na(reported$confirm))) {
+      if (length(cols) > 1) {
+        max_cases_to_plot <- data.table::copy(reported)[,
+          .(max = round(max(confirm, na.rm = TRUE) * max_plot, 0)),
+          by = cols
+        ]
+        estimate <- estimate[max_cases_to_plot, on = cols]
+      } else {
+        max_cases_to_plot <- round(
+          max(reported$confirm, na.rm = TRUE) * max_plot, 0
+        )
+        estimate <- estimate[, max := max_cases_to_plot]
+      }
+      estimate <- estimate[, lapply(.SD, pmin, max),
+        by = setdiff(colnames(estimate), sd_cols), .SDcols = sd_cols
       ]
-      estimate <- estimate[max_cases_to_plot, on = cols]
-    } else {
-      max_cases_to_plot <- round(
-        max(reported$confirm, na.rm = TRUE) * max_plot, 0
-      )
-      estimate <- estimate[, max := max_cases_to_plot]
     }
-    estimate <- estimate[, lapply(.SD, pmin, max),
-      by = setdiff(colnames(estimate), sd_cols), .SDcols = sd_cols
-    ]
   }
 
   # initialise plot
-  plot <- ggplot2::ggplot(
+  p <- ggplot2::ggplot(
     estimate, ggplot2::aes(x = date, col = type, fill = type)
   )
 
   # add in reported data if present (either as column or as a line)
   if (!missing(reported)) {
     if (obs_as_col) {
-      plot <- plot +
+      p <- p +
         ggplot2::geom_col(
-          data = reported[date >= min(estimate$date, na.rm = TRUE) &
-            date <= max(estimate$date, na.rm = TRUE)],
+          data = reported[
+            date >= min(estimate$date, na.rm = TRUE) &
+              date <= max(estimate$date, na.rm = TRUE)
+          ],
           ggplot2::aes(y = confirm), fill = "grey", col = "white",
           show.legend = FALSE, na.rm = TRUE
         )
     } else {
-      plot <- plot +
+      p <- p +
         ggplot2::geom_line(
           data = reported,
           ggplot2::aes(y = confirm, fill = NULL),
@@ -189,7 +223,7 @@ plot_estimates <- function(estimate, reported, ylab, hline,
   }
 
   # plot estimates
-  plot <- plot +
+  p <- p +
     ggplot2::geom_vline(
       xintercept = orig_estimate[
         type == "Estimate based on partial data"
@@ -198,12 +232,12 @@ plot_estimates <- function(estimate, reported, ylab, hline,
     )
 
   # plot CrIs
-  plot <- plot_CrIs(plot, extract_CrIs(estimate),
-    alpha = 0.6, linewidth = 0.05
+  p <- plot_CrIs(p, extract_CrIs(estimate),
+    alpha = 0.6, linewidth = 0.05, style = style
   )
 
   # add plot theming
-  plot <- plot +
+  p <- p +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "bottom") +
     ggplot2::scale_color_brewer(palette = "Dark2") +
@@ -216,10 +250,10 @@ plot_estimates <- function(estimate, reported, ylab, hline,
 
   # add in a horizontal line if required
   if (!missing(hline)) {
-    plot <- plot +
+    p <- p +
       ggplot2::geom_hline(yintercept = hline, linetype = 2)
   }
-  return(plot)
+  p
 }
 
 
@@ -264,7 +298,7 @@ plot_summary <- function(summary_results,
 
   # generic plotting function
   inner_plot <- function(df) {
-    plot <- ggplot2::ggplot(df, ggplot2::aes(
+    p <- ggplot2::ggplot(df, ggplot2::aes(
       x = region,
       col = `Expected change in reports`
     ))
@@ -274,7 +308,7 @@ plot_summary <- function(summary_results,
     for (CrI in CrIs) {
       bottom <- paste0("lower_", CrI)
       top <- paste0("upper_", CrI)
-      plot <- plot +
+      p <- p +
         ggplot2::geom_linerange(
           ggplot2::aes(ymin = .data[[bottom]], ymax = .data[[top]]),
           alpha = ifelse(index == 1, 0.4, alpha_per_CrI),
@@ -283,7 +317,7 @@ plot_summary <- function(summary_results,
       index <- index + 1
     }
 
-    plot <- plot +
+    p <- p +
       ggplot2::geom_hline(yintercept = 1, linetype = 2) +
       ggplot2::facet_wrap(~metric, ncol = 1, scales = "free_y") +
       ggplot2::theme_bw() +
@@ -354,8 +388,7 @@ plot_summary <- function(summary_results,
     ggplot2::coord_cartesian(ylim = c(0, min(max_rt, 4)))
 
   # join plots together
-  plot <- cases_plot + rt_plot + patchwork::plot_layout(ncol = 1)
-  return(plot)
+  cases_plot + rt_plot + patchwork::plot_layout(ncol = 1)
 }
 
 #' Plot method for estimate_infections
@@ -365,54 +398,85 @@ plot_summary <- function(summary_results,
 #'
 #' @param x A list of output as produced by `estimate_infections`
 #'
+#' @param ... Pass additional arguments to report_plots
+#' @importFrom rlang arg_match
+#' @inheritParams select_plots
+#' @inheritParams calc_summary_measures
+#' @inheritParams plot_estimates
+#'
+#' @seealso [report_plots()]
+#' @method plot estimate_infections
+#' @return List of plots as produced by [report_plots()]
+#' @export
+#' @examples
+#' # get example output
+#' out <- readRDS(system.file(
+#'   package = "EpiNow2", "extdata", "example_estimate_infections.rds"
+#' ))
+#'
+#' # plot with error bars instead of ribbons
+#' plot(out, style = "linerange")
+plot.estimate_infections <- function(x,
+                                     type = "summary",
+                                     CrIs = c(0.2, 0.5, 0.9),
+                                     ...) {
+  out <- report_plots(
+    summarised_estimates = summary(x, type = "parameters", CrIs = CrIs),
+    reported = x$observations, ...
+  )
+  select_plots(out, type)
+}
+
+#' Plot method for forecast_infections
+#'
+#' @description `r lifecycle::badge("maturing")`
+#' `plot` method for class `<forecast_infections>`.
+#'
+#' @param x A list of output as produced by `forecast_infections`
+#'
+#' @param ... Pass additional arguments to report_plots
+#' @importFrom rlang arg_match
+#' @inheritParams select_plots
+#' @inheritParams calc_summary_measures
+#' @inheritParams plot_estimates
+#'
+#' @seealso [report_plots()] [forecast_infections()]
+#' @method plot forecast_infections
+#' @return List of plots as produced by [report_plots()]
+#' @export
+plot.forecast_infections <- function(x,
+                                     type = "summary",
+                                     CrIs = c(0.2, 0.5, 0.9),
+                                     ...) {
+  plot.estimate_infections(x, type = type, CrIs = CrIs, ...)
+}
+
+#' Internal helper function to select plots from those created by
+#' [report_plots()]
+#'
+#' @param plots A list of plots as produced by [report_plots()].
 #' @param type A character vector indicating the name of the plot to return.
 #' Defaults to  "summary" with supported options being "infections", "reports",
 #' "R", "growth_rate", "summary", "all". If "all" is supplied all plots are
 #' generated.
-#'
-#' @param ... Pass additional arguments to report_plots
-#' @importFrom rlang arg_match
-#'
-#' @seealso plot report_plots estimate_infections
-#' @aliases plot
-#' @method plot estimate_infections
-#' @return List of plots as produced by [report_plots()]
-#' @export
-plot.estimate_infections <- function(x,
-                                     type = c(
-                                       "summary", "infections", "reports", "R",
-                                       "growth_rate", "all"
-                                     ), ...) {
-  out <- report_plots(
-    summarised_estimates = x$summarised,
-    reported = x$observations, ...
-  )
+#' @return Selected plots by type
+#' @keywords internal
+select_plots <- function(plots, type = c(
+  "summary", "infections", "reports", "R",
+  "growth_rate", "all"
+)) {
   type <- arg_match(type)
   if (type == "all") {
     type <- c("summary", "infections", "reports", "R", "growth_rate")
   }
 
-  if (!is.null(out)) {
-    out <- out[type]
+  if (!is.null(plots)) {
+    plots <- plots[type]
     if (length(type) == 1) {
-      out <- out[[1]]
+      plots <- plots[[1]]
     }
-    return(out)
+    plots
   } else {
-    return(invisible(NULL))
+    invisible(NULL)
   }
-}
-
-#' Plot method for epinow
-#'
-#' @description `r lifecycle::badge("maturing")`
-#' `plot` method for class `<epinow>`.
-#' @param x A list of output as produced by [epinow()].
-#' @inheritParams plot.estimate_infections
-#' @seealso plot plot.estimate_infections report_plots estimate_infections
-#' @method plot epinow
-#' @return List of plots as produced by [report_plots()]
-#' @export
-plot.epinow <- function(x, type = "summary", ...) {
-  plot.estimate_infections(x$estimates, type = type, ...)
 }

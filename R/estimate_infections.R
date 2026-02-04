@@ -18,13 +18,15 @@
 #' estimate Rt for Covid-19 in a country from the ECDC data source.
 #'
 #' @param data A `<data.frame>` of disease reports (confirm) by date (date).
-#' `confirm` must be numeric and `date` must be in date format. Optionally
-#' this can also have a logical `accumulate` column which indicates whether
+#' `confirm` must be numeric and `date` must be in date format. Optionally,
+#' `data` can also have a logical `accumulate` column which indicates whether
 #' data should be added to the next data point. This is useful when modelling
 #' e.g. weekly incidence data. See also the [fill_missing()] function which
 #' helps add the `accumulate` column with the desired properties when dealing
 #' with non-daily data. If any accumulation is done this happens after
-#' truncation as specified by the `truncation` argument.
+#' truncation as specified by the `truncation` argument. If all entries
+#' of `confirm` are missing (`NA`) the returned estimates will represent the
+#' prior distributions.
 #'
 #' @param generation_time A call to [gt_opts()] (or its alias
 #' [generation_time_opts()]) defining the generation time distribution used.
@@ -45,14 +47,15 @@
 #' the forecast opitions. Defaults to [forecast_opts()]. If NULL then no
 #' forecasting will be done.
 #'
+#' @param CrIs Deprecated; specify credible intervals when using [summary()] or
+#' [plot()]
+#'
 #' @param horizon Deprecated; use `forecast` instead to specify the predictive
 #'   horizon
 #'
-#' @param weigh_delay_priors Logical. If TRUE (default), all delay distribution
-#' priors will be weighted by the number of observation data points, in doing so
-#' approximately placing an independent prior at each time step and usually
-#' preventing the posteriors from shifting. If FALSE, no weight will be applied,
-#' i.e. delay distributions will be treated as a single parameters.
+#' @param weigh_delay_priors Deprecated; this is now specified at the
+#' distribution level in `generation_time_opts()`, `delay_opts()` and
+#' `trunc_opts()` using the `weight_prior` argument.
 #'
 #' @param verbose Logical, defaults to `TRUE` when used interactively and
 #' otherwise `FALSE`. Should verbose debug progress messages be printed.
@@ -68,10 +71,14 @@
 #' threshold then the zero is replaced using `fill`.
 #'
 #' @export
-#' @return A list of output including: posterior samples, summarised posterior
-#' samples, data used to fit the model, and the fit object itself.
+#' @return An `<estimate_infections>` object containing:
 #'
-#' @seealso [epinow()] [regional_epinow()] [forecast_infections()]
+#' - `fit`: The stan fit object.
+#' - `args`: A list of arguments used for fitting (stan data).
+#' - `observations`: The input data (`<data.frame>`).
+#'
+#' @seealso [get_samples()] [get_predictions()] [get_parameters()]
+#' [epinow()] [regional_epinow()] [forecast_infections()]
 #' [estimate_truncation()]
 #' @inheritParams create_stan_args
 #' @inheritParams create_stan_data
@@ -80,7 +87,6 @@
 #' @inheritParams create_gp_data
 #' @inheritParams create_obs_model
 #' @inheritParams fit_model_with_nuts
-#' @inheritParams calc_CrIs
 #' @importFrom data.table data.table copy merge.data.table as.data.table
 #' @importFrom data.table setorder rbindlist melt .N setDT
 #' @importFrom lubridate days
@@ -94,7 +100,7 @@
 #' options(mc.cores = ifelse(interactive(), 4, 1))
 #'
 #' # get example case counts
-#' reported_cases <- example_confirmed[1:60]
+#' reported_cases <- example_confirmed[1:40]
 #'
 #' # set an example generation time. In practice this should use an estimate
 #' # from the literature or be estimated from data
@@ -115,10 +121,13 @@
 #' reporting_delay <- LogNormal(mean = 2, sd = 1, max = 10)
 #'
 #' # for more examples, see the "estimate_infections examples" vignette
+#' # samples and calculation time have been reduced for this example
+#' # for real analyses, use at least samples = 2000
 #' def <- estimate_infections(reported_cases,
 #'   generation_time = gt_opts(generation_time),
 #'   delays = delay_opts(incubation_period + reporting_delay),
-#'   rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1))
+#'   rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.1)),
+#'   stan = stan_opts(samples = 100, warmup = 200)
 #' )
 #' # real time estimates
 #' summary(def)
@@ -143,6 +152,13 @@ estimate_infections <- function(data,
                                 filter_leading_zeros = TRUE,
                                 zero_threshold = Inf,
                                 horizon) {
+  if (!missing(CrIs)) {
+    lifecycle::deprecate_stop(
+      "1.8.0",
+      "estimate_infections(CrIs)",
+      detail = "Specify credible intervals when using `summary()` or `plot()`."
+    )
+  }
   if (!missing(filter_leading_zeros)) {
     lifecycle::deprecate_stop(
       "1.7.0",
@@ -155,6 +171,15 @@ estimate_infections <- function(data,
       "1.7.0",
       "estimate_infections(zero_threshold)",
       "apply_zero_threshold()"
+    )
+  }
+  if (!missing(weigh_delay_priors)) {
+    lifecycle::deprecate_stop(
+      "1.8.0",
+      "estimate_infections(weigh_delay_priors)",
+      detail = "Weighting of priors is now done when defining them in
+      `generation_time_opts()`, `delay_opts()` or `trunc_opts()` using the
+      `weight_prior` argument."
     )
   }
   if (!missing(horizon)) {
@@ -187,9 +212,6 @@ estimate_infections <- function(data,
 
   set_dt_single_thread()
 
-  # store dirty reported case data
-  dirty_reported_cases <- data.table::copy(data)
-
   if (!is.null(rt) && !rt$use_rt) {
     rt <- NULL
   }
@@ -219,31 +241,20 @@ estimate_infections <- function(data,
   # Add breakpoints column
   reported_cases <- add_breakpoints(reported_cases)
 
-  # Record earliest date with data
-  start_date <- min(reported_cases$date, na.rm = TRUE)
-
+  # Determine seeding time
   seeding_time <- get_seeding_time(delays, generation_time, rt)
 
-  # Create mean shifted reported cases as prior
-  reported_cases <- data.table::rbindlist(list(
-    data.table::data.table(
-      date = seq(
-        min(reported_cases$date) - seeding_time - backcalc$prior_window,
-        min(reported_cases$date) - 1,
-        by = "days"
-      ),
-      confirm = 0, accumulate = FALSE, breakpoint = 0
-    ),
-    reported_cases[, .(date, confirm, accumulate, breakpoint)]
-  ))
+  # Add initial zeroes
+  reported_cases <- pad_reported_cases(reported_cases, seeding_time)
 
-  shifted_cases <- create_shifted_cases(
-    reported_cases,
-    seeding_time,
-    backcalc$prior_window,
-    forecast$horizon
+  params <- list(
+    make_param("alpha", gp$alpha, lower_bound = 0),
+    make_param("rho", gp$ls, lower_bound = 0),
+    make_param("R0", rt$prior, lower_bound = 0),
+    make_param("fraction_observed", obs$scale, lower_bound = 0),
+    make_param("reporting_overdispersion", obs$dispersion, lower_bound = 0),
+    make_param("pop", rt$pop, lower_bound = 0)
   )
-  reported_cases <- reported_cases[-(1:backcalc$prior_window)]
 
   # Define stan model parameters
   stan_data <- create_stan_data(
@@ -253,130 +264,101 @@ estimate_infections <- function(data,
     gp = gp,
     obs = obs,
     backcalc = backcalc,
-    shifted_cases = shifted_cases$confirm,
-    forecast = forecast
+    forecast = forecast,
+    params = params
   )
 
   stan_data <- c(stan_data, create_stan_delays(
-    gt = generation_time,
-    delay = delays,
-    trunc = truncation,
+    generation_time = generation_time,
+    reporting = delays,
+    truncation = truncation,
     time_points = stan_data$t - stan_data$seeding_time - stan_data$horizon
   ))
 
   # Set up default settings
-  args <- create_stan_args(
+  stan_args <- create_stan_args(
     stan = stan,
     data = stan_data,
-    init = create_initial_conditions(stan_data),
+    init = create_initial_conditions(stan_data, params),
     verbose = verbose
   )
 
-  # Fit model
-  fit <- fit_model(args, id = id)
-
-  # Extract parameters of interest from the fit
-  out <- extract_parameter_samples(fit, stan_data,
-    reported_inf_dates = reported_cases$date,
-    reported_dates = reported_cases$date[-(1:stan_data$seeding_time)],
-    imputed_dates =
-      reported_cases$date[-(1:stan_data$seeding_time)][stan_data$imputed_times]
+  # Warn if truncation distribution is longer than observed time
+  check_truncation_length(
+    stan_args,
+    time_points = stan_data$t - stan_data$seeding_time - stan_data$horizon
   )
 
-  ## Add initial infections estimate
-  if (length(delays) > 0) {
-    out$initial_infections_estimate <- shifted_cases[
-      ,
-      .(
-        parameter = "initial_infections_estimate", time = seq_len(.N),
-        date, value = confirm, sample = 1
-      )
-    ]
-  }
-  # Format output
-  format_out <- format_fit(
-    posterior_samples = out,
-    horizon = stan_data$horizon,
-    shift = stan_data$seeding_time,
-    burn_in = 0,
-    start_date = start_date,
-    CrIs = CrIs
+  # Fit model
+  fit <- fit_model(stan_args, id = id)
+
+  ret <- list(
+    fit = fit,
+    args = stan_data,
+    observations = data
   )
 
   ## Join stan fit if required
-  if (stan$return_fit) {
-    format_out$fit <- fit
-    format_out$args <- stan_data
-  }
-  format_out$observations <- dirty_reported_cases
-  class(format_out) <- c("estimate_infections", class(format_out))
-  return(format_out)
+  class(ret) <- c("estimate_infections", "epinowfit", class(ret))
+  ret
 }
 
-#' Format Posterior Samples
+#' Extract elements from estimate_infections objects with deprecated warnings
 #'
-#' @description `r lifecycle::badge("stable")`
-#' Summaries posterior samples and adds additional custom variables.
+#' @description `r lifecycle::badge("deprecated")`
+#' Provides backward compatibility for the old return structure. The previous
+#' structure with \code{samples} and \code{summarised} elements is deprecated.
+#' Use the accessor methods instead:
+#' \itemize{
+#'   \item \code{samples} - use \code{get_samples(object)}
+#'   \item \code{summarised} - use \code{summary(object, type = "parameters")}
+#' }
 #'
-#' @param posterior_samples A list of posterior samples as returned by
-#' [extract_parameter_samples()].
-#'
-#' @param horizon Numeric, forecast horizon.
-#'
-#' @param shift Numeric, the shift to apply to estimates.
-#'
-#' @param burn_in Numeric, number of days to discard estimates for.
-#'
-#' @param start_date Date, earliest date with data.
-#'
-#' @inheritParams calc_summary_measures
-#' @importFrom data.table fcase rbindlist
-#' @importFrom lubridate days
-#' @importFrom futile.logger flog.info
-#' @return A list of samples and summarised posterior parameter estimates.
+#' @param x An \code{estimate_infections} object
+#' @param name The name of the element to extract
+#' @return The requested element with a deprecation warning for deprecated
+#'   elements
 #' @keywords internal
-format_fit <- function(posterior_samples, horizon, shift, burn_in, start_date,
-                       CrIs) {
-  format_out <- list()
-  # bind all samples together
-  format_out$samples <- data.table::rbindlist(
-    posterior_samples,
-    fill = TRUE, idcol = "variable"
-  )
-
-  if (is.null(format_out$samples$strat)) {
-    format_out$samples <- format_out$samples[, strat := NA]
-  }
-  # add type based on horizon
-  format_out$samples <- format_out$samples[
-    ,
-    type := data.table::fcase(
-      date > (max(date, na.rm = TRUE) - horizon),
-      "forecast",
-      date > (max(date, na.rm = TRUE) - horizon - shift),
-      "estimate based on partial data",
-      is.na(date), NA_character_,
-      default = "estimate"
+#' @export
+#' @method $ estimate_infections
+`$.estimate_infections` <- function(x, name) {
+  if (name == "samples") {
+    lifecycle::deprecate_warn(
+      "1.8.0",
+      I("estimate_infections()$samples"),
+      "get_samples()"
     )
-  ]
-
-  # remove burn in period if specified
-  if (burn_in > 0) {
-    futile.logger::flog.info(
-      "burn_in is depreciated as of EpiNow2 1.3.0 - if using this feature",
-      " please contact the developers",
-      name = "EpiNow2.epinow.estimate_infections"
-    )
-    format_out$samples <-
-      format_out$samples[is.na(date) ||
-        date >= (start_date + lubridate::days(burn_in))]
+    return(get_samples(x))
   }
+  if (name == "summarised") {
+    lifecycle::deprecate_warn(
+      "1.8.0",
+      I("estimate_infections()$summarised"),
+      I("summary(type = 'parameters')")
+    )
+    return(summary(x, type = "parameters"))
+  }
+  .subset2(x, name)
+}
 
-  # summarise samples
-  format_out$summarised <- calc_summary_measures(format_out$samples,
-    summarise_by = c("date", "variable", "strat", "type"),
-    order_by = c("variable", "date"),
-    CrIs = CrIs
-  )
-  return(format_out)
+#' Extract elements from estimate_infections objects with bracket notation
+#'
+#' @description `r lifecycle::badge("deprecated")`
+#' Provides backward compatibility for bracket-based access to deprecated
+#' elements. See [$.estimate_infections] for details on the deprecation.
+#'
+#' @param x An `estimate_infections` object
+#' @param i The name or index of the element to extract
+#' @return The requested element with a deprecation warning for deprecated
+#'   elements
+#' @keywords internal
+#' @export
+#' @method [[ estimate_infections
+`[[.estimate_infections` <- function(x, i) {
+  deprecated_names <- c("samples", "summarised")
+  if (i %in% deprecated_names) {
+    # nolint next: object_usage_linter
+    return(`$.estimate_infections`(x, i))
+  }
+  .subset2(x, i)
 }

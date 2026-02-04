@@ -27,670 +27,704 @@ namespace model_simulate_infections_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 663> locations_array__ =
+static constexpr std::array<const char*, 697> locations_array__ =
   {" (found before start of program)",
-  " (in 'simulate_infections', line 1107, column 2 to column 26)",
-  " (in 'simulate_infections', line 1108, column 2 to column 38)",
-  " (in 'simulate_infections', line 1109, column 2 to column 49)",
-  " (in 'simulate_infections', line 1110, column 2 to column 36)",
-  " (in 'simulate_infections', line 1112, column 11 to column 12)",
-  " (in 'simulate_infections', line 1112, column 4 to line 1115, column 6)",
-  " (in 'simulate_infections', line 1116, column 11 to column 12)",
-  " (in 'simulate_infections', line 1116, column 4 to line 1119, column 6)",
-  " (in 'simulate_infections', line 1122, column 13 to column 38)",
-  " (in 'simulate_infections', line 1122, column 6 to column 51)",
-  " (in 'simulate_infections', line 1123, column 8 to line 1128, column 8)",
-  " (in 'simulate_infections', line 1129, column 6 to line 1132, column 9)",
-  " (in 'simulate_infections', line 1145, column 8 to line 1147, column 10)",
-  " (in 'simulate_infections', line 1144, column 13 to line 1148, column 7)",
-  " (in 'simulate_infections', line 1134, column 15 to column 43)",
-  " (in 'simulate_infections', line 1134, column 8 to line 1139, column 10)",
-  " (in 'simulate_infections', line 1141, column 8 to line 1143, column 10)",
-  " (in 'simulate_infections', line 1133, column 20 to line 1144, column 7)",
-  " (in 'simulate_infections', line 1133, column 6 to line 1148, column 7)",
-  " (in 'simulate_infections', line 1151, column 8 to line 1153, column 64)",
-  " (in 'simulate_infections', line 1150, column 27 to line 1154, column 7)",
-  " (in 'simulate_infections', line 1150, column 6 to line 1154, column 7)",
-  " (in 'simulate_infections', line 1157, column 15 to column 43)",
-  " (in 'simulate_infections', line 1157, column 8 to line 1162, column 10)",
-  " (in 'simulate_infections', line 1163, column 8 to line 1165, column 10)",
-  " (in 'simulate_infections', line 1156, column 20 to line 1166, column 7)",
-  " (in 'simulate_infections', line 1156, column 6 to line 1166, column 7)",
-  " (in 'simulate_infections', line 1169, column 8 to column 82)",
-  " (in 'simulate_infections', line 1168, column 21 to line 1170, column 7)",
-  " (in 'simulate_infections', line 1168, column 6 to line 1170, column 7)",
-  " (in 'simulate_infections', line 1172, column 6 to line 1174, column 8)",
-  " (in 'simulate_infections', line 1175, column 6 to line 1177, column 8)",
-  " (in 'simulate_infections', line 1120, column 19 to line 1178, column 5)",
-  " (in 'simulate_infections', line 1120, column 4 to line 1178, column 5)",
-  " (in 'simulate_infections', line 1111, column 2 to line 1179, column 3)",
-  " (in 'simulate_infections', line 1021, column 2 to column 8)",
-  " (in 'simulate_infections', line 1022, column 2 to column 8)",
-  " (in 'simulate_infections', line 1023, column 2 to column 19)",
-  " (in 'simulate_infections', line 1024, column 2 to column 18)",
-  " (in 'simulate_infections', line 1027, column 6 to column 7)",
-  " (in 'simulate_infections', line 1027, column 0 to column 36)",
-  " (in 'simulate_infections', line 1028, column 0 to column 21)",
-  " (in 'simulate_infections', line 1030, column 7 to column 8)",
-  " (in 'simulate_infections', line 1030, column 10 to column 26)",
-  " (in 'simulate_infections', line 1030, column 0 to column 30)",
-  " (in 'simulate_infections', line 1031, column 0 to column 8)",
-  " (in 'simulate_infections', line 1033, column 0 to column 21)",
-  " (in 'simulate_infections', line 1036, column 0 to column 23)",
-  " (in 'simulate_infections', line 1037, column 0 to column 25)",
-  " (in 'simulate_infections', line 1038, column 0 to column 26)",
-  " (in 'simulate_infections', line 1039, column 6 to column 15)",
-  " (in 'simulate_infections', line 1039, column 0 to column 42)",
-  " (in 'simulate_infections', line 1040, column 6 to column 15)",
-  " (in 'simulate_infections', line 1040, column 0 to column 43)",
-  " (in 'simulate_infections', line 1041, column 0 to column 35)",
-  " (in 'simulate_infections', line 1043, column 29 to column 48)",
-  " (in 'simulate_infections', line 1043, column 0 to column 63)",
-  " (in 'simulate_infections', line 1045, column 6 to column 20)",
-  " (in 'simulate_infections', line 1045, column 0 to column 57)",
-  " (in 'simulate_infections', line 1046, column 6 to column 15)",
-  " (in 'simulate_infections', line 1046, column 0 to column 34)",
-  " (in 'simulate_infections', line 1049, column 0 to column 35)",
-  " (in 'simulate_infections', line 1051, column 6 to column 7)",
-  " (in 'simulate_infections', line 1051, column 16 to column 35)",
-  " (in 'simulate_infections', line 1051, column 0 to column 50)",
-  " (in 'simulate_infections', line 1053, column 6 to column 19)",
-  " (in 'simulate_infections', line 1053, column 0 to column 56)",
-  " (in 'simulate_infections', line 1055, column 0 to column 27)",
-  " (in 'simulate_infections', line 1057, column 6 to column 13)",
-  " (in 'simulate_infections', line 1057, column 0 to column 44)",
-  " (in 'simulate_infections', line 1059, column 6 to column 13)",
-  " (in 'simulate_infections', line 1059, column 0 to column 45)",
-  " (in 'simulate_infections', line 1061, column 6 to column 21)",
-  " (in 'simulate_infections', line 1061, column 0 to column 57)",
-  " (in 'simulate_infections', line 1063, column 0 to column 24)",
-  " (in 'simulate_infections', line 1066, column 6 to column 22)",
-  " (in 'simulate_infections', line 1066, column 0 to column 40)",
-  " (in 'simulate_infections', line 1067, column 0 to column 16)",
-  " (in 'simulate_infections', line 1068, column 6 to column 7)",
-  " (in 'simulate_infections', line 1068, column 9 to column 20)",
-  " (in 'simulate_infections', line 1068, column 0 to column 58)",
-  " (in 'simulate_infections', line 1069, column 0 to column 14)",
-  " (in 'simulate_infections', line 1070, column 0 to column 15)",
-  " (in 'simulate_infections', line 1071, column 0 to column 24)",
-  " (in 'simulate_infections', line 1074, column 0 to column 33)",
-  " (in 'simulate_infections', line 1075, column 0 to column 30)",
-  " (in 'simulate_infections', line 1076, column 7 to column 24)",
-  " (in 'simulate_infections', line 1076, column 0 to column 39)",
-  " (in 'simulate_infections', line 1077, column 7 to column 24)",
-  " (in 'simulate_infections', line 1077, column 0 to column 39)",
-  " (in 'simulate_infections', line 1080, column 6 to column 40)",
-  " (in 'simulate_infections', line 1080, column 0 to column 77)",
-  " (in 'simulate_infections', line 1082, column 6 to column 40)",
-  " (in 'simulate_infections', line 1082, column 0 to column 80)",
-  " (in 'simulate_infections', line 1084, column 7 to column 21)",
-  " (in 'simulate_infections', line 1084, column 0 to column 36)",
-  " (in 'simulate_infections', line 1087, column 6 to column 23)",
-  " (in 'simulate_infections', line 1087, column 0 to column 51)",
-  " (in 'simulate_infections', line 1089, column 0 to column 40)",
-  " (in 'simulate_infections', line 1090, column 7 to column 31)",
-  " (in 'simulate_infections', line 1090, column 0 to column 51)",
-  " (in 'simulate_infections', line 1092, column 0 to column 24)",
-  " (in 'simulate_infections', line 1093, column 0 to column 22)",
-  " (in 'simulate_infections', line 1094, column 0 to column 21)",
-  " (in 'simulate_infections', line 1095, column 0 to column 27)",
-  " (in 'simulate_infections', line 1096, column 0 to column 29)",
-  " (in 'simulate_infections', line 1097, column 9 to column 10)",
-  " (in 'simulate_infections', line 1097, column 12 to column 29)",
-  " (in 'simulate_infections', line 1097, column 2 to column 38)",
-  " (in 'simulate_infections', line 1100, column 8 to column 19)",
-  " (in 'simulate_infections', line 1100, column 2 to line 1103, column 4)",
-  " (in 'simulate_infections', line 1107, column 9 to column 10)",
-  " (in 'simulate_infections', line 1107, column 12 to column 13)",
-  " (in 'simulate_infections', line 1108, column 9 to column 10)",
-  " (in 'simulate_infections', line 1108, column 12 to column 28)",
-  " (in 'simulate_infections', line 1109, column 8 to column 9)",
-  " (in 'simulate_infections', line 1109, column 11 to column 27)",
-  " (in 'simulate_infections', line 1110, column 9 to column 10)",
-  " (in 'simulate_infections', line 1110, column 12 to column 32)",
-  " (in 'simulate_infections', line 12, column 2 to column 30)",
-  " (in 'simulate_infections', line 13, column 2 to column 41)",
-  " (in 'simulate_infections', line 14, column 2 to column 16)",
-  " (in 'simulate_infections', line 15, column 2 to column 41)",
-  " (in 'simulate_infections', line 16, column 2 to column 19)",
-  " (in 'simulate_infections', line 17, column 2 to column 42)",
-  " (in 'simulate_infections', line 11, column 62 to line 18, column 1)",
-  " (in 'simulate_infections', line 29, column 2 to column 30)",
-  " (in 'simulate_infections', line 30, column 2 to column 41)",
-  " (in 'simulate_infections', line 31, column 2 to column 19)",
-  " (in 'simulate_infections', line 32, column 2 to column 41)",
-  " (in 'simulate_infections', line 32, column 41 to column 42)",
-  " (in 'simulate_infections', line 33, column 2 to column 30)",
-  " (in 'simulate_infections', line 34, column 2 to column 42)",
-  " (in 'simulate_infections', line 28, column 61 to line 35, column 1)",
-  " (in 'simulate_infections', line 50, column 2 to column 29)",
-  " (in 'simulate_infections', line 51, column 2 to column 29)",
-  " (in 'simulate_infections', line 52, column 9 to column 12)",
-  " (in 'simulate_infections', line 52, column 2 to column 16)",
-  " (in 'simulate_infections', line 55, column 4 to column 74)",
-  " (in 'simulate_infections', line 54, column 29 to line 56, column 3)",
-  " (in 'simulate_infections', line 54, column 2 to line 56, column 3)",
-  " (in 'simulate_infections', line 59, column 4 to column 59)",
-  " (in 'simulate_infections', line 58, column 18 to line 60, column 3)",
-  " (in 'simulate_infections', line 58, column 2 to line 60, column 3)",
-  " (in 'simulate_infections', line 63, column 4 to column 65)",
-  " (in 'simulate_infections', line 64, column 4 to column 75)",
-  " (in 'simulate_infections', line 62, column 20 to line 65, column 3)",
-  " (in 'simulate_infections', line 62, column 2 to line 65, column 3)",
-  " (in 'simulate_infections', line 69, column 6 to column 66)",
-  " (in 'simulate_infections', line 70, column 6 to column 77)",
-  " (in 'simulate_infections', line 68, column 30 to line 71, column 5)",
-  " (in 'simulate_infections', line 68, column 4 to line 71, column 5)",
-  " (in 'simulate_infections', line 67, column 18 to line 72, column 3)",
-  " (in 'simulate_infections', line 67, column 2 to line 72, column 3)",
-  " (in 'simulate_infections', line 74, column 2 to column 11)",
-  " (in 'simulate_infections', line 49, column 58 to line 75, column 1)",
-  " (in 'simulate_infections', line 93, column 2 to column 35)",
-  " (in 'simulate_infections', line 94, column 2 to column 43)",
-  " (in 'simulate_infections', line 97, column 4 to column 44)",
-  " (in 'simulate_infections', line 96, column 19 to line 98, column 3)",
-  " (in 'simulate_infections', line 96, column 2 to line 98, column 3)",
-  " (in 'simulate_infections', line 100, column 9 to column 10)",
-  " (in 'simulate_infections', line 100, column 2 to column 80)",
-  " (in 'simulate_infections', line 101, column 2 to column 45)",
-  " (in 'simulate_infections', line 92, column 44 to line 102, column 1)",
-  " (in 'simulate_infections', line 109, column 9 to column 10)",
-  " (in 'simulate_infections', line 109, column 2 to column 17)",
-  " (in 'simulate_infections', line 110, column 9 to column 10)",
-  " (in 'simulate_infections', line 110, column 2 to column 23)",
-  " (in 'simulate_infections', line 120, column 4 to column 54)",
-  " (in 'simulate_infections', line 119, column 9 to line 121, column 3)",
-  " (in 'simulate_infections', line 117, column 6 to column 59)",
-  " (in 'simulate_infections', line 116, column 19 to line 118, column 5)",
-  " (in 'simulate_infections', line 116, column 4 to line 118, column 5)",
-  " (in 'simulate_infections', line 115, column 24 to line 119, column 3)",
-  " (in 'simulate_infections', line 115, column 9 to line 121, column 3)",
-  " (in 'simulate_infections', line 113, column 6 to column 63)",
-  " (in 'simulate_infections', line 112, column 19 to line 114, column 5)",
-  " (in 'simulate_infections', line 112, column 4 to line 114, column 5)",
-  " (in 'simulate_infections', line 111, column 17 to line 115, column 3)",
-  " (in 'simulate_infections', line 111, column 2 to line 121, column 3)",
-  " (in 'simulate_infections', line 132, column 4 to column 16)",
-  " (in 'simulate_infections', line 131, column 9 to line 133, column 3)",
-  " (in 'simulate_infections', line 124, column 4 to column 28)",
-  " (in 'simulate_infections', line 125, column 4 to column 28)",
-  " (in 'simulate_infections', line 127, column 6 to column 71)",
-  " (in 'simulate_infections', line 126, column 15 to line 128, column 5)",
-  " (in 'simulate_infections', line 126, column 4 to line 128, column 5)",
-  " (in 'simulate_infections', line 130, column 4 to column 53)",
-  " (in 'simulate_infections', line 123, column 13 to line 131, column 3)",
-  " (in 'simulate_infections', line 123, column 2 to line 133, column 3)",
-  " (in 'simulate_infections', line 134, column 2 to column 20)",
-  " (in 'simulate_infections', line 108, column 55 to line 135, column 1)",
-  " (in 'simulate_infections', line 142, column 8 to column 19)",
-  " (in 'simulate_infections', line 142, column 2 to column 29)",
-  " (in 'simulate_infections', line 144, column 4 to column 15)",
-  " (in 'simulate_infections', line 149, column 8 to line 150, column 53)",
-  " (in 'simulate_infections', line 148, column 13 to line 151, column 7)",
-  " (in 'simulate_infections', line 147, column 8 to column 47)",
-  " (in 'simulate_infections', line 146, column 28 to line 148, column 7)",
-  " (in 'simulate_infections', line 146, column 6 to line 151, column 7)",
-  " (in 'simulate_infections', line 145, column 69 to line 152, column 5)",
-  " (in 'simulate_infections', line 145, column 4 to line 152, column 5)",
-  " (in 'simulate_infections', line 143, column 27 to line 153, column 3)",
-  " (in 'simulate_infections', line 143, column 2 to line 153, column 3)",
-  " (in 'simulate_infections', line 154, column 2 to column 13)",
-  " (in 'simulate_infections', line 141, column 2 to line 155, column 1)",
-  " (in 'simulate_infections', line 165, column 9 to column 12)",
-  " (in 'simulate_infections', line 165, column 2 to column 39)",
-  " (in 'simulate_infections', line 166, column 2 to column 22)",
-  " (in 'simulate_infections', line 167, column 2 to column 14)",
-  " (in 'simulate_infections', line 188, column 6 to column 57)",
-  " (in 'simulate_infections', line 189, column 6 to column 63)",
-  " (in 'simulate_infections', line 190, column 6 to column 42)",
-  " (in 'simulate_infections', line 194, column 8 to line 196, column 10)",
-  " (in 'simulate_infections', line 193, column 13 to line 197, column 7)",
-  " (in 'simulate_infections', line 192, column 8 to column 49)",
-  " (in 'simulate_infections', line 191, column 28 to line 193, column 7)",
-  " (in 'simulate_infections', line 191, column 6 to line 197, column 7)",
-  " (in 'simulate_infections', line 187, column 11 to line 198, column 5)",
-  " (in 'simulate_infections', line 171, column 6 to column 57)",
-  " (in 'simulate_infections', line 172, column 6 to column 63)",
-  " (in 'simulate_infections', line 173, column 13 to column 45)",
-  " (in 'simulate_infections', line 173, column 6 to line 178, column 8)",
-  " (in 'simulate_infections', line 179, column 6 to column 59)",
-  " (in 'simulate_infections', line 183, column 8 to line 185, column 10)",
-  " (in 'simulate_infections', line 182, column 13 to line 186, column 7)",
-  " (in 'simulate_infections', line 181, column 8 to column 42)",
-  " (in 'simulate_infections', line 180, column 28 to line 182, column 7)",
-  " (in 'simulate_infections', line 180, column 6 to line 186, column 7)",
-  " (in 'simulate_infections', line 170, column 26 to line 187, column 5)",
-  " (in 'simulate_infections', line 170, column 4 to line 198, column 5)",
-  " (in 'simulate_infections', line 199, column 4 to column 26)",
-  " (in 'simulate_infections', line 169, column 78 to line 200, column 3)",
-  " (in 'simulate_infections', line 168, column 2 to line 200, column 3)",
-  " (in 'simulate_infections', line 202, column 4 to line 205, column 6)",
-  " (in 'simulate_infections', line 201, column 21 to line 206, column 3)",
-  " (in 'simulate_infections', line 201, column 2 to line 206, column 3)",
-  " (in 'simulate_infections', line 208, column 4 to column 30)",
-  " (in 'simulate_infections', line 207, column 18 to line 209, column 3)",
-  " (in 'simulate_infections', line 207, column 2 to line 209, column 3)",
-  " (in 'simulate_infections', line 211, column 4 to column 23)",
-  " (in 'simulate_infections', line 210, column 19 to line 212, column 3)",
-  " (in 'simulate_infections', line 210, column 2 to line 212, column 3)",
-  " (in 'simulate_infections', line 213, column 2 to column 13)",
-  " (in 'simulate_infections', line 163, column 2 to line 214, column 1)",
-  " (in 'simulate_infections', line 221, column 2 to column 55)",
-  " (in 'simulate_infections', line 223, column 4 to column 11)",
-  " (in 'simulate_infections', line 222, column 21 to line 224, column 3)",
-  " (in 'simulate_infections', line 222, column 2 to line 224, column 3)",
-  " (in 'simulate_infections', line 226, column 4 to column 39)",
-  " (in 'simulate_infections', line 227, column 4 to column 45)",
-  " (in 'simulate_infections', line 236, column 10 to column 77)",
-  " (in 'simulate_infections', line 235, column 15 to line 237, column 9)",
-  " (in 'simulate_infections', line 231, column 10 to line 234, column 14)",
-  " (in 'simulate_infections', line 230, column 27 to line 235, column 9)",
-  " (in 'simulate_infections', line 230, column 8 to line 237, column 9)",
-  " (in 'simulate_infections', line 229, column 34 to line 238, column 7)",
-  " (in 'simulate_infections', line 229, column 6 to line 238, column 7)",
-  " (in 'simulate_infections', line 228, column 25 to line 239, column 5)",
-  " (in 'simulate_infections', line 228, column 4 to line 239, column 5)",
-  " (in 'simulate_infections', line 225, column 24 to line 240, column 3)",
-  " (in 'simulate_infections', line 225, column 2 to line 240, column 3)",
-  " (in 'simulate_infections', line 220, column 59 to line 241, column 1)",
-  " (in 'simulate_infections', line 244, column 2 to column 29)",
-  " (in 'simulate_infections', line 245, column 9 to column 12)",
-  " (in 'simulate_infections', line 245, column 2 to column 18)",
-  " (in 'simulate_infections', line 247, column 4 to column 49)",
-  " (in 'simulate_infections', line 248, column 4 to column 31)",
-  " (in 'simulate_infections', line 249, column 4 to column 45)",
-  " (in 'simulate_infections', line 246, column 19 to line 250, column 3)",
-  " (in 'simulate_infections', line 246, column 2 to line 250, column 3)",
-  " (in 'simulate_infections', line 251, column 2 to column 13)",
-  " (in 'simulate_infections', line 243, column 57 to line 252, column 1)",
-  " (in 'simulate_infections', line 271, column 9 to column 10)",
-  " (in 'simulate_infections', line 271, column 2 to column 48)",
-  " (in 'simulate_infections', line 272, column 2 to column 51)",
-  " (in 'simulate_infections', line 273, column 2 to column 49)",
-  " (in 'simulate_infections', line 274, column 2 to column 50)",
-  " (in 'simulate_infections', line 270, column 55 to line 275, column 1)",
-  " (in 'simulate_infections', line 287, column 9 to column 10)",
-  " (in 'simulate_infections', line 287, column 2 to column 48)",
-  " (in 'simulate_infections', line 288, column 2 to column 18)",
-  " (in 'simulate_infections', line 289, column 9 to column 10)",
-  " (in 'simulate_infections', line 289, column 2 to column 73)",
-  " (in 'simulate_infections', line 290, column 2 to column 43)",
-  " (in 'simulate_infections', line 286, column 61 to line 291, column 1)",
-  " (in 'simulate_infections', line 303, column 9 to column 10)",
-  " (in 'simulate_infections', line 303, column 2 to column 48)",
-  " (in 'simulate_infections', line 304, column 2 to column 52)",
-  " (in 'simulate_infections', line 305, column 9 to column 10)",
-  " (in 'simulate_infections', line 305, column 2 to column 73)",
-  " (in 'simulate_infections', line 306, column 2 to column 29)",
-  " (in 'simulate_infections', line 302, column 61 to line 307, column 1)",
-  " (in 'simulate_infections', line 319, column 9 to column 10)",
-  " (in 'simulate_infections', line 319, column 2 to column 48)",
-  " (in 'simulate_infections', line 320, column 2 to column 42)",
-  " (in 'simulate_infections', line 321, column 9 to column 10)",
-  " (in 'simulate_infections', line 321, column 2 to line 322, column 69)",
-  " (in 'simulate_infections', line 323, column 2 to column 43)",
-  " (in 'simulate_infections', line 318, column 61 to line 324, column 1)",
-  " (in 'simulate_infections', line 335, column 2 to column 27)",
-  " (in 'simulate_infections', line 336, column 9 to column 10)",
-  " (in 'simulate_infections', line 336, column 2 to column 48)",
-  " (in 'simulate_infections', line 337, column 9 to column 10)",
-  " (in 'simulate_infections', line 337, column 2 to line 340, column 4)",
-  " (in 'simulate_infections', line 341, column 2 to column 26)",
-  " (in 'simulate_infections', line 334, column 53 to line 342, column 1)",
-  " (in 'simulate_infections', line 354, column 9 to column 10)",
-  " (in 'simulate_infections', line 354, column 12 to column 13)",
-  " (in 'simulate_infections', line 354, column 2 to line 358, column 14)",
-  " (in 'simulate_infections', line 359, column 2 to column 13)",
-  " (in 'simulate_infections', line 353, column 43 to line 360, column 1)",
-  " (in 'simulate_infections', line 372, column 9 to column 10)",
-  " (in 'simulate_infections', line 372, column 12 to column 13)",
-  " (in 'simulate_infections', line 372, column 2 to line 374, column 4)",
-  " (in 'simulate_infections', line 375, column 2 to column 42)",
-  " (in 'simulate_infections', line 371, column 53 to line 376, column 1)",
-  " (in 'simulate_infections', line 392, column 2 to column 75)",
-  " (in 'simulate_infections', line 393, column 2 to line 394, column 72)",
-  " (in 'simulate_infections', line 395, column 2 to column 21)",
-  " (in 'simulate_infections', line 391, column 66 to line 396, column 1)",
-  " (in 'simulate_infections', line 409, column 9 to column 18)",
-  " (in 'simulate_infections', line 409, column 2 to column 66)",
-  " (in 'simulate_infections', line 410, column 2 to column 39)",
-  " (in 'simulate_infections', line 414, column 4 to column 35)",
-  " (in 'simulate_infections', line 413, column 9 to line 415, column 3)",
-  " (in 'simulate_infections', line 412, column 4 to column 45)",
-  " (in 'simulate_infections', line 411, column 19 to line 413, column 3)",
-  " (in 'simulate_infections', line 411, column 2 to line 415, column 3)",
-  " (in 'simulate_infections', line 408, column 72 to line 416, column 1)",
-  " (in 'simulate_infections', line 433, column 9 to column 30)",
-  " (in 'simulate_infections', line 433, column 2 to column 40)",
-  " (in 'simulate_infections', line 448, column 6 to column 65)",
-  " (in 'simulate_infections', line 447, column 11 to line 449, column 5)",
-  " (in 'simulate_infections', line 446, column 6 to column 51)",
-  " (in 'simulate_infections', line 445, column 26 to line 447, column 5)",
-  " (in 'simulate_infections', line 445, column 11 to line 449, column 5)",
-  " (in 'simulate_infections', line 444, column 6 to column 51)",
-  " (in 'simulate_infections', line 443, column 26 to line 445, column 5)",
-  " (in 'simulate_infections', line 443, column 11 to line 449, column 5)",
-  " (in 'simulate_infections', line 442, column 6 to column 51)",
-  " (in 'simulate_infections', line 441, column 19 to line 443, column 5)",
-  " (in 'simulate_infections', line 441, column 4 to line 449, column 5)",
-  " (in 'simulate_infections', line 440, column 24 to line 450, column 3)",
-  " (in 'simulate_infections', line 440, column 9 to line 450, column 3)",
-  " (in 'simulate_infections', line 439, column 4 to column 46)",
-  " (in 'simulate_infections', line 438, column 24 to line 440, column 3)",
-  " (in 'simulate_infections', line 438, column 9 to line 450, column 3)",
-  " (in 'simulate_infections', line 437, column 4 to column 43)",
-  " (in 'simulate_infections', line 436, column 17 to line 438, column 3)",
-  " (in 'simulate_infections', line 436, column 2 to line 450, column 3)",
-  " (in 'simulate_infections', line 451, column 2 to column 32)",
-  " (in 'simulate_infections', line 432, column 58 to line 452, column 1)",
-  " (in 'simulate_infections', line 460, column 2 to column 21)",
-  " (in 'simulate_infections', line 459, column 37 to line 461, column 1)",
-  " (in 'simulate_infections', line 480, column 2 to column 38)",
-  " (in 'simulate_infections', line 481, column 2 to column 33)",
-  " (in 'simulate_infections', line 483, column 9 to column 10)",
-  " (in 'simulate_infections', line 483, column 2 to column 42)",
-  " (in 'simulate_infections', line 486, column 11 to column 19)",
-  " (in 'simulate_infections', line 486, column 4 to column 25)",
-  " (in 'simulate_infections', line 487, column 4 to column 15)",
-  " (in 'simulate_infections', line 488, column 4 to column 51)",
-  " (in 'simulate_infections', line 489, column 4 to column 27)",
-  " (in 'simulate_infections', line 485, column 12 to line 490, column 3)",
-  " (in 'simulate_infections', line 485, column 2 to line 490, column 3)",
-  " (in 'simulate_infections', line 493, column 11 to column 12)",
-  " (in 'simulate_infections', line 493, column 4 to column 36)",
-  " (in 'simulate_infections', line 501, column 6 to column 31)",
-  " (in 'simulate_infections', line 502, column 6 to column 30)",
-  " (in 'simulate_infections', line 500, column 11 to line 503, column 5)",
-  " (in 'simulate_infections', line 495, column 6 to column 25)",
-  " (in 'simulate_infections', line 498, column 8 to column 61)",
-  " (in 'simulate_infections', line 497, column 20 to line 499, column 7)",
-  " (in 'simulate_infections', line 497, column 6 to line 499, column 7)",
-  " (in 'simulate_infections', line 494, column 20 to line 500, column 5)",
-  " (in 'simulate_infections', line 494, column 4 to line 503, column 5)",
-  " (in 'simulate_infections', line 504, column 4 to column 21)",
-  " (in 'simulate_infections', line 492, column 12 to line 505, column 3)",
-  " (in 'simulate_infections', line 492, column 2 to line 505, column 3)",
-  " (in 'simulate_infections', line 507, column 2 to column 19)",
-  " (in 'simulate_infections', line 478, column 52 to line 508, column 1)",
-  " (in 'simulate_infections', line 523, column 4 to column 36)",
-  " (in 'simulate_infections', line 523, column 32 to column 33)",
-  " (in 'simulate_infections', line 524, column 4 to column 37)",
-  " (in 'simulate_infections', line 522, column 16 to line 525, column 3)",
-  " (in 'simulate_infections', line 522, column 2 to line 525, column 3)",
-  " (in 'simulate_infections', line 526, column 2 to column 65)",
-  " (in 'simulate_infections', line 520, column 42 to line 527, column 1)",
-  " (in 'simulate_infections', line 541, column 2 to column 30)",
-  " (in 'simulate_infections', line 542, column 9 to column 12)",
-  " (in 'simulate_infections', line 542, column 2 to column 62)",
-  " (in 'simulate_infections', line 543, column 9 to column 12)",
-  " (in 'simulate_infections', line 543, column 2 to column 44)",
-  " (in 'simulate_infections', line 544, column 2 to line 545, column 51)",
-  " (in 'simulate_infections', line 546, column 2 to column 14)",
-  " (in 'simulate_infections', line 540, column 52 to line 547, column 1)",
-  " (in 'simulate_infections', line 562, column 2 to column 40)",
-  " (in 'simulate_infections', line 563, column 9 to column 15)",
-  " (in 'simulate_infections', line 563, column 2 to column 46)",
-  " (in 'simulate_infections', line 564, column 2 to column 78)",
-  " (in 'simulate_infections', line 565, column 2 to column 45)",
-  " (in 'simulate_infections', line 566, column 2 to column 26)",
-  " (in 'simulate_infections', line 568, column 4 to column 44)",
-  " (in 'simulate_infections', line 569, column 4 to column 14)",
-  " (in 'simulate_infections', line 567, column 30 to line 570, column 3)",
-  " (in 'simulate_infections', line 567, column 2 to line 570, column 3)",
-  " (in 'simulate_infections', line 572, column 2 to column 12)",
-  " (in 'simulate_infections', line 561, column 53 to line 573, column 1)",
-  " (in 'simulate_infections', line 579, column 2 to column 43)",
-  " (in 'simulate_infections', line 583, column 2 to column 65)",
-  " (in 'simulate_infections', line 585, column 2 to column 39)",
-  " (in 'simulate_infections', line 588, column 2 to column 58)",
-  " (in 'simulate_infections', line 590, column 2 to line 592, column 4)",
-  " (in 'simulate_infections', line 593, column 2 to column 18)",
-  " (in 'simulate_infections', line 578, column 55 to line 594, column 1)",
-  " (in 'simulate_infections', line 602, column 2 to column 27)",
-  " (in 'simulate_infections', line 603, column 2 to column 20)",
-  " (in 'simulate_infections', line 604, column 2 to column 19)",
-  " (in 'simulate_infections', line 605, column 2 to column 18)",
-  " (in 'simulate_infections', line 606, column 9 to column 10)",
-  " (in 'simulate_infections', line 606, column 2 to column 42)",
-  " (in 'simulate_infections', line 607, column 9 to column 11)",
-  " (in 'simulate_infections', line 607, column 2 to column 28)",
-  " (in 'simulate_infections', line 608, column 9 to column 11)",
-  " (in 'simulate_infections', line 608, column 2 to column 28)",
-  " (in 'simulate_infections', line 609, column 2 to column 47)",
-  " (in 'simulate_infections', line 617, column 4 to column 47)",
-  " (in 'simulate_infections', line 616, column 9 to line 618, column 3)",
-  " (in 'simulate_infections', line 612, column 4 to column 62)",
-  " (in 'simulate_infections', line 614, column 6 to column 47)",
-  " (in 'simulate_infections', line 613, column 19 to line 615, column 5)",
-  " (in 'simulate_infections', line 613, column 4 to line 615, column 5)",
-  " (in 'simulate_infections', line 611, column 24 to line 616, column 3)",
-  " (in 'simulate_infections', line 611, column 2 to line 618, column 3)",
-  " (in 'simulate_infections', line 620, column 4 to column 34)",
-  " (in 'simulate_infections', line 622, column 6 to column 53)",
-  " (in 'simulate_infections', line 621, column 21 to line 623, column 5)",
-  " (in 'simulate_infections', line 621, column 4 to line 623, column 5)",
-  " (in 'simulate_infections', line 619, column 15 to line 624, column 3)",
+  " (in 'simulate_infections', line 1492, column 2 to column 26)",
+  " (in 'simulate_infections', line 1493, column 2 to column 38)",
+  " (in 'simulate_infections', line 1494, column 2 to column 49)",
+  " (in 'simulate_infections', line 1495, column 2 to column 36)",
+  " (in 'simulate_infections', line 1497, column 11 to column 12)",
+  " (in 'simulate_infections', line 1497, column 4 to line 1500, column 6)",
+  " (in 'simulate_infections', line 1501, column 11 to column 12)",
+  " (in 'simulate_infections', line 1501, column 4 to line 1504, column 6)",
+  " (in 'simulate_infections', line 1505, column 11 to column 12)",
+  " (in 'simulate_infections', line 1505, column 4 to line 1508, column 6)",
+  " (in 'simulate_infections', line 1511, column 13 to column 57)",
+  " (in 'simulate_infections', line 1511, column 6 to column 70)",
+  " (in 'simulate_infections', line 1512, column 8 to line 1517, column 8)",
+  " (in 'simulate_infections', line 1518, column 6 to line 1522, column 9)",
+  " (in 'simulate_infections', line 1538, column 8 to line 1540, column 10)",
+  " (in 'simulate_infections', line 1537, column 13 to line 1541, column 7)",
+  " (in 'simulate_infections', line 1524, column 15 to column 53)",
+  " (in 'simulate_infections', line 1524, column 8 to line 1530, column 12)",
+  " (in 'simulate_infections', line 1532, column 8 to line 1536, column 10)",
+  " (in 'simulate_infections', line 1523, column 30 to line 1537, column 7)",
+  " (in 'simulate_infections', line 1523, column 6 to line 1541, column 7)",
+  " (in 'simulate_infections', line 1544, column 8 to line 1546, column 64)",
+  " (in 'simulate_infections', line 1543, column 27 to line 1547, column 7)",
+  " (in 'simulate_infections', line 1543, column 6 to line 1547, column 7)",
+  " (in 'simulate_infections', line 1550, column 15 to column 54)",
+  " (in 'simulate_infections', line 1550, column 8 to line 1556, column 12)",
+  " (in 'simulate_infections', line 1557, column 8 to line 1559, column 10)",
+  " (in 'simulate_infections', line 1549, column 31 to line 1560, column 7)",
+  " (in 'simulate_infections', line 1549, column 6 to line 1560, column 7)",
+  " (in 'simulate_infections', line 1563, column 8 to line 1565, column 10)",
+  " (in 'simulate_infections', line 1562, column 21 to line 1566, column 7)",
+  " (in 'simulate_infections', line 1562, column 6 to line 1566, column 7)",
+  " (in 'simulate_infections', line 1568, column 6 to line 1570, column 8)",
+  " (in 'simulate_infections', line 1571, column 6 to line 1573, column 11)",
+  " (in 'simulate_infections', line 1509, column 19 to line 1574, column 5)",
+  " (in 'simulate_infections', line 1509, column 4 to line 1574, column 5)",
+  " (in 'simulate_infections', line 1496, column 2 to line 1575, column 3)",
+  " (in 'simulate_infections', line 1401, column 2 to column 8)",
+  " (in 'simulate_infections', line 1402, column 2 to column 8)",
+  " (in 'simulate_infections', line 1403, column 2 to column 19)",
+  " (in 'simulate_infections', line 1404, column 2 to column 18)",
+  " (in 'simulate_infections', line 1407, column 6 to column 7)",
+  " (in 'simulate_infections', line 1407, column 0 to column 36)",
+  " (in 'simulate_infections', line 1408, column 0 to column 21)",
+  " (in 'simulate_infections', line 1410, column 7 to column 8)",
+  " (in 'simulate_infections', line 1410, column 10 to column 26)",
+  " (in 'simulate_infections', line 1410, column 0 to column 30)",
+  " (in 'simulate_infections', line 1411, column 0 to column 12)",
+  " (in 'simulate_infections', line 1412, column 0 to column 26)",
+  " (in 'simulate_infections', line 1414, column 0 to column 40)",
+  " (in 'simulate_infections', line 1416, column 0 to column 40)",
+  " (in 'simulate_infections', line 1420, column 0 to column 23)",
+  " (in 'simulate_infections', line 1421, column 0 to column 25)",
+  " (in 'simulate_infections', line 1422, column 0 to column 26)",
+  " (in 'simulate_infections', line 1423, column 6 to column 15)",
+  " (in 'simulate_infections', line 1423, column 0 to column 42)",
+  " (in 'simulate_infections', line 1424, column 6 to column 15)",
+  " (in 'simulate_infections', line 1424, column 0 to column 43)",
+  " (in 'simulate_infections', line 1425, column 0 to column 35)",
+  " (in 'simulate_infections', line 1427, column 29 to column 48)",
+  " (in 'simulate_infections', line 1427, column 0 to column 63)",
+  " (in 'simulate_infections', line 1429, column 6 to column 20)",
+  " (in 'simulate_infections', line 1429, column 0 to column 57)",
+  " (in 'simulate_infections', line 1430, column 6 to column 15)",
+  " (in 'simulate_infections', line 1430, column 0 to column 34)",
+  " (in 'simulate_infections', line 1433, column 0 to column 35)",
+  " (in 'simulate_infections', line 1435, column 6 to column 7)",
+  " (in 'simulate_infections', line 1435, column 16 to column 35)",
+  " (in 'simulate_infections', line 1435, column 0 to column 50)",
+  " (in 'simulate_infections', line 1437, column 6 to column 19)",
+  " (in 'simulate_infections', line 1437, column 0 to column 56)",
+  " (in 'simulate_infections', line 1439, column 0 to column 27)",
+  " (in 'simulate_infections', line 1441, column 6 to column 13)",
+  " (in 'simulate_infections', line 1441, column 0 to column 44)",
+  " (in 'simulate_infections', line 1443, column 6 to column 13)",
+  " (in 'simulate_infections', line 1443, column 0 to column 45)",
+  " (in 'simulate_infections', line 1445, column 6 to column 21)",
+  " (in 'simulate_infections', line 1445, column 0 to column 57)",
+  " (in 'simulate_infections', line 1447, column 0 to column 34)",
+  " (in 'simulate_infections', line 1450, column 6 to column 22)",
+  " (in 'simulate_infections', line 1450, column 0 to column 40)",
+  " (in 'simulate_infections', line 1451, column 0 to column 16)",
+  " (in 'simulate_infections', line 1452, column 6 to column 7)",
+  " (in 'simulate_infections', line 1452, column 9 to column 20)",
+  " (in 'simulate_infections', line 1452, column 0 to column 58)",
+  " (in 'simulate_infections', line 1453, column 0 to column 14)",
+  " (in 'simulate_infections', line 1454, column 0 to column 15)",
+  " (in 'simulate_infections', line 1455, column 0 to column 35)",
+  " (in 'simulate_infections', line 1458, column 0 to column 33)",
+  " (in 'simulate_infections', line 1459, column 0 to column 30)",
+  " (in 'simulate_infections', line 1460, column 7 to column 24)",
+  " (in 'simulate_infections', line 1460, column 0 to column 39)",
+  " (in 'simulate_infections', line 1461, column 7 to column 24)",
+  " (in 'simulate_infections', line 1461, column 0 to column 39)",
+  " (in 'simulate_infections', line 1464, column 6 to column 40)",
+  " (in 'simulate_infections', line 1464, column 0 to column 77)",
+  " (in 'simulate_infections', line 1466, column 6 to column 40)",
+  " (in 'simulate_infections', line 1466, column 0 to column 80)",
+  " (in 'simulate_infections', line 1468, column 7 to column 21)",
+  " (in 'simulate_infections', line 1468, column 0 to column 36)",
+  " (in 'simulate_infections', line 1471, column 6 to column 23)",
+  " (in 'simulate_infections', line 1471, column 0 to column 51)",
+  " (in 'simulate_infections', line 1473, column 0 to column 40)",
+  " (in 'simulate_infections', line 1474, column 7 to column 31)",
+  " (in 'simulate_infections', line 1474, column 0 to column 51)",
+  " (in 'simulate_infections', line 1476, column 0 to column 30)",
+  " (in 'simulate_infections', line 1477, column 0 to column 28)",
+  " (in 'simulate_infections', line 1478, column 0 to column 27)",
+  " (in 'simulate_infections', line 1479, column 0 to column 42)",
+  " (in 'simulate_infections', line 1480, column 0 to column 49)",
+  " (in 'simulate_infections', line 1481, column 0 to column 28)",
+  " (in 'simulate_infections', line 1482, column 9 to column 10)",
+  " (in 'simulate_infections', line 1482, column 12 to column 29)",
+  " (in 'simulate_infections', line 1482, column 2 to column 38)",
+  " (in 'simulate_infections', line 1485, column 8 to column 19)",
+  " (in 'simulate_infections', line 1485, column 2 to line 1488, column 4)",
+  " (in 'simulate_infections', line 1492, column 9 to column 10)",
+  " (in 'simulate_infections', line 1492, column 12 to column 13)",
+  " (in 'simulate_infections', line 1493, column 9 to column 10)",
+  " (in 'simulate_infections', line 1493, column 12 to column 28)",
+  " (in 'simulate_infections', line 1494, column 8 to column 9)",
+  " (in 'simulate_infections', line 1494, column 11 to column 27)",
+  " (in 'simulate_infections', line 1495, column 9 to column 10)",
+  " (in 'simulate_infections', line 1495, column 12 to column 32)",
+  " (in 'simulate_infections', line 23, column 2 to column 30)",
+  " (in 'simulate_infections', line 24, column 2 to column 41)",
+  " (in 'simulate_infections', line 25, column 2 to column 16)",
+  " (in 'simulate_infections', line 26, column 2 to column 41)",
+  " (in 'simulate_infections', line 27, column 2 to column 19)",
+  " (in 'simulate_infections', line 28, column 2 to column 42)",
+  " (in 'simulate_infections', line 22, column 62 to line 29, column 1)",
+  " (in 'simulate_infections', line 42, column 2 to column 30)",
+  " (in 'simulate_infections', line 43, column 2 to column 41)",
+  " (in 'simulate_infections', line 44, column 2 to column 19)",
+  " (in 'simulate_infections', line 45, column 2 to column 41)",
+  " (in 'simulate_infections', line 45, column 41 to column 42)",
+  " (in 'simulate_infections', line 46, column 2 to column 30)",
+  " (in 'simulate_infections', line 47, column 2 to column 42)",
+  " (in 'simulate_infections', line 41, column 61 to line 48, column 1)",
+  " (in 'simulate_infections', line 65, column 2 to column 29)",
+  " (in 'simulate_infections', line 66, column 2 to column 29)",
+  " (in 'simulate_infections', line 67, column 9 to column 12)",
+  " (in 'simulate_infections', line 67, column 2 to column 16)",
+  " (in 'simulate_infections', line 70, column 4 to column 74)",
+  " (in 'simulate_infections', line 69, column 29 to line 71, column 3)",
+  " (in 'simulate_infections', line 69, column 2 to line 71, column 3)",
+  " (in 'simulate_infections', line 74, column 4 to column 59)",
+  " (in 'simulate_infections', line 73, column 18 to line 75, column 3)",
+  " (in 'simulate_infections', line 73, column 2 to line 75, column 3)",
+  " (in 'simulate_infections', line 78, column 4 to column 65)",
+  " (in 'simulate_infections', line 79, column 4 to column 75)",
+  " (in 'simulate_infections', line 77, column 20 to line 80, column 3)",
+  " (in 'simulate_infections', line 77, column 2 to line 80, column 3)",
+  " (in 'simulate_infections', line 84, column 6 to column 66)",
+  " (in 'simulate_infections', line 85, column 6 to column 77)",
+  " (in 'simulate_infections', line 83, column 30 to line 86, column 5)",
+  " (in 'simulate_infections', line 83, column 4 to line 86, column 5)",
+  " (in 'simulate_infections', line 82, column 18 to line 87, column 3)",
+  " (in 'simulate_infections', line 82, column 2 to line 87, column 3)",
+  " (in 'simulate_infections', line 89, column 2 to column 11)",
+  " (in 'simulate_infections', line 64, column 58 to line 90, column 1)",
+  " (in 'simulate_infections', line 110, column 2 to column 35)",
+  " (in 'simulate_infections', line 111, column 2 to column 43)",
+  " (in 'simulate_infections', line 114, column 4 to column 44)",
+  " (in 'simulate_infections', line 113, column 19 to line 115, column 3)",
+  " (in 'simulate_infections', line 113, column 2 to line 115, column 3)",
+  " (in 'simulate_infections', line 117, column 9 to column 10)",
+  " (in 'simulate_infections', line 117, column 2 to column 80)",
+  " (in 'simulate_infections', line 118, column 2 to column 45)",
+  " (in 'simulate_infections', line 109, column 44 to line 119, column 1)",
+  " (in 'simulate_infections', line 148, column 9 to column 10)",
+  " (in 'simulate_infections', line 148, column 2 to column 17)",
+  " (in 'simulate_infections', line 149, column 9 to column 10)",
+  " (in 'simulate_infections', line 149, column 2 to column 23)",
+  " (in 'simulate_infections', line 159, column 4 to column 54)",
+  " (in 'simulate_infections', line 158, column 9 to line 160, column 3)",
+  " (in 'simulate_infections', line 156, column 6 to column 59)",
+  " (in 'simulate_infections', line 155, column 19 to line 157, column 5)",
+  " (in 'simulate_infections', line 155, column 4 to line 157, column 5)",
+  " (in 'simulate_infections', line 154, column 24 to line 158, column 3)",
+  " (in 'simulate_infections', line 154, column 9 to line 160, column 3)",
+  " (in 'simulate_infections', line 152, column 6 to column 63)",
+  " (in 'simulate_infections', line 151, column 19 to line 153, column 5)",
+  " (in 'simulate_infections', line 151, column 4 to line 153, column 5)",
+  " (in 'simulate_infections', line 150, column 17 to line 154, column 3)",
+  " (in 'simulate_infections', line 150, column 2 to line 160, column 3)",
+  " (in 'simulate_infections', line 171, column 4 to column 16)",
+  " (in 'simulate_infections', line 170, column 9 to line 172, column 3)",
+  " (in 'simulate_infections', line 163, column 4 to column 28)",
+  " (in 'simulate_infections', line 164, column 4 to column 28)",
+  " (in 'simulate_infections', line 166, column 6 to column 71)",
+  " (in 'simulate_infections', line 165, column 15 to line 167, column 5)",
+  " (in 'simulate_infections', line 165, column 4 to line 167, column 5)",
+  " (in 'simulate_infections', line 169, column 4 to column 53)",
+  " (in 'simulate_infections', line 162, column 13 to line 170, column 3)",
+  " (in 'simulate_infections', line 162, column 2 to line 172, column 3)",
+  " (in 'simulate_infections', line 173, column 2 to column 20)",
+  " (in 'simulate_infections', line 147, column 55 to line 174, column 1)",
+  " (in 'simulate_infections', line 203, column 8 to column 19)",
+  " (in 'simulate_infections', line 203, column 2 to column 29)",
+  " (in 'simulate_infections', line 205, column 4 to column 15)",
+  " (in 'simulate_infections', line 210, column 8 to line 211, column 53)",
+  " (in 'simulate_infections', line 209, column 13 to line 212, column 7)",
+  " (in 'simulate_infections', line 208, column 8 to column 47)",
+  " (in 'simulate_infections', line 207, column 28 to line 209, column 7)",
+  " (in 'simulate_infections', line 207, column 6 to line 212, column 7)",
+  " (in 'simulate_infections', line 206, column 69 to line 213, column 5)",
+  " (in 'simulate_infections', line 206, column 4 to line 213, column 5)",
+  " (in 'simulate_infections', line 204, column 27 to line 214, column 3)",
+  " (in 'simulate_infections', line 204, column 2 to line 214, column 3)",
+  " (in 'simulate_infections', line 215, column 2 to column 13)",
+  " (in 'simulate_infections', line 202, column 2 to line 216, column 1)",
+  " (in 'simulate_infections', line 247, column 9 to column 12)",
+  " (in 'simulate_infections', line 247, column 2 to column 39)",
+  " (in 'simulate_infections', line 248, column 2 to column 22)",
+  " (in 'simulate_infections', line 249, column 2 to column 14)",
+  " (in 'simulate_infections', line 270, column 6 to column 57)",
+  " (in 'simulate_infections', line 271, column 6 to column 63)",
+  " (in 'simulate_infections', line 272, column 6 to column 42)",
+  " (in 'simulate_infections', line 276, column 8 to line 278, column 10)",
+  " (in 'simulate_infections', line 275, column 13 to line 279, column 7)",
+  " (in 'simulate_infections', line 274, column 8 to column 49)",
+  " (in 'simulate_infections', line 273, column 28 to line 275, column 7)",
+  " (in 'simulate_infections', line 273, column 6 to line 279, column 7)",
+  " (in 'simulate_infections', line 269, column 11 to line 280, column 5)",
+  " (in 'simulate_infections', line 253, column 6 to column 57)",
+  " (in 'simulate_infections', line 254, column 6 to column 63)",
+  " (in 'simulate_infections', line 255, column 13 to column 45)",
+  " (in 'simulate_infections', line 255, column 6 to line 260, column 8)",
+  " (in 'simulate_infections', line 261, column 6 to column 59)",
+  " (in 'simulate_infections', line 265, column 8 to line 267, column 10)",
+  " (in 'simulate_infections', line 264, column 13 to line 268, column 7)",
+  " (in 'simulate_infections', line 263, column 8 to column 42)",
+  " (in 'simulate_infections', line 262, column 28 to line 264, column 7)",
+  " (in 'simulate_infections', line 262, column 6 to line 268, column 7)",
+  " (in 'simulate_infections', line 252, column 26 to line 269, column 5)",
+  " (in 'simulate_infections', line 252, column 4 to line 280, column 5)",
+  " (in 'simulate_infections', line 281, column 4 to column 26)",
+  " (in 'simulate_infections', line 251, column 78 to line 282, column 3)",
+  " (in 'simulate_infections', line 250, column 2 to line 282, column 3)",
+  " (in 'simulate_infections', line 284, column 4 to line 287, column 6)",
+  " (in 'simulate_infections', line 283, column 21 to line 288, column 3)",
+  " (in 'simulate_infections', line 283, column 2 to line 288, column 3)",
+  " (in 'simulate_infections', line 290, column 4 to column 30)",
+  " (in 'simulate_infections', line 289, column 18 to line 291, column 3)",
+  " (in 'simulate_infections', line 289, column 2 to line 291, column 3)",
+  " (in 'simulate_infections', line 293, column 4 to column 23)",
+  " (in 'simulate_infections', line 292, column 19 to line 294, column 3)",
+  " (in 'simulate_infections', line 292, column 2 to line 294, column 3)",
+  " (in 'simulate_infections', line 295, column 2 to column 13)",
+  " (in 'simulate_infections', line 245, column 2 to line 296, column 1)",
+  " (in 'simulate_infections', line 314, column 2 to column 55)",
+  " (in 'simulate_infections', line 316, column 4 to column 11)",
+  " (in 'simulate_infections', line 315, column 21 to line 317, column 3)",
+  " (in 'simulate_infections', line 315, column 2 to line 317, column 3)",
+  " (in 'simulate_infections', line 319, column 4 to column 39)",
+  " (in 'simulate_infections', line 320, column 4 to column 45)",
+  " (in 'simulate_infections', line 329, column 10 to column 77)",
+  " (in 'simulate_infections', line 328, column 15 to line 330, column 9)",
+  " (in 'simulate_infections', line 324, column 10 to line 327, column 14)",
+  " (in 'simulate_infections', line 323, column 27 to line 328, column 9)",
+  " (in 'simulate_infections', line 323, column 8 to line 330, column 9)",
+  " (in 'simulate_infections', line 322, column 34 to line 331, column 7)",
+  " (in 'simulate_infections', line 322, column 6 to line 331, column 7)",
+  " (in 'simulate_infections', line 321, column 25 to line 332, column 5)",
+  " (in 'simulate_infections', line 321, column 4 to line 332, column 5)",
+  " (in 'simulate_infections', line 318, column 24 to line 333, column 3)",
+  " (in 'simulate_infections', line 318, column 2 to line 333, column 3)",
+  " (in 'simulate_infections', line 313, column 59 to line 334, column 1)",
+  " (in 'simulate_infections', line 347, column 2 to column 29)",
+  " (in 'simulate_infections', line 348, column 9 to column 12)",
+  " (in 'simulate_infections', line 348, column 2 to column 18)",
+  " (in 'simulate_infections', line 350, column 4 to column 49)",
+  " (in 'simulate_infections', line 351, column 4 to column 31)",
+  " (in 'simulate_infections', line 352, column 4 to column 45)",
+  " (in 'simulate_infections', line 349, column 19 to line 353, column 3)",
+  " (in 'simulate_infections', line 349, column 2 to line 353, column 3)",
+  " (in 'simulate_infections', line 354, column 2 to column 13)",
+  " (in 'simulate_infections', line 346, column 57 to line 355, column 1)",
+  " (in 'simulate_infections', line 376, column 9 to column 10)",
+  " (in 'simulate_infections', line 376, column 2 to column 48)",
+  " (in 'simulate_infections', line 377, column 2 to column 51)",
+  " (in 'simulate_infections', line 378, column 2 to column 49)",
+  " (in 'simulate_infections', line 379, column 2 to column 50)",
+  " (in 'simulate_infections', line 375, column 55 to line 380, column 1)",
+  " (in 'simulate_infections', line 394, column 9 to column 10)",
+  " (in 'simulate_infections', line 394, column 2 to column 48)",
+  " (in 'simulate_infections', line 395, column 2 to column 18)",
+  " (in 'simulate_infections', line 396, column 9 to column 10)",
+  " (in 'simulate_infections', line 396, column 2 to column 73)",
+  " (in 'simulate_infections', line 397, column 2 to column 43)",
+  " (in 'simulate_infections', line 393, column 61 to line 398, column 1)",
+  " (in 'simulate_infections', line 412, column 9 to column 10)",
+  " (in 'simulate_infections', line 412, column 2 to column 48)",
+  " (in 'simulate_infections', line 413, column 2 to column 52)",
+  " (in 'simulate_infections', line 414, column 9 to column 10)",
+  " (in 'simulate_infections', line 414, column 2 to column 73)",
+  " (in 'simulate_infections', line 415, column 2 to column 29)",
+  " (in 'simulate_infections', line 411, column 61 to line 416, column 1)",
+  " (in 'simulate_infections', line 430, column 9 to column 10)",
+  " (in 'simulate_infections', line 430, column 2 to column 48)",
+  " (in 'simulate_infections', line 431, column 2 to column 43)",
+  " (in 'simulate_infections', line 432, column 9 to column 10)",
+  " (in 'simulate_infections', line 432, column 2 to line 433, column 69)",
+  " (in 'simulate_infections', line 434, column 2 to column 43)",
+  " (in 'simulate_infections', line 429, column 61 to line 435, column 1)",
+  " (in 'simulate_infections', line 448, column 2 to column 27)",
+  " (in 'simulate_infections', line 449, column 9 to column 10)",
+  " (in 'simulate_infections', line 449, column 2 to column 48)",
+  " (in 'simulate_infections', line 450, column 9 to column 10)",
+  " (in 'simulate_infections', line 450, column 2 to line 453, column 4)",
+  " (in 'simulate_infections', line 454, column 2 to column 26)",
+  " (in 'simulate_infections', line 447, column 53 to line 455, column 1)",
+  " (in 'simulate_infections', line 469, column 9 to column 10)",
+  " (in 'simulate_infections', line 469, column 12 to column 13)",
+  " (in 'simulate_infections', line 469, column 2 to line 473, column 14)",
+  " (in 'simulate_infections', line 474, column 2 to column 13)",
+  " (in 'simulate_infections', line 468, column 43 to line 475, column 1)",
+  " (in 'simulate_infections', line 489, column 9 to column 10)",
+  " (in 'simulate_infections', line 489, column 12 to column 13)",
+  " (in 'simulate_infections', line 489, column 2 to line 491, column 4)",
+  " (in 'simulate_infections', line 492, column 2 to column 42)",
+  " (in 'simulate_infections', line 488, column 53 to line 493, column 1)",
+  " (in 'simulate_infections', line 511, column 2 to column 75)",
+  " (in 'simulate_infections', line 512, column 2 to line 513, column 72)",
+  " (in 'simulate_infections', line 514, column 2 to column 21)",
+  " (in 'simulate_infections', line 510, column 66 to line 515, column 1)",
+  " (in 'simulate_infections', line 530, column 9 to column 18)",
+  " (in 'simulate_infections', line 530, column 2 to column 66)",
+  " (in 'simulate_infections', line 531, column 2 to column 39)",
+  " (in 'simulate_infections', line 535, column 4 to column 35)",
+  " (in 'simulate_infections', line 534, column 9 to line 536, column 3)",
+  " (in 'simulate_infections', line 533, column 4 to column 45)",
+  " (in 'simulate_infections', line 532, column 19 to line 534, column 3)",
+  " (in 'simulate_infections', line 532, column 2 to line 536, column 3)",
+  " (in 'simulate_infections', line 529, column 72 to line 537, column 1)",
+  " (in 'simulate_infections', line 554, column 9 to column 30)",
+  " (in 'simulate_infections', line 554, column 2 to column 40)",
+  " (in 'simulate_infections', line 569, column 6 to column 65)",
+  " (in 'simulate_infections', line 568, column 11 to line 570, column 5)",
+  " (in 'simulate_infections', line 567, column 6 to column 51)",
+  " (in 'simulate_infections', line 566, column 26 to line 568, column 5)",
+  " (in 'simulate_infections', line 566, column 11 to line 570, column 5)",
+  " (in 'simulate_infections', line 565, column 6 to column 51)",
+  " (in 'simulate_infections', line 564, column 26 to line 566, column 5)",
+  " (in 'simulate_infections', line 564, column 11 to line 570, column 5)",
+  " (in 'simulate_infections', line 563, column 6 to column 51)",
+  " (in 'simulate_infections', line 562, column 19 to line 564, column 5)",
+  " (in 'simulate_infections', line 562, column 4 to line 570, column 5)",
+  " (in 'simulate_infections', line 561, column 24 to line 571, column 3)",
+  " (in 'simulate_infections', line 561, column 9 to line 571, column 3)",
+  " (in 'simulate_infections', line 560, column 4 to column 46)",
+  " (in 'simulate_infections', line 559, column 24 to line 561, column 3)",
+  " (in 'simulate_infections', line 559, column 9 to line 571, column 3)",
+  " (in 'simulate_infections', line 558, column 4 to column 43)",
+  " (in 'simulate_infections', line 557, column 17 to line 559, column 3)",
+  " (in 'simulate_infections', line 557, column 2 to line 571, column 3)",
+  " (in 'simulate_infections', line 572, column 2 to column 32)",
+  " (in 'simulate_infections', line 553, column 58 to line 573, column 1)",
+  " (in 'simulate_infections', line 583, column 2 to column 21)",
+  " (in 'simulate_infections', line 582, column 37 to line 584, column 1)",
+  " (in 'simulate_infections', line 614, column 2 to column 38)",
+  " (in 'simulate_infections', line 615, column 2 to column 33)",
+  " (in 'simulate_infections', line 617, column 9 to column 10)",
+  " (in 'simulate_infections', line 617, column 2 to column 42)",
+  " (in 'simulate_infections', line 620, column 11 to column 19)",
+  " (in 'simulate_infections', line 620, column 4 to column 25)",
+  " (in 'simulate_infections', line 621, column 4 to column 15)",
+  " (in 'simulate_infections', line 622, column 4 to column 51)",
+  " (in 'simulate_infections', line 623, column 4 to column 27)",
+  " (in 'simulate_infections', line 619, column 12 to line 624, column 3)",
   " (in 'simulate_infections', line 619, column 2 to line 624, column 3)",
-  " (in 'simulate_infections', line 627, column 4 to column 47)",
-  " (in 'simulate_infections', line 626, column 11 to line 628, column 3)",
-  " (in 'simulate_infections', line 626, column 2 to line 628, column 3)",
-  " (in 'simulate_infections', line 631, column 4 to column 78)",
-  " (in 'simulate_infections', line 637, column 6 to column 53)",
-  " (in 'simulate_infections', line 636, column 11 to line 638, column 5)",
-  " (in 'simulate_infections', line 633, column 6 to column 80)",
-  " (in 'simulate_infections', line 634, column 6 to column 51)",
-  " (in 'simulate_infections', line 635, column 6 to column 73)",
-  " (in 'simulate_infections', line 632, column 24 to line 636, column 5)",
-  " (in 'simulate_infections', line 632, column 4 to line 638, column 5)",
-  " (in 'simulate_infections', line 640, column 6 to column 70)",
-  " (in 'simulate_infections', line 639, column 23 to line 641, column 5)",
-  " (in 'simulate_infections', line 639, column 4 to line 641, column 5)",
-  " (in 'simulate_infections', line 630, column 18 to line 642, column 3)",
-  " (in 'simulate_infections', line 630, column 2 to line 642, column 3)",
-  " (in 'simulate_infections', line 643, column 2 to column 21)",
-  " (in 'simulate_infections', line 600, column 79 to line 644, column 1)",
-  " (in 'simulate_infections', line 648, column 2 to column 38)",
-  " (in 'simulate_infections', line 649, column 9 to column 10)",
-  " (in 'simulate_infections', line 649, column 2 to column 45)",
-  " (in 'simulate_infections', line 663, column 4 to column 44)",
-  " (in 'simulate_infections', line 662, column 9 to line 664, column 3)",
-  " (in 'simulate_infections', line 651, column 11 to column 12)",
-  " (in 'simulate_infections', line 651, column 4 to column 37)",
-  " (in 'simulate_infections', line 657, column 6 to column 70)",
-  " (in 'simulate_infections', line 659, column 8 to column 57)",
-  " (in 'simulate_infections', line 658, column 21 to line 660, column 7)",
-  " (in 'simulate_infections', line 658, column 6 to line 660, column 7)",
-  " (in 'simulate_infections', line 656, column 27 to line 661, column 5)",
-  " (in 'simulate_infections', line 656, column 11 to line 661, column 5)",
-  " (in 'simulate_infections', line 655, column 5 to column 41)",
-  " (in 'simulate_infections', line 654, column 27 to line 656, column 5)",
-  " (in 'simulate_infections', line 654, column 11 to line 661, column 5)",
-  " (in 'simulate_infections', line 653, column 6 to column 59)",
-  " (in 'simulate_infections', line 652, column 20 to line 654, column 5)",
-  " (in 'simulate_infections', line 652, column 4 to line 661, column 5)",
-  " (in 'simulate_infections', line 650, column 14 to line 662, column 3)",
-  " (in 'simulate_infections', line 650, column 2 to line 664, column 3)",
-  " (in 'simulate_infections', line 665, column 2 to column 21)",
-  " (in 'simulate_infections', line 647, column 40 to line 666, column 1)",
-  " (in 'simulate_infections', line 682, column 2 to column 32)",
-  " (in 'simulate_infections', line 683, column 9 to column 11)",
-  " (in 'simulate_infections', line 683, column 2 to column 41)",
-  " (in 'simulate_infections', line 684, column 2 to column 47)",
-  " (in 'simulate_infections', line 681, column 41 to line 685, column 1)",
-  " (in 'simulate_infections', line 698, column 2 to column 32)",
-  " (in 'simulate_infections', line 699, column 9 to column 10)",
-  " (in 'simulate_infections', line 699, column 2 to column 27)",
-  " (in 'simulate_infections', line 700, column 2 to column 38)",
-  " (in 'simulate_infections', line 701, column 2 to column 25)",
-  " (in 'simulate_infections', line 697, column 48 to line 702, column 1)",
-  " (in 'simulate_infections', line 719, column 2 to column 32)",
-  " (in 'simulate_infections', line 720, column 2 to column 46)",
-  " (in 'simulate_infections', line 721, column 9 to column 10)",
-  " (in 'simulate_infections', line 721, column 2 to column 36)",
-  " (in 'simulate_infections', line 723, column 2 to column 36)",
-  " (in 'simulate_infections', line 724, column 2 to column 34)",
-  " (in 'simulate_infections', line 725, column 2 to column 46)",
-  " (in 'simulate_infections', line 731, column 4 to column 70)",
-  " (in 'simulate_infections', line 730, column 9 to line 732, column 3)",
-  " (in 'simulate_infections', line 729, column 4 to column 70)",
-  " (in 'simulate_infections', line 728, column 19 to line 730, column 3)",
-  " (in 'simulate_infections', line 728, column 2 to line 732, column 3)",
-  " (in 'simulate_infections', line 733, column 2 to column 24)",
-  " (in 'simulate_infections', line 718, column 75 to line 734, column 1)",
-  " (in 'simulate_infections', line 755, column 2 to column 49)",
-  " (in 'simulate_infections', line 759, column 6 to column 63)",
-  " (in 'simulate_infections', line 757, column 30 to line 760, column 5)",
-  " (in 'simulate_infections', line 757, column 4 to line 760, column 5)",
-  " (in 'simulate_infections', line 763, column 6 to column 57)",
-  " (in 'simulate_infections', line 761, column 28 to line 764, column 5)",
-  " (in 'simulate_infections', line 761, column 4 to line 764, column 5)",
-  " (in 'simulate_infections', line 756, column 18 to line 765, column 3)",
-  " (in 'simulate_infections', line 756, column 2 to line 765, column 3)",
-  " (in 'simulate_infections', line 754, column 73 to line 766, column 1)",
-  " (in 'simulate_infections', line 786, column 2 to column 35)",
-  " (in 'simulate_infections', line 787, column 9 to column 10)",
-  " (in 'simulate_infections', line 787, column 2 to column 46)",
-  " (in 'simulate_infections', line 801, column 6 to column 59)",
-  " (in 'simulate_infections', line 800, column 11 to line 802, column 5)",
-  " (in 'simulate_infections', line 799, column 6 to column 35)",
-  " (in 'simulate_infections', line 798, column 21 to line 800, column 5)",
-  " (in 'simulate_infections', line 798, column 4 to line 802, column 5)",
-  " (in 'simulate_infections', line 797, column 9 to line 803, column 3)",
-  " (in 'simulate_infections', line 789, column 4 to column 38)",
-  " (in 'simulate_infections', line 793, column 6 to line 795, column 17)",
-  " (in 'simulate_infections', line 792, column 11 to line 796, column 5)",
-  " (in 'simulate_infections', line 791, column 6 to column 47)",
-  " (in 'simulate_infections', line 790, column 21 to line 792, column 5)",
-  " (in 'simulate_infections', line 790, column 4 to line 796, column 5)",
-  " (in 'simulate_infections', line 788, column 18 to line 797, column 3)",
-  " (in 'simulate_infections', line 788, column 2 to line 803, column 3)",
-  " (in 'simulate_infections', line 785, column 61 to line 804, column 1)",
-  " (in 'simulate_infections', line 819, column 2 to column 35)",
-  " (in 'simulate_infections', line 820, column 9 to column 13)",
-  " (in 'simulate_infections', line 820, column 2 to column 45)",
-  " (in 'simulate_infections', line 823, column 6 to column 59)",
-  " (in 'simulate_infections', line 822, column 23 to line 824, column 5)",
-  " (in 'simulate_infections', line 822, column 4 to line 824, column 5)",
-  " (in 'simulate_infections', line 821, column 26 to line 825, column 3)",
-  " (in 'simulate_infections', line 821, column 2 to line 825, column 3)",
-  " (in 'simulate_infections', line 826, column 2 to column 29)",
-  " (in 'simulate_infections', line 818, column 66 to line 827, column 1)",
-  " (in 'simulate_infections', line 846, column 2 to column 32)",
-  " (in 'simulate_infections', line 847, column 9 to column 10)",
-  " (in 'simulate_infections', line 847, column 2 to column 20)",
-  " (in 'simulate_infections', line 855, column 4 to column 38)",
-  " (in 'simulate_infections', line 857, column 6 to line 859, column 17)",
-  " (in 'simulate_infections', line 856, column 19 to line 860, column 5)",
-  " (in 'simulate_infections', line 856, column 4 to line 860, column 5)",
-  " (in 'simulate_infections', line 854, column 9 to line 861, column 3)",
-  " (in 'simulate_infections', line 852, column 6 to column 64)",
-  " (in 'simulate_infections', line 851, column 19 to line 853, column 5)",
-  " (in 'simulate_infections', line 851, column 4 to line 853, column 5)",
-  " (in 'simulate_infections', line 850, column 23 to line 854, column 3)",
-  " (in 'simulate_infections', line 850, column 2 to line 861, column 3)",
-  " (in 'simulate_infections', line 862, column 2 to column 18)",
-  " (in 'simulate_infections', line 845, column 68 to line 863, column 1)",
-  " (in 'simulate_infections', line 890, column 4 to column 47)",
-  " (in 'simulate_infections', line 891, column 4 to column 61)",
-  " (in 'simulate_infections', line 889, column 9 to line 892, column 3)",
-  " (in 'simulate_infections', line 888, column 4 to column 45)",
-  " (in 'simulate_infections', line 887, column 24 to line 889, column 3)",
-  " (in 'simulate_infections', line 887, column 9 to line 892, column 3)",
-  " (in 'simulate_infections', line 886, column 4 to column 14)",
-  " (in 'simulate_infections', line 885, column 17 to line 887, column 3)",
-  " (in 'simulate_infections', line 885, column 2 to line 892, column 3)",
-  " (in 'simulate_infections', line 884, column 47 to line 893, column 1)",
-  " (in 'simulate_infections', line 909, column 2 to column 32)",
-  " (in 'simulate_infections', line 910, column 8 to column 9)",
-  " (in 'simulate_infections', line 910, column 2 to column 31)",
-  " (in 'simulate_infections', line 911, column 2 to column 17)",
-  " (in 'simulate_infections', line 913, column 4 to column 33)",
-  " (in 'simulate_infections', line 912, column 18 to line 914, column 3)",
-  " (in 'simulate_infections', line 912, column 2 to line 914, column 3)",
-  " (in 'simulate_infections', line 917, column 4 to column 66)",
-  " (in 'simulate_infections', line 916, column 17 to line 918, column 3)",
-  " (in 'simulate_infections', line 916, column 2 to line 918, column 3)",
-  " (in 'simulate_infections', line 919, column 2 to column 26)",
-  " (in 'simulate_infections', line 908, column 72 to line 920, column 1)",
-  " (in 'simulate_infections', line 925, column 2 to column 35)",
-  " (in 'simulate_infections', line 926, column 2 to column 28)",
-  " (in 'simulate_infections', line 927, column 9 to column 11)",
-  " (in 'simulate_infections', line 927, column 2 to column 15)",
-  " (in 'simulate_infections', line 928, column 9 to column 11)",
-  " (in 'simulate_infections', line 928, column 2 to column 16)",
-  " (in 'simulate_infections', line 929, column 9 to column 11)",
-  " (in 'simulate_infections', line 929, column 2 to column 51)",
-  " (in 'simulate_infections', line 932, column 4 to line 934, column 6)",
-  " (in 'simulate_infections', line 935, column 4 to column 60)",
-  " (in 'simulate_infections', line 931, column 18 to line 936, column 3)",
-  " (in 'simulate_infections', line 931, column 2 to line 936, column 3)",
-  " (in 'simulate_infections', line 948, column 4 to column 11)",
-  " (in 'simulate_infections', line 947, column 8 to line 949, column 3)",
-  " (in 'simulate_infections', line 939, column 6 to column 22)",
-  " (in 'simulate_infections', line 940, column 6 to column 16)",
-  " (in 'simulate_infections', line 942, column 8 to column 22)",
-  " (in 'simulate_infections', line 943, column 8 to column 20)",
-  " (in 'simulate_infections', line 941, column 56 to line 944, column 7)",
-  " (in 'simulate_infections', line 941, column 6 to line 944, column 7)",
-  " (in 'simulate_infections', line 945, column 6 to column 29)",
-  " (in 'simulate_infections', line 938, column 20 to line 946, column 5)",
-  " (in 'simulate_infections', line 938, column 4 to line 946, column 5)",
-  " (in 'simulate_infections', line 937, column 14 to line 947, column 3)",
-  " (in 'simulate_infections', line 937, column 2 to line 949, column 3)",
-  " (in 'simulate_infections', line 950, column 2 to column 13)",
-  " (in 'simulate_infections', line 924, column 51 to line 951, column 1)",
-  " (in 'simulate_infections', line 955, column 2 to column 35)",
-  " (in 'simulate_infections', line 956, column 2 to column 28)",
-  " (in 'simulate_infections', line 957, column 9 to column 10)",
-  " (in 'simulate_infections', line 957, column 2 to column 38)",
-  " (in 'simulate_infections', line 958, column 9 to column 11)",
-  " (in 'simulate_infections', line 958, column 2 to line 959, column 66)",
-  " (in 'simulate_infections', line 960, column 2 to column 17)",
-  " (in 'simulate_infections', line 954, column 61 to line 961, column 1)",
-  " (in 'simulate_infections', line 972, column 4 to column 46)",
-  " (in 'simulate_infections', line 971, column 9 to line 973, column 3)",
-  " (in 'simulate_infections', line 970, column 4 to column 49)",
-  " (in 'simulate_infections', line 969, column 38 to line 971, column 3)",
-  " (in 'simulate_infections', line 969, column 9 to line 973, column 3)",
-  " (in 'simulate_infections', line 968, column 4 to column 13)",
-  " (in 'simulate_infections', line 967, column 15 to line 969, column 3)",
-  " (in 'simulate_infections', line 967, column 2 to line 973, column 3)",
-  " (in 'simulate_infections', line 966, column 51 to line 974, column 1)",
-  " (in 'simulate_infections', line 980, column 2 to column 31)",
-  " (in 'simulate_infections', line 986, column 4 to column 48)",
-  " (in 'simulate_infections', line 985, column 9 to line 987, column 3)",
-  " (in 'simulate_infections', line 984, column 4 to column 72)",
-  " (in 'simulate_infections', line 983, column 38 to line 985, column 3)",
-  " (in 'simulate_infections', line 983, column 9 to line 987, column 3)",
-  " (in 'simulate_infections', line 982, column 4 to column 37)",
-  " (in 'simulate_infections', line 981, column 15 to line 983, column 3)",
-  " (in 'simulate_infections', line 981, column 2 to line 987, column 3)",
-  " (in 'simulate_infections', line 979, column 53 to line 988, column 1)",
-  " (in 'simulate_infections', line 993, column 2 to column 20)",
-  " (in 'simulate_infections', line 994, column 2 to column 40)",
-  " (in 'simulate_infections', line 1014, column 6 to column 34)",
-  " (in 'simulate_infections', line 1013, column 11 to line 1015, column 5)",
-  " (in 'simulate_infections', line 1009, column 6 to line 1011, column 46)",
-  " (in 'simulate_infections', line 1011, column 28 to column 44)",
-  " (in 'simulate_infections', line 1011, column 10 to column 26)",
-  " (in 'simulate_infections', line 1012, column 6 to column 21)",
-  " (in 'simulate_infections', line 1008, column 36 to line 1013, column 5)",
-  " (in 'simulate_infections', line 1008, column 11 to line 1015, column 5)",
-  " (in 'simulate_infections', line 1004, column 6 to line 1006, column 46)",
-  " (in 'simulate_infections', line 1006, column 28 to column 44)",
-  " (in 'simulate_infections', line 1006, column 10 to column 26)",
-  " (in 'simulate_infections', line 1007, column 6 to column 21)",
-  " (in 'simulate_infections', line 1003, column 36 to line 1008, column 5)",
-  " (in 'simulate_infections', line 1003, column 11 to line 1015, column 5)",
-  " (in 'simulate_infections', line 997, column 6 to line 1001, column 46)",
-  " (in 'simulate_infections', line 1001, column 28 to column 44)",
-  " (in 'simulate_infections', line 1001, column 10 to column 26)",
-  " (in 'simulate_infections', line 1002, column 6 to column 21)",
-  " (in 'simulate_infections', line 996, column 29 to line 1003, column 5)",
-  " (in 'simulate_infections', line 996, column 4 to line 1015, column 5)",
-  " (in 'simulate_infections', line 995, column 27 to line 1016, column 3)",
-  " (in 'simulate_infections', line 995, column 2 to line 1016, column 3)",
-  " (in 'simulate_infections', line 992, column 35 to line 1017, column 1)"};
+  " (in 'simulate_infections', line 627, column 11 to column 12)",
+  " (in 'simulate_infections', line 627, column 4 to column 36)",
+  " (in 'simulate_infections', line 635, column 6 to column 31)",
+  " (in 'simulate_infections', line 636, column 6 to column 30)",
+  " (in 'simulate_infections', line 634, column 11 to line 637, column 5)",
+  " (in 'simulate_infections', line 629, column 6 to column 25)",
+  " (in 'simulate_infections', line 632, column 8 to column 61)",
+  " (in 'simulate_infections', line 631, column 20 to line 633, column 7)",
+  " (in 'simulate_infections', line 631, column 6 to line 633, column 7)",
+  " (in 'simulate_infections', line 628, column 20 to line 634, column 5)",
+  " (in 'simulate_infections', line 628, column 4 to line 637, column 5)",
+  " (in 'simulate_infections', line 638, column 4 to column 21)",
+  " (in 'simulate_infections', line 626, column 12 to line 639, column 3)",
+  " (in 'simulate_infections', line 626, column 2 to line 639, column 3)",
+  " (in 'simulate_infections', line 641, column 2 to column 19)",
+  " (in 'simulate_infections', line 612, column 52 to line 642, column 1)",
+  " (in 'simulate_infections', line 664, column 4 to column 36)",
+  " (in 'simulate_infections', line 664, column 32 to column 33)",
+  " (in 'simulate_infections', line 665, column 4 to column 37)",
+  " (in 'simulate_infections', line 663, column 16 to line 666, column 3)",
+  " (in 'simulate_infections', line 663, column 2 to line 666, column 3)",
+  " (in 'simulate_infections', line 667, column 2 to column 65)",
+  " (in 'simulate_infections', line 661, column 42 to line 668, column 1)",
+  " (in 'simulate_infections', line 688, column 2 to column 30)",
+  " (in 'simulate_infections', line 689, column 9 to column 12)",
+  " (in 'simulate_infections', line 689, column 2 to column 62)",
+  " (in 'simulate_infections', line 690, column 9 to column 12)",
+  " (in 'simulate_infections', line 690, column 2 to column 44)",
+  " (in 'simulate_infections', line 691, column 2 to line 692, column 51)",
+  " (in 'simulate_infections', line 693, column 2 to column 14)",
+  " (in 'simulate_infections', line 687, column 52 to line 694, column 1)",
+  " (in 'simulate_infections', line 715, column 2 to column 40)",
+  " (in 'simulate_infections', line 716, column 9 to column 15)",
+  " (in 'simulate_infections', line 716, column 2 to column 46)",
+  " (in 'simulate_infections', line 717, column 2 to column 78)",
+  " (in 'simulate_infections', line 718, column 2 to column 45)",
+  " (in 'simulate_infections', line 719, column 2 to column 26)",
+  " (in 'simulate_infections', line 721, column 4 to column 44)",
+  " (in 'simulate_infections', line 722, column 4 to column 14)",
+  " (in 'simulate_infections', line 720, column 30 to line 723, column 3)",
+  " (in 'simulate_infections', line 720, column 2 to line 723, column 3)",
+  " (in 'simulate_infections', line 725, column 2 to column 12)",
+  " (in 'simulate_infections', line 714, column 53 to line 726, column 1)",
+  " (in 'simulate_infections', line 754, column 2 to column 43)",
+  " (in 'simulate_infections', line 758, column 2 to column 65)",
+  " (in 'simulate_infections', line 760, column 2 to column 39)",
+  " (in 'simulate_infections', line 763, column 2 to column 58)",
+  " (in 'simulate_infections', line 765, column 2 to line 767, column 4)",
+  " (in 'simulate_infections', line 768, column 2 to column 18)",
+  " (in 'simulate_infections', line 753, column 55 to line 769, column 1)",
+  " (in 'simulate_infections', line 797, column 2 to column 27)",
+  " (in 'simulate_infections', line 798, column 2 to column 20)",
+  " (in 'simulate_infections', line 799, column 2 to column 19)",
+  " (in 'simulate_infections', line 800, column 2 to column 18)",
+  " (in 'simulate_infections', line 801, column 9 to column 10)",
+  " (in 'simulate_infections', line 801, column 2 to column 42)",
+  " (in 'simulate_infections', line 802, column 9 to column 11)",
+  " (in 'simulate_infections', line 802, column 2 to column 28)",
+  " (in 'simulate_infections', line 803, column 9 to column 11)",
+  " (in 'simulate_infections', line 803, column 2 to column 28)",
+  " (in 'simulate_infections', line 804, column 2 to column 47)",
+  " (in 'simulate_infections', line 812, column 4 to column 47)",
+  " (in 'simulate_infections', line 811, column 9 to line 813, column 3)",
+  " (in 'simulate_infections', line 807, column 4 to column 62)",
+  " (in 'simulate_infections', line 809, column 6 to column 56)",
+  " (in 'simulate_infections', line 808, column 19 to line 810, column 5)",
+  " (in 'simulate_infections', line 808, column 4 to line 810, column 5)",
+  " (in 'simulate_infections', line 806, column 24 to line 811, column 3)",
+  " (in 'simulate_infections', line 806, column 2 to line 813, column 3)",
+  " (in 'simulate_infections', line 815, column 4 to column 34)",
+  " (in 'simulate_infections', line 817, column 6 to column 53)",
+  " (in 'simulate_infections', line 816, column 21 to line 818, column 5)",
+  " (in 'simulate_infections', line 816, column 4 to line 818, column 5)",
+  " (in 'simulate_infections', line 814, column 15 to line 819, column 3)",
+  " (in 'simulate_infections', line 814, column 2 to line 819, column 3)",
+  " (in 'simulate_infections', line 822, column 4 to column 47)",
+  " (in 'simulate_infections', line 821, column 15 to line 823, column 3)",
+  " (in 'simulate_infections', line 821, column 2 to line 823, column 3)",
+  " (in 'simulate_infections', line 826, column 4 to column 78)",
+  " (in 'simulate_infections', line 832, column 6 to column 53)",
+  " (in 'simulate_infections', line 831, column 10 to line 833, column 5)",
+  " (in 'simulate_infections', line 828, column 6 to column 66)",
+  " (in 'simulate_infections', line 829, column 6 to column 64)",
+  " (in 'simulate_infections', line 830, column 6 to column 66)",
+  " (in 'simulate_infections', line 827, column 51 to line 831, column 5)",
+  " (in 'simulate_infections', line 827, column 4 to line 833, column 5)",
+  " (in 'simulate_infections', line 835, column 6 to column 70)",
+  " (in 'simulate_infections', line 834, column 27 to line 836, column 5)",
+  " (in 'simulate_infections', line 834, column 4 to line 836, column 5)",
+  " (in 'simulate_infections', line 825, column 18 to line 837, column 3)",
+  " (in 'simulate_infections', line 825, column 2 to line 837, column 3)",
+  " (in 'simulate_infections', line 838, column 2 to column 21)",
+  " (in 'simulate_infections', line 795, column 49 to line 839, column 1)",
+  " (in 'simulate_infections', line 857, column 2 to column 38)",
+  " (in 'simulate_infections', line 858, column 9 to column 10)",
+  " (in 'simulate_infections', line 858, column 2 to column 45)",
+  " (in 'simulate_infections', line 872, column 4 to column 44)",
+  " (in 'simulate_infections', line 871, column 9 to line 873, column 3)",
+  " (in 'simulate_infections', line 860, column 11 to column 12)",
+  " (in 'simulate_infections', line 860, column 4 to column 37)",
+  " (in 'simulate_infections', line 866, column 6 to column 70)",
+  " (in 'simulate_infections', line 868, column 8 to column 57)",
+  " (in 'simulate_infections', line 867, column 21 to line 869, column 7)",
+  " (in 'simulate_infections', line 867, column 6 to line 869, column 7)",
+  " (in 'simulate_infections', line 865, column 27 to line 870, column 5)",
+  " (in 'simulate_infections', line 865, column 11 to line 870, column 5)",
+  " (in 'simulate_infections', line 864, column 5 to column 41)",
+  " (in 'simulate_infections', line 863, column 27 to line 865, column 5)",
+  " (in 'simulate_infections', line 863, column 11 to line 870, column 5)",
+  " (in 'simulate_infections', line 862, column 6 to column 59)",
+  " (in 'simulate_infections', line 861, column 20 to line 863, column 5)",
+  " (in 'simulate_infections', line 861, column 4 to line 870, column 5)",
+  " (in 'simulate_infections', line 859, column 14 to line 871, column 3)",
+  " (in 'simulate_infections', line 859, column 2 to line 873, column 3)",
+  " (in 'simulate_infections', line 874, column 2 to column 21)",
+  " (in 'simulate_infections', line 856, column 40 to line 875, column 1)",
+  " (in 'simulate_infections', line 893, column 2 to column 32)",
+  " (in 'simulate_infections', line 894, column 9 to column 11)",
+  " (in 'simulate_infections', line 894, column 2 to column 41)",
+  " (in 'simulate_infections', line 895, column 2 to column 47)",
+  " (in 'simulate_infections', line 892, column 41 to line 896, column 1)",
+  " (in 'simulate_infections', line 911, column 2 to column 32)",
+  " (in 'simulate_infections', line 912, column 9 to column 10)",
+  " (in 'simulate_infections', line 912, column 2 to column 27)",
+  " (in 'simulate_infections', line 913, column 2 to column 47)",
+  " (in 'simulate_infections', line 914, column 2 to column 25)",
+  " (in 'simulate_infections', line 910, column 57 to line 915, column 1)",
+  " (in 'simulate_infections', line 934, column 2 to column 32)",
+  " (in 'simulate_infections', line 935, column 2 to column 46)",
+  " (in 'simulate_infections', line 936, column 9 to column 10)",
+  " (in 'simulate_infections', line 936, column 2 to column 36)",
+  " (in 'simulate_infections', line 938, column 2 to column 36)",
+  " (in 'simulate_infections', line 939, column 2 to column 34)",
+  " (in 'simulate_infections', line 940, column 2 to column 46)",
+  " (in 'simulate_infections', line 946, column 4 to column 70)",
+  " (in 'simulate_infections', line 945, column 9 to line 947, column 3)",
+  " (in 'simulate_infections', line 944, column 4 to column 70)",
+  " (in 'simulate_infections', line 943, column 19 to line 945, column 3)",
+  " (in 'simulate_infections', line 943, column 2 to line 947, column 3)",
+  " (in 'simulate_infections', line 948, column 2 to column 24)",
+  " (in 'simulate_infections', line 933, column 75 to line 949, column 1)",
+  " (in 'simulate_infections', line 972, column 2 to column 49)",
+  " (in 'simulate_infections', line 976, column 6 to column 63)",
+  " (in 'simulate_infections', line 974, column 30 to line 977, column 5)",
+  " (in 'simulate_infections', line 974, column 4 to line 977, column 5)",
+  " (in 'simulate_infections', line 980, column 6 to column 57)",
+  " (in 'simulate_infections', line 978, column 28 to line 981, column 5)",
+  " (in 'simulate_infections', line 978, column 4 to line 981, column 5)",
+  " (in 'simulate_infections', line 973, column 18 to line 982, column 3)",
+  " (in 'simulate_infections', line 973, column 2 to line 982, column 3)",
+  " (in 'simulate_infections', line 971, column 73 to line 983, column 1)",
+  " (in 'simulate_infections', line 1003, column 2 to column 35)",
+  " (in 'simulate_infections', line 1004, column 9 to column 10)",
+  " (in 'simulate_infections', line 1004, column 2 to column 46)",
+  " (in 'simulate_infections', line 1018, column 6 to column 59)",
+  " (in 'simulate_infections', line 1017, column 11 to line 1019, column 5)",
+  " (in 'simulate_infections', line 1016, column 6 to column 35)",
+  " (in 'simulate_infections', line 1015, column 21 to line 1017, column 5)",
+  " (in 'simulate_infections', line 1015, column 4 to line 1019, column 5)",
+  " (in 'simulate_infections', line 1014, column 9 to line 1020, column 3)",
+  " (in 'simulate_infections', line 1006, column 4 to column 52)",
+  " (in 'simulate_infections', line 1010, column 6 to line 1012, column 17)",
+  " (in 'simulate_infections', line 1009, column 11 to line 1013, column 5)",
+  " (in 'simulate_infections', line 1008, column 6 to column 47)",
+  " (in 'simulate_infections', line 1007, column 21 to line 1009, column 5)",
+  " (in 'simulate_infections', line 1007, column 4 to line 1013, column 5)",
+  " (in 'simulate_infections', line 1005, column 18 to line 1014, column 3)",
+  " (in 'simulate_infections', line 1005, column 2 to line 1020, column 3)",
+  " (in 'simulate_infections', line 1002, column 75 to line 1021, column 1)",
+  " (in 'simulate_infections', line 1038, column 2 to column 35)",
+  " (in 'simulate_infections', line 1039, column 9 to column 13)",
+  " (in 'simulate_infections', line 1039, column 2 to column 45)",
+  " (in 'simulate_infections', line 1042, column 6 to column 59)",
+  " (in 'simulate_infections', line 1041, column 23 to line 1043, column 5)",
+  " (in 'simulate_infections', line 1041, column 4 to line 1043, column 5)",
+  " (in 'simulate_infections', line 1040, column 26 to line 1044, column 3)",
+  " (in 'simulate_infections', line 1040, column 2 to line 1044, column 3)",
+  " (in 'simulate_infections', line 1045, column 2 to column 29)",
+  " (in 'simulate_infections', line 1037, column 66 to line 1046, column 1)",
+  " (in 'simulate_infections', line 1067, column 2 to column 32)",
+  " (in 'simulate_infections', line 1068, column 9 to column 10)",
+  " (in 'simulate_infections', line 1068, column 2 to column 20)",
+  " (in 'simulate_infections', line 1076, column 4 to column 52)",
+  " (in 'simulate_infections', line 1078, column 6 to line 1080, column 17)",
+  " (in 'simulate_infections', line 1077, column 19 to line 1081, column 5)",
+  " (in 'simulate_infections', line 1077, column 4 to line 1081, column 5)",
+  " (in 'simulate_infections', line 1075, column 9 to line 1082, column 3)",
+  " (in 'simulate_infections', line 1073, column 6 to column 64)",
+  " (in 'simulate_infections', line 1072, column 19 to line 1074, column 5)",
+  " (in 'simulate_infections', line 1072, column 4 to line 1074, column 5)",
+  " (in 'simulate_infections', line 1071, column 23 to line 1075, column 3)",
+  " (in 'simulate_infections', line 1071, column 2 to line 1082, column 3)",
+  " (in 'simulate_infections', line 1083, column 2 to column 18)",
+  " (in 'simulate_infections', line 1066, column 82 to line 1084, column 1)",
+  " (in 'simulate_infections', line 1113, column 4 to column 47)",
+  " (in 'simulate_infections', line 1114, column 4 to column 61)",
+  " (in 'simulate_infections', line 1112, column 9 to line 1115, column 3)",
+  " (in 'simulate_infections', line 1111, column 4 to column 45)",
+  " (in 'simulate_infections', line 1110, column 24 to line 1112, column 3)",
+  " (in 'simulate_infections', line 1110, column 9 to line 1115, column 3)",
+  " (in 'simulate_infections', line 1109, column 4 to column 14)",
+  " (in 'simulate_infections', line 1108, column 17 to line 1110, column 3)",
+  " (in 'simulate_infections', line 1108, column 2 to line 1115, column 3)",
+  " (in 'simulate_infections', line 1107, column 47 to line 1116, column 1)",
+  " (in 'simulate_infections', line 1134, column 2 to column 32)",
+  " (in 'simulate_infections', line 1135, column 8 to column 9)",
+  " (in 'simulate_infections', line 1135, column 2 to column 31)",
+  " (in 'simulate_infections', line 1136, column 2 to column 17)",
+  " (in 'simulate_infections', line 1138, column 4 to column 47)",
+  " (in 'simulate_infections', line 1137, column 18 to line 1139, column 3)",
+  " (in 'simulate_infections', line 1137, column 2 to line 1139, column 3)",
+  " (in 'simulate_infections', line 1142, column 4 to column 66)",
+  " (in 'simulate_infections', line 1141, column 17 to line 1143, column 3)",
+  " (in 'simulate_infections', line 1141, column 2 to line 1143, column 3)",
+  " (in 'simulate_infections', line 1144, column 2 to column 26)",
+  " (in 'simulate_infections', line 1133, column 86 to line 1145, column 1)",
+  " (in 'simulate_infections', line 1169, column 2 to column 35)",
+  " (in 'simulate_infections', line 1170, column 2 to column 28)",
+  " (in 'simulate_infections', line 1171, column 9 to column 11)",
+  " (in 'simulate_infections', line 1171, column 2 to column 15)",
+  " (in 'simulate_infections', line 1172, column 9 to column 11)",
+  " (in 'simulate_infections', line 1172, column 2 to column 16)",
+  " (in 'simulate_infections', line 1173, column 9 to column 11)",
+  " (in 'simulate_infections', line 1173, column 2 to column 51)",
+  " (in 'simulate_infections', line 1176, column 4 to line 1178, column 6)",
+  " (in 'simulate_infections', line 1179, column 4 to column 60)",
+  " (in 'simulate_infections', line 1175, column 18 to line 1180, column 3)",
+  " (in 'simulate_infections', line 1175, column 2 to line 1180, column 3)",
+  " (in 'simulate_infections', line 1192, column 4 to column 11)",
+  " (in 'simulate_infections', line 1191, column 8 to line 1193, column 3)",
+  " (in 'simulate_infections', line 1183, column 6 to column 22)",
+  " (in 'simulate_infections', line 1184, column 6 to column 16)",
+  " (in 'simulate_infections', line 1186, column 8 to column 22)",
+  " (in 'simulate_infections', line 1187, column 8 to column 20)",
+  " (in 'simulate_infections', line 1185, column 56 to line 1188, column 7)",
+  " (in 'simulate_infections', line 1185, column 6 to line 1188, column 7)",
+  " (in 'simulate_infections', line 1189, column 6 to column 29)",
+  " (in 'simulate_infections', line 1182, column 20 to line 1190, column 5)",
+  " (in 'simulate_infections', line 1182, column 4 to line 1190, column 5)",
+  " (in 'simulate_infections', line 1181, column 14 to line 1191, column 3)",
+  " (in 'simulate_infections', line 1181, column 2 to line 1193, column 3)",
+  " (in 'simulate_infections', line 1194, column 2 to column 13)",
+  " (in 'simulate_infections', line 1168, column 51 to line 1195, column 1)",
+  " (in 'simulate_infections', line 1220, column 4 to column 74)",
+  " (in 'simulate_infections', line 1219, column 9 to line 1221, column 3)",
+  " (in 'simulate_infections', line 1218, column 4 to column 75)",
+  " (in 'simulate_infections', line 1217, column 33 to line 1219, column 3)",
+  " (in 'simulate_infections', line 1217, column 9 to line 1221, column 3)",
+  " (in 'simulate_infections', line 1216, column 4 to column 66)",
+  " (in 'simulate_infections', line 1215, column 26 to line 1217, column 3)",
+  " (in 'simulate_infections', line 1215, column 2 to line 1221, column 3)",
+  " (in 'simulate_infections', line 1214, column 67 to line 1222, column 1)",
+  " (in 'simulate_infections', line 1238, column 2 to column 35)",
+  " (in 'simulate_infections', line 1239, column 2 to column 28)",
+  " (in 'simulate_infections', line 1240, column 2 to column 31)",
+  " (in 'simulate_infections', line 1241, column 9 to column 10)",
+  " (in 'simulate_infections', line 1241, column 2 to column 38)",
+  " (in 'simulate_infections', line 1242, column 9 to column 15)",
+  " (in 'simulate_infections', line 1242, column 2 to column 72)",
+  " (in 'simulate_infections', line 1243, column 2 to column 17)",
+  " (in 'simulate_infections', line 1237, column 72 to line 1244, column 1)",
+  " (in 'simulate_infections', line 1264, column 2 to column 35)",
+  " (in 'simulate_infections', line 1265, column 2 to column 28)",
+  " (in 'simulate_infections', line 1266, column 2 to column 31)",
+  " (in 'simulate_infections', line 1268, column 4 to column 77)",
+  " (in 'simulate_infections', line 1267, column 15 to line 1269, column 5)",
+  " (in 'simulate_infections', line 1267, column 2 to line 1269, column 5)",
+  " (in 'simulate_infections', line 1271, column 9 to column 11)",
+  " (in 'simulate_infections', line 1271, column 2 to column 48)",
+  " (in 'simulate_infections', line 1273, column 4 to line 1275, column 7)",
+  " (in 'simulate_infections', line 1272, column 18 to line 1276, column 3)",
+  " (in 'simulate_infections', line 1272, column 2 to line 1276, column 3)",
+  " (in 'simulate_infections', line 1278, column 2 to column 43)",
+  " (in 'simulate_infections', line 1279, column 2 to line 1281, column 7)",
+  " (in 'simulate_infections', line 1283, column 9 to column 15)",
+  " (in 'simulate_infections', line 1283, column 2 to column 70)",
+  " (in 'simulate_infections', line 1285, column 2 to column 66)",
+  " (in 'simulate_infections', line 1286, column 2 to column 74)",
+  " (in 'simulate_infections', line 1287, column 2 to column 17)",
+  " (in 'simulate_infections', line 1263, column 63 to line 1288, column 1)",
+  " (in 'simulate_infections', line 1322, column 4 to column 46)",
+  " (in 'simulate_infections', line 1321, column 9 to line 1323, column 3)",
+  " (in 'simulate_infections', line 1320, column 4 to column 49)",
+  " (in 'simulate_infections', line 1319, column 38 to line 1321, column 3)",
+  " (in 'simulate_infections', line 1319, column 9 to line 1323, column 3)",
+  " (in 'simulate_infections', line 1318, column 4 to column 13)",
+  " (in 'simulate_infections', line 1317, column 15 to line 1319, column 3)",
+  " (in 'simulate_infections', line 1317, column 2 to line 1323, column 3)",
+  " (in 'simulate_infections', line 1316, column 51 to line 1324, column 1)",
+  " (in 'simulate_infections', line 1345, column 2 to column 31)",
+  " (in 'simulate_infections', line 1351, column 4 to column 48)",
+  " (in 'simulate_infections', line 1350, column 9 to line 1352, column 3)",
+  " (in 'simulate_infections', line 1349, column 4 to column 72)",
+  " (in 'simulate_infections', line 1348, column 38 to line 1350, column 3)",
+  " (in 'simulate_infections', line 1348, column 9 to line 1352, column 3)",
+  " (in 'simulate_infections', line 1347, column 4 to column 37)",
+  " (in 'simulate_infections', line 1346, column 15 to line 1348, column 3)",
+  " (in 'simulate_infections', line 1346, column 2 to line 1352, column 3)",
+  " (in 'simulate_infections', line 1344, column 53 to line 1353, column 1)",
+  " (in 'simulate_infections', line 1372, column 2 to column 20)",
+  " (in 'simulate_infections', line 1373, column 2 to column 40)",
+  " (in 'simulate_infections', line 1393, column 6 to column 34)",
+  " (in 'simulate_infections', line 1392, column 11 to line 1394, column 5)",
+  " (in 'simulate_infections', line 1388, column 6 to line 1390, column 46)",
+  " (in 'simulate_infections', line 1390, column 28 to column 44)",
+  " (in 'simulate_infections', line 1390, column 10 to column 26)",
+  " (in 'simulate_infections', line 1391, column 6 to column 21)",
+  " (in 'simulate_infections', line 1387, column 36 to line 1392, column 5)",
+  " (in 'simulate_infections', line 1387, column 11 to line 1394, column 5)",
+  " (in 'simulate_infections', line 1383, column 6 to line 1385, column 46)",
+  " (in 'simulate_infections', line 1385, column 28 to column 44)",
+  " (in 'simulate_infections', line 1385, column 10 to column 26)",
+  " (in 'simulate_infections', line 1386, column 6 to column 21)",
+  " (in 'simulate_infections', line 1382, column 36 to line 1387, column 5)",
+  " (in 'simulate_infections', line 1382, column 11 to line 1394, column 5)",
+  " (in 'simulate_infections', line 1376, column 6 to line 1380, column 46)",
+  " (in 'simulate_infections', line 1380, column 28 to column 44)",
+  " (in 'simulate_infections', line 1380, column 10 to column 26)",
+  " (in 'simulate_infections', line 1381, column 6 to column 21)",
+  " (in 'simulate_infections', line 1375, column 29 to line 1382, column 5)",
+  " (in 'simulate_infections', line 1375, column 4 to line 1394, column 5)",
+  " (in 'simulate_infections', line 1374, column 27 to line 1395, column 3)",
+  " (in 'simulate_infections', line 1374, column 2 to line 1395, column 3)",
+  " (in 'simulate_infections', line 1371, column 35 to line 1396, column 1)"};
 std::vector<int>
 calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
                        std::ostream* pstream__);
@@ -899,19 +933,24 @@ stan::promote_args_t<stan::base_type_t<T0__>, stan::base_type_t<T1__>>
 update_infectiousness(const T0__& infections_arg__, const T1__&
                       gt_rev_pmf_arg__, const int& seeding_time, const int&
                       index, std::ostream* pstream__);
-template <typename T0__, typename T2__, typename T3__, typename T7__,
+template <typename T0__, typename T2__, typename T3__, typename T4__,
+          typename T6__, typename T9__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_col_vector<T2__>,
                               stan::is_vt_not_complex<T2__>,
                               stan::is_stan_scalar<T3__>,
-                              stan::is_stan_scalar<T7__>>* = nullptr>
+                              stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T6__>,
+                              stan::is_stan_scalar<T9__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
-                stan::base_type_t<T2__>, T3__, T7__>,-1,1>
+                stan::base_type_t<T2__>, T3__, T4__, T6__,
+                stan::promote_args_t<T9__>>,-1,1>
 generate_infections(const T0__& R_arg__, const int& uot, const T2__&
                     gt_rev_pmf_arg__, const std::vector<T3__>&
-                    initial_infections, const int& pop, const int& ht,
-                    const int& obs_scale, const T7__& frac_obs, const int&
+                    initial_infections, const T4__& pop, const int& use_pop,
+                    const T6__& pop_floor, const int& ht, const int&
+                    obs_scale, const T9__& fraction_observed, const int&
                     initial_as_scale, std::ostream* pstream__);
 template <typename T0__, typename T1__,
           stan::require_all_t<stan::is_col_vector<T0__>,
@@ -938,8 +977,8 @@ template <typename T0__, typename T1__,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>, T1__>,-1,1>
-scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
-          pstream__);
+scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
+          std::ostream* pstream__);
 template <typename T0__, typename T1__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -974,9 +1013,9 @@ template <bool propto__, typename T2__, typename T3__, typename T5__,
                               stan::is_stan_scalar<T5__>>* = nullptr>
 void
 report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
-          const T2__& reports_arg__, const T3__& dispersion, const int&
-          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
-          lp_accum__, std::ostream* pstream__);
+          const T2__& reports_arg__, const T3__& reporting_overdispersion,
+          const int& model_type, const T5__& weight, T_lp__& lp__,
+          T_lp_accum__& lp_accum__, std::ostream* pstream__);
 template <typename T0__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>>* = nullptr>
@@ -990,8 +1029,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const T2__& dispersion, const int& model_type, const T4__&
-               weight, std::ostream* pstream__);
+               const T2__& reporting_overdispersion, const int& model_type,
+               const T4__& weight, std::ostream* pstream__);
 template <typename T0__, typename T1__, typename RNG,
           stan::require_all_t<stan::is_stan_scalar<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
@@ -1003,8 +1042,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
-           model_type, RNG& base_rng__, std::ostream* pstream__);
+report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
+           const int& model_type, RNG& base_rng__, std::ostream* pstream__);
 template <typename T0__, typename T2__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -1015,12 +1054,32 @@ Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
 calculate_Rt(const T0__& infections_arg__, const int& seeding_time,
              const T2__& gt_rev_pmf_arg__, const int& smooth, std::ostream*
              pstream__);
+template <typename T0__, typename T2__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T2__>,
+                              stan::is_vt_not_complex<T2__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
+                stan::base_type_t<T2__>>,-1,1>
+calculate_growth(const T0__& infections_arg__, const int& seeding_time,
+                 const T2__& gt_rev_pmf_arg__, const int& growth_method,
+                 std::ostream* pstream__);
 template <typename T0__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>>,-1,1>
-calculate_growth(const T0__& infections_arg__, const int& seeding_time,
-                 std::ostream* pstream__);
+calculate_growth_infections(const T0__& infections_arg__, const int&
+                            seeding_time, std::ostream* pstream__);
+template <typename T0__, typename T2__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T2__>,
+                              stan::is_vt_not_complex<T2__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
+                stan::base_type_t<T2__>>,-1,1>
+calculate_growth_infness(const T0__& infections_arg__, const int&
+                         seeding_time, const T2__& gt_rev_pmf_arg__,
+                         std::ostream* pstream__);
 template <typename T3__, typename T4__,
           stan::require_all_t<stan::is_col_vector<T3__>,
                               stan::is_vt_not_complex<T3__>,
@@ -1070,21 +1129,21 @@ calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
   (void) DUMMY_VAR__;
   try {
     int s_minus_ylen = std::numeric_limits<int>::min();
-    current_statement__ = 120;
+    current_statement__ = 125;
     s_minus_ylen = (s - ylen);
     int start_x = std::numeric_limits<int>::min();
-    current_statement__ = 121;
+    current_statement__ = 126;
     start_x = stan::math::max(1, (s_minus_ylen + 1));
     int end_x = std::numeric_limits<int>::min();
-    current_statement__ = 122;
+    current_statement__ = 127;
     end_x = s;
     int start_y = std::numeric_limits<int>::min();
-    current_statement__ = 123;
+    current_statement__ = 128;
     start_y = stan::math::max(1, (1 - s_minus_ylen));
     int end_y = std::numeric_limits<int>::min();
-    current_statement__ = 124;
+    current_statement__ = 129;
     end_y = ylen;
-    current_statement__ = 125;
+    current_statement__ = 130;
     return std::vector<int>{start_x, end_x, start_y, end_y};
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1103,22 +1162,22 @@ calc_conv_indices_len(const int& s, const int& xlen, const int& ylen,
   (void) DUMMY_VAR__;
   try {
     int s_minus_ylen = std::numeric_limits<int>::min();
-    current_statement__ = 127;
+    current_statement__ = 132;
     s_minus_ylen = (s - ylen);
     int start_x = std::numeric_limits<int>::min();
-    current_statement__ = 128;
+    current_statement__ = 133;
     start_x = stan::math::max(1, (s_minus_ylen + 1));
     int end_x = std::numeric_limits<int>::min();
-    current_statement__ = 129;
+    current_statement__ = 134;
     end_x = xlen;
     int start_y = std::numeric_limits<int>::min();
-    current_statement__ = 130;
+    current_statement__ = 135;
     start_y = stan::math::max(1, (1 - s_minus_ylen));
     ;
     int end_y = std::numeric_limits<int>::min();
-    current_statement__ = 132;
+    current_statement__ = 137;
     end_y = ((ylen + xlen) - s);
-    current_statement__ = 133;
+    current_statement__ = 138;
     return std::vector<int>{start_x, end_x, start_y, end_y};
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1146,40 +1205,40 @@ convolve_with_rev_pmf(const T0__& x_arg__, const T1__& y_arg__, const int&
   (void) DUMMY_VAR__;
   try {
     int xlen = std::numeric_limits<int>::min();
-    current_statement__ = 135;
+    current_statement__ = 140;
     xlen = stan::math::num_elements(x);
     int ylen = std::numeric_limits<int>::min();
-    current_statement__ = 136;
+    current_statement__ = 141;
     ylen = stan::math::num_elements(y);
-    current_statement__ = 137;
+    current_statement__ = 142;
     stan::math::validate_non_negative_index("z", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> z =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 141;
+    current_statement__ = 146;
     if (stan::math::logical_lt(((xlen + ylen) - 1), len)) {
-      current_statement__ = 139;
+      current_statement__ = 144;
       std::stringstream errmsg_stream__;
       stan::math::stan_print(&errmsg_stream__,
         "convolve_with_rev_pmf: len is longer than x and y convolved");
       throw std::domain_error(errmsg_stream__.str());
     }
-    current_statement__ = 144;
+    current_statement__ = 149;
     if (stan::math::logical_gt(xlen, len)) {
-      current_statement__ = 142;
+      current_statement__ = 147;
       std::stringstream errmsg_stream__;
       stan::math::stan_print(&errmsg_stream__,
         "convolve_with_rev_pmf: len is shorter than x");
       throw std::domain_error(errmsg_stream__.str());
     }
-    current_statement__ = 148;
+    current_statement__ = 153;
     for (int s = 1; s <= xlen; ++s) {
       std::vector<int> indices =
         std::vector<int>(4, std::numeric_limits<int>::min());
-      current_statement__ = 145;
+      current_statement__ = 150;
       stan::model::assign(indices,
         calc_conv_indices_xlen(s, xlen, ylen, pstream__),
         "assigning variable indices");
-      current_statement__ = 146;
+      current_statement__ = 151;
       stan::model::assign(z,
         stan::math::dot_product(
           stan::model::rvalue(x, "x",
@@ -1196,17 +1255,17 @@ convolve_with_rev_pmf(const T0__& x_arg__, const T1__& y_arg__, const int&
                 stan::model::index_uni(4))))), "assigning variable z",
         stan::model::index_uni(s));
     }
-    current_statement__ = 154;
+    current_statement__ = 159;
     if (stan::math::logical_gt(len, xlen)) {
-      current_statement__ = 152;
+      current_statement__ = 157;
       for (int s = (xlen + 1); s <= len; ++s) {
         std::vector<int> indices =
           std::vector<int>(4, std::numeric_limits<int>::min());
-        current_statement__ = 149;
+        current_statement__ = 154;
         stan::model::assign(indices,
           calc_conv_indices_len(s, xlen, ylen, pstream__),
           "assigning variable indices");
-        current_statement__ = 150;
+        current_statement__ = 155;
         stan::model::assign(z,
           stan::math::dot_product(
             stan::model::rvalue(x, "x",
@@ -1224,7 +1283,7 @@ convolve_with_rev_pmf(const T0__& x_arg__, const T1__& y_arg__, const int&
           stan::model::index_uni(s));
       }
     }
-    current_statement__ = 155;
+    current_statement__ = 160;
     return z;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1253,26 +1312,26 @@ convolve_to_report(const T0__& infections_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 157;
+    current_statement__ = 162;
     t = stan::math::num_elements(infections);
     int delays = std::numeric_limits<int>::min();
-    current_statement__ = 158;
+    current_statement__ = 163;
     delays = stan::math::num_elements(delay_rev_pmf);
-    current_statement__ = 161;
+    current_statement__ = 166;
     if (stan::math::logical_eq(delays, 0)) {
-      current_statement__ = 159;
+      current_statement__ = 164;
       return stan::model::rvalue(infections, "infections",
                stan::model::index_min_max((seeding_time + 1), t));
     }
-    current_statement__ = 162;
+    current_statement__ = 167;
     stan::math::validate_non_negative_index("unobs_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> unobs_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 163;
+    current_statement__ = 168;
     stan::model::assign(unobs_reports,
       convolve_with_rev_pmf(infections, delay_rev_pmf, t, pstream__),
       "assigning variable unobs_reports");
-    current_statement__ = 164;
+    current_statement__ = 169;
     return stan::model::rvalue(unobs_reports, "unobs_reports",
              stan::model::index_min_max((seeding_time + 1), t));
   } catch (const std::exception& e) {
@@ -1295,19 +1354,19 @@ discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 166;
+    current_statement__ = 171;
     stan::math::validate_non_negative_index("lpmf", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> lpmf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 168;
+    current_statement__ = 173;
     stan::math::validate_non_negative_index("upper_lcdf", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> upper_lcdf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 181;
+    current_statement__ = 186;
     if (stan::math::logical_eq(dist, 0)) {
-      current_statement__ = 179;
+      current_statement__ = 184;
       for (int i = 1; i <= n; ++i) {
-        current_statement__ = 177;
+        current_statement__ = 182;
         stan::model::assign(upper_lcdf,
           stan::math::lognormal_lcdf(i,
             stan::model::rvalue(params, "params", stan::model::index_uni(1)),
@@ -1315,11 +1374,11 @@ discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
           "assigning variable upper_lcdf", stan::model::index_uni(i));
       }
     } else {
-      current_statement__ = 176;
+      current_statement__ = 181;
       if (stan::math::logical_eq(dist, 1)) {
-        current_statement__ = 174;
+        current_statement__ = 179;
         for (int i = 1; i <= n; ++i) {
-          current_statement__ = 172;
+          current_statement__ = 177;
           stan::model::assign(upper_lcdf,
             stan::math::gamma_lcdf(i,
               stan::model::rvalue(params, "params", stan::model::index_uni(1)),
@@ -1327,28 +1386,28 @@ discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
             "assigning variable upper_lcdf", stan::model::index_uni(i));
         }
       } else {
-        current_statement__ = 170;
+        current_statement__ = 175;
         std::stringstream errmsg_stream__;
         stan::math::stan_print(&errmsg_stream__,
           "Unknown distribution function provided.");
         throw std::domain_error(errmsg_stream__.str());
       }
     }
-    current_statement__ = 191;
+    current_statement__ = 196;
     if (stan::math::logical_gt(n, 1)) {
-      current_statement__ = 184;
+      current_statement__ = 189;
       stan::model::assign(lpmf,
         stan::model::rvalue(upper_lcdf, "upper_lcdf",
           stan::model::index_uni(1)), "assigning variable lpmf",
         stan::model::index_uni(1));
-      current_statement__ = 185;
+      current_statement__ = 190;
       stan::model::assign(lpmf,
         stan::model::rvalue(upper_lcdf, "upper_lcdf",
           stan::model::index_uni(2)), "assigning variable lpmf",
         stan::model::index_uni(2));
-      current_statement__ = 188;
+      current_statement__ = 193;
       if (stan::math::logical_gt(n, 2)) {
-        current_statement__ = 186;
+        current_statement__ = 191;
         stan::model::assign(lpmf,
           stan::math::log_diff_exp(
             stan::model::rvalue(upper_lcdf, "upper_lcdf",
@@ -1357,7 +1416,7 @@ discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
               stan::model::index_min_max(1, (n - 2)))),
           "assigning variable lpmf", stan::model::index_min_max(3, n));
       }
-      current_statement__ = 189;
+      current_statement__ = 194;
       stan::model::assign(lpmf,
         stan::math::subtract(stan::model::deep_copy(lpmf),
           stan::math::log_sum_exp(
@@ -1365,11 +1424,11 @@ discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
               stan::model::index_min_max((n - 1), n)))),
         "assigning variable lpmf");
     } else {
-      current_statement__ = 182;
+      current_statement__ = 187;
       stan::model::assign(lpmf, 0, "assigning variable lpmf",
         stan::model::index_uni(1));
     }
-    current_statement__ = 192;
+    current_statement__ = 197;
     return stan::math::exp(lpmf);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1390,25 +1449,25 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 194;
+    current_statement__ = 199;
     stan::math::validate_non_negative_index("ret", "delay_types", delay_types);
     std::vector<int> ret =
       std::vector<int>(delay_types, std::numeric_limits<int>::min());
-    current_statement__ = 205;
+    current_statement__ = 210;
     for (int i = 1; i <= delay_types; ++i) {
-      current_statement__ = 196;
+      current_statement__ = 201;
       stan::model::assign(ret, 0, "assigning variable ret",
         stan::model::index_uni(i));
-      current_statement__ = 203;
+      current_statement__ = 208;
       for (int j =
              stan::model::rvalue(delay_types_groups, "delay_types_groups",
                stan::model::index_uni(i)); j <=
            (stan::model::rvalue(delay_types_groups, "delay_types_groups",
               stan::model::index_uni((i + 1))) - 1); ++j) {
-        current_statement__ = 201;
+        current_statement__ = 206;
         if (stan::model::rvalue(delay_types_p, "delay_types_p",
               stan::model::index_uni(j))) {
-          current_statement__ = 199;
+          current_statement__ = 204;
           stan::model::assign(ret,
             (stan::model::rvalue(ret, "ret", stan::model::index_uni(i)) +
             stan::model::rvalue(delay_max, "delay_max",
@@ -1417,7 +1476,7 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
                   stan::model::index_uni(j))))), "assigning variable ret",
             stan::model::index_uni(i));
         } else {
-          current_statement__ = 197;
+          current_statement__ = 202;
           stan::model::assign(ret,
             (stan::model::rvalue(ret, "ret", stan::model::index_uni(i)) +
             ((stan::model::rvalue(delay_np_pmf_groups, "delay_np_pmf_groups",
@@ -1432,7 +1491,7 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
         }
       }
     }
-    current_statement__ = 206;
+    current_statement__ = 211;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1468,42 +1527,42 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 208;
+    current_statement__ = 213;
     stan::math::validate_non_negative_index("pmf", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> pmf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 209;
+    current_statement__ = 214;
     stan::model::assign(pmf, stan::math::rep_vector(0, len),
       "assigning variable pmf");
     int current_len = std::numeric_limits<int>::min();
-    current_statement__ = 210;
+    current_statement__ = 215;
     current_len = 1;
     int new_len = std::numeric_limits<int>::min();
-    current_statement__ = 235;
+    current_statement__ = 240;
     for (int i =
            stan::model::rvalue(delay_types_groups, "delay_types_groups",
              stan::model::index_uni(delay_id)); i <=
          (stan::model::rvalue(delay_types_groups, "delay_types_groups",
             stan::model::index_uni((delay_id + 1))) - 1); ++i) {
-      current_statement__ = 232;
+      current_statement__ = 237;
       if (stan::model::rvalue(delay_types_p, "delay_types_p",
             stan::model::index_uni(i))) {
         int start = std::numeric_limits<int>::min();
-        current_statement__ = 221;
+        current_statement__ = 226;
         start = stan::model::rvalue(delay_params_groups,
                   "delay_params_groups",
                   stan::model::index_uni(
                     stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i))));
         int end = std::numeric_limits<int>::min();
-        current_statement__ = 222;
+        current_statement__ = 227;
         end = (stan::model::rvalue(delay_params_groups,
                  "delay_params_groups",
                  stan::model::index_uni(
                    (stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i)) + 1)))
           - 1);
-        current_statement__ = 223;
+        current_statement__ = 228;
         stan::math::validate_non_negative_index("new_variable_pmf",
           "delay_max[delay_types_id[i]] + 1",
           (stan::model::rvalue(delay_max, "delay_max",
@@ -1521,7 +1580,7 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                                                                 stan::model::index_uni(
                                                                   i)))) + 1),
             DUMMY_VAR__);
-        current_statement__ = 224;
+        current_statement__ = 229;
         stan::model::assign(new_variable_pmf,
           discretised_pmf(
             stan::model::rvalue(delay_params, "delay_params",
@@ -1535,19 +1594,19 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                 stan::model::rvalue(delay_types_id, "delay_types_id",
                   stan::model::index_uni(i)))), pstream__),
           "assigning variable new_variable_pmf");
-        current_statement__ = 225;
+        current_statement__ = 230;
         new_len = (current_len +
           stan::model::rvalue(delay_max, "delay_max",
             stan::model::index_uni(
               stan::model::rvalue(delay_types_id, "delay_types_id",
                 stan::model::index_uni(i)))));
-        current_statement__ = 230;
+        current_statement__ = 235;
         if (stan::math::logical_eq(current_len, 1)) {
-          current_statement__ = 228;
+          current_statement__ = 233;
           stan::model::assign(pmf, new_variable_pmf,
             "assigning variable pmf", stan::model::index_min_max(1, new_len));
         } else {
-          current_statement__ = 226;
+          current_statement__ = 231;
           stan::model::assign(pmf,
             convolve_with_rev_pmf(
               stan::model::deep_copy(
@@ -1558,31 +1617,31 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
         }
       } else {
         int start = std::numeric_limits<int>::min();
-        current_statement__ = 212;
+        current_statement__ = 217;
         start = stan::model::rvalue(delay_np_pmf_groups,
                   "delay_np_pmf_groups",
                   stan::model::index_uni(
                     stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i))));
         int end = std::numeric_limits<int>::min();
-        current_statement__ = 213;
+        current_statement__ = 218;
         end = (stan::model::rvalue(delay_np_pmf_groups,
                  "delay_np_pmf_groups",
                  stan::model::index_uni(
                    (stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i)) + 1)))
           - 1);
-        current_statement__ = 214;
-        new_len = ((current_len + end) - start);
         current_statement__ = 219;
+        new_len = ((current_len + end) - start);
+        current_statement__ = 224;
         if (stan::math::logical_eq(current_len, 1)) {
-          current_statement__ = 217;
+          current_statement__ = 222;
           stan::model::assign(pmf,
             stan::model::rvalue(delay_np_pmf, "delay_np_pmf",
               stan::model::index_min_max(start, end)),
             "assigning variable pmf", stan::model::index_min_max(1, new_len));
         } else {
-          current_statement__ = 215;
+          current_statement__ = 220;
           stan::model::assign(pmf,
             convolve_with_rev_pmf(
               stan::model::deep_copy(
@@ -1595,12 +1654,12 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
             stan::model::index_min_max(1, new_len));
         }
       }
-      current_statement__ = 233;
+      current_statement__ = 238;
       current_len = new_len;
     }
-    current_statement__ = 238;
+    current_statement__ = 243;
     if (left_truncate) {
-      current_statement__ = 236;
+      current_statement__ = 241;
       stan::model::assign(pmf,
         stan::math::append_row(stan::math::rep_vector(0, left_truncate),
           stan::math::divide(
@@ -1612,21 +1671,21 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                 stan::model::index_min_max((left_truncate + 1), len))))),
         "assigning variable pmf");
     }
-    current_statement__ = 241;
+    current_statement__ = 246;
     if (cumulative) {
-      current_statement__ = 239;
+      current_statement__ = 244;
       stan::model::assign(pmf,
         stan::math::cumulative_sum(stan::model::deep_copy(pmf)),
         "assigning variable pmf");
     }
-    current_statement__ = 244;
+    current_statement__ = 249;
     if (reverse_pmf) {
-      current_statement__ = 242;
+      current_statement__ = 247;
       stan::model::assign(pmf,
         stan::math::reverse(stan::model::deep_copy(pmf)),
         "assigning variable pmf");
     }
-    current_statement__ = 245;
+    current_statement__ = 250;
     return pmf;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1658,35 +1717,35 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int n_delays = std::numeric_limits<int>::min();
-    current_statement__ = 247;
+    current_statement__ = 252;
     n_delays = (stan::math::num_elements(delay_params_groups) - 1);
-    current_statement__ = 250;
+    current_statement__ = 255;
     if (stan::math::logical_eq(n_delays, 0)) {
-      current_statement__ = 248;
+      current_statement__ = 253;
       return ;
     }
-    current_statement__ = 263;
+    current_statement__ = 268;
     for (int d = 1; d <= n_delays; ++d) {
       int start = std::numeric_limits<int>::min();
-      current_statement__ = 251;
+      current_statement__ = 256;
       start = stan::model::rvalue(delay_params_groups, "delay_params_groups",
                 stan::model::index_uni(d));
       int end = std::numeric_limits<int>::min();
-      current_statement__ = 252;
+      current_statement__ = 257;
       end = (stan::model::rvalue(delay_params_groups, "delay_params_groups",
                stan::model::index_uni((d + 1)))
         - 1);
-      current_statement__ = 261;
+      current_statement__ = 266;
       for (int s = start; s <= end; ++s) {
-        current_statement__ = 259;
+        current_statement__ = 264;
         if (stan::math::logical_gt(
               stan::model::rvalue(delay_params_sd, "delay_params_sd",
                 stan::model::index_uni(s)), 0)) {
-          current_statement__ = 257;
+          current_statement__ = 262;
           if (stan::math::logical_gt(
                 stan::model::rvalue(weight, "weight",
                   stan::model::index_uni(d)), 1)) {
-            current_statement__ = 255;
+            current_statement__ = 260;
             lp_accum__.add((stan::model::rvalue(weight, "weight",
                               stan::model::index_uni(d)) *
               stan::math::normal_lpdf<false>(
@@ -1697,7 +1756,7 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
                 stan::model::rvalue(delay_params_sd, "delay_params_sd",
                   stan::model::index_uni(s)))));
           } else {
-            current_statement__ = 253;
+            current_statement__ = 258;
             lp_accum__.add(stan::math::normal_lpdf<propto__>(
                              stan::model::rvalue(delay_params,
                                "delay_params", stan::model::index_uni(s)),
@@ -1739,31 +1798,31 @@ normal_lb_rng(const T0__& mu_arg__, const T1__& sigma_arg__, const T2__&
   (void) DUMMY_VAR__;
   try {
     int len = std::numeric_limits<int>::min();
-    current_statement__ = 265;
+    current_statement__ = 270;
     len = stan::math::num_elements(mu);
-    current_statement__ = 266;
+    current_statement__ = 271;
     stan::math::validate_non_negative_index("ret", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> ret =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 272;
+    current_statement__ = 277;
     for (int i = 1; i <= len; ++i) {
       local_scalar_t__ p = DUMMY_VAR__;
-      current_statement__ = 268;
+      current_statement__ = 273;
       p = stan::math::normal_cdf(
             stan::model::rvalue(lb, "lb", stan::model::index_uni(i)),
             stan::model::rvalue(mu, "mu", stan::model::index_uni(i)),
             stan::model::rvalue(sigma, "sigma", stan::model::index_uni(i)));
       local_scalar_t__ u = DUMMY_VAR__;
-      current_statement__ = 269;
+      current_statement__ = 274;
       u = stan::math::uniform_rng(p, 1, base_rng__);
-      current_statement__ = 270;
+      current_statement__ = 275;
       stan::model::assign(ret,
         ((stan::model::rvalue(sigma, "sigma", stan::model::index_uni(i)) *
         stan::math::inv_Phi(u)) +
         stan::model::rvalue(mu, "mu", stan::model::index_uni(i))),
         "assigning variable ret", stan::model::index_uni(i));
     }
-    current_statement__ = 273;
+    current_statement__ = 278;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1785,22 +1844,22 @@ diagSPD_EQ(const T0__& alpha, const T1__& rho, const T2__& L, const int& M,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 275;
+    current_statement__ = 280;
     stan::math::validate_non_negative_index("indices", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> indices =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 276;
+    current_statement__ = 281;
     stan::model::assign(indices, stan::math::linspaced_vector(M, 1, M),
       "assigning variable indices");
     local_scalar_t__ factor = DUMMY_VAR__;
-    current_statement__ = 277;
+    current_statement__ = 282;
     factor = (alpha *
       stan::math::sqrt((stan::math::sqrt((2 * stan::math::pi())) * rho)));
     local_scalar_t__ exponent = DUMMY_VAR__;
-    current_statement__ = 278;
+    current_statement__ = 283;
     exponent = (-0.25 *
       stan::math::pow((((rho * stan::math::pi()) / 2) / L), 2));
-    current_statement__ = 279;
+    current_statement__ = 284;
     return stan::math::multiply(factor,
              stan::math::exp(
                stan::math::multiply(exponent, stan::math::square(indices))));
@@ -1824,28 +1883,28 @@ diagSPD_Matern12(const T0__& alpha, const T1__& rho, const T2__& L,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 281;
+    current_statement__ = 286;
     stan::math::validate_non_negative_index("indices", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> indices =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 282;
+    current_statement__ = 287;
     stan::model::assign(indices, stan::math::linspaced_vector(M, 1, M),
       "assigning variable indices");
     local_scalar_t__ factor = DUMMY_VAR__;
-    current_statement__ = 283;
+    current_statement__ = 288;
     factor = 2;
-    current_statement__ = 284;
+    current_statement__ = 289;
     stan::math::validate_non_negative_index("denom", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> denom =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 285;
+    current_statement__ = 290;
     stan::model::assign(denom,
       stan::math::multiply(rho,
         stan::math::add(stan::math::pow((1 / rho), 2),
           stan::math::pow(
             stan::math::multiply(((stan::math::pi() / 2) / L), indices), 2))),
       "assigning variable denom");
-    current_statement__ = 286;
+    current_statement__ = 291;
     return stan::math::multiply(alpha,
              stan::math::sqrt(
                stan::math::multiply(factor, stan::math::inv(denom))));
@@ -1869,28 +1928,28 @@ diagSPD_Matern32(const T0__& alpha, const T1__& rho, const T2__& L,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 288;
+    current_statement__ = 293;
     stan::math::validate_non_negative_index("indices", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> indices =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 289;
+    current_statement__ = 294;
     stan::model::assign(indices, stan::math::linspaced_vector(M, 1, M),
       "assigning variable indices");
     local_scalar_t__ factor = DUMMY_VAR__;
-    current_statement__ = 290;
+    current_statement__ = 295;
     factor = ((2 * alpha) *
       stan::math::pow((stan::math::sqrt(3) / rho), 1.5));
-    current_statement__ = 291;
+    current_statement__ = 296;
     stan::math::validate_non_negative_index("denom", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> denom =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 292;
+    current_statement__ = 297;
     stan::model::assign(denom,
       stan::math::add(stan::math::pow((stan::math::sqrt(3) / rho), 2),
         stan::math::pow(
           stan::math::multiply(((stan::math::pi() / 2) / L), indices), 2)),
       "assigning variable denom");
-    current_statement__ = 293;
+    current_statement__ = 298;
     return stan::math::multiply(factor, stan::math::inv(denom));
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1912,29 +1971,29 @@ diagSPD_Matern52(const T0__& alpha, const T1__& rho, const T2__& L,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 295;
+    current_statement__ = 300;
     stan::math::validate_non_negative_index("indices", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> indices =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 296;
+    current_statement__ = 301;
     stan::model::assign(indices, stan::math::linspaced_vector(M, 1, M),
       "assigning variable indices");
     local_scalar_t__ factor = DUMMY_VAR__;
-    current_statement__ = 297;
-    factor = (3 * stan::math::pow((stan::math::sqrt(5) / rho), 5));
-    current_statement__ = 298;
+    current_statement__ = 302;
+    factor = (16 * stan::math::pow((stan::math::sqrt(5) / rho), 5));
+    current_statement__ = 303;
     stan::math::validate_non_negative_index("denom", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> denom =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 299;
+    current_statement__ = 304;
     stan::model::assign(denom,
-      stan::math::multiply(2,
+      stan::math::multiply(3,
         stan::math::pow(
           stan::math::add(stan::math::pow((stan::math::sqrt(5) / rho), 2),
             stan::math::pow(
               stan::math::multiply(((stan::math::pi() / 2) / L), indices), 2)),
           3)), "assigning variable denom");
-    current_statement__ = 300;
+    current_statement__ = 305;
     return stan::math::multiply(alpha,
              stan::math::sqrt(
                stan::math::multiply(factor, stan::math::inv(denom))));
@@ -1958,20 +2017,20 @@ diagSPD_Periodic(const T0__& alpha, const T1__& rho, const int& M,
   (void) DUMMY_VAR__;
   try {
     local_scalar_t__ a = DUMMY_VAR__;
-    current_statement__ = 302;
+    current_statement__ = 307;
     a = stan::math::inv_square(rho);
-    current_statement__ = 303;
+    current_statement__ = 308;
     stan::math::validate_non_negative_index("indices", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> indices =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 304;
+    current_statement__ = 309;
     stan::model::assign(indices, stan::math::linspaced_vector(M, 1, M),
       "assigning variable indices");
-    current_statement__ = 305;
+    current_statement__ = 310;
     stan::math::validate_non_negative_index("q", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,1> q =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(M, DUMMY_VAR__);
-    current_statement__ = 306;
+    current_statement__ = 311;
     stan::model::assign(q,
       stan::math::exp(
         stan::math::add(stan::math::log(alpha),
@@ -1980,7 +2039,7 @@ diagSPD_Periodic(const T0__& alpha, const T1__& rho, const int& M,
               stan::math::to_vector(
                 stan::math::log_modified_bessel_first_kind(indices, a)))))),
       "assigning variable q");
-    current_statement__ = 307;
+    current_statement__ = 312;
     return stan::math::append_row(q, q);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2004,13 +2063,13 @@ PHI(const int& N, const int& M, const T2__& L, const T3__& x_arg__,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 309;
+    current_statement__ = 314;
     stan::math::validate_non_negative_index("phi", "N", N);
-    current_statement__ = 310;
+    current_statement__ = 315;
     stan::math::validate_non_negative_index("phi", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,-1> phi =
       Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(N, M, DUMMY_VAR__);
-    current_statement__ = 311;
+    current_statement__ = 316;
     stan::model::assign(phi,
       stan::math::divide(
         stan::math::sin(
@@ -2020,7 +2079,7 @@ PHI(const int& N, const int& M, const T2__& L, const T3__& x_arg__,
                 stan::math::add(x, L)), M),
             stan::math::linspaced_vector(M, 1, M))), stan::math::sqrt(L)),
       "assigning variable phi");
-    current_statement__ = 312;
+    current_statement__ = 317;
     return phi;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2044,18 +2103,18 @@ PHI_periodic(const int& N, const int& M, const T2__& w0, const T3__& x_arg__,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 314;
+    current_statement__ = 319;
     stan::math::validate_non_negative_index("mw0x", "N", N);
-    current_statement__ = 315;
+    current_statement__ = 320;
     stan::math::validate_non_negative_index("mw0x", "M", M);
     Eigen::Matrix<local_scalar_t__,-1,-1> mw0x =
       Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(N, M, DUMMY_VAR__);
-    current_statement__ = 316;
+    current_statement__ = 321;
     stan::model::assign(mw0x,
       stan::math::diag_post_multiply(
         stan::math::rep_matrix(stan::math::multiply(w0, x), M),
         stan::math::linspaced_vector(M, 1, M)), "assigning variable mw0x");
-    current_statement__ = 317;
+    current_statement__ = 322;
     return stan::math::append_col(stan::math::cos(mw0x),
              stan::math::sin(mw0x));
   } catch (const std::exception& e) {
@@ -2076,15 +2135,15 @@ setup_noise(const int& ot_h, const int& t, const int& horizon, const int&
   (void) DUMMY_VAR__;
   try {
     int noise_time = std::numeric_limits<int>::min();
-    current_statement__ = 319;
+    current_statement__ = 324;
     noise_time = (stan::math::logical_gt(estimate_r, 0) ? (stan::math::logical_gt(
                                                              stationary, 0) ? ot_h : (ot_h
       - 1)) : t);
     int noise_terms = std::numeric_limits<int>::min();
-    current_statement__ = 320;
+    current_statement__ = 325;
     noise_terms = (stan::math::logical_gt(future_fixed, 0) ? ((noise_time -
       horizon) + fixed_from) : noise_time);
-    current_statement__ = 321;
+    current_statement__ = 326;
     return noise_terms;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2105,26 +2164,26 @@ setup_gp(const int& M, const T1__& L, const int& dimension, const int&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 323;
+    current_statement__ = 328;
     stan::math::validate_non_negative_index("x", "dimension", dimension);
     Eigen::Matrix<local_scalar_t__,-1,1> x =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(dimension, DUMMY_VAR__);
-    current_statement__ = 324;
+    current_statement__ = 329;
     stan::model::assign(x,
       stan::math::linspaced_vector(dimension, 1, dimension),
       "assigning variable x");
-    current_statement__ = 325;
+    current_statement__ = 330;
     stan::model::assign(x,
       stan::math::divide(
         stan::math::multiply(2,
           stan::math::subtract(stan::model::deep_copy(x), stan::math::mean(x))),
         (stan::math::max(x) - 1)), "assigning variable x");
-    current_statement__ = 330;
+    current_statement__ = 335;
     if (is_periodic) {
-      current_statement__ = 328;
+      current_statement__ = 333;
       return PHI_periodic(dimension, M, w0, x, pstream__);
     } else {
-      current_statement__ = 326;
+      current_statement__ = 331;
       return PHI(dimension, M, L, x, pstream__);
     }
   } catch (const std::exception& e) {
@@ -2159,7 +2218,7 @@ update_gp(const T0__& PHI_arg__, const int& M, const T2__& L, const T3__&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 332;
+    current_statement__ = 337;
     stan::math::validate_non_negative_index("diagSPD",
       "type == 1 ? 2 * M : M", (stan::math::logical_eq(type, 1) ? (2 *
       M) : M));
@@ -2167,43 +2226,43 @@ update_gp(const T0__& PHI_arg__, const int& M, const T2__& L, const T3__&
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant((stan::math::logical_eq(
                                                         type, 1) ? (2 *
         M) : M), DUMMY_VAR__);
-    current_statement__ = 352;
+    current_statement__ = 357;
     if (stan::math::logical_eq(type, 0)) {
-      current_statement__ = 350;
+      current_statement__ = 355;
       stan::model::assign(diagSPD, diagSPD_EQ(alpha, rho, L, M, pstream__),
         "assigning variable diagSPD");
     } else {
-      current_statement__ = 349;
+      current_statement__ = 354;
       if (stan::math::logical_eq(type, 1)) {
-        current_statement__ = 347;
+        current_statement__ = 352;
         stan::model::assign(diagSPD,
           diagSPD_Periodic(alpha, rho, M, pstream__),
           "assigning variable diagSPD");
       } else {
-        current_statement__ = 346;
+        current_statement__ = 351;
         if (stan::math::logical_eq(type, 2)) {
-          current_statement__ = 344;
+          current_statement__ = 349;
           if (stan::math::logical_eq(nu, 0.5)) {
-            current_statement__ = 342;
+            current_statement__ = 347;
             stan::model::assign(diagSPD,
               diagSPD_Matern12(alpha, rho, L, M, pstream__),
               "assigning variable diagSPD");
           } else {
-            current_statement__ = 341;
+            current_statement__ = 346;
             if (stan::math::logical_eq(nu, 1.5)) {
-              current_statement__ = 339;
+              current_statement__ = 344;
               stan::model::assign(diagSPD,
                 diagSPD_Matern32(alpha, rho, L, M, pstream__),
                 "assigning variable diagSPD");
             } else {
-              current_statement__ = 338;
+              current_statement__ = 343;
               if (stan::math::logical_eq(nu, 2.5)) {
-                current_statement__ = 336;
+                current_statement__ = 341;
                 stan::model::assign(diagSPD,
                   diagSPD_Matern52(alpha, rho, L, M, pstream__),
                   "assigning variable diagSPD");
               } else {
-                current_statement__ = 334;
+                current_statement__ = 339;
                 std::stringstream errmsg_stream__;
                 stan::math::stan_print(&errmsg_stream__,
                   "nu must be one of 1/2, 3/2 or 5/2; found nu=");
@@ -2215,7 +2274,7 @@ update_gp(const T0__& PHI_arg__, const int& M, const T2__& L, const T3__&
         }
       }
     }
-    current_statement__ = 353;
+    current_statement__ = 358;
     return stan::math::multiply(PHI, stan::math::elt_multiply(diagSPD, eta));
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2235,7 +2294,7 @@ gaussian_process_lp(const T0__& eta_arg__, T_lp__& lp__, T_lp_accum__&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 355;
+    current_statement__ = 360;
     lp_accum__.add(stan::math::std_normal_lpdf<propto__>(eta));
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2266,54 +2325,54 @@ update_Rt(const int& t, const T1__& R0, const T2__& noise_arg__,
   (void) DUMMY_VAR__;
   try {
     int bp_n = std::numeric_limits<int>::min();
-    current_statement__ = 357;
+    current_statement__ = 362;
     bp_n = stan::math::num_elements(bp_effects);
     int gp_n = std::numeric_limits<int>::min();
-    current_statement__ = 358;
+    current_statement__ = 363;
     gp_n = stan::math::num_elements(noise);
-    current_statement__ = 359;
+    current_statement__ = 364;
     stan::math::validate_non_negative_index("logR", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> logR =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 360;
+    current_statement__ = 365;
     stan::model::assign(logR, stan::math::rep_vector(stan::math::log(R0), t),
       "assigning variable logR");
-    current_statement__ = 367;
+    current_statement__ = 372;
     if (bp_n) {
-      current_statement__ = 361;
+      current_statement__ = 366;
       stan::math::validate_non_negative_index("bp0", "bp_n + 1", (bp_n + 1));
       Eigen::Matrix<local_scalar_t__,-1,1> bp0 =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant((bp_n + 1),
           DUMMY_VAR__);
-      current_statement__ = 363;
+      current_statement__ = 368;
       stan::model::assign(bp0, 0, "assigning variable bp0",
         stan::model::index_uni(1));
-      current_statement__ = 364;
+      current_statement__ = 369;
       stan::model::assign(bp0, stan::math::cumulative_sum(bp_effects),
         "assigning variable bp0", stan::model::index_min_max(2, (bp_n + 1)));
-      current_statement__ = 365;
+      current_statement__ = 370;
       stan::model::assign(logR,
         stan::math::add(stan::model::deep_copy(logR),
           stan::model::rvalue(bp0, "bp0", stan::model::index_multi(bps))),
         "assigning variable logR");
     }
-    current_statement__ = 381;
+    current_statement__ = 386;
     if (gp_n) {
-      current_statement__ = 368;
+      current_statement__ = 373;
       stan::math::validate_non_negative_index("gp", "t", t);
       Eigen::Matrix<local_scalar_t__,-1,1> gp =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-      current_statement__ = 369;
+      current_statement__ = 374;
       stan::model::assign(gp, stan::math::rep_vector(0, t),
         "assigning variable gp");
-      current_statement__ = 378;
+      current_statement__ = 383;
       if (stationary) {
-        current_statement__ = 373;
+        current_statement__ = 378;
         stan::model::assign(gp, noise, "assigning variable gp",
           stan::model::index_min_max(1, gp_n));
-        current_statement__ = 376;
+        current_statement__ = 381;
         if (stan::math::logical_gt(t, gp_n)) {
-          current_statement__ = 374;
+          current_statement__ = 379;
           stan::model::assign(gp,
             stan::math::rep_vector(
               stan::model::rvalue(noise, "noise",
@@ -2322,20 +2381,20 @@ update_Rt(const int& t, const T1__& R0, const T2__& noise_arg__,
             stan::model::index_min_max((gp_n + 1), t));
         }
       } else {
-        current_statement__ = 370;
+        current_statement__ = 375;
         stan::model::assign(gp, noise, "assigning variable gp",
           stan::model::index_min_max(2, (gp_n + 1)));
-        current_statement__ = 371;
+        current_statement__ = 376;
         stan::model::assign(gp,
           stan::math::cumulative_sum(stan::model::deep_copy(gp)),
           "assigning variable gp");
       }
-      current_statement__ = 379;
+      current_statement__ = 384;
       stan::model::assign(logR,
         stan::math::add(stan::model::deep_copy(logR), gp),
         "assigning variable logR");
     }
-    current_statement__ = 382;
+    current_statement__ = 387;
     return stan::math::exp(logR);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2361,27 +2420,27 @@ rt_lp(const std::vector<T0__>& initial_infections_scale, const T1__&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 388;
+    current_statement__ = 393;
     if (stan::math::logical_gt(bp_n, 0)) {
-      current_statement__ = 384;
+      current_statement__ = 389;
       lp_accum__.add(stan::math::normal_lpdf<propto__>(
                        stan::model::rvalue(bp_sd, "bp_sd",
                          stan::model::index_uni(1)), 0, 0.1));
-      current_statement__ = 385;
+      current_statement__ = 390;
       if (stan::math::logical_lt(
             stan::model::rvalue(bp_sd, "bp_sd", stan::model::index_uni(1)), 0)) {
-        current_statement__ = 385;
+        current_statement__ = 390;
         lp_accum__.add(stan::math::negative_infinity());
       } else {
-        current_statement__ = 385;
+        current_statement__ = 390;
         lp_accum__.add(-stan::math::normal_lccdf(0, 0, 0.1));
       }
-      current_statement__ = 386;
+      current_statement__ = 391;
       lp_accum__.add(stan::math::normal_lpdf<propto__>(bp_effects, 0,
                        stan::model::rvalue(bp_sd, "bp_sd",
                          stan::model::index_uni(1))));
     }
-    current_statement__ = 389;
+    current_statement__ = 394;
     lp_accum__.add(stan::math::normal_lpdf<propto__>(
                      initial_infections_scale, initial_infections_guess, 2));
   } catch (const std::exception& e) {
@@ -2408,30 +2467,30 @@ R_to_r_newton_step(const T0__& R, const T1__& r, const T2__& pmf_arg__,
   (void) DUMMY_VAR__;
   try {
     int len = std::numeric_limits<int>::min();
-    current_statement__ = 391;
+    current_statement__ = 396;
     len = stan::math::num_elements(pmf);
-    current_statement__ = 392;
+    current_statement__ = 397;
     stan::math::validate_non_negative_index("zero_series", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> zero_series =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 393;
+    current_statement__ = 398;
     stan::model::assign(zero_series,
       stan::math::linspaced_vector(len, 0, (len - 1)),
       "assigning variable zero_series");
-    current_statement__ = 394;
+    current_statement__ = 399;
     stan::math::validate_non_negative_index("exp_r", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> exp_r =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 395;
+    current_statement__ = 400;
     stan::model::assign(exp_r,
       stan::math::exp(stan::math::multiply(-r, zero_series)),
       "assigning variable exp_r");
     local_scalar_t__ ret = DUMMY_VAR__;
-    current_statement__ = 396;
+    current_statement__ = 401;
     ret = (((R * stan::math::dot_product(pmf, exp_r)) - 1) / (-R *
       stan::math::dot_product(stan::math::elt_multiply(pmf, zero_series),
         exp_r)));
-    current_statement__ = 397;
+    current_statement__ = 402;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2457,33 +2516,33 @@ R_to_r(const T0__& R, const T1__& gt_rev_pmf_arg__, const T2__& abs_tol,
   (void) DUMMY_VAR__;
   try {
     int gt_len = std::numeric_limits<int>::min();
-    current_statement__ = 399;
+    current_statement__ = 404;
     gt_len = stan::math::num_elements(gt_rev_pmf);
-    current_statement__ = 400;
+    current_statement__ = 405;
     stan::math::validate_non_negative_index("gt_pmf", "gt_len", gt_len);
     Eigen::Matrix<local_scalar_t__,-1,1> gt_pmf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(gt_len, DUMMY_VAR__);
-    current_statement__ = 401;
+    current_statement__ = 406;
     stan::model::assign(gt_pmf, stan::math::reverse(gt_rev_pmf),
       "assigning variable gt_pmf");
     local_scalar_t__ mean_gt = DUMMY_VAR__;
-    current_statement__ = 402;
+    current_statement__ = 407;
     mean_gt = stan::math::dot_product(gt_pmf,
                 stan::math::linspaced_vector(gt_len, 0, (gt_len - 1)));
     local_scalar_t__ r = DUMMY_VAR__;
-    current_statement__ = 403;
+    current_statement__ = 408;
     r = stan::math::fmax(((R - 1) / (R * mean_gt)), -1);
     local_scalar_t__ step = DUMMY_VAR__;
-    current_statement__ = 404;
+    current_statement__ = 409;
     step = (abs_tol + 1);
-    current_statement__ = 408;
+    current_statement__ = 413;
     while (stan::math::logical_gt(stan::math::abs(step), abs_tol)) {
-      current_statement__ = 405;
+      current_statement__ = 410;
       step = R_to_r_newton_step(R, r, gt_pmf, pstream__);
-      current_statement__ = 406;
+      current_statement__ = 411;
       r = (r - step);
     }
-    current_statement__ = 409;
+    current_statement__ = 414;
     return r;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2511,45 +2570,51 @@ update_infectiousness(const T0__& infections_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int gt_length = std::numeric_limits<int>::min();
-    current_statement__ = 411;
+    current_statement__ = 416;
     gt_length = stan::math::num_elements(gt_rev_pmf);
     int inf_start = std::numeric_limits<int>::min();
-    current_statement__ = 412;
+    current_statement__ = 417;
     inf_start = stan::math::max(1, (((index + seeding_time) - gt_length) + 1));
     int inf_end = std::numeric_limits<int>::min();
-    current_statement__ = 413;
+    current_statement__ = 418;
     inf_end = (index + seeding_time);
     int pmf_accessed = std::numeric_limits<int>::min();
-    current_statement__ = 414;
+    current_statement__ = 419;
     pmf_accessed = stan::math::min(gt_length, (index + seeding_time));
     local_scalar_t__ new_inf = DUMMY_VAR__;
-    current_statement__ = 415;
+    current_statement__ = 420;
     new_inf = stan::math::dot_product(
                 stan::model::rvalue(infections, "infections",
                   stan::model::index_min_max(inf_start, inf_end)),
                 stan::math::tail(gt_rev_pmf, pmf_accessed));
-    current_statement__ = 416;
+    current_statement__ = 421;
     return new_inf;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
 }
-template <typename T0__, typename T2__, typename T3__, typename T7__,
+template <typename T0__, typename T2__, typename T3__, typename T4__,
+          typename T6__, typename T9__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_col_vector<T2__>,
                               stan::is_vt_not_complex<T2__>,
                               stan::is_stan_scalar<T3__>,
-                              stan::is_stan_scalar<T7__>>*>
+                              stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T6__>,
+                              stan::is_stan_scalar<T9__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
-                stan::base_type_t<T2__>, T3__, T7__>,-1,1>
+                stan::base_type_t<T2__>, T3__, T4__, T6__,
+                stan::promote_args_t<T9__>>,-1,1>
 generate_infections(const T0__& R_arg__, const int& uot, const T2__&
                     gt_rev_pmf_arg__, const std::vector<T3__>&
-                    initial_infections, const int& pop, const int& ht,
-                    const int& obs_scale, const T7__& frac_obs, const int&
+                    initial_infections, const T4__& pop, const int& use_pop,
+                    const T6__& pop_floor, const int& ht, const int&
+                    obs_scale, const T9__& fraction_observed, const int&
                     initial_as_scale, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
-                             stan::base_type_t<T2__>, T3__, T7__>;
+                             stan::base_type_t<T2__>, T3__, T4__, T6__,
+                             stan::promote_args_t<T9__>>;
   int current_statement__ = 0;
   const auto& R = stan::math::to_ref(R_arg__);
   const auto& gt_rev_pmf = stan::math::to_ref(gt_rev_pmf_arg__);
@@ -2561,117 +2626,119 @@ generate_infections(const T0__& R_arg__, const int& uot, const T2__&
   (void) DUMMY_VAR__;
   try {
     int ot = std::numeric_limits<int>::min();
-    current_statement__ = 418;
+    current_statement__ = 423;
     ot = stan::math::num_elements(R);
     int nht = std::numeric_limits<int>::min();
-    current_statement__ = 419;
+    current_statement__ = 424;
     nht = (ot - ht);
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 420;
+    current_statement__ = 425;
     t = (ot + uot);
     local_scalar_t__ exp_adj_Rt = DUMMY_VAR__;
-    current_statement__ = 422;
+    current_statement__ = 427;
     stan::math::validate_non_negative_index("infections", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> infections =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 423;
+    current_statement__ = 428;
     stan::model::assign(infections, stan::math::rep_vector(0, t),
       "assigning variable infections");
-    current_statement__ = 424;
+    current_statement__ = 429;
     stan::math::validate_non_negative_index("cum_infections", "ot", ot);
     Eigen::Matrix<local_scalar_t__,-1,1> cum_infections =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
-    current_statement__ = 426;
+    current_statement__ = 431;
     stan::math::validate_non_negative_index("infectiousness", "ot", ot);
     Eigen::Matrix<local_scalar_t__,-1,1> infectiousness =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
     local_scalar_t__ growth = DUMMY_VAR__;
-    current_statement__ = 428;
+    current_statement__ = 433;
     growth = R_to_r(stan::model::rvalue(R, "R", stan::model::index_uni(1)),
                gt_rev_pmf, 1e-3, pstream__);
-    current_statement__ = 436;
+    current_statement__ = 441;
     if (initial_as_scale) {
-      current_statement__ = 431;
+      current_statement__ = 436;
       stan::model::assign(infections,
         stan::math::exp(
           (stan::model::rvalue(initial_infections, "initial_infections",
              stan::model::index_uni(1)) - (growth * uot))),
         "assigning variable infections", stan::model::index_uni(1));
-      current_statement__ = 434;
+      current_statement__ = 439;
       if (obs_scale) {
-        current_statement__ = 432;
+        current_statement__ = 437;
         stan::model::assign(infections,
           (stan::model::rvalue(infections, "infections",
-             stan::model::index_uni(1)) / frac_obs),
+             stan::model::index_uni(1)) / fraction_observed),
           "assigning variable infections", stan::model::index_uni(1));
       }
     } else {
-      current_statement__ = 429;
+      current_statement__ = 434;
       stan::model::assign(infections,
         stan::math::exp(
           stan::model::rvalue(initial_infections, "initial_infections",
             stan::model::index_uni(1))), "assigning variable infections",
         stan::model::index_uni(1));
     }
-    current_statement__ = 442;
+    current_statement__ = 447;
     if (stan::math::logical_gt(uot, 1)) {
       local_scalar_t__ exp_growth = DUMMY_VAR__;
-      current_statement__ = 437;
+      current_statement__ = 442;
       exp_growth = stan::math::exp(growth);
-      current_statement__ = 440;
+      current_statement__ = 445;
       for (int s = 2; s <= uot; ++s) {
-        current_statement__ = 438;
+        current_statement__ = 443;
         stan::model::assign(infections,
           (stan::model::rvalue(infections, "infections",
              stan::model::index_uni((s - 1))) * exp_growth),
           "assigning variable infections", stan::model::index_uni(s));
       }
     }
-    current_statement__ = 445;
-    if (pop) {
-      current_statement__ = 443;
+    current_statement__ = 450;
+    if (use_pop) {
+      current_statement__ = 448;
       stan::model::assign(cum_infections,
         stan::math::sum(
           stan::model::rvalue(infections, "infections",
             stan::model::index_min_max(1, uot))),
         "assigning variable cum_infections", stan::model::index_uni(1));
     }
-    current_statement__ = 458;
+    current_statement__ = 463;
     for (int s = 1; s <= ot; ++s) {
-      current_statement__ = 446;
+      current_statement__ = 451;
       stan::model::assign(infectiousness,
         update_infectiousness(infections, gt_rev_pmf, uot, s, pstream__),
         "assigning variable infectiousness", stan::model::index_uni(s));
-      current_statement__ = 453;
-      if ((stan::math::primitive_value(pop) &&
-          stan::math::primitive_value(stan::math::logical_gt(s, nht)))) {
-        current_statement__ = 449;
+      current_statement__ = 458;
+      if ((stan::math::primitive_value(
+             (stan::math::primitive_value(stan::math::logical_eq(use_pop, 1))
+             && stan::math::primitive_value(stan::math::logical_gt(s, nht))))
+          || stan::math::primitive_value(stan::math::logical_eq(use_pop, 2)))) {
+        local_scalar_t__ susceptible = DUMMY_VAR__;
+        current_statement__ = 454;
+        susceptible = stan::math::fmax(pop_floor, (pop -
+                        stan::model::rvalue(cum_infections, "cum_infections",
+                          stan::model::index_uni(s))));
+        current_statement__ = 455;
         exp_adj_Rt = stan::math::exp(
                        ((-stan::model::rvalue(R, "R",
                             stan::model::index_uni(s)) *
                        stan::model::rvalue(infectiousness, "infectiousness",
-                         stan::model::index_uni(s))) / (pop -
-                       stan::model::rvalue(cum_infections, "cum_infections",
-                         stan::model::index_uni(nht)))));
-        current_statement__ = 450;
-        exp_adj_Rt = (stan::math::logical_gt(exp_adj_Rt, 1) ? 1 : exp_adj_Rt);
-        current_statement__ = 451;
-        stan::model::assign(infections, ((pop -
-          stan::model::rvalue(cum_infections, "cum_infections",
-            stan::model::index_uni(s))) * (1 - exp_adj_Rt)),
+                         stan::model::index_uni(s))) / susceptible));
+        current_statement__ = 456;
+        stan::model::assign(infections, (susceptible *
+          stan::math::fmax(0, (1 - exp_adj_Rt))),
           "assigning variable infections", stan::model::index_uni((s + uot)));
       } else {
-        current_statement__ = 447;
+        current_statement__ = 452;
         stan::model::assign(infections,
           (stan::model::rvalue(R, "R", stan::model::index_uni(s)) *
           stan::model::rvalue(infectiousness, "infectiousness",
             stan::model::index_uni(s))), "assigning variable infections",
           stan::model::index_uni((s + uot)));
       }
-      current_statement__ = 456;
-      if ((stan::math::primitive_value(pop) &&
+      current_statement__ = 461;
+      if ((stan::math::primitive_value(use_pop) &&
           stan::math::primitive_value(stan::math::logical_lt(s, ot)))) {
-        current_statement__ = 454;
+        current_statement__ = 459;
         stan::model::assign(cum_infections,
           (stan::model::rvalue(cum_infections, "cum_infections",
              stan::model::index_uni(s)) +
@@ -2681,7 +2748,7 @@ generate_infections(const T0__& R_arg__, const int& uot, const T2__&
           stan::model::index_uni((s + 1)));
       }
     }
-    current_statement__ = 459;
+    current_statement__ = 464;
     return infections;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2710,42 +2777,42 @@ deconvolve_infections(const T0__& shifted_cases_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 461;
+    current_statement__ = 466;
     t = stan::math::num_elements(shifted_cases);
-    current_statement__ = 462;
+    current_statement__ = 467;
     stan::math::validate_non_negative_index("infections", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> infections =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 463;
+    current_statement__ = 468;
     stan::model::assign(infections, stan::math::rep_vector(1e-5, t),
       "assigning variable infections");
-    current_statement__ = 481;
+    current_statement__ = 486;
     if (stan::math::logical_negation(fixed)) {
-      current_statement__ = 466;
+      current_statement__ = 471;
       stan::math::validate_non_negative_index("exp_noise", "t", t);
       Eigen::Matrix<local_scalar_t__,-1,1> exp_noise =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-      current_statement__ = 467;
+      current_statement__ = 472;
       stan::model::assign(exp_noise, stan::math::exp(noise),
         "assigning variable exp_noise");
-      current_statement__ = 479;
+      current_statement__ = 484;
       if (stan::math::logical_eq(prior, 1)) {
-        current_statement__ = 477;
+        current_statement__ = 482;
         stan::model::assign(infections,
           stan::math::add(stan::model::deep_copy(infections),
             stan::math::elt_multiply(shifted_cases, exp_noise)),
           "assigning variable infections");
       } else {
-        current_statement__ = 476;
+        current_statement__ = 481;
         if (stan::math::logical_eq(prior, 0)) {
-          current_statement__ = 474;
+          current_statement__ = 479;
           stan::model::assign(infections,
             stan::math::add(stan::model::deep_copy(infections), exp_noise),
             "assigning variable infections");
         } else {
-          current_statement__ = 473;
+          current_statement__ = 478;
           if (stan::math::logical_eq(prior, 2)) {
-            current_statement__ = 468;
+            current_statement__ = 473;
             stan::model::assign(infections,
               (stan::model::rvalue(infections, "infections",
                  stan::model::index_uni(1)) +
@@ -2754,9 +2821,9 @@ deconvolve_infections(const T0__& shifted_cases_arg__, const T1__&
               stan::model::rvalue(exp_noise, "exp_noise",
                 stan::model::index_uni(1)))),
               "assigning variable infections", stan::model::index_uni(1));
-            current_statement__ = 471;
+            current_statement__ = 476;
             for (int i = 2; i <= t; ++i) {
-              current_statement__ = 469;
+              current_statement__ = 474;
               stan::model::assign(infections,
                 (stan::model::rvalue(infections, "infections",
                    stan::model::index_uni((i - 1))) *
@@ -2768,12 +2835,12 @@ deconvolve_infections(const T0__& shifted_cases_arg__, const T1__&
         }
       }
     } else {
-      current_statement__ = 464;
+      current_statement__ = 469;
       stan::model::assign(infections,
         stan::math::add(stan::model::deep_copy(infections), shifted_cases),
         "assigning variable infections");
     }
-    current_statement__ = 482;
+    current_statement__ = 487;
     return infections;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2802,16 +2869,16 @@ day_of_week_effect(const T0__& reports_arg__, const std::vector<int>&
   (void) DUMMY_VAR__;
   try {
     int wl = std::numeric_limits<int>::min();
-    current_statement__ = 484;
+    current_statement__ = 489;
     wl = stan::math::num_elements(effect);
-    current_statement__ = 485;
+    current_statement__ = 490;
     stan::math::validate_non_negative_index("scaled_effect", "wl", wl);
     Eigen::Matrix<local_scalar_t__,-1,1> scaled_effect =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(wl, DUMMY_VAR__);
-    current_statement__ = 486;
+    current_statement__ = 491;
     stan::model::assign(scaled_effect, stan::math::multiply(wl, effect),
       "assigning variable scaled_effect");
-    current_statement__ = 487;
+    current_statement__ = 492;
     return stan::math::elt_multiply(reports,
              stan::model::rvalue(scaled_effect, "scaled_effect",
                stan::model::index_multi(day_of_week)));
@@ -2824,8 +2891,8 @@ template <typename T0__, typename T1__,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>, T1__>,-1,1>
-scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
-          pstream__) {
+scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
+          std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -2838,17 +2905,17 @@ scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 489;
+    current_statement__ = 494;
     t = stan::math::num_elements(reports);
-    current_statement__ = 490;
+    current_statement__ = 495;
     stan::math::validate_non_negative_index("scaled_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> scaled_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 492;
+    current_statement__ = 497;
     stan::model::assign(scaled_reports,
-      stan::math::multiply(reports, frac_obs),
+      stan::math::multiply(reports, fraction_observed),
       "assigning variable scaled_reports");
-    current_statement__ = 493;
+    current_statement__ = 498;
     return scaled_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2876,30 +2943,30 @@ truncate_obs(const T0__& reports_arg__, const T1__& trunc_rev_cmf_arg__,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 495;
+    current_statement__ = 500;
     t = stan::math::num_elements(reports);
     int trunc_max = std::numeric_limits<int>::min();
-    current_statement__ = 496;
+    current_statement__ = 501;
     trunc_max = stan::math::num_elements(trunc_rev_cmf);
-    current_statement__ = 497;
+    current_statement__ = 502;
     stan::math::validate_non_negative_index("trunc_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> trunc_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 498;
+    current_statement__ = 503;
     stan::model::assign(trunc_reports, reports,
       "assigning variable trunc_reports");
     int joint_max = std::numeric_limits<int>::min();
-    current_statement__ = 499;
+    current_statement__ = 504;
     joint_max = stan::math::min(t, trunc_max);
     int first_t = std::numeric_limits<int>::min();
-    current_statement__ = 500;
+    current_statement__ = 505;
     first_t = ((t - joint_max) + 1);
     int first_trunc = std::numeric_limits<int>::min();
-    current_statement__ = 501;
-    first_trunc = ((trunc_max - joint_max) + 1);
     current_statement__ = 506;
+    first_trunc = ((trunc_max - joint_max) + 1);
+    current_statement__ = 511;
     if (reconstruct) {
-      current_statement__ = 504;
+      current_statement__ = 509;
       stan::model::assign(trunc_reports,
         stan::math::elt_divide(
           stan::model::deep_copy(
@@ -2910,7 +2977,7 @@ truncate_obs(const T0__& reports_arg__, const T1__& trunc_rev_cmf_arg__,
         "assigning variable trunc_reports",
         stan::model::index_min_max(first_t, t));
     } else {
-      current_statement__ = 502;
+      current_statement__ = 507;
       stan::model::assign(trunc_reports,
         stan::math::elt_multiply(
           stan::model::deep_copy(
@@ -2921,7 +2988,7 @@ truncate_obs(const T0__& reports_arg__, const T1__& trunc_rev_cmf_arg__,
         "assigning variable trunc_reports",
         stan::model::index_min_max(first_t, t));
     }
-    current_statement__ = 507;
+    current_statement__ = 512;
     return trunc_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2952,23 +3019,23 @@ truncation_lp(const std::vector<T0__>& truncation_mean,
   (void) DUMMY_VAR__;
   try {
     int truncation = std::numeric_limits<int>::min();
-    current_statement__ = 509;
+    current_statement__ = 514;
     truncation = stan::math::num_elements(truncation_mean);
-    current_statement__ = 517;
+    current_statement__ = 522;
     if (truncation) {
-      current_statement__ = 512;
+      current_statement__ = 517;
       if (stan::math::logical_gt(
             stan::model::rvalue(trunc_mean_sd, "trunc_mean_sd",
               stan::model::index_uni(1)), 0)) {
-        current_statement__ = 510;
+        current_statement__ = 515;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(truncation_mean,
                          trunc_mean_mean, trunc_mean_sd));
       }
-      current_statement__ = 515;
+      current_statement__ = 520;
       if (stan::math::logical_gt(
             stan::model::rvalue(trunc_sd_sd, "trunc_sd_sd",
               stan::model::index_uni(1)), 0)) {
-        current_statement__ = 513;
+        current_statement__ = 518;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(truncation_sd,
                          trunc_sd_mean, trunc_sd_sd));
       }
@@ -2985,9 +3052,9 @@ template <bool propto__, typename T2__, typename T3__, typename T5__,
                               stan::is_stan_scalar<T5__>>*>
 void
 report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
-          const T2__& reports_arg__, const T3__& dispersion, const int&
-          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
-          lp_accum__, std::ostream* pstream__) {
+          const T2__& reports_arg__, const T3__& reporting_overdispersion,
+          const int& model_type, const T5__& weight, T_lp__& lp__,
+          T_lp_accum__& lp_accum__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T2__>,
                              T3__, T5__>;
   int current_statement__ = 0;
@@ -2997,39 +3064,39 @@ report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
   (void) DUMMY_VAR__;
   try {
     int n = std::numeric_limits<int>::min();
-    current_statement__ = 519;
+    current_statement__ = 524;
     n = stan::math::num_elements(case_times);
-    current_statement__ = 520;
+    current_statement__ = 525;
     stan::math::validate_non_negative_index("obs_reports", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> obs_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 521;
+    current_statement__ = 526;
     stan::model::assign(obs_reports,
       stan::model::rvalue(reports, "reports",
         stan::model::index_multi(case_times)),
       "assigning variable obs_reports");
-    current_statement__ = 535;
+    current_statement__ = 540;
     if (model_type) {
       local_scalar_t__ phi = DUMMY_VAR__;
-      current_statement__ = 528;
-      phi = stan::math::inv_square(dispersion);
       current_statement__ = 533;
+      phi = stan::math::inv_square(reporting_overdispersion);
+      current_statement__ = 538;
       if (stan::math::logical_eq(weight, 1)) {
-        current_statement__ = 531;
+        current_statement__ = 536;
         lp_accum__.add(stan::math::neg_binomial_2_lpmf<propto__>(cases,
                          obs_reports, phi));
       } else {
-        current_statement__ = 529;
+        current_statement__ = 534;
         lp_accum__.add((stan::math::neg_binomial_2_lpmf<false>(cases,
                           obs_reports, phi) * weight));
       }
     } else {
-      current_statement__ = 526;
+      current_statement__ = 531;
       if (stan::math::logical_eq(weight, 1)) {
-        current_statement__ = 524;
+        current_statement__ = 529;
         lp_accum__.add(stan::math::poisson_lpmf<propto__>(cases, obs_reports));
       } else {
-        current_statement__ = 522;
+        current_statement__ = 527;
         lp_accum__.add((stan::math::poisson_lpmf<false>(cases, obs_reports) *
           weight));
       }
@@ -3055,22 +3122,22 @@ accumulate_reports(const T0__& reports_arg__, const std::vector<int>&
   (void) DUMMY_VAR__;
   try {
     int ot_h = std::numeric_limits<int>::min();
-    current_statement__ = 537;
+    current_statement__ = 542;
     ot_h = stan::math::num_elements(reports);
-    current_statement__ = 538;
+    current_statement__ = 543;
     stan::math::validate_non_negative_index("accumulated_reports", "ot_h",
       ot_h);
     Eigen::Matrix<local_scalar_t__,-1,1> accumulated_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot_h, DUMMY_VAR__);
-    current_statement__ = 539;
+    current_statement__ = 544;
     stan::model::assign(accumulated_reports, reports,
       "assigning variable accumulated_reports");
-    current_statement__ = 544;
+    current_statement__ = 549;
     for (int i = 1; i <= (ot_h - 1); ++i) {
-      current_statement__ = 542;
+      current_statement__ = 547;
       if (stan::model::rvalue(accumulate, "accumulate",
             stan::model::index_uni(i))) {
-        current_statement__ = 540;
+        current_statement__ = 545;
         stan::model::assign(accumulated_reports,
           (stan::model::rvalue(accumulated_reports, "accumulated_reports",
              stan::model::index_uni((i + 1))) +
@@ -3080,7 +3147,7 @@ accumulate_reports(const T0__& reports_arg__, const std::vector<int>&
           stan::model::index_uni((i + 1)));
       }
     }
-    current_statement__ = 545;
+    current_statement__ = 550;
     return accumulated_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -3093,8 +3160,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const T2__& dispersion, const int& model_type, const T4__&
-               weight, std::ostream* pstream__) {
+               const T2__& reporting_overdispersion, const int& model_type,
+               const T4__& weight, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T1__>,
                              T2__, T4__>;
   int current_statement__ = 0;
@@ -3107,17 +3174,17 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 547;
+    current_statement__ = 552;
     t = stan::math::num_elements(reports);
-    current_statement__ = 548;
+    current_statement__ = 553;
     stan::math::validate_non_negative_index("log_lik", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> log_lik =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 559;
+    current_statement__ = 564;
     if (stan::math::logical_eq(model_type, 0)) {
-      current_statement__ = 557;
+      current_statement__ = 562;
       for (int i = 1; i <= t; ++i) {
-        current_statement__ = 555;
+        current_statement__ = 560;
         stan::model::assign(log_lik,
           (stan::math::poisson_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
@@ -3127,20 +3194,20 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
       }
     } else {
       local_scalar_t__ phi = DUMMY_VAR__;
-      current_statement__ = 550;
-      phi = stan::math::inv_square(dispersion);
-      current_statement__ = 553;
+      current_statement__ = 555;
+      phi = stan::math::inv_square(reporting_overdispersion);
+      current_statement__ = 558;
       for (int i = 1; i <= t; ++i) {
-        current_statement__ = 551;
+        current_statement__ = 556;
         stan::model::assign(log_lik,
           (stan::math::neg_binomial_2_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
              stan::model::rvalue(reports, "reports",
-               stan::model::index_uni(i)), dispersion) * weight),
+               stan::model::index_uni(i)), phi) * weight),
           "assigning variable log_lik", stan::model::index_uni(i));
       }
     }
-    current_statement__ = 560;
+    current_statement__ = 565;
     return log_lik;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -3161,21 +3228,21 @@ neg_binomial_2_safe_rng(const T0__& mu, const T1__& phi, RNG& base_rng__,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 570;
+    current_statement__ = 575;
     if (stan::math::logical_lt(mu, 1e-8)) {
-      current_statement__ = 568;
+      current_statement__ = 573;
       return 0;
     } else {
-      current_statement__ = 567;
+      current_statement__ = 572;
       if (stan::math::logical_gt(phi, 1e4)) {
-        current_statement__ = 565;
+        current_statement__ = 570;
         return stan::math::poisson_rng(
                  (stan::math::logical_gt(mu, 1e8) ? 1e8 : mu), base_rng__);
       } else {
         local_scalar_t__ gamma_rate = DUMMY_VAR__;
-        current_statement__ = 562;
+        current_statement__ = 567;
         gamma_rate = stan::math::gamma_rng(phi, (phi / mu), base_rng__);
-        current_statement__ = 563;
+        current_statement__ = 568;
         return stan::math::poisson_rng(
                  (stan::math::logical_gt(gamma_rate, 1e8) ? 1e8 : gamma_rate),
                  base_rng__);
@@ -3190,8 +3257,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
-           model_type, RNG& base_rng__, std::ostream* pstream__) {
+report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
+           const int& model_type, RNG& base_rng__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -3204,30 +3271,30 @@ report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 572;
+    current_statement__ = 577;
     t = stan::math::num_elements(reports);
-    current_statement__ = 573;
+    current_statement__ = 578;
     stan::math::validate_non_negative_index("sampled_reports", "t", t);
     std::vector<int> sampled_reports =
       std::vector<int>(t, std::numeric_limits<int>::min());
     local_scalar_t__ phi = DUMMY_VAR__;
-    current_statement__ = 575;
+    current_statement__ = 580;
     phi = 1e5;
-    current_statement__ = 578;
+    current_statement__ = 583;
     if (model_type) {
-      current_statement__ = 576;
-      phi = stan::math::inv_square(dispersion);
+      current_statement__ = 581;
+      phi = stan::math::inv_square(reporting_overdispersion);
     }
-    current_statement__ = 581;
+    current_statement__ = 586;
     for (int s = 1; s <= t; ++s) {
-      current_statement__ = 579;
+      current_statement__ = 584;
       stan::model::assign(sampled_reports,
         neg_binomial_2_safe_rng(
           stan::model::rvalue(reports, "reports", stan::model::index_uni(s)),
           phi, base_rng__, pstream__), "assigning variable sampled_reports",
         stan::model::index_uni(s));
     }
-    current_statement__ = 582;
+    current_statement__ = 587;
     return sampled_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -3256,36 +3323,36 @@ calculate_Rt(const T0__& infections_arg__, const int& seeding_time,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 584;
+    current_statement__ = 589;
     t = stan::math::num_elements(infections);
     int ot = std::numeric_limits<int>::min();
-    current_statement__ = 585;
+    current_statement__ = 590;
     ot = (t - seeding_time);
-    current_statement__ = 586;
+    current_statement__ = 591;
     stan::math::validate_non_negative_index("R", "ot", ot);
     Eigen::Matrix<local_scalar_t__,-1,1> R =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
-    current_statement__ = 588;
+    current_statement__ = 593;
     stan::math::validate_non_negative_index("sR", "ot", ot);
     Eigen::Matrix<local_scalar_t__,-1,1> sR =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
-    current_statement__ = 590;
+    current_statement__ = 595;
     stan::math::validate_non_negative_index("infectiousness", "ot", ot);
     Eigen::Matrix<local_scalar_t__,-1,1> infectiousness =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
-    current_statement__ = 591;
+    current_statement__ = 596;
     stan::model::assign(infectiousness, stan::math::rep_vector(1e-5, ot),
       "assigning variable infectiousness");
-    current_statement__ = 595;
+    current_statement__ = 600;
     for (int s = 1; s <= ot; ++s) {
-      current_statement__ = 592;
+      current_statement__ = 597;
       stan::model::assign(infectiousness,
         (stan::model::rvalue(infectiousness, "infectiousness",
            stan::model::index_uni(s)) +
         update_infectiousness(infections, gt_rev_pmf, seeding_time, s,
           pstream__)), "assigning variable infectiousness",
         stan::model::index_uni(s));
-      current_statement__ = 593;
+      current_statement__ = 598;
       stan::model::assign(R,
         (stan::model::rvalue(infections, "infections",
            stan::model::index_uni((s + seeding_time))) /
@@ -3293,38 +3360,82 @@ calculate_Rt(const T0__& infections_arg__, const int& seeding_time,
           stan::model::index_uni(s))), "assigning variable R",
         stan::model::index_uni(s));
     }
-    current_statement__ = 608;
+    current_statement__ = 613;
     if (smooth) {
-      current_statement__ = 606;
+      current_statement__ = 611;
       for (int s = 1; s <= ot; ++s) {
         local_scalar_t__ window = DUMMY_VAR__;
-        current_statement__ = 598;
+        current_statement__ = 603;
         window = 0;
-        current_statement__ = 599;
+        current_statement__ = 604;
         stan::model::assign(sR, 0, "assigning variable sR",
           stan::model::index_uni(s));
-        current_statement__ = 603;
+        current_statement__ = 608;
         for (int i = stan::math::max(1, (s - smooth)); i <=
              stan::math::min(ot, (s + smooth)); ++i) {
-          current_statement__ = 600;
+          current_statement__ = 605;
           stan::model::assign(sR,
             (stan::model::rvalue(sR, "sR", stan::model::index_uni(s)) +
             stan::model::rvalue(R, "R", stan::model::index_uni(i))),
             "assigning variable sR", stan::model::index_uni(s));
-          current_statement__ = 601;
+          current_statement__ = 606;
           window = (window + 1);
         }
-        current_statement__ = 604;
+        current_statement__ = 609;
         stan::model::assign(sR,
           (stan::model::rvalue(sR, "sR", stan::model::index_uni(s)) /
           window), "assigning variable sR", stan::model::index_uni(s));
       }
     } else {
-      current_statement__ = 596;
+      current_statement__ = 601;
       stan::model::assign(sR, R, "assigning variable sR");
     }
-    current_statement__ = 609;
+    current_statement__ = 614;
     return sR;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T2__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T2__>,
+                              stan::is_vt_not_complex<T2__>>*>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
+                stan::base_type_t<T2__>>,-1,1>
+calculate_growth(const T0__& infections_arg__, const int& seeding_time,
+                 const T2__& gt_rev_pmf_arg__, const int& growth_method,
+                 std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
+                             stan::base_type_t<T2__>>;
+  int current_statement__ = 0;
+  const auto& infections = stan::math::to_ref(infections_arg__);
+  const auto& gt_rev_pmf = stan::math::to_ref(gt_rev_pmf_arg__);
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 623;
+    if (stan::math::logical_eq(growth_method, 0)) {
+      current_statement__ = 621;
+      return calculate_growth_infections(infections, seeding_time, pstream__);
+    } else {
+      current_statement__ = 620;
+      if (stan::math::logical_eq(growth_method, 1)) {
+        current_statement__ = 618;
+        return calculate_growth_infness(infections, seeding_time, gt_rev_pmf,
+                 pstream__);
+      } else {
+        current_statement__ = 616;
+        std::stringstream errmsg_stream__;
+        stan::math::stan_print(&errmsg_stream__,
+          "growth_method must be 0 (infections) or 1 (infectiousness).");
+        throw std::domain_error(errmsg_stream__.str());
+      }
+    }
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -3333,8 +3444,8 @@ template <typename T0__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>>,-1,1>
-calculate_growth(const T0__& infections_arg__, const int& seeding_time,
-                 std::ostream* pstream__) {
+calculate_growth_infections(const T0__& infections_arg__, const int&
+                            seeding_time, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>>;
   int current_statement__ = 0;
   const auto& infections = stan::math::to_ref(infections_arg__);
@@ -3346,31 +3457,132 @@ calculate_growth(const T0__& infections_arg__, const int& seeding_time,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 611;
+    current_statement__ = 625;
     t = stan::math::num_elements(infections);
     int ot = std::numeric_limits<int>::min();
-    current_statement__ = 612;
+    current_statement__ = 626;
     ot = (t - seeding_time);
-    current_statement__ = 613;
+    int start = std::numeric_limits<int>::min();
+    current_statement__ = 627;
+    start = (1 + seeding_time);
+    current_statement__ = 628;
     stan::math::validate_non_negative_index("log_inf", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> log_inf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 614;
+    current_statement__ = 629;
     stan::model::assign(log_inf, stan::math::log(infections),
       "assigning variable log_inf");
-    current_statement__ = 615;
-    stan::math::validate_non_negative_index("growth", "ot", ot);
+    current_statement__ = 630;
+    stan::math::validate_non_negative_index("growth", "ot - 1", (ot - 1));
     Eigen::Matrix<local_scalar_t__,-1,1> growth =
-      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
-    current_statement__ = 616;
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant((ot - 1), DUMMY_VAR__);
+    current_statement__ = 631;
     stan::model::assign(growth,
       stan::math::subtract(
         stan::model::rvalue(log_inf, "log_inf",
-          stan::model::index_min_max((seeding_time + 1), t)),
+          stan::model::index_min_max((1 + start), t)),
         stan::model::rvalue(log_inf, "log_inf",
-          stan::model::index_min_max(seeding_time, (t - 1)))),
+          stan::model::index_min_max(start, (t - 1)))),
       "assigning variable growth");
-    current_statement__ = 617;
+    current_statement__ = 632;
+    return growth;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T2__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T2__>,
+                              stan::is_vt_not_complex<T2__>>*>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
+                stan::base_type_t<T2__>>,-1,1>
+calculate_growth_infness(const T0__& infections_arg__, const int&
+                         seeding_time, const T2__& gt_rev_pmf_arg__,
+                         std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
+                             stan::base_type_t<T2__>>;
+  int current_statement__ = 0;
+  const auto& infections = stan::math::to_ref(infections_arg__);
+  const auto& gt_rev_pmf = stan::math::to_ref(gt_rev_pmf_arg__);
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    int t = std::numeric_limits<int>::min();
+    current_statement__ = 634;
+    t = stan::math::num_elements(infections);
+    int ot = std::numeric_limits<int>::min();
+    current_statement__ = 635;
+    ot = (t - seeding_time);
+    int start = std::numeric_limits<int>::min();
+    current_statement__ = 636;
+    start = (1 + seeding_time);
+    current_statement__ = 639;
+    if (stan::math::logical_lte(ot, 1)) {
+      current_statement__ = 637;
+      std::stringstream errmsg_stream__;
+      stan::math::stan_print(&errmsg_stream__,
+        "seeding_time must >1 time step shorter than infections vector.");
+      throw std::domain_error(errmsg_stream__.str());
+    }
+    current_statement__ = 640;
+    stan::math::validate_non_negative_index("infness_log", "ot", ot);
+    Eigen::Matrix<local_scalar_t__,-1,1> infness_log =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot, DUMMY_VAR__);
+    current_statement__ = 641;
+    stan::model::assign(infness_log, stan::math::rep_vector(1e-5, ot),
+      "assigning variable infness_log");
+    current_statement__ = 644;
+    for (int s = 1; s <= ot; ++s) {
+      current_statement__ = 642;
+      stan::model::assign(infness_log,
+        (stan::model::rvalue(infness_log, "infness_log",
+           stan::model::index_uni(s)) +
+        stan::math::log(
+          update_infectiousness(infections, gt_rev_pmf, seeding_time, s,
+            pstream__))), "assigning variable infness_log",
+        stan::model::index_uni(s));
+    }
+    int gt_length = std::numeric_limits<int>::min();
+    current_statement__ = 645;
+    gt_length = stan::math::num_elements(gt_rev_pmf);
+    int mean_gen = std::numeric_limits<int>::min();
+    current_statement__ = 646;
+    mean_gen = stan::math::to_int(
+                 stan::math::round(
+                   stan::math::dot_product(
+                     stan::math::reverse(
+                       stan::math::linspaced_vector(gt_length, 1, gt_length)),
+                     gt_rev_pmf)));
+    current_statement__ = 647;
+    stan::math::validate_non_negative_index("growth", "ot - 1", (ot - 1));
+    Eigen::Matrix<local_scalar_t__,-1,1> growth =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant((ot - 1), DUMMY_VAR__);
+    current_statement__ = 648;
+    stan::model::assign(growth,
+      stan::math::subtract(
+        stan::model::rvalue(infness_log, "infness_log",
+          stan::model::index_min_max(2, ot)),
+        stan::model::rvalue(infness_log, "infness_log",
+          stan::model::index_min_max(1, (ot - 1)))),
+      "assigning variable growth");
+    current_statement__ = 649;
+    stan::model::assign(growth,
+      stan::model::deep_copy(
+        stan::model::rvalue(growth, "growth",
+          stan::model::index_min_max((1 + mean_gen), (ot - 1)))),
+      "assigning variable growth",
+      stan::model::index_min_max(1, ((ot - 1) - mean_gen)));
+    current_statement__ = 650;
+    stan::model::assign(growth,
+      stan::math::rep_vector(stan::math::not_a_number(), mean_gen),
+      "assigning variable growth",
+      stan::model::index_min_max((ot - mean_gen), (ot - 1)));
+    current_statement__ = 651;
     return growth;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -3398,21 +3610,21 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 626;
+    current_statement__ = 660;
     if (stan::math::logical_eq(id, 0)) {
-      current_statement__ = 624;
+      current_statement__ = 658;
       return 0;
     } else {
-      current_statement__ = 623;
+      current_statement__ = 657;
       if (stan::model::rvalue(params_fixed_lookup, "params_fixed_lookup",
             stan::model::index_uni(id))) {
-        current_statement__ = 621;
+        current_statement__ = 655;
         return stan::model::rvalue(params_value, "params_value",
                  stan::model::index_uni(
                    stan::model::rvalue(params_fixed_lookup,
                      "params_fixed_lookup", stan::model::index_uni(id))));
       } else {
-        current_statement__ = 619;
+        current_statement__ = 653;
         return stan::model::rvalue(params, "params",
                  stan::model::index_uni(
                    stan::model::rvalue(params_variable_lookup,
@@ -3447,17 +3659,17 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
   (void) DUMMY_VAR__;
   try {
     int n_samples = std::numeric_limits<int>::min();
-    current_statement__ = 628;
+    current_statement__ = 662;
     n_samples = stan::math::rows(params);
-    current_statement__ = 636;
+    current_statement__ = 670;
     if (stan::math::logical_eq(id, 0)) {
-      current_statement__ = 634;
+      current_statement__ = 668;
       return stan::math::rep_vector(0, n_samples);
     } else {
-      current_statement__ = 633;
+      current_statement__ = 667;
       if (stan::model::rvalue(params_fixed_lookup, "params_fixed_lookup",
             stan::model::index_uni(id))) {
-        current_statement__ = 631;
+        current_statement__ = 665;
         return stan::math::rep_vector(
                  stan::model::rvalue(params_value, "params_value",
                    stan::model::index_uni(
@@ -3465,7 +3677,7 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
                        "params_fixed_lookup", stan::model::index_uni(id)))),
                  n_samples);
       } else {
-        current_statement__ = 629;
+        current_statement__ = 663;
         return stan::model::rvalue(params, "params",
                  stan::model::index_omni(),
                  stan::model::index_uni(
@@ -3506,18 +3718,18 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
   (void) DUMMY_VAR__;
   try {
     int params_id = std::numeric_limits<int>::min();
-    current_statement__ = 638;
+    current_statement__ = 672;
     params_id = 1;
     int num_params = std::numeric_limits<int>::min();
-    current_statement__ = 639;
+    current_statement__ = 673;
     num_params = stan::math::num_elements(params);
-    current_statement__ = 661;
+    current_statement__ = 695;
     for (int id = 1; id <= num_params; ++id) {
-      current_statement__ = 659;
+      current_statement__ = 693;
       if (stan::math::logical_eq(
             stan::model::rvalue(prior_dist, "prior_dist",
               stan::model::index_uni(id)), 0)) {
-        current_statement__ = 654;
+        current_statement__ = 688;
         lp_accum__.add(stan::math::lognormal_lpdf<propto__>(
                          stan::model::rvalue(params, "params",
                            stan::model::index_uni(id)),
@@ -3527,25 +3739,25 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
                          stan::model::rvalue(prior_dist_params,
                            "prior_dist_params",
                            stan::model::index_uni((params_id + 1)))));
-        current_statement__ = 656;
+        current_statement__ = 690;
         if (stan::math::logical_lt(
               stan::model::rvalue(params, "params",
                 stan::model::index_uni(id)),
               stan::model::rvalue(params_lower, "params_lower",
                 stan::model::index_uni(id)))) {
-          current_statement__ = 656;
+          current_statement__ = 690;
           lp_accum__.add(stan::math::negative_infinity());
         } else {
-          current_statement__ = 655;
+          current_statement__ = 689;
           if (stan::math::logical_gt(
                 stan::model::rvalue(params, "params",
                   stan::model::index_uni(id)),
                 stan::model::rvalue(params_upper, "params_upper",
                   stan::model::index_uni(id)))) {
-            current_statement__ = 655;
+            current_statement__ = 689;
             lp_accum__.add(stan::math::negative_infinity());
           } else {
-            current_statement__ = 655;
+            current_statement__ = 689;
             lp_accum__.add(-stan::math::log_diff_exp(
                               stan::math::lognormal_lcdf(
                                 stan::model::rvalue(params_upper,
@@ -3567,14 +3779,14 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
                                   stan::model::index_uni((params_id + 1))))));
           }
         }
-        current_statement__ = 657;
+        current_statement__ = 691;
         params_id = (params_id + 2);
       } else {
-        current_statement__ = 653;
+        current_statement__ = 687;
         if (stan::math::logical_eq(
               stan::model::rvalue(prior_dist, "prior_dist",
                 stan::model::index_uni(id)), 1)) {
-          current_statement__ = 648;
+          current_statement__ = 682;
           lp_accum__.add(stan::math::gamma_lpdf<propto__>(
                            stan::model::rvalue(params, "params",
                              stan::model::index_uni(id)),
@@ -3584,25 +3796,25 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
                            stan::model::rvalue(prior_dist_params,
                              "prior_dist_params",
                              stan::model::index_uni((params_id + 1)))));
-          current_statement__ = 650;
+          current_statement__ = 684;
           if (stan::math::logical_lt(
                 stan::model::rvalue(params, "params",
                   stan::model::index_uni(id)),
                 stan::model::rvalue(params_lower, "params_lower",
                   stan::model::index_uni(id)))) {
-            current_statement__ = 650;
+            current_statement__ = 684;
             lp_accum__.add(stan::math::negative_infinity());
           } else {
-            current_statement__ = 649;
+            current_statement__ = 683;
             if (stan::math::logical_gt(
                   stan::model::rvalue(params, "params",
                     stan::model::index_uni(id)),
                   stan::model::rvalue(params_upper, "params_upper",
                     stan::model::index_uni(id)))) {
-              current_statement__ = 649;
+              current_statement__ = 683;
               lp_accum__.add(stan::math::negative_infinity());
             } else {
-              current_statement__ = 649;
+              current_statement__ = 683;
               lp_accum__.add(-stan::math::log_diff_exp(
                                 stan::math::gamma_lcdf(
                                   stan::model::rvalue(params_upper,
@@ -3626,14 +3838,14 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
                                     stan::model::index_uni((params_id + 1))))));
             }
           }
-          current_statement__ = 651;
+          current_statement__ = 685;
           params_id = (params_id + 2);
         } else {
-          current_statement__ = 647;
+          current_statement__ = 681;
           if (stan::math::logical_eq(
                 stan::model::rvalue(prior_dist, "prior_dist",
                   stan::model::index_uni(id)), 2)) {
-            current_statement__ = 642;
+            current_statement__ = 676;
             lp_accum__.add(stan::math::normal_lpdf<propto__>(
                              stan::model::rvalue(params, "params",
                                stan::model::index_uni(id)),
@@ -3643,25 +3855,25 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
                              stan::model::rvalue(prior_dist_params,
                                "prior_dist_params",
                                stan::model::index_uni((params_id + 1)))));
-            current_statement__ = 644;
+            current_statement__ = 678;
             if (stan::math::logical_lt(
                   stan::model::rvalue(params, "params",
                     stan::model::index_uni(id)),
                   stan::model::rvalue(params_lower, "params_lower",
                     stan::model::index_uni(id)))) {
-              current_statement__ = 644;
+              current_statement__ = 678;
               lp_accum__.add(stan::math::negative_infinity());
             } else {
-              current_statement__ = 643;
+              current_statement__ = 677;
               if (stan::math::logical_gt(
                     stan::model::rvalue(params, "params",
                       stan::model::index_uni(id)),
                     stan::model::rvalue(params_upper, "params_upper",
                       stan::model::index_uni(id)))) {
-                current_statement__ = 643;
+                current_statement__ = 677;
                 lp_accum__.add(stan::math::negative_infinity());
               } else {
-                current_statement__ = 643;
+                current_statement__ = 677;
                 lp_accum__.add(-stan::math::log_diff_exp(
                                   stan::math::normal_lcdf(
                                     stan::model::rvalue(params_upper,
@@ -3685,10 +3897,10 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
                                       stan::model::index_uni((params_id + 1))))));
               }
             }
-            current_statement__ = 645;
+            current_statement__ = 679;
             params_id = (params_id + 2);
           } else {
-            current_statement__ = 640;
+            current_statement__ = 674;
             std::stringstream errmsg_stream__;
             stan::math::stan_print(&errmsg_stream__, "dist must be <= 2");
             throw std::domain_error(errmsg_stream__.str());
@@ -3710,8 +3922,10 @@ private:
   std::vector<std::vector<double>> initial_infections;
   int initial_as_scale;
   Eigen::Matrix<double,-1,-1> R_data__;
-  int pop;
-  int gt_id;
+  int use_pop;
+  double pop_floor;
+  int delay_id_generation_time;
+  int growth_method;
   int delay_n;
   int delay_n_p;
   int delay_n_np;
@@ -3728,13 +3942,13 @@ private:
   std::vector<int> delay_types_p;
   std::vector<int> delay_types_id;
   std::vector<int> delay_types_groups;
-  int delay_id;
+  int delay_id_reporting;
   std::vector<int> day_of_week;
   int week_effect;
   std::vector<std::vector<double>> day_of_week_simplex;
   int obs_scale;
   int model_type;
-  int trunc_id;
+  int delay_id_truncation;
   int n_params_variable;
   int n_params_fixed;
   Eigen::Matrix<double,-1,1> params_lower_data__;
@@ -3745,11 +3959,12 @@ private:
   std::vector<int> prior_dist;
   int prior_dist_params_length;
   Eigen::Matrix<double,-1,1> prior_dist_params_data__;
-  int alpha_id;
-  int rho_id;
-  int R0_id;
-  int frac_obs_id;
-  int dispersion_id;
+  int param_id_alpha;
+  int param_id_rho;
+  int param_id_R0;
+  int param_id_fraction_observed;
+  int param_id_reporting_overdispersion;
+  int param_id_pop;
   Eigen::Matrix<double,-1,-1> params_data__;
   std::vector<int> delay_type_max;
   int reports_2dim__;
@@ -3783,33 +3998,33 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 36;
+      current_statement__ = 38;
       context__.validate_dims("data initialization", "n", "int",
         std::vector<size_t>{});
       n = std::numeric_limits<int>::min();
-      current_statement__ = 36;
+      current_statement__ = 38;
       n = context__.vals_i("n")[(1 - 1)];
-      current_statement__ = 37;
+      current_statement__ = 39;
       context__.validate_dims("data initialization", "t", "int",
         std::vector<size_t>{});
       t = std::numeric_limits<int>::min();
-      current_statement__ = 37;
+      current_statement__ = 39;
       t = context__.vals_i("t")[(1 - 1)];
-      current_statement__ = 38;
+      current_statement__ = 40;
       context__.validate_dims("data initialization", "seeding_time", "int",
         std::vector<size_t>{});
       seeding_time = std::numeric_limits<int>::min();
-      current_statement__ = 38;
+      current_statement__ = 40;
       seeding_time = context__.vals_i("seeding_time")[(1 - 1)];
-      current_statement__ = 39;
+      current_statement__ = 41;
       context__.validate_dims("data initialization", "future_time", "int",
         std::vector<size_t>{});
       future_time = std::numeric_limits<int>::min();
-      current_statement__ = 39;
-      future_time = context__.vals_i("future_time")[(1 - 1)];
-      current_statement__ = 40;
-      stan::math::validate_non_negative_index("initial_infections", "n", n);
       current_statement__ = 41;
+      future_time = context__.vals_i("future_time")[(1 - 1)];
+      current_statement__ = 42;
+      stan::math::validate_non_negative_index("initial_infections", "n", n);
+      current_statement__ = 43;
       context__.validate_dims("data initialization", "initial_infections",
         "double",
         std::vector<size_t>{static_cast<size_t>(n), static_cast<size_t>(1)});
@@ -3818,36 +4033,36 @@ public:
                                std::numeric_limits<double>::quiet_NaN()));
       {
         std::vector<local_scalar_t__> initial_infections_flat__;
-        current_statement__ = 41;
+        current_statement__ = 43;
         initial_infections_flat__ = context__.vals_r("initial_infections");
-        current_statement__ = 41;
+        current_statement__ = 43;
         pos__ = 1;
-        current_statement__ = 41;
+        current_statement__ = 43;
         for (int sym1__ = 1; sym1__ <= 1; ++sym1__) {
-          current_statement__ = 41;
+          current_statement__ = 43;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 41;
+            current_statement__ = 43;
             stan::model::assign(initial_infections,
               initial_infections_flat__[(pos__ - 1)],
               "assigning variable initial_infections",
               stan::model::index_uni(sym2__), stan::model::index_uni(sym1__));
-            current_statement__ = 41;
+            current_statement__ = 43;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 42;
+      current_statement__ = 44;
       context__.validate_dims("data initialization", "initial_as_scale",
         "int", std::vector<size_t>{});
       initial_as_scale = std::numeric_limits<int>::min();
-      current_statement__ = 42;
-      initial_as_scale = context__.vals_i("initial_as_scale")[(1 - 1)];
-      current_statement__ = 43;
-      stan::math::validate_non_negative_index("R", "n", n);
       current_statement__ = 44;
+      initial_as_scale = context__.vals_i("initial_as_scale")[(1 - 1)];
+      current_statement__ = 45;
+      stan::math::validate_non_negative_index("R", "n", n);
+      current_statement__ = 46;
       stan::math::validate_non_negative_index("R", "t - seeding_time", (t -
         seeding_time));
-      current_statement__ = 45;
+      current_statement__ = 47;
       context__.validate_dims("data initialization", "R", "double",
         std::vector<size_t>{static_cast<size_t>(n),
           static_cast<size_t>((t - seeding_time))});
@@ -3857,102 +4072,125 @@ public:
         - seeding_time));
       {
         std::vector<local_scalar_t__> R_flat__;
-        current_statement__ = 45;
+        current_statement__ = 47;
         R_flat__ = context__.vals_r("R");
-        current_statement__ = 45;
+        current_statement__ = 47;
         pos__ = 1;
-        current_statement__ = 45;
+        current_statement__ = 47;
         for (int sym1__ = 1; sym1__ <= (t - seeding_time); ++sym1__) {
-          current_statement__ = 45;
+          current_statement__ = 47;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 45;
+            current_statement__ = 47;
             stan::model::assign(R, R_flat__[(pos__ - 1)],
               "assigning variable R", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 45;
+            current_statement__ = 47;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 46;
-      context__.validate_dims("data initialization", "pop", "int",
-        std::vector<size_t>{});
-      pop = std::numeric_limits<int>::min();
-      current_statement__ = 46;
-      pop = context__.vals_i("pop")[(1 - 1)];
-      current_statement__ = 47;
-      context__.validate_dims("data initialization", "gt_id", "int",
-        std::vector<size_t>{});
-      gt_id = std::numeric_limits<int>::min();
-      current_statement__ = 47;
-      gt_id = context__.vals_i("gt_id")[(1 - 1)];
-      current_statement__ = 47;
-      stan::math::check_greater_or_equal(function__, "gt_id", gt_id, 0);
       current_statement__ = 48;
+      context__.validate_dims("data initialization", "use_pop", "int",
+        std::vector<size_t>{});
+      use_pop = std::numeric_limits<int>::min();
+      current_statement__ = 48;
+      use_pop = context__.vals_i("use_pop")[(1 - 1)];
+      current_statement__ = 49;
+      context__.validate_dims("data initialization", "pop_floor", "double",
+        std::vector<size_t>{});
+      pop_floor = std::numeric_limits<double>::quiet_NaN();
+      current_statement__ = 49;
+      pop_floor = context__.vals_r("pop_floor")[(1 - 1)];
+      current_statement__ = 49;
+      stan::math::check_greater_or_equal(function__, "pop_floor", pop_floor,
+        0);
+      current_statement__ = 50;
+      context__.validate_dims("data initialization",
+        "delay_id_generation_time", "int", std::vector<size_t>{});
+      delay_id_generation_time = std::numeric_limits<int>::min();
+      current_statement__ = 50;
+      delay_id_generation_time = context__.vals_i("delay_id_generation_time")[(1
+        - 1)];
+      current_statement__ = 50;
+      stan::math::check_greater_or_equal(function__,
+        "delay_id_generation_time", delay_id_generation_time, 0);
+      current_statement__ = 51;
+      context__.validate_dims("data initialization", "growth_method", "int",
+        std::vector<size_t>{});
+      growth_method = std::numeric_limits<int>::min();
+      current_statement__ = 51;
+      growth_method = context__.vals_i("growth_method")[(1 - 1)];
+      current_statement__ = 51;
+      stan::math::check_greater_or_equal(function__, "growth_method",
+        growth_method, 0);
+      current_statement__ = 51;
+      stan::math::check_less_or_equal(function__, "growth_method",
+        growth_method, 1);
+      current_statement__ = 52;
       context__.validate_dims("data initialization", "delay_n", "int",
         std::vector<size_t>{});
       delay_n = std::numeric_limits<int>::min();
-      current_statement__ = 48;
+      current_statement__ = 52;
       delay_n = context__.vals_i("delay_n")[(1 - 1)];
-      current_statement__ = 48;
+      current_statement__ = 52;
       stan::math::check_greater_or_equal(function__, "delay_n", delay_n, 0);
-      current_statement__ = 49;
+      current_statement__ = 53;
       context__.validate_dims("data initialization", "delay_n_p", "int",
         std::vector<size_t>{});
       delay_n_p = std::numeric_limits<int>::min();
-      current_statement__ = 49;
+      current_statement__ = 53;
       delay_n_p = context__.vals_i("delay_n_p")[(1 - 1)];
-      current_statement__ = 49;
+      current_statement__ = 53;
       stan::math::check_greater_or_equal(function__, "delay_n_p", delay_n_p,
         0);
-      current_statement__ = 50;
+      current_statement__ = 54;
       context__.validate_dims("data initialization", "delay_n_np", "int",
         std::vector<size_t>{});
       delay_n_np = std::numeric_limits<int>::min();
-      current_statement__ = 50;
+      current_statement__ = 54;
       delay_n_np = context__.vals_i("delay_n_np")[(1 - 1)];
-      current_statement__ = 50;
+      current_statement__ = 54;
       stan::math::check_greater_or_equal(function__, "delay_n_np",
         delay_n_np, 0);
-      current_statement__ = 51;
+      current_statement__ = 55;
       stan::math::validate_non_negative_index("delay_max", "delay_n_p",
         delay_n_p);
-      current_statement__ = 52;
+      current_statement__ = 56;
       context__.validate_dims("data initialization", "delay_max", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n_p)});
       delay_max = std::vector<int>(delay_n_p,
                     std::numeric_limits<int>::min());
-      current_statement__ = 52;
+      current_statement__ = 56;
       delay_max = context__.vals_i("delay_max");
-      current_statement__ = 52;
+      current_statement__ = 56;
       stan::math::check_greater_or_equal(function__, "delay_max", delay_max,
         1);
-      current_statement__ = 53;
+      current_statement__ = 57;
       stan::math::validate_non_negative_index("delay_dist", "delay_n_p",
         delay_n_p);
-      current_statement__ = 54;
+      current_statement__ = 58;
       context__.validate_dims("data initialization", "delay_dist", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n_p)});
       delay_dist = std::vector<int>(delay_n_p,
                      std::numeric_limits<int>::min());
-      current_statement__ = 54;
+      current_statement__ = 58;
       delay_dist = context__.vals_i("delay_dist");
-      current_statement__ = 54;
+      current_statement__ = 58;
       stan::math::check_greater_or_equal(function__, "delay_dist",
         delay_dist, 0);
-      current_statement__ = 55;
+      current_statement__ = 59;
       context__.validate_dims("data initialization", "delay_np_pmf_length",
         "int", std::vector<size_t>{});
       delay_np_pmf_length = std::numeric_limits<int>::min();
-      current_statement__ = 55;
+      current_statement__ = 59;
       delay_np_pmf_length = context__.vals_i("delay_np_pmf_length")[(1 - 1)];
-      current_statement__ = 55;
+      current_statement__ = 59;
       stan::math::check_greater_or_equal(function__, "delay_np_pmf_length",
         delay_np_pmf_length, 0);
-      current_statement__ = 56;
+      current_statement__ = 60;
       stan::math::validate_non_negative_index("delay_np_pmf",
         "delay_np_pmf_length", delay_np_pmf_length);
-      current_statement__ = 57;
+      current_statement__ = 61;
       context__.validate_dims("data initialization", "delay_np_pmf",
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_np_pmf_length)});
@@ -3963,63 +4201,63 @@ public:
         delay_np_pmf_length);
       {
         std::vector<local_scalar_t__> delay_np_pmf_flat__;
-        current_statement__ = 57;
+        current_statement__ = 61;
         delay_np_pmf_flat__ = context__.vals_r("delay_np_pmf");
-        current_statement__ = 57;
+        current_statement__ = 61;
         pos__ = 1;
-        current_statement__ = 57;
+        current_statement__ = 61;
         for (int sym1__ = 1; sym1__ <= delay_np_pmf_length; ++sym1__) {
-          current_statement__ = 57;
+          current_statement__ = 61;
           stan::model::assign(delay_np_pmf, delay_np_pmf_flat__[(pos__ - 1)],
             "assigning variable delay_np_pmf", stan::model::index_uni(sym1__));
-          current_statement__ = 57;
+          current_statement__ = 61;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 57;
+      current_statement__ = 61;
       stan::math::check_greater_or_equal(function__, "delay_np_pmf",
         delay_np_pmf, 0);
-      current_statement__ = 57;
+      current_statement__ = 61;
       stan::math::check_less_or_equal(function__, "delay_np_pmf",
         delay_np_pmf, 1);
-      current_statement__ = 58;
+      current_statement__ = 62;
       stan::math::validate_non_negative_index("delay_np_pmf_groups",
         "delay_n_np + 1", (delay_n_np + 1));
-      current_statement__ = 59;
+      current_statement__ = 63;
       context__.validate_dims("data initialization", "delay_np_pmf_groups",
         "int", std::vector<size_t>{static_cast<size_t>((delay_n_np + 1))});
       delay_np_pmf_groups = std::vector<int>((delay_n_np + 1),
                               std::numeric_limits<int>::min());
-      current_statement__ = 59;
+      current_statement__ = 63;
       delay_np_pmf_groups = context__.vals_i("delay_np_pmf_groups");
-      current_statement__ = 59;
+      current_statement__ = 63;
       stan::math::check_greater_or_equal(function__, "delay_np_pmf_groups",
         delay_np_pmf_groups, 1);
-      current_statement__ = 60;
+      current_statement__ = 64;
       stan::math::validate_non_negative_index("delay_weight", "delay_n_p",
         delay_n_p);
-      current_statement__ = 61;
+      current_statement__ = 65;
       context__.validate_dims("data initialization", "delay_weight", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n_p)});
       delay_weight = std::vector<int>(delay_n_p,
                        std::numeric_limits<int>::min());
-      current_statement__ = 61;
+      current_statement__ = 65;
       delay_weight = context__.vals_i("delay_weight");
-      current_statement__ = 62;
+      current_statement__ = 66;
       context__.validate_dims("data initialization", "delay_params_length",
         "int", std::vector<size_t>{});
       delay_params_length = std::numeric_limits<int>::min();
-      current_statement__ = 62;
+      current_statement__ = 66;
       delay_params_length = context__.vals_i("delay_params_length")[(1 - 1)];
-      current_statement__ = 62;
+      current_statement__ = 66;
       stan::math::check_greater_or_equal(function__, "delay_params_length",
         delay_params_length, 0);
-      current_statement__ = 63;
+      current_statement__ = 67;
       stan::math::validate_non_negative_index("delay_params", "n", n);
-      current_statement__ = 64;
+      current_statement__ = 68;
       stan::math::validate_non_negative_index("delay_params",
         "delay_params_length", delay_params_length);
-      current_statement__ = 65;
+      current_statement__ = 69;
       context__.validate_dims("data initialization", "delay_params",
         "double",
         std::vector<size_t>{static_cast<size_t>(n),
@@ -4029,114 +4267,115 @@ public:
                          std::numeric_limits<double>::quiet_NaN()));
       {
         std::vector<local_scalar_t__> delay_params_flat__;
-        current_statement__ = 65;
+        current_statement__ = 69;
         delay_params_flat__ = context__.vals_r("delay_params");
-        current_statement__ = 65;
+        current_statement__ = 69;
         pos__ = 1;
-        current_statement__ = 65;
+        current_statement__ = 69;
         for (int sym1__ = 1; sym1__ <= delay_params_length; ++sym1__) {
-          current_statement__ = 65;
+          current_statement__ = 69;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 65;
+            current_statement__ = 69;
             stan::model::assign(delay_params, delay_params_flat__[(pos__ -
               1)], "assigning variable delay_params",
               stan::model::index_uni(sym2__), stan::model::index_uni(sym1__));
-            current_statement__ = 65;
+            current_statement__ = 69;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 66;
+      current_statement__ = 70;
       stan::math::validate_non_negative_index("delay_params_groups",
         "delay_n_p + 1", (delay_n_p + 1));
-      current_statement__ = 67;
+      current_statement__ = 71;
       context__.validate_dims("data initialization", "delay_params_groups",
         "int", std::vector<size_t>{static_cast<size_t>((delay_n_p + 1))});
       delay_params_groups = std::vector<int>((delay_n_p + 1),
                               std::numeric_limits<int>::min());
-      current_statement__ = 67;
+      current_statement__ = 71;
       delay_params_groups = context__.vals_i("delay_params_groups");
-      current_statement__ = 67;
+      current_statement__ = 71;
       stan::math::check_greater_or_equal(function__, "delay_params_groups",
         delay_params_groups, 0);
-      current_statement__ = 68;
+      current_statement__ = 72;
       context__.validate_dims("data initialization", "delay_types", "int",
         std::vector<size_t>{});
       delay_types = std::numeric_limits<int>::min();
-      current_statement__ = 68;
+      current_statement__ = 72;
       delay_types = context__.vals_i("delay_types")[(1 - 1)];
-      current_statement__ = 68;
+      current_statement__ = 72;
       stan::math::check_greater_or_equal(function__, "delay_types",
         delay_types, 0);
-      current_statement__ = 69;
+      current_statement__ = 73;
       stan::math::validate_non_negative_index("delay_types_p", "delay_n",
         delay_n);
-      current_statement__ = 70;
+      current_statement__ = 74;
       context__.validate_dims("data initialization", "delay_types_p", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n)});
       delay_types_p = std::vector<int>(delay_n,
                         std::numeric_limits<int>::min());
-      current_statement__ = 70;
+      current_statement__ = 74;
       delay_types_p = context__.vals_i("delay_types_p");
-      current_statement__ = 70;
+      current_statement__ = 74;
       stan::math::check_greater_or_equal(function__, "delay_types_p",
         delay_types_p, 0);
-      current_statement__ = 71;
+      current_statement__ = 75;
       stan::math::validate_non_negative_index("delay_types_id", "delay_n",
         delay_n);
-      current_statement__ = 72;
+      current_statement__ = 76;
       context__.validate_dims("data initialization", "delay_types_id", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n)});
       delay_types_id = std::vector<int>(delay_n,
                          std::numeric_limits<int>::min());
-      current_statement__ = 72;
+      current_statement__ = 76;
       delay_types_id = context__.vals_i("delay_types_id");
-      current_statement__ = 72;
+      current_statement__ = 76;
       stan::math::check_greater_or_equal(function__, "delay_types_id",
         delay_types_id, 0);
-      current_statement__ = 73;
+      current_statement__ = 77;
       stan::math::validate_non_negative_index("delay_types_groups",
         "delay_types + 1", (delay_types + 1));
-      current_statement__ = 74;
+      current_statement__ = 78;
       context__.validate_dims("data initialization", "delay_types_groups",
         "int", std::vector<size_t>{static_cast<size_t>((delay_types + 1))});
       delay_types_groups = std::vector<int>((delay_types + 1),
                              std::numeric_limits<int>::min());
-      current_statement__ = 74;
+      current_statement__ = 78;
       delay_types_groups = context__.vals_i("delay_types_groups");
-      current_statement__ = 74;
+      current_statement__ = 78;
       stan::math::check_greater_or_equal(function__, "delay_types_groups",
         delay_types_groups, 0);
-      current_statement__ = 75;
-      context__.validate_dims("data initialization", "delay_id", "int",
-        std::vector<size_t>{});
-      delay_id = std::numeric_limits<int>::min();
-      current_statement__ = 75;
-      delay_id = context__.vals_i("delay_id")[(1 - 1)];
-      current_statement__ = 75;
-      stan::math::check_greater_or_equal(function__, "delay_id", delay_id, 0);
-      current_statement__ = 76;
+      current_statement__ = 79;
+      context__.validate_dims("data initialization", "delay_id_reporting",
+        "int", std::vector<size_t>{});
+      delay_id_reporting = std::numeric_limits<int>::min();
+      current_statement__ = 79;
+      delay_id_reporting = context__.vals_i("delay_id_reporting")[(1 - 1)];
+      current_statement__ = 79;
+      stan::math::check_greater_or_equal(function__, "delay_id_reporting",
+        delay_id_reporting, 0);
+      current_statement__ = 80;
       stan::math::validate_non_negative_index("day_of_week",
         "t - seeding_time", (t - seeding_time));
-      current_statement__ = 77;
+      current_statement__ = 81;
       context__.validate_dims("data initialization", "day_of_week", "int",
         std::vector<size_t>{static_cast<size_t>((t - seeding_time))});
       day_of_week = std::vector<int>((t - seeding_time),
                       std::numeric_limits<int>::min());
-      current_statement__ = 77;
+      current_statement__ = 81;
       day_of_week = context__.vals_i("day_of_week");
-      current_statement__ = 78;
+      current_statement__ = 82;
       context__.validate_dims("data initialization", "week_effect", "int",
         std::vector<size_t>{});
       week_effect = std::numeric_limits<int>::min();
-      current_statement__ = 78;
+      current_statement__ = 82;
       week_effect = context__.vals_i("week_effect")[(1 - 1)];
-      current_statement__ = 79;
+      current_statement__ = 83;
       stan::math::validate_non_negative_index("day_of_week_simplex", "n", n);
-      current_statement__ = 80;
+      current_statement__ = 84;
       stan::math::validate_non_negative_index("day_of_week_simplex",
         "week_effect", week_effect);
-      current_statement__ = 81;
+      current_statement__ = 85;
       context__.validate_dims("data initialization", "day_of_week_simplex",
         "double",
         std::vector<size_t>{static_cast<size_t>(n),
@@ -4146,69 +4385,70 @@ public:
                                 std::numeric_limits<double>::quiet_NaN()));
       {
         std::vector<local_scalar_t__> day_of_week_simplex_flat__;
-        current_statement__ = 81;
+        current_statement__ = 85;
         day_of_week_simplex_flat__ = context__.vals_r("day_of_week_simplex");
-        current_statement__ = 81;
+        current_statement__ = 85;
         pos__ = 1;
-        current_statement__ = 81;
+        current_statement__ = 85;
         for (int sym1__ = 1; sym1__ <= week_effect; ++sym1__) {
-          current_statement__ = 81;
+          current_statement__ = 85;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 81;
+            current_statement__ = 85;
             stan::model::assign(day_of_week_simplex,
               day_of_week_simplex_flat__[(pos__ - 1)],
               "assigning variable day_of_week_simplex",
               stan::model::index_uni(sym2__), stan::model::index_uni(sym1__));
-            current_statement__ = 81;
+            current_statement__ = 85;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 81;
+      current_statement__ = 85;
       stan::math::check_greater_or_equal(function__, "day_of_week_simplex",
         day_of_week_simplex, 0);
-      current_statement__ = 82;
+      current_statement__ = 86;
       context__.validate_dims("data initialization", "obs_scale", "int",
         std::vector<size_t>{});
       obs_scale = std::numeric_limits<int>::min();
-      current_statement__ = 82;
+      current_statement__ = 86;
       obs_scale = context__.vals_i("obs_scale")[(1 - 1)];
-      current_statement__ = 83;
+      current_statement__ = 87;
       context__.validate_dims("data initialization", "model_type", "int",
         std::vector<size_t>{});
       model_type = std::numeric_limits<int>::min();
-      current_statement__ = 83;
+      current_statement__ = 87;
       model_type = context__.vals_i("model_type")[(1 - 1)];
-      current_statement__ = 84;
-      context__.validate_dims("data initialization", "trunc_id", "int",
-        std::vector<size_t>{});
-      trunc_id = std::numeric_limits<int>::min();
-      current_statement__ = 84;
-      trunc_id = context__.vals_i("trunc_id")[(1 - 1)];
-      current_statement__ = 84;
-      stan::math::check_greater_or_equal(function__, "trunc_id", trunc_id, 0);
-      current_statement__ = 85;
+      current_statement__ = 88;
+      context__.validate_dims("data initialization", "delay_id_truncation",
+        "int", std::vector<size_t>{});
+      delay_id_truncation = std::numeric_limits<int>::min();
+      current_statement__ = 88;
+      delay_id_truncation = context__.vals_i("delay_id_truncation")[(1 - 1)];
+      current_statement__ = 88;
+      stan::math::check_greater_or_equal(function__, "delay_id_truncation",
+        delay_id_truncation, 0);
+      current_statement__ = 89;
       context__.validate_dims("data initialization", "n_params_variable",
         "int", std::vector<size_t>{});
       n_params_variable = std::numeric_limits<int>::min();
-      current_statement__ = 85;
+      current_statement__ = 89;
       n_params_variable = context__.vals_i("n_params_variable")[(1 - 1)];
-      current_statement__ = 85;
+      current_statement__ = 89;
       stan::math::check_greater_or_equal(function__, "n_params_variable",
         n_params_variable, 0);
-      current_statement__ = 86;
+      current_statement__ = 90;
       context__.validate_dims("data initialization", "n_params_fixed", "int",
         std::vector<size_t>{});
       n_params_fixed = std::numeric_limits<int>::min();
-      current_statement__ = 86;
+      current_statement__ = 90;
       n_params_fixed = context__.vals_i("n_params_fixed")[(1 - 1)];
-      current_statement__ = 86;
+      current_statement__ = 90;
       stan::math::check_greater_or_equal(function__, "n_params_fixed",
         n_params_fixed, 0);
-      current_statement__ = 87;
+      current_statement__ = 91;
       stan::math::validate_non_negative_index("params_lower",
         "n_params_variable", n_params_variable);
-      current_statement__ = 88;
+      current_statement__ = 92;
       context__.validate_dims("data initialization", "params_lower",
         "double",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
@@ -4219,23 +4459,23 @@ public:
         n_params_variable);
       {
         std::vector<local_scalar_t__> params_lower_flat__;
-        current_statement__ = 88;
+        current_statement__ = 92;
         params_lower_flat__ = context__.vals_r("params_lower");
-        current_statement__ = 88;
+        current_statement__ = 92;
         pos__ = 1;
-        current_statement__ = 88;
+        current_statement__ = 92;
         for (int sym1__ = 1; sym1__ <= n_params_variable; ++sym1__) {
-          current_statement__ = 88;
+          current_statement__ = 92;
           stan::model::assign(params_lower, params_lower_flat__[(pos__ - 1)],
             "assigning variable params_lower", stan::model::index_uni(sym1__));
-          current_statement__ = 88;
+          current_statement__ = 92;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 89;
+      current_statement__ = 93;
       stan::math::validate_non_negative_index("params_upper",
         "n_params_variable", n_params_variable);
-      current_statement__ = 90;
+      current_statement__ = 94;
       context__.validate_dims("data initialization", "params_upper",
         "double",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
@@ -4246,24 +4486,24 @@ public:
         n_params_variable);
       {
         std::vector<local_scalar_t__> params_upper_flat__;
-        current_statement__ = 90;
+        current_statement__ = 94;
         params_upper_flat__ = context__.vals_r("params_upper");
-        current_statement__ = 90;
+        current_statement__ = 94;
         pos__ = 1;
-        current_statement__ = 90;
+        current_statement__ = 94;
         for (int sym1__ = 1; sym1__ <= n_params_variable; ++sym1__) {
-          current_statement__ = 90;
+          current_statement__ = 94;
           stan::model::assign(params_upper, params_upper_flat__[(pos__ - 1)],
             "assigning variable params_upper", stan::model::index_uni(sym1__));
-          current_statement__ = 90;
+          current_statement__ = 94;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 91;
+      current_statement__ = 95;
       stan::math::validate_non_negative_index("params_fixed_lookup",
         "n_params_fixed + n_params_variable", (n_params_fixed +
         n_params_variable));
-      current_statement__ = 92;
+      current_statement__ = 96;
       context__.validate_dims("data initialization", "params_fixed_lookup",
         "int",
         std::vector<size_t>{static_cast<size_t>((n_params_fixed +
@@ -4271,16 +4511,16 @@ public:
       params_fixed_lookup = std::vector<int>((n_params_fixed +
                               n_params_variable),
                               std::numeric_limits<int>::min());
-      current_statement__ = 92;
+      current_statement__ = 96;
       params_fixed_lookup = context__.vals_i("params_fixed_lookup");
-      current_statement__ = 92;
+      current_statement__ = 96;
       stan::math::check_greater_or_equal(function__, "params_fixed_lookup",
         params_fixed_lookup, 0);
-      current_statement__ = 93;
+      current_statement__ = 97;
       stan::math::validate_non_negative_index("params_variable_lookup",
         "n_params_fixed + n_params_variable", (n_params_fixed +
         n_params_variable));
-      current_statement__ = 94;
+      current_statement__ = 98;
       context__.validate_dims("data initialization",
         "params_variable_lookup", "int",
         std::vector<size_t>{static_cast<size_t>((n_params_fixed +
@@ -4288,15 +4528,15 @@ public:
       params_variable_lookup = std::vector<int>((n_params_fixed +
                                  n_params_variable),
                                  std::numeric_limits<int>::min());
-      current_statement__ = 94;
+      current_statement__ = 98;
       params_variable_lookup = context__.vals_i("params_variable_lookup");
-      current_statement__ = 94;
+      current_statement__ = 98;
       stan::math::check_greater_or_equal(function__,
         "params_variable_lookup", params_variable_lookup, 0);
-      current_statement__ = 95;
+      current_statement__ = 99;
       stan::math::validate_non_negative_index("params_value",
         "n_params_fixed", n_params_fixed);
-      current_statement__ = 96;
+      current_statement__ = 100;
       context__.validate_dims("data initialization", "params_value",
         "double", std::vector<size_t>{static_cast<size_t>(n_params_fixed)});
       params_value_data__ = Eigen::Matrix<double,-1,1>::Constant(n_params_fixed,
@@ -4306,46 +4546,46 @@ public:
         n_params_fixed);
       {
         std::vector<local_scalar_t__> params_value_flat__;
-        current_statement__ = 96;
+        current_statement__ = 100;
         params_value_flat__ = context__.vals_r("params_value");
-        current_statement__ = 96;
+        current_statement__ = 100;
         pos__ = 1;
-        current_statement__ = 96;
+        current_statement__ = 100;
         for (int sym1__ = 1; sym1__ <= n_params_fixed; ++sym1__) {
-          current_statement__ = 96;
+          current_statement__ = 100;
           stan::model::assign(params_value, params_value_flat__[(pos__ - 1)],
             "assigning variable params_value", stan::model::index_uni(sym1__));
-          current_statement__ = 96;
+          current_statement__ = 100;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 97;
+      current_statement__ = 101;
       stan::math::validate_non_negative_index("prior_dist",
         "n_params_variable", n_params_variable);
-      current_statement__ = 98;
+      current_statement__ = 102;
       context__.validate_dims("data initialization", "prior_dist", "int",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
       prior_dist = std::vector<int>(n_params_variable,
                      std::numeric_limits<int>::min());
-      current_statement__ = 98;
+      current_statement__ = 102;
       prior_dist = context__.vals_i("prior_dist");
-      current_statement__ = 98;
+      current_statement__ = 102;
       stan::math::check_greater_or_equal(function__, "prior_dist",
         prior_dist, 0);
-      current_statement__ = 99;
+      current_statement__ = 103;
       context__.validate_dims("data initialization",
         "prior_dist_params_length", "int", std::vector<size_t>{});
       prior_dist_params_length = std::numeric_limits<int>::min();
-      current_statement__ = 99;
+      current_statement__ = 103;
       prior_dist_params_length = context__.vals_i("prior_dist_params_length")[(1
         - 1)];
-      current_statement__ = 99;
+      current_statement__ = 103;
       stan::math::check_greater_or_equal(function__,
         "prior_dist_params_length", prior_dist_params_length, 0);
-      current_statement__ = 100;
+      current_statement__ = 104;
       stan::math::validate_non_negative_index("prior_dist_params",
         "prior_dist_params_length", prior_dist_params_length);
-      current_statement__ = 101;
+      current_statement__ = 105;
       context__.validate_dims("data initialization", "prior_dist_params",
         "double",
         std::vector<size_t>{static_cast<size_t>(prior_dist_params_length)});
@@ -4356,69 +4596,84 @@ public:
         prior_dist_params_length);
       {
         std::vector<local_scalar_t__> prior_dist_params_flat__;
-        current_statement__ = 101;
+        current_statement__ = 105;
         prior_dist_params_flat__ = context__.vals_r("prior_dist_params");
-        current_statement__ = 101;
+        current_statement__ = 105;
         pos__ = 1;
-        current_statement__ = 101;
+        current_statement__ = 105;
         for (int sym1__ = 1; sym1__ <= prior_dist_params_length; ++sym1__) {
-          current_statement__ = 101;
+          current_statement__ = 105;
           stan::model::assign(prior_dist_params,
             prior_dist_params_flat__[(pos__ - 1)],
             "assigning variable prior_dist_params",
             stan::model::index_uni(sym1__));
-          current_statement__ = 101;
+          current_statement__ = 105;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 102;
-      context__.validate_dims("data initialization", "alpha_id", "int",
-        std::vector<size_t>{});
-      alpha_id = std::numeric_limits<int>::min();
-      current_statement__ = 102;
-      alpha_id = context__.vals_i("alpha_id")[(1 - 1)];
-      current_statement__ = 102;
-      stan::math::check_greater_or_equal(function__, "alpha_id", alpha_id, 0);
-      current_statement__ = 103;
-      context__.validate_dims("data initialization", "rho_id", "int",
-        std::vector<size_t>{});
-      rho_id = std::numeric_limits<int>::min();
-      current_statement__ = 103;
-      rho_id = context__.vals_i("rho_id")[(1 - 1)];
-      current_statement__ = 103;
-      stan::math::check_greater_or_equal(function__, "rho_id", rho_id, 0);
-      current_statement__ = 104;
-      context__.validate_dims("data initialization", "R0_id", "int",
-        std::vector<size_t>{});
-      R0_id = std::numeric_limits<int>::min();
-      current_statement__ = 104;
-      R0_id = context__.vals_i("R0_id")[(1 - 1)];
-      current_statement__ = 104;
-      stan::math::check_greater_or_equal(function__, "R0_id", R0_id, 0);
-      current_statement__ = 105;
-      context__.validate_dims("data initialization", "frac_obs_id", "int",
-        std::vector<size_t>{});
-      frac_obs_id = std::numeric_limits<int>::min();
-      current_statement__ = 105;
-      frac_obs_id = context__.vals_i("frac_obs_id")[(1 - 1)];
-      current_statement__ = 105;
-      stan::math::check_greater_or_equal(function__, "frac_obs_id",
-        frac_obs_id, 0);
       current_statement__ = 106;
-      context__.validate_dims("data initialization", "dispersion_id", "int",
+      context__.validate_dims("data initialization", "param_id_alpha", "int",
         std::vector<size_t>{});
-      dispersion_id = std::numeric_limits<int>::min();
+      param_id_alpha = std::numeric_limits<int>::min();
       current_statement__ = 106;
-      dispersion_id = context__.vals_i("dispersion_id")[(1 - 1)];
+      param_id_alpha = context__.vals_i("param_id_alpha")[(1 - 1)];
       current_statement__ = 106;
-      stan::math::check_greater_or_equal(function__, "dispersion_id",
-        dispersion_id, 0);
+      stan::math::check_greater_or_equal(function__, "param_id_alpha",
+        param_id_alpha, 0);
       current_statement__ = 107;
-      stan::math::validate_non_negative_index("params", "n", n);
+      context__.validate_dims("data initialization", "param_id_rho", "int",
+        std::vector<size_t>{});
+      param_id_rho = std::numeric_limits<int>::min();
+      current_statement__ = 107;
+      param_id_rho = context__.vals_i("param_id_rho")[(1 - 1)];
+      current_statement__ = 107;
+      stan::math::check_greater_or_equal(function__, "param_id_rho",
+        param_id_rho, 0);
       current_statement__ = 108;
+      context__.validate_dims("data initialization", "param_id_R0", "int",
+        std::vector<size_t>{});
+      param_id_R0 = std::numeric_limits<int>::min();
+      current_statement__ = 108;
+      param_id_R0 = context__.vals_i("param_id_R0")[(1 - 1)];
+      current_statement__ = 108;
+      stan::math::check_greater_or_equal(function__, "param_id_R0",
+        param_id_R0, 0);
+      current_statement__ = 109;
+      context__.validate_dims("data initialization",
+        "param_id_fraction_observed", "int", std::vector<size_t>{});
+      param_id_fraction_observed = std::numeric_limits<int>::min();
+      current_statement__ = 109;
+      param_id_fraction_observed = context__.vals_i("param_id_fraction_observed")[(1
+        - 1)];
+      current_statement__ = 109;
+      stan::math::check_greater_or_equal(function__,
+        "param_id_fraction_observed", param_id_fraction_observed, 0);
+      current_statement__ = 110;
+      context__.validate_dims("data initialization",
+        "param_id_reporting_overdispersion", "int", std::vector<size_t>{});
+      param_id_reporting_overdispersion = std::numeric_limits<int>::min();
+      current_statement__ = 110;
+      param_id_reporting_overdispersion = context__.vals_i("param_id_reporting_overdispersion")[(1
+        - 1)];
+      current_statement__ = 110;
+      stan::math::check_greater_or_equal(function__,
+        "param_id_reporting_overdispersion",
+        param_id_reporting_overdispersion, 0);
+      current_statement__ = 111;
+      context__.validate_dims("data initialization", "param_id_pop", "int",
+        std::vector<size_t>{});
+      param_id_pop = std::numeric_limits<int>::min();
+      current_statement__ = 111;
+      param_id_pop = context__.vals_i("param_id_pop")[(1 - 1)];
+      current_statement__ = 111;
+      stan::math::check_greater_or_equal(function__, "param_id_pop",
+        param_id_pop, 0);
+      current_statement__ = 112;
+      stan::math::validate_non_negative_index("params", "n", n);
+      current_statement__ = 113;
       stan::math::validate_non_negative_index("params", "n_params_variable",
         n_params_variable);
-      current_statement__ = 109;
+      current_statement__ = 114;
       context__.validate_dims("data initialization", "params", "double",
         std::vector<size_t>{static_cast<size_t>(n),
           static_cast<size_t>(n_params_variable)});
@@ -4430,63 +4685,63 @@ public:
         n_params_variable);
       {
         std::vector<local_scalar_t__> params_flat__;
-        current_statement__ = 109;
+        current_statement__ = 114;
         params_flat__ = context__.vals_r("params");
-        current_statement__ = 109;
+        current_statement__ = 114;
         pos__ = 1;
-        current_statement__ = 109;
+        current_statement__ = 114;
         for (int sym1__ = 1; sym1__ <= n_params_variable; ++sym1__) {
-          current_statement__ = 109;
+          current_statement__ = 114;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 109;
+            current_statement__ = 114;
             stan::model::assign(params, params_flat__[(pos__ - 1)],
               "assigning variable params", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 109;
+            current_statement__ = 114;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 110;
+      current_statement__ = 115;
       stan::math::validate_non_negative_index("delay_type_max",
         "delay_types", delay_types);
-      current_statement__ = 111;
+      current_statement__ = 116;
       delay_type_max = std::vector<int>(delay_types,
                          std::numeric_limits<int>::min());
-      current_statement__ = 111;
+      current_statement__ = 116;
       stan::model::assign(delay_type_max,
         get_delay_type_max(delay_types, delay_types_p, delay_types_id,
           delay_types_groups, delay_max, delay_np_pmf_groups, pstream__),
         "assigning variable delay_type_max");
-      current_statement__ = 112;
+      current_statement__ = 117;
       stan::math::validate_non_negative_index("infections", "n", n);
-      current_statement__ = 113;
+      current_statement__ = 118;
       stan::math::validate_non_negative_index("infections", "t", t);
-      current_statement__ = 114;
+      current_statement__ = 119;
       stan::math::validate_non_negative_index("reports", "n", n);
-      current_statement__ = 115;
+      current_statement__ = 120;
       reports_2dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 115;
+      current_statement__ = 120;
       reports_2dim__ = (t - seeding_time);
-      current_statement__ = 115;
+      current_statement__ = 120;
       stan::math::validate_non_negative_index("reports", "t - seeding_time",
         reports_2dim__);
-      current_statement__ = 116;
+      current_statement__ = 121;
       stan::math::validate_non_negative_index("imputed_reports", "n", n);
-      current_statement__ = 117;
+      current_statement__ = 122;
       imputed_reports_2dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 117;
+      current_statement__ = 122;
       imputed_reports_2dim__ = (t - seeding_time);
-      current_statement__ = 117;
+      current_statement__ = 122;
       stan::math::validate_non_negative_index("imputed_reports",
         "t - seeding_time", imputed_reports_2dim__);
-      current_statement__ = 118;
+      current_statement__ = 123;
       stan::math::validate_non_negative_index("r", "n", n);
-      current_statement__ = 119;
+      current_statement__ = 124;
       r_2dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 119;
+      current_statement__ = 124;
       r_2dim__ = ((t - seeding_time) - 1);
-      current_statement__ = 119;
+      current_statement__ = 124;
       stan::math::validate_non_negative_index("r", "t - seeding_time - 1",
         r_2dim__);
     } catch (const std::exception& e) {
@@ -4582,49 +4837,61 @@ public:
           std::numeric_limits<double>::quiet_NaN());
       {
         current_statement__ = 5;
-        stan::math::validate_non_negative_index("dispersion", "n", n);
-        Eigen::Matrix<double,-1,1> dispersion =
+        stan::math::validate_non_negative_index("reporting_overdispersion",
+          "n", n);
+        Eigen::Matrix<double,-1,1> reporting_overdispersion =
           Eigen::Matrix<double,-1,1>::Constant(n,
             std::numeric_limits<double>::quiet_NaN());
         current_statement__ = 6;
-        stan::model::assign(dispersion,
-          get_param(dispersion_id, params_fixed_lookup,
+        stan::model::assign(reporting_overdispersion,
+          get_param(param_id_reporting_overdispersion, params_fixed_lookup,
             params_variable_lookup, params_value, params, pstream__),
-          "assigning variable dispersion");
+          "assigning variable reporting_overdispersion");
         current_statement__ = 7;
-        stan::math::validate_non_negative_index("frac_obs", "n", n);
-        Eigen::Matrix<double,-1,1> frac_obs =
+        stan::math::validate_non_negative_index("fraction_observed", "n", n);
+        Eigen::Matrix<double,-1,1> fraction_observed =
           Eigen::Matrix<double,-1,1>::Constant(n,
             std::numeric_limits<double>::quiet_NaN());
         current_statement__ = 8;
-        stan::model::assign(frac_obs,
-          get_param(frac_obs_id, params_fixed_lookup, params_variable_lookup,
-            params_value, params, pstream__), "assigning variable frac_obs");
-        current_statement__ = 34;
+        stan::model::assign(fraction_observed,
+          get_param(param_id_fraction_observed, params_fixed_lookup,
+            params_variable_lookup, params_value, params, pstream__),
+          "assigning variable fraction_observed");
+        current_statement__ = 9;
+        stan::math::validate_non_negative_index("pop", "n", n);
+        Eigen::Matrix<double,-1,1> pop =
+          Eigen::Matrix<double,-1,1>::Constant(n,
+            std::numeric_limits<double>::quiet_NaN());
+        current_statement__ = 10;
+        stan::model::assign(pop,
+          get_param(param_id_pop, params_fixed_lookup,
+            params_variable_lookup, params_value, params, pstream__),
+          "assigning variable pop");
+        current_statement__ = 36;
         for (int i = 1; i <= n; ++i) {
-          current_statement__ = 9;
+          current_statement__ = 11;
           stan::math::validate_non_negative_index("gt_rev_pmf",
-            "delay_type_max[gt_id] + 1",
+            "delay_type_max[delay_id_generation_time] + 1",
             (stan::model::rvalue(delay_type_max, "delay_type_max",
-               stan::model::index_uni(gt_id)) + 1));
+               stan::model::index_uni(delay_id_generation_time)) + 1));
           Eigen::Matrix<double,-1,1> gt_rev_pmf =
             Eigen::Matrix<double,-1,1>::Constant((stan::model::rvalue(
                                                     delay_type_max,
                                                     "delay_type_max",
                                                     stan::model::index_uni(
-                                                      gt_id)) + 1),
-              std::numeric_limits<double>::quiet_NaN());
-          current_statement__ = 11;
+                                                      delay_id_generation_time))
+              + 1), std::numeric_limits<double>::quiet_NaN());
+          current_statement__ = 13;
           stan::model::assign(gt_rev_pmf,
-            get_delay_rev_pmf(gt_id,
+            get_delay_rev_pmf(delay_id_generation_time,
               (stan::model::rvalue(delay_type_max, "delay_type_max",
-                 stan::model::index_uni(gt_id)) + 1), delay_types_p,
-              delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-              delay_np_pmf_groups,
+                 stan::model::index_uni(delay_id_generation_time)) + 1),
+              delay_types_p, delay_types_id, delay_types_groups, delay_max,
+              delay_np_pmf, delay_np_pmf_groups,
               stan::model::rvalue(delay_params, "delay_params",
                 stan::model::index_uni(i)), delay_params_groups, delay_dist,
               1, 1, 0, pstream__), "assigning variable gt_rev_pmf");
-          current_statement__ = 12;
+          current_statement__ = 14;
           stan::model::assign(infections,
             stan::math::to_row_vector(
               generate_infections(
@@ -4632,46 +4899,48 @@ public:
                   stan::model::rvalue(R, "R", stan::model::index_uni(i))),
                 seeding_time, gt_rev_pmf,
                 stan::model::rvalue(initial_infections, "initial_infections",
-                  stan::model::index_uni(i)), pop, future_time, obs_scale,
-                stan::model::rvalue(frac_obs, "frac_obs",
+                  stan::model::index_uni(i)),
+                stan::model::rvalue(pop, "pop", stan::model::index_uni(i)),
+                use_pop, pop_floor, future_time, obs_scale,
+                stan::model::rvalue(fraction_observed, "fraction_observed",
                   stan::model::index_uni(i)), initial_as_scale, pstream__)),
             "assigning variable infections", stan::model::index_uni(i));
-          current_statement__ = 19;
-          if (delay_id) {
-            current_statement__ = 15;
-            stan::math::validate_non_negative_index("delay_rev_pmf",
-              "delay_type_max[delay_id] + 1",
+          current_statement__ = 21;
+          if (delay_id_reporting) {
+            current_statement__ = 17;
+            stan::math::validate_non_negative_index("reporting_rev_pmf",
+              "delay_type_max[delay_id_reporting] + 1",
               (stan::model::rvalue(delay_type_max, "delay_type_max",
-                 stan::model::index_uni(delay_id)) + 1));
-            Eigen::Matrix<double,-1,1> delay_rev_pmf =
+                 stan::model::index_uni(delay_id_reporting)) + 1));
+            Eigen::Matrix<double,-1,1> reporting_rev_pmf =
               Eigen::Matrix<double,-1,1>::Constant((stan::model::rvalue(
                                                       delay_type_max,
                                                       "delay_type_max",
                                                       stan::model::index_uni(
-                                                        delay_id)) + 1),
-                std::numeric_limits<double>::quiet_NaN());
-            current_statement__ = 16;
-            stan::model::assign(delay_rev_pmf,
-              get_delay_rev_pmf(delay_id,
+                                                        delay_id_reporting))
+                + 1), std::numeric_limits<double>::quiet_NaN());
+            current_statement__ = 18;
+            stan::model::assign(reporting_rev_pmf,
+              get_delay_rev_pmf(delay_id_reporting,
                 (stan::model::rvalue(delay_type_max, "delay_type_max",
-                   stan::model::index_uni(delay_id)) + 1), delay_types_p,
-                delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-                delay_np_pmf_groups,
+                   stan::model::index_uni(delay_id_reporting)) + 1),
+                delay_types_p, delay_types_id, delay_types_groups, delay_max,
+                delay_np_pmf, delay_np_pmf_groups,
                 stan::model::rvalue(delay_params, "delay_params",
                   stan::model::index_uni(i)), delay_params_groups,
                 delay_dist, 0, 1, 0, pstream__),
-              "assigning variable delay_rev_pmf");
-            current_statement__ = 17;
+              "assigning variable reporting_rev_pmf");
+            current_statement__ = 19;
             stan::model::assign(reports,
               stan::math::to_row_vector(
                 convolve_to_report(
                   stan::math::to_vector(
                     stan::model::rvalue(infections, "infections",
-                      stan::model::index_uni(i))), delay_rev_pmf,
+                      stan::model::index_uni(i))), reporting_rev_pmf,
                   seeding_time, pstream__)), "assigning variable reports",
               stan::model::index_uni(i));
           } else {
-            current_statement__ = 13;
+            current_statement__ = 15;
             stan::model::assign(reports,
               stan::math::to_row_vector(
                 stan::model::rvalue(infections, "infections",
@@ -4679,9 +4948,9 @@ public:
                   stan::model::index_min_max((seeding_time + 1), t))),
               "assigning variable reports", stan::model::index_uni(i));
           }
-          current_statement__ = 22;
+          current_statement__ = 24;
           if (stan::math::logical_gt(week_effect, 1)) {
-            current_statement__ = 20;
+            current_statement__ = 22;
             stan::model::assign(reports,
               stan::math::to_row_vector(
                 day_of_week_effect(
@@ -4695,32 +4964,32 @@ public:
                   pstream__)), "assigning variable reports",
               stan::model::index_uni(i));
           }
-          current_statement__ = 27;
-          if (trunc_id) {
-            current_statement__ = 23;
+          current_statement__ = 29;
+          if (delay_id_truncation) {
+            current_statement__ = 25;
             stan::math::validate_non_negative_index("trunc_rev_cmf",
-              "delay_type_max[trunc_id] + 1",
+              "delay_type_max[delay_id_truncation] + 1",
               (stan::model::rvalue(delay_type_max, "delay_type_max",
-                 stan::model::index_uni(trunc_id)) + 1));
+                 stan::model::index_uni(delay_id_truncation)) + 1));
             Eigen::Matrix<double,-1,1> trunc_rev_cmf =
               Eigen::Matrix<double,-1,1>::Constant((stan::model::rvalue(
                                                       delay_type_max,
                                                       "delay_type_max",
                                                       stan::model::index_uni(
-                                                        trunc_id)) + 1),
-                std::numeric_limits<double>::quiet_NaN());
-            current_statement__ = 24;
+                                                        delay_id_truncation))
+                + 1), std::numeric_limits<double>::quiet_NaN());
+            current_statement__ = 26;
             stan::model::assign(trunc_rev_cmf,
-              get_delay_rev_pmf(trunc_id,
+              get_delay_rev_pmf(delay_id_truncation,
                 (stan::model::rvalue(delay_type_max, "delay_type_max",
-                   stan::model::index_uni(trunc_id)) + 1), delay_types_p,
-                delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-                delay_np_pmf_groups,
+                   stan::model::index_uni(delay_id_truncation)) + 1),
+                delay_types_p, delay_types_id, delay_types_groups, delay_max,
+                delay_np_pmf, delay_np_pmf_groups,
                 stan::model::rvalue(delay_params, "delay_params",
                   stan::model::index_uni(i)), delay_params_groups,
                 delay_dist, 0, 1, 1, pstream__),
               "assigning variable trunc_rev_cmf");
-            current_statement__ = 25;
+            current_statement__ = 27;
             stan::model::assign(reports,
               stan::math::to_row_vector(
                 truncate_obs(
@@ -4731,9 +5000,9 @@ public:
                   pstream__)), "assigning variable reports",
               stan::model::index_uni(i));
           }
-          current_statement__ = 30;
+          current_statement__ = 32;
           if (obs_scale) {
-            current_statement__ = 28;
+            current_statement__ = 30;
             stan::model::assign(reports,
               stan::math::to_row_vector(
                 scale_obs(
@@ -4741,27 +5010,28 @@ public:
                     stan::model::deep_copy(
                       stan::model::rvalue(reports, "reports",
                         stan::model::index_uni(i)))),
-                  stan::model::rvalue(frac_obs, "frac_obs",
+                  stan::model::rvalue(fraction_observed, "fraction_observed",
                     stan::model::index_uni(i)), pstream__)),
               "assigning variable reports", stan::model::index_uni(i));
           }
-          current_statement__ = 31;
+          current_statement__ = 33;
           stan::model::assign(imputed_reports,
             report_rng(
               stan::math::to_vector(
                 stan::model::rvalue(reports, "reports",
                   stan::model::index_uni(i))),
-              stan::model::rvalue(dispersion, "dispersion",
-                stan::model::index_uni(i)), model_type, base_rng__, pstream__),
+              stan::model::rvalue(reporting_overdispersion,
+                "reporting_overdispersion", stan::model::index_uni(i)),
+              model_type, base_rng__, pstream__),
             "assigning variable imputed_reports", stan::model::index_uni(i));
-          current_statement__ = 32;
+          current_statement__ = 34;
           stan::model::assign(r,
             stan::math::to_row_vector(
               calculate_growth(
                 stan::math::to_vector(
                   stan::model::rvalue(infections, "infections",
-                    stan::model::index_uni(i))), (seeding_time + 1),
-                pstream__)), "assigning variable r",
+                    stan::model::index_uni(i))), seeding_time, gt_rev_pmf,
+                growth_method, pstream__)), "assigning variable r",
             stan::model::index_uni(i));
         }
       }

@@ -1,5 +1,27 @@
-// calculate infectiousness (weighted sum of the generation time and infections)
-// for a single time point
+/**
+ * Infection Modeling Functions
+ *
+ * This group of functions handles the generation, calculation, and backcalculation
+ * of infection time series in the model. These functions implement the core
+ * epidemiological dynamics, including the renewal equation approach.
+ *
+ * @ingroup infections_estimation
+ */
+
+/**
+ * Calculate infectiousness for a single time point
+ *
+ * This function computes the weighted sum of past infections with the generation
+ * time distribution to determine the current infectiousness.
+ *
+ * @param infections Vector of infection counts
+ * @param gt_rev_pmf Vector of reversed generation time PMF
+ * @param seeding_time Number of time steps used for seeding
+ * @param index Current time index (relative to seeding_time)
+ * @return The infectiousness at the specified time point
+ *
+ * @ingroup infections_estimation
+ */
 real update_infectiousness(vector infections, vector gt_rev_pmf,
                            int seeding_time, int index){
   int gt_length = num_elements(gt_rev_pmf);
@@ -19,11 +41,31 @@ real update_infectiousness(vector infections, vector gt_rev_pmf,
   return(new_inf);
 }
 
-// generate infections by using
-// Rt = Rt-1 * sum(reversed generation time pmf * infections)
+/**
+ * @ingroup infections_estimation
+ * @brief Generate infections using a renewal equation approach
+ *
+ * This function implements the renewal equation to generate a time series of
+ * infections based on reproduction numbers and the generation time distribution.
+ * It can also account for population depletion if a population size is specified.
+ *
+ * @param R Vector of reproduction numbers
+ * @param uot Unobserved time (seeding time)
+ * @param gt_rev_pmf Vector of reversed generation time PMF
+ * @param initial_infections Array of initial infection values
+ * @param pop Initial susceptible population (0 for unlimited)
+ * @param use_pop Population adjustment mode (0=none, 1=forecast only, 2=all)
+ * @param pop_floor Minimum susceptible population (floor to prevent instability)
+ * @param ht Horizon time
+ * @param obs_scale Whether to scale by fraction observed (1) or not (0)
+ * @param fraction_observed Fraction of infections that are observed
+ * @param initial_as_scale Whether initial infections are a scaling factor (1) or not (0)
+ * @return A vector of infection counts
+ */
 vector generate_infections(vector R, int uot, vector gt_rev_pmf,
-                           array[] real initial_infections, int pop, int ht,
-                           int obs_scale, real frac_obs, int initial_as_scale) {
+                           array[] real initial_infections, real pop,
+                           int use_pop, real pop_floor, int ht, int obs_scale, real fraction_observed,
+                           int initial_as_scale) {
   // time indices and storage
   int ot = num_elements(R);
   int nht = ot - ht;
@@ -37,7 +79,7 @@ vector generate_infections(vector R, int uot, vector gt_rev_pmf,
   if (initial_as_scale) {
     infections[1] = exp(initial_infections[1] - growth * uot);
     if (obs_scale) {
-      infections[1] = infections[1] / frac_obs;
+      infections[1] = infections[1] / fraction_observed;
     }
   } else {
     infections[1] = exp(initial_infections[1]);
@@ -49,26 +91,40 @@ vector generate_infections(vector R, int uot, vector gt_rev_pmf,
     }
   }
   // calculate cumulative infections
-  if (pop) {
+  if (use_pop) {
     cum_infections[1] = sum(infections[1:uot]);
   }
   // iteratively update infections
   for (s in 1:ot) {
     infectiousness[s] = update_infectiousness(infections, gt_rev_pmf, uot, s);
-    if (pop && s > nht) {
-      exp_adj_Rt = exp(-R[s] * infectiousness[s] / (pop - cum_infections[nht]));
-      exp_adj_Rt = exp_adj_Rt > 1 ? 1 : exp_adj_Rt;
-      infections[s + uot] = (pop - cum_infections[s]) * (1 - exp_adj_Rt);
-    } else {
+    if ((use_pop == 1 && s > nht) || use_pop == 2) {
+      real susceptible = fmax(pop_floor, pop - cum_infections[s]);
+      exp_adj_Rt = exp(-R[s] * infectiousness[s] / susceptible);
+      infections[s + uot] = susceptible * fmax(0, 1 - exp_adj_Rt);
+    } else{
       infections[s + uot] = R[s] * infectiousness[s];
     }
-    if (pop && s < ot) {
+    if (use_pop && s < ot) {
       cum_infections[s + 1] = cum_infections[s] + infections[s + uot];
     }
   }
   return(infections);
 }
-// backcalculate infections using mean shifted cases and non-parametric noise
+
+/**
+ * Backcalculate infections from cases
+ *
+ * This function estimates infections by working backwards from observed cases,
+ * applying noise to account for uncertainty in the process.
+ *
+ * @param shifted_cases Vector of shifted case counts
+ * @param noise Vector of noise values
+ * @param fixed Whether to use fixed (1) or variable (0) noise
+ * @param prior Prior type to use (0: noise only, 1: cases * noise, 2: random walk)
+ * @return A vector of infection counts
+ *
+ * @ingroup infections_estimation
+ */
 vector deconvolve_infections(vector shifted_cases, vector noise, int fixed,
                              int prior) {
   int t = num_elements(shifted_cases);

@@ -29,448 +29,448 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 443> locations_array__ =
   {" (found before start of program)",
-  " (in 'simulate_secondary', line 686, column 2 to column 48)",
-  " (in 'simulate_secondary', line 688, column 11 to column 12)",
-  " (in 'simulate_secondary', line 688, column 4 to line 691, column 6)",
-  " (in 'simulate_secondary', line 692, column 11 to column 12)",
-  " (in 'simulate_secondary', line 692, column 4 to line 695, column 6)",
-  " (in 'simulate_secondary', line 697, column 13 to column 14)",
-  " (in 'simulate_secondary', line 697, column 6 to column 26)",
-  " (in 'simulate_secondary', line 698, column 13 to column 14)",
-  " (in 'simulate_secondary', line 698, column 6 to column 23)",
-  " (in 'simulate_secondary', line 699, column 13 to column 14)",
-  " (in 'simulate_secondary', line 699, column 6 to column 48)",
-  " (in 'simulate_secondary', line 703, column 8 to column 39)",
-  " (in 'simulate_secondary', line 702, column 13 to line 704, column 7)",
-  " (in 'simulate_secondary', line 701, column 8 to column 63)",
-  " (in 'simulate_secondary', line 700, column 21 to line 702, column 7)",
-  " (in 'simulate_secondary', line 700, column 6 to line 704, column 7)",
-  " (in 'simulate_secondary', line 714, column 8 to column 39)",
-  " (in 'simulate_secondary', line 713, column 13 to line 715, column 7)",
-  " (in 'simulate_secondary', line 706, column 15 to column 43)",
-  " (in 'simulate_secondary', line 706, column 8 to line 711, column 10)",
-  " (in 'simulate_secondary', line 712, column 8 to column 77)",
-  " (in 'simulate_secondary', line 705, column 20 to line 713, column 7)",
-  " (in 'simulate_secondary', line 705, column 6 to line 715, column 7)",
-  " (in 'simulate_secondary', line 717, column 6 to line 720, column 8)",
-  " (in 'simulate_secondary', line 723, column 8 to column 98)",
-  " (in 'simulate_secondary', line 722, column 27 to line 724, column 7)",
-  " (in 'simulate_secondary', line 722, column 6 to line 724, column 7)",
-  " (in 'simulate_secondary', line 727, column 15 to column 43)",
-  " (in 'simulate_secondary', line 727, column 8 to line 732, column 10)",
-  " (in 'simulate_secondary', line 733, column 8 to line 735, column 10)",
-  " (in 'simulate_secondary', line 726, column 20 to line 736, column 7)",
-  " (in 'simulate_secondary', line 726, column 6 to line 736, column 7)",
-  " (in 'simulate_secondary', line 738, column 6 to line 740, column 8)",
-  " (in 'simulate_secondary', line 696, column 19 to line 741, column 5)",
-  " (in 'simulate_secondary', line 696, column 4 to line 741, column 5)",
-  " (in 'simulate_secondary', line 687, column 2 to line 742, column 3)",
-  " (in 'simulate_secondary', line 606, column 2 to column 8)",
-  " (in 'simulate_secondary', line 607, column 2 to column 8)",
-  " (in 'simulate_secondary', line 608, column 2 to column 8)",
-  " (in 'simulate_secondary', line 609, column 2 to column 16)",
-  " (in 'simulate_secondary', line 611, column 8 to column 13)",
-  " (in 'simulate_secondary', line 611, column 2 to column 34)",
-  " (in 'simulate_secondary', line 612, column 9 to column 10)",
-  " (in 'simulate_secondary', line 612, column 12 to column 13)",
-  " (in 'simulate_secondary', line 612, column 2 to column 23)",
-  " (in 'simulate_secondary', line 614, column 0 to column 17)",
-  " (in 'simulate_secondary', line 615, column 0 to column 15)",
-  " (in 'simulate_secondary', line 616, column 0 to column 13)",
-  " (in 'simulate_secondary', line 617, column 0 to column 26)",
-  " (in 'simulate_secondary', line 618, column 0 to column 12)",
-  " (in 'simulate_secondary', line 619, column 0 to column 29)",
-  " (in 'simulate_secondary', line 621, column 0 to column 23)",
-  " (in 'simulate_secondary', line 622, column 0 to column 25)",
-  " (in 'simulate_secondary', line 623, column 0 to column 26)",
-  " (in 'simulate_secondary', line 624, column 6 to column 15)",
-  " (in 'simulate_secondary', line 624, column 0 to column 42)",
-  " (in 'simulate_secondary', line 625, column 6 to column 15)",
-  " (in 'simulate_secondary', line 625, column 0 to column 43)",
-  " (in 'simulate_secondary', line 626, column 0 to column 35)",
-  " (in 'simulate_secondary', line 628, column 29 to column 48)",
-  " (in 'simulate_secondary', line 628, column 0 to column 63)",
-  " (in 'simulate_secondary', line 630, column 6 to column 20)",
-  " (in 'simulate_secondary', line 630, column 0 to column 57)",
-  " (in 'simulate_secondary', line 631, column 6 to column 15)",
-  " (in 'simulate_secondary', line 631, column 0 to column 34)",
-  " (in 'simulate_secondary', line 634, column 0 to column 35)",
-  " (in 'simulate_secondary', line 636, column 6 to column 7)",
-  " (in 'simulate_secondary', line 636, column 16 to column 35)",
-  " (in 'simulate_secondary', line 636, column 0 to column 50)",
-  " (in 'simulate_secondary', line 638, column 6 to column 19)",
-  " (in 'simulate_secondary', line 638, column 0 to column 56)",
-  " (in 'simulate_secondary', line 640, column 0 to column 27)",
-  " (in 'simulate_secondary', line 642, column 6 to column 13)",
-  " (in 'simulate_secondary', line 642, column 0 to column 44)",
-  " (in 'simulate_secondary', line 644, column 6 to column 13)",
-  " (in 'simulate_secondary', line 644, column 0 to column 45)",
-  " (in 'simulate_secondary', line 646, column 6 to column 21)",
-  " (in 'simulate_secondary', line 646, column 0 to column 57)",
-  " (in 'simulate_secondary', line 648, column 0 to column 24)",
-  " (in 'simulate_secondary', line 650, column 6 to column 22)",
-  " (in 'simulate_secondary', line 650, column 0 to column 40)",
-  " (in 'simulate_secondary', line 651, column 0 to column 16)",
-  " (in 'simulate_secondary', line 652, column 6 to column 7)",
-  " (in 'simulate_secondary', line 652, column 9 to column 20)",
-  " (in 'simulate_secondary', line 652, column 0 to column 58)",
-  " (in 'simulate_secondary', line 653, column 0 to column 14)",
-  " (in 'simulate_secondary', line 654, column 0 to column 15)",
-  " (in 'simulate_secondary', line 655, column 0 to column 24)",
-  " (in 'simulate_secondary', line 657, column 0 to column 33)",
-  " (in 'simulate_secondary', line 658, column 0 to column 30)",
-  " (in 'simulate_secondary', line 659, column 7 to column 24)",
-  " (in 'simulate_secondary', line 659, column 0 to column 39)",
-  " (in 'simulate_secondary', line 660, column 7 to column 24)",
-  " (in 'simulate_secondary', line 660, column 0 to column 39)",
-  " (in 'simulate_secondary', line 663, column 6 to column 40)",
-  " (in 'simulate_secondary', line 663, column 0 to column 77)",
-  " (in 'simulate_secondary', line 665, column 6 to column 40)",
-  " (in 'simulate_secondary', line 665, column 0 to column 80)",
-  " (in 'simulate_secondary', line 667, column 7 to column 21)",
-  " (in 'simulate_secondary', line 667, column 0 to column 36)",
-  " (in 'simulate_secondary', line 670, column 6 to column 23)",
-  " (in 'simulate_secondary', line 670, column 0 to column 51)",
-  " (in 'simulate_secondary', line 672, column 0 to column 40)",
-  " (in 'simulate_secondary', line 673, column 7 to column 31)",
-  " (in 'simulate_secondary', line 673, column 0 to column 51)",
-  " (in 'simulate_secondary', line 675, column 0 to column 27)",
-  " (in 'simulate_secondary', line 676, column 0 to column 29)",
-  " (in 'simulate_secondary', line 677, column 9 to column 10)",
-  " (in 'simulate_secondary', line 677, column 12 to column 29)",
-  " (in 'simulate_secondary', line 677, column 2 to column 38)",
-  " (in 'simulate_secondary', line 680, column 8 to column 19)",
-  " (in 'simulate_secondary', line 680, column 2 to line 683, column 4)",
-  " (in 'simulate_secondary', line 686, column 8 to column 9)",
-  " (in 'simulate_secondary', line 686, column 11 to column 28)",
-  " (in 'simulate_secondary', line 12, column 2 to column 30)",
-  " (in 'simulate_secondary', line 13, column 2 to column 41)",
-  " (in 'simulate_secondary', line 14, column 2 to column 16)",
-  " (in 'simulate_secondary', line 15, column 2 to column 41)",
-  " (in 'simulate_secondary', line 16, column 2 to column 19)",
-  " (in 'simulate_secondary', line 17, column 2 to column 42)",
-  " (in 'simulate_secondary', line 11, column 62 to line 18, column 1)",
-  " (in 'simulate_secondary', line 29, column 2 to column 30)",
-  " (in 'simulate_secondary', line 30, column 2 to column 41)",
-  " (in 'simulate_secondary', line 31, column 2 to column 19)",
-  " (in 'simulate_secondary', line 32, column 2 to column 41)",
-  " (in 'simulate_secondary', line 32, column 41 to column 42)",
-  " (in 'simulate_secondary', line 33, column 2 to column 30)",
-  " (in 'simulate_secondary', line 34, column 2 to column 42)",
-  " (in 'simulate_secondary', line 28, column 61 to line 35, column 1)",
-  " (in 'simulate_secondary', line 50, column 2 to column 29)",
-  " (in 'simulate_secondary', line 51, column 2 to column 29)",
-  " (in 'simulate_secondary', line 52, column 9 to column 12)",
-  " (in 'simulate_secondary', line 52, column 2 to column 16)",
-  " (in 'simulate_secondary', line 55, column 4 to column 74)",
-  " (in 'simulate_secondary', line 54, column 29 to line 56, column 3)",
-  " (in 'simulate_secondary', line 54, column 2 to line 56, column 3)",
-  " (in 'simulate_secondary', line 59, column 4 to column 59)",
-  " (in 'simulate_secondary', line 58, column 18 to line 60, column 3)",
-  " (in 'simulate_secondary', line 58, column 2 to line 60, column 3)",
-  " (in 'simulate_secondary', line 63, column 4 to column 65)",
-  " (in 'simulate_secondary', line 64, column 4 to column 75)",
-  " (in 'simulate_secondary', line 62, column 20 to line 65, column 3)",
-  " (in 'simulate_secondary', line 62, column 2 to line 65, column 3)",
-  " (in 'simulate_secondary', line 69, column 6 to column 66)",
-  " (in 'simulate_secondary', line 70, column 6 to column 77)",
-  " (in 'simulate_secondary', line 68, column 30 to line 71, column 5)",
-  " (in 'simulate_secondary', line 68, column 4 to line 71, column 5)",
-  " (in 'simulate_secondary', line 67, column 18 to line 72, column 3)",
-  " (in 'simulate_secondary', line 67, column 2 to line 72, column 3)",
-  " (in 'simulate_secondary', line 74, column 2 to column 11)",
-  " (in 'simulate_secondary', line 49, column 58 to line 75, column 1)",
-  " (in 'simulate_secondary', line 93, column 2 to column 35)",
-  " (in 'simulate_secondary', line 94, column 2 to column 43)",
-  " (in 'simulate_secondary', line 97, column 4 to column 44)",
-  " (in 'simulate_secondary', line 96, column 19 to line 98, column 3)",
-  " (in 'simulate_secondary', line 96, column 2 to line 98, column 3)",
-  " (in 'simulate_secondary', line 100, column 9 to column 10)",
-  " (in 'simulate_secondary', line 100, column 2 to column 80)",
-  " (in 'simulate_secondary', line 101, column 2 to column 45)",
-  " (in 'simulate_secondary', line 92, column 44 to line 102, column 1)",
-  " (in 'simulate_secondary', line 109, column 9 to column 10)",
-  " (in 'simulate_secondary', line 109, column 2 to column 17)",
-  " (in 'simulate_secondary', line 110, column 9 to column 10)",
-  " (in 'simulate_secondary', line 110, column 2 to column 23)",
-  " (in 'simulate_secondary', line 120, column 4 to column 54)",
-  " (in 'simulate_secondary', line 119, column 9 to line 121, column 3)",
-  " (in 'simulate_secondary', line 117, column 6 to column 59)",
-  " (in 'simulate_secondary', line 116, column 19 to line 118, column 5)",
-  " (in 'simulate_secondary', line 116, column 4 to line 118, column 5)",
-  " (in 'simulate_secondary', line 115, column 24 to line 119, column 3)",
-  " (in 'simulate_secondary', line 115, column 9 to line 121, column 3)",
-  " (in 'simulate_secondary', line 113, column 6 to column 63)",
-  " (in 'simulate_secondary', line 112, column 19 to line 114, column 5)",
-  " (in 'simulate_secondary', line 112, column 4 to line 114, column 5)",
-  " (in 'simulate_secondary', line 111, column 17 to line 115, column 3)",
-  " (in 'simulate_secondary', line 111, column 2 to line 121, column 3)",
-  " (in 'simulate_secondary', line 132, column 4 to column 16)",
-  " (in 'simulate_secondary', line 131, column 9 to line 133, column 3)",
-  " (in 'simulate_secondary', line 124, column 4 to column 28)",
-  " (in 'simulate_secondary', line 125, column 4 to column 28)",
-  " (in 'simulate_secondary', line 127, column 6 to column 71)",
-  " (in 'simulate_secondary', line 126, column 15 to line 128, column 5)",
-  " (in 'simulate_secondary', line 126, column 4 to line 128, column 5)",
-  " (in 'simulate_secondary', line 130, column 4 to column 53)",
-  " (in 'simulate_secondary', line 123, column 13 to line 131, column 3)",
-  " (in 'simulate_secondary', line 123, column 2 to line 133, column 3)",
-  " (in 'simulate_secondary', line 134, column 2 to column 20)",
-  " (in 'simulate_secondary', line 108, column 55 to line 135, column 1)",
-  " (in 'simulate_secondary', line 142, column 8 to column 19)",
-  " (in 'simulate_secondary', line 142, column 2 to column 29)",
-  " (in 'simulate_secondary', line 144, column 4 to column 15)",
-  " (in 'simulate_secondary', line 149, column 8 to line 150, column 53)",
-  " (in 'simulate_secondary', line 148, column 13 to line 151, column 7)",
-  " (in 'simulate_secondary', line 147, column 8 to column 47)",
-  " (in 'simulate_secondary', line 146, column 28 to line 148, column 7)",
-  " (in 'simulate_secondary', line 146, column 6 to line 151, column 7)",
-  " (in 'simulate_secondary', line 145, column 69 to line 152, column 5)",
-  " (in 'simulate_secondary', line 145, column 4 to line 152, column 5)",
-  " (in 'simulate_secondary', line 143, column 27 to line 153, column 3)",
-  " (in 'simulate_secondary', line 143, column 2 to line 153, column 3)",
-  " (in 'simulate_secondary', line 154, column 2 to column 13)",
-  " (in 'simulate_secondary', line 141, column 2 to line 155, column 1)",
-  " (in 'simulate_secondary', line 165, column 9 to column 12)",
-  " (in 'simulate_secondary', line 165, column 2 to column 39)",
-  " (in 'simulate_secondary', line 166, column 2 to column 22)",
-  " (in 'simulate_secondary', line 167, column 2 to column 14)",
-  " (in 'simulate_secondary', line 188, column 6 to column 57)",
-  " (in 'simulate_secondary', line 189, column 6 to column 63)",
-  " (in 'simulate_secondary', line 190, column 6 to column 42)",
-  " (in 'simulate_secondary', line 194, column 8 to line 196, column 10)",
-  " (in 'simulate_secondary', line 193, column 13 to line 197, column 7)",
-  " (in 'simulate_secondary', line 192, column 8 to column 49)",
-  " (in 'simulate_secondary', line 191, column 28 to line 193, column 7)",
-  " (in 'simulate_secondary', line 191, column 6 to line 197, column 7)",
-  " (in 'simulate_secondary', line 187, column 11 to line 198, column 5)",
-  " (in 'simulate_secondary', line 171, column 6 to column 57)",
-  " (in 'simulate_secondary', line 172, column 6 to column 63)",
-  " (in 'simulate_secondary', line 173, column 13 to column 45)",
-  " (in 'simulate_secondary', line 173, column 6 to line 178, column 8)",
-  " (in 'simulate_secondary', line 179, column 6 to column 59)",
-  " (in 'simulate_secondary', line 183, column 8 to line 185, column 10)",
-  " (in 'simulate_secondary', line 182, column 13 to line 186, column 7)",
-  " (in 'simulate_secondary', line 181, column 8 to column 42)",
-  " (in 'simulate_secondary', line 180, column 28 to line 182, column 7)",
-  " (in 'simulate_secondary', line 180, column 6 to line 186, column 7)",
-  " (in 'simulate_secondary', line 170, column 26 to line 187, column 5)",
-  " (in 'simulate_secondary', line 170, column 4 to line 198, column 5)",
-  " (in 'simulate_secondary', line 199, column 4 to column 26)",
-  " (in 'simulate_secondary', line 169, column 78 to line 200, column 3)",
-  " (in 'simulate_secondary', line 168, column 2 to line 200, column 3)",
-  " (in 'simulate_secondary', line 202, column 4 to line 205, column 6)",
-  " (in 'simulate_secondary', line 201, column 21 to line 206, column 3)",
-  " (in 'simulate_secondary', line 201, column 2 to line 206, column 3)",
-  " (in 'simulate_secondary', line 208, column 4 to column 30)",
-  " (in 'simulate_secondary', line 207, column 18 to line 209, column 3)",
-  " (in 'simulate_secondary', line 207, column 2 to line 209, column 3)",
-  " (in 'simulate_secondary', line 211, column 4 to column 23)",
-  " (in 'simulate_secondary', line 210, column 19 to line 212, column 3)",
-  " (in 'simulate_secondary', line 210, column 2 to line 212, column 3)",
-  " (in 'simulate_secondary', line 213, column 2 to column 13)",
-  " (in 'simulate_secondary', line 163, column 2 to line 214, column 1)",
-  " (in 'simulate_secondary', line 221, column 2 to column 55)",
-  " (in 'simulate_secondary', line 223, column 4 to column 11)",
-  " (in 'simulate_secondary', line 222, column 21 to line 224, column 3)",
-  " (in 'simulate_secondary', line 222, column 2 to line 224, column 3)",
-  " (in 'simulate_secondary', line 226, column 4 to column 39)",
-  " (in 'simulate_secondary', line 227, column 4 to column 45)",
-  " (in 'simulate_secondary', line 236, column 10 to column 77)",
-  " (in 'simulate_secondary', line 235, column 15 to line 237, column 9)",
-  " (in 'simulate_secondary', line 231, column 10 to line 234, column 14)",
-  " (in 'simulate_secondary', line 230, column 27 to line 235, column 9)",
-  " (in 'simulate_secondary', line 230, column 8 to line 237, column 9)",
-  " (in 'simulate_secondary', line 229, column 34 to line 238, column 7)",
-  " (in 'simulate_secondary', line 229, column 6 to line 238, column 7)",
-  " (in 'simulate_secondary', line 228, column 25 to line 239, column 5)",
-  " (in 'simulate_secondary', line 228, column 4 to line 239, column 5)",
-  " (in 'simulate_secondary', line 225, column 24 to line 240, column 3)",
-  " (in 'simulate_secondary', line 225, column 2 to line 240, column 3)",
-  " (in 'simulate_secondary', line 220, column 59 to line 241, column 1)",
-  " (in 'simulate_secondary', line 244, column 2 to column 29)",
-  " (in 'simulate_secondary', line 245, column 9 to column 12)",
-  " (in 'simulate_secondary', line 245, column 2 to column 18)",
-  " (in 'simulate_secondary', line 247, column 4 to column 49)",
-  " (in 'simulate_secondary', line 248, column 4 to column 31)",
-  " (in 'simulate_secondary', line 249, column 4 to column 45)",
-  " (in 'simulate_secondary', line 246, column 19 to line 250, column 3)",
-  " (in 'simulate_secondary', line 246, column 2 to line 250, column 3)",
-  " (in 'simulate_secondary', line 251, column 2 to column 13)",
-  " (in 'simulate_secondary', line 243, column 57 to line 252, column 1)",
-  " (in 'simulate_secondary', line 268, column 2 to column 32)",
-  " (in 'simulate_secondary', line 269, column 9 to column 11)",
-  " (in 'simulate_secondary', line 269, column 2 to column 41)",
-  " (in 'simulate_secondary', line 270, column 2 to column 47)",
-  " (in 'simulate_secondary', line 267, column 41 to line 271, column 1)",
-  " (in 'simulate_secondary', line 284, column 2 to column 32)",
-  " (in 'simulate_secondary', line 285, column 9 to column 10)",
-  " (in 'simulate_secondary', line 285, column 2 to column 27)",
-  " (in 'simulate_secondary', line 286, column 2 to column 38)",
-  " (in 'simulate_secondary', line 287, column 2 to column 25)",
-  " (in 'simulate_secondary', line 283, column 48 to line 288, column 1)",
-  " (in 'simulate_secondary', line 305, column 2 to column 32)",
-  " (in 'simulate_secondary', line 306, column 2 to column 46)",
-  " (in 'simulate_secondary', line 307, column 9 to column 10)",
-  " (in 'simulate_secondary', line 307, column 2 to column 36)",
-  " (in 'simulate_secondary', line 309, column 2 to column 36)",
-  " (in 'simulate_secondary', line 310, column 2 to column 34)",
-  " (in 'simulate_secondary', line 311, column 2 to column 46)",
-  " (in 'simulate_secondary', line 317, column 4 to column 70)",
-  " (in 'simulate_secondary', line 316, column 9 to line 318, column 3)",
-  " (in 'simulate_secondary', line 315, column 4 to column 70)",
-  " (in 'simulate_secondary', line 314, column 19 to line 316, column 3)",
-  " (in 'simulate_secondary', line 314, column 2 to line 318, column 3)",
-  " (in 'simulate_secondary', line 319, column 2 to column 24)",
-  " (in 'simulate_secondary', line 304, column 75 to line 320, column 1)",
-  " (in 'simulate_secondary', line 341, column 2 to column 49)",
-  " (in 'simulate_secondary', line 345, column 6 to column 63)",
-  " (in 'simulate_secondary', line 343, column 30 to line 346, column 5)",
-  " (in 'simulate_secondary', line 343, column 4 to line 346, column 5)",
-  " (in 'simulate_secondary', line 349, column 6 to column 57)",
-  " (in 'simulate_secondary', line 347, column 28 to line 350, column 5)",
-  " (in 'simulate_secondary', line 347, column 4 to line 350, column 5)",
-  " (in 'simulate_secondary', line 342, column 18 to line 351, column 3)",
-  " (in 'simulate_secondary', line 342, column 2 to line 351, column 3)",
-  " (in 'simulate_secondary', line 340, column 73 to line 352, column 1)",
-  " (in 'simulate_secondary', line 372, column 2 to column 35)",
-  " (in 'simulate_secondary', line 373, column 9 to column 10)",
-  " (in 'simulate_secondary', line 373, column 2 to column 46)",
-  " (in 'simulate_secondary', line 387, column 6 to column 59)",
-  " (in 'simulate_secondary', line 386, column 11 to line 388, column 5)",
-  " (in 'simulate_secondary', line 385, column 6 to column 35)",
-  " (in 'simulate_secondary', line 384, column 21 to line 386, column 5)",
-  " (in 'simulate_secondary', line 384, column 4 to line 388, column 5)",
-  " (in 'simulate_secondary', line 383, column 9 to line 389, column 3)",
-  " (in 'simulate_secondary', line 375, column 4 to column 38)",
-  " (in 'simulate_secondary', line 379, column 6 to line 381, column 17)",
-  " (in 'simulate_secondary', line 378, column 11 to line 382, column 5)",
-  " (in 'simulate_secondary', line 377, column 6 to column 47)",
-  " (in 'simulate_secondary', line 376, column 21 to line 378, column 5)",
-  " (in 'simulate_secondary', line 376, column 4 to line 382, column 5)",
-  " (in 'simulate_secondary', line 374, column 18 to line 383, column 3)",
-  " (in 'simulate_secondary', line 374, column 2 to line 389, column 3)",
-  " (in 'simulate_secondary', line 371, column 61 to line 390, column 1)",
-  " (in 'simulate_secondary', line 405, column 2 to column 35)",
-  " (in 'simulate_secondary', line 406, column 9 to column 13)",
-  " (in 'simulate_secondary', line 406, column 2 to column 45)",
-  " (in 'simulate_secondary', line 409, column 6 to column 59)",
-  " (in 'simulate_secondary', line 408, column 23 to line 410, column 5)",
-  " (in 'simulate_secondary', line 408, column 4 to line 410, column 5)",
-  " (in 'simulate_secondary', line 407, column 26 to line 411, column 3)",
-  " (in 'simulate_secondary', line 407, column 2 to line 411, column 3)",
-  " (in 'simulate_secondary', line 412, column 2 to column 29)",
-  " (in 'simulate_secondary', line 404, column 66 to line 413, column 1)",
-  " (in 'simulate_secondary', line 432, column 2 to column 32)",
-  " (in 'simulate_secondary', line 433, column 9 to column 10)",
-  " (in 'simulate_secondary', line 433, column 2 to column 20)",
-  " (in 'simulate_secondary', line 441, column 4 to column 38)",
-  " (in 'simulate_secondary', line 443, column 6 to line 445, column 17)",
-  " (in 'simulate_secondary', line 442, column 19 to line 446, column 5)",
-  " (in 'simulate_secondary', line 442, column 4 to line 446, column 5)",
-  " (in 'simulate_secondary', line 440, column 9 to line 447, column 3)",
-  " (in 'simulate_secondary', line 438, column 6 to column 64)",
-  " (in 'simulate_secondary', line 437, column 19 to line 439, column 5)",
-  " (in 'simulate_secondary', line 437, column 4 to line 439, column 5)",
-  " (in 'simulate_secondary', line 436, column 23 to line 440, column 3)",
-  " (in 'simulate_secondary', line 436, column 2 to line 447, column 3)",
-  " (in 'simulate_secondary', line 448, column 2 to column 18)",
-  " (in 'simulate_secondary', line 431, column 68 to line 449, column 1)",
-  " (in 'simulate_secondary', line 476, column 4 to column 47)",
-  " (in 'simulate_secondary', line 477, column 4 to column 61)",
-  " (in 'simulate_secondary', line 475, column 9 to line 478, column 3)",
-  " (in 'simulate_secondary', line 474, column 4 to column 45)",
-  " (in 'simulate_secondary', line 473, column 24 to line 475, column 3)",
-  " (in 'simulate_secondary', line 473, column 9 to line 478, column 3)",
-  " (in 'simulate_secondary', line 472, column 4 to column 14)",
-  " (in 'simulate_secondary', line 471, column 17 to line 473, column 3)",
-  " (in 'simulate_secondary', line 471, column 2 to line 478, column 3)",
-  " (in 'simulate_secondary', line 470, column 47 to line 479, column 1)",
-  " (in 'simulate_secondary', line 495, column 2 to column 32)",
-  " (in 'simulate_secondary', line 496, column 8 to column 9)",
-  " (in 'simulate_secondary', line 496, column 2 to column 31)",
-  " (in 'simulate_secondary', line 497, column 2 to column 17)",
-  " (in 'simulate_secondary', line 499, column 4 to column 33)",
-  " (in 'simulate_secondary', line 498, column 18 to line 500, column 3)",
-  " (in 'simulate_secondary', line 498, column 2 to line 500, column 3)",
-  " (in 'simulate_secondary', line 503, column 4 to column 66)",
-  " (in 'simulate_secondary', line 502, column 17 to line 504, column 3)",
-  " (in 'simulate_secondary', line 502, column 2 to line 504, column 3)",
-  " (in 'simulate_secondary', line 505, column 2 to column 26)",
-  " (in 'simulate_secondary', line 494, column 72 to line 506, column 1)",
-  " (in 'simulate_secondary', line 514, column 2 to column 39)",
-  " (in 'simulate_secondary', line 515, column 9 to column 10)",
-  " (in 'simulate_secondary', line 515, column 2 to column 51)",
-  " (in 'simulate_secondary', line 524, column 8 to column 42)",
-  " (in 'simulate_secondary', line 523, column 12 to line 525, column 7)",
-  " (in 'simulate_secondary', line 522, column 8 to column 56)",
-  " (in 'simulate_secondary', line 521, column 23 to line 523, column 7)",
-  " (in 'simulate_secondary', line 521, column 6 to line 525, column 7)",
-  " (in 'simulate_secondary', line 520, column 29 to line 526, column 5)",
-  " (in 'simulate_secondary', line 520, column 4 to line 526, column 5)",
-  " (in 'simulate_secondary', line 532, column 8 to column 79)",
-  " (in 'simulate_secondary', line 531, column 12 to line 533, column 7)",
-  " (in 'simulate_secondary', line 530, column 8 to column 48)",
-  " (in 'simulate_secondary', line 529, column 33 to line 531, column 7)",
-  " (in 'simulate_secondary', line 529, column 6 to line 533, column 7)",
-  " (in 'simulate_secondary', line 528, column 18 to line 534, column 5)",
-  " (in 'simulate_secondary', line 528, column 4 to line 534, column 5)",
-  " (in 'simulate_secondary', line 540, column 8 to column 50)",
-  " (in 'simulate_secondary', line 539, column 12 to line 541, column 7)",
-  " (in 'simulate_secondary', line 538, column 8 to column 50)",
-  " (in 'simulate_secondary', line 537, column 36 to line 539, column 7)",
-  " (in 'simulate_secondary', line 537, column 6 to line 541, column 7)",
-  " (in 'simulate_secondary', line 536, column 17 to line 542, column 5)",
-  " (in 'simulate_secondary', line 536, column 4 to line 542, column 5)",
-  " (in 'simulate_secondary', line 543, column 4 to column 55)",
-  " (in 'simulate_secondary', line 518, column 17 to line 544, column 3)",
-  " (in 'simulate_secondary', line 518, column 2 to line 544, column 3)",
-  " (in 'simulate_secondary', line 545, column 2 to column 28)",
-  " (in 'simulate_secondary', line 513, column 2 to line 546, column 1)",
-  " (in 'simulate_secondary', line 557, column 4 to column 46)",
-  " (in 'simulate_secondary', line 556, column 9 to line 558, column 3)",
-  " (in 'simulate_secondary', line 555, column 4 to column 49)",
-  " (in 'simulate_secondary', line 554, column 38 to line 556, column 3)",
-  " (in 'simulate_secondary', line 554, column 9 to line 558, column 3)",
-  " (in 'simulate_secondary', line 553, column 4 to column 13)",
-  " (in 'simulate_secondary', line 552, column 15 to line 554, column 3)",
-  " (in 'simulate_secondary', line 552, column 2 to line 558, column 3)",
-  " (in 'simulate_secondary', line 551, column 51 to line 559, column 1)",
-  " (in 'simulate_secondary', line 565, column 2 to column 31)",
-  " (in 'simulate_secondary', line 571, column 4 to column 48)",
-  " (in 'simulate_secondary', line 570, column 9 to line 572, column 3)",
-  " (in 'simulate_secondary', line 569, column 4 to column 72)",
-  " (in 'simulate_secondary', line 568, column 38 to line 570, column 3)",
-  " (in 'simulate_secondary', line 568, column 9 to line 572, column 3)",
-  " (in 'simulate_secondary', line 567, column 4 to column 37)",
-  " (in 'simulate_secondary', line 566, column 15 to line 568, column 3)",
-  " (in 'simulate_secondary', line 566, column 2 to line 572, column 3)",
-  " (in 'simulate_secondary', line 564, column 53 to line 573, column 1)",
-  " (in 'simulate_secondary', line 578, column 2 to column 20)",
-  " (in 'simulate_secondary', line 579, column 2 to column 40)",
-  " (in 'simulate_secondary', line 599, column 6 to column 34)",
-  " (in 'simulate_secondary', line 598, column 11 to line 600, column 5)",
-  " (in 'simulate_secondary', line 594, column 6 to line 596, column 46)",
-  " (in 'simulate_secondary', line 596, column 28 to column 44)",
-  " (in 'simulate_secondary', line 596, column 10 to column 26)",
-  " (in 'simulate_secondary', line 597, column 6 to column 21)",
-  " (in 'simulate_secondary', line 593, column 36 to line 598, column 5)",
-  " (in 'simulate_secondary', line 593, column 11 to line 600, column 5)",
-  " (in 'simulate_secondary', line 589, column 6 to line 591, column 46)",
-  " (in 'simulate_secondary', line 591, column 28 to column 44)",
-  " (in 'simulate_secondary', line 591, column 10 to column 26)",
-  " (in 'simulate_secondary', line 592, column 6 to column 21)",
-  " (in 'simulate_secondary', line 588, column 36 to line 593, column 5)",
-  " (in 'simulate_secondary', line 588, column 11 to line 600, column 5)",
-  " (in 'simulate_secondary', line 582, column 6 to line 586, column 46)",
-  " (in 'simulate_secondary', line 586, column 28 to column 44)",
-  " (in 'simulate_secondary', line 586, column 10 to column 26)",
-  " (in 'simulate_secondary', line 587, column 6 to column 21)",
-  " (in 'simulate_secondary', line 581, column 29 to line 588, column 5)",
-  " (in 'simulate_secondary', line 581, column 4 to line 600, column 5)",
-  " (in 'simulate_secondary', line 580, column 27 to line 601, column 3)",
-  " (in 'simulate_secondary', line 580, column 2 to line 601, column 3)",
-  " (in 'simulate_secondary', line 577, column 35 to line 602, column 1)"};
+  " (in 'simulate_secondary', line 887, column 2 to column 54)",
+  " (in 'simulate_secondary', line 889, column 11 to column 12)",
+  " (in 'simulate_secondary', line 889, column 4 to line 892, column 6)",
+  " (in 'simulate_secondary', line 893, column 11 to column 12)",
+  " (in 'simulate_secondary', line 893, column 4 to line 896, column 6)",
+  " (in 'simulate_secondary', line 898, column 13 to column 14)",
+  " (in 'simulate_secondary', line 898, column 6 to column 26)",
+  " (in 'simulate_secondary', line 899, column 13 to column 14)",
+  " (in 'simulate_secondary', line 899, column 6 to column 23)",
+  " (in 'simulate_secondary', line 900, column 13 to column 14)",
+  " (in 'simulate_secondary', line 900, column 6 to column 48)",
+  " (in 'simulate_secondary', line 904, column 8 to column 39)",
+  " (in 'simulate_secondary', line 903, column 13 to line 905, column 7)",
+  " (in 'simulate_secondary', line 902, column 8 to column 72)",
+  " (in 'simulate_secondary', line 901, column 21 to line 903, column 7)",
+  " (in 'simulate_secondary', line 901, column 6 to line 905, column 7)",
+  " (in 'simulate_secondary', line 916, column 8 to column 39)",
+  " (in 'simulate_secondary', line 915, column 13 to line 917, column 7)",
+  " (in 'simulate_secondary', line 907, column 15 to column 53)",
+  " (in 'simulate_secondary', line 907, column 8 to line 913, column 12)",
+  " (in 'simulate_secondary', line 914, column 8 to column 81)",
+  " (in 'simulate_secondary', line 906, column 30 to line 915, column 7)",
+  " (in 'simulate_secondary', line 906, column 6 to line 917, column 7)",
+  " (in 'simulate_secondary', line 919, column 6 to line 922, column 8)",
+  " (in 'simulate_secondary', line 925, column 8 to column 98)",
+  " (in 'simulate_secondary', line 924, column 27 to line 926, column 7)",
+  " (in 'simulate_secondary', line 924, column 6 to line 926, column 7)",
+  " (in 'simulate_secondary', line 929, column 15 to column 54)",
+  " (in 'simulate_secondary', line 929, column 8 to line 935, column 12)",
+  " (in 'simulate_secondary', line 936, column 8 to line 938, column 10)",
+  " (in 'simulate_secondary', line 928, column 31 to line 939, column 7)",
+  " (in 'simulate_secondary', line 928, column 6 to line 939, column 7)",
+  " (in 'simulate_secondary', line 941, column 6 to line 943, column 8)",
+  " (in 'simulate_secondary', line 897, column 19 to line 944, column 5)",
+  " (in 'simulate_secondary', line 897, column 4 to line 944, column 5)",
+  " (in 'simulate_secondary', line 888, column 2 to line 945, column 3)",
+  " (in 'simulate_secondary', line 807, column 2 to column 8)",
+  " (in 'simulate_secondary', line 808, column 2 to column 8)",
+  " (in 'simulate_secondary', line 809, column 2 to column 14)",
+  " (in 'simulate_secondary', line 810, column 2 to column 16)",
+  " (in 'simulate_secondary', line 812, column 8 to column 19)",
+  " (in 'simulate_secondary', line 812, column 2 to column 40)",
+  " (in 'simulate_secondary', line 813, column 9 to column 10)",
+  " (in 'simulate_secondary', line 813, column 12 to column 13)",
+  " (in 'simulate_secondary', line 813, column 2 to column 23)",
+  " (in 'simulate_secondary', line 815, column 0 to column 17)",
+  " (in 'simulate_secondary', line 816, column 0 to column 15)",
+  " (in 'simulate_secondary', line 817, column 0 to column 13)",
+  " (in 'simulate_secondary', line 818, column 0 to column 26)",
+  " (in 'simulate_secondary', line 819, column 0 to column 12)",
+  " (in 'simulate_secondary', line 820, column 0 to column 29)",
+  " (in 'simulate_secondary', line 822, column 0 to column 23)",
+  " (in 'simulate_secondary', line 823, column 0 to column 25)",
+  " (in 'simulate_secondary', line 824, column 0 to column 26)",
+  " (in 'simulate_secondary', line 825, column 6 to column 15)",
+  " (in 'simulate_secondary', line 825, column 0 to column 42)",
+  " (in 'simulate_secondary', line 826, column 6 to column 15)",
+  " (in 'simulate_secondary', line 826, column 0 to column 43)",
+  " (in 'simulate_secondary', line 827, column 0 to column 35)",
+  " (in 'simulate_secondary', line 829, column 29 to column 48)",
+  " (in 'simulate_secondary', line 829, column 0 to column 63)",
+  " (in 'simulate_secondary', line 831, column 6 to column 20)",
+  " (in 'simulate_secondary', line 831, column 0 to column 57)",
+  " (in 'simulate_secondary', line 832, column 6 to column 15)",
+  " (in 'simulate_secondary', line 832, column 0 to column 34)",
+  " (in 'simulate_secondary', line 835, column 0 to column 35)",
+  " (in 'simulate_secondary', line 837, column 6 to column 7)",
+  " (in 'simulate_secondary', line 837, column 16 to column 35)",
+  " (in 'simulate_secondary', line 837, column 0 to column 50)",
+  " (in 'simulate_secondary', line 839, column 6 to column 19)",
+  " (in 'simulate_secondary', line 839, column 0 to column 56)",
+  " (in 'simulate_secondary', line 841, column 0 to column 27)",
+  " (in 'simulate_secondary', line 843, column 6 to column 13)",
+  " (in 'simulate_secondary', line 843, column 0 to column 44)",
+  " (in 'simulate_secondary', line 845, column 6 to column 13)",
+  " (in 'simulate_secondary', line 845, column 0 to column 45)",
+  " (in 'simulate_secondary', line 847, column 6 to column 21)",
+  " (in 'simulate_secondary', line 847, column 0 to column 57)",
+  " (in 'simulate_secondary', line 849, column 0 to column 34)",
+  " (in 'simulate_secondary', line 851, column 6 to column 22)",
+  " (in 'simulate_secondary', line 851, column 0 to column 40)",
+  " (in 'simulate_secondary', line 852, column 0 to column 16)",
+  " (in 'simulate_secondary', line 853, column 6 to column 7)",
+  " (in 'simulate_secondary', line 853, column 9 to column 20)",
+  " (in 'simulate_secondary', line 853, column 0 to column 58)",
+  " (in 'simulate_secondary', line 854, column 0 to column 14)",
+  " (in 'simulate_secondary', line 855, column 0 to column 15)",
+  " (in 'simulate_secondary', line 856, column 0 to column 35)",
+  " (in 'simulate_secondary', line 858, column 0 to column 33)",
+  " (in 'simulate_secondary', line 859, column 0 to column 30)",
+  " (in 'simulate_secondary', line 860, column 7 to column 24)",
+  " (in 'simulate_secondary', line 860, column 0 to column 39)",
+  " (in 'simulate_secondary', line 861, column 7 to column 24)",
+  " (in 'simulate_secondary', line 861, column 0 to column 39)",
+  " (in 'simulate_secondary', line 864, column 6 to column 40)",
+  " (in 'simulate_secondary', line 864, column 0 to column 77)",
+  " (in 'simulate_secondary', line 866, column 6 to column 40)",
+  " (in 'simulate_secondary', line 866, column 0 to column 80)",
+  " (in 'simulate_secondary', line 868, column 7 to column 21)",
+  " (in 'simulate_secondary', line 868, column 0 to column 36)",
+  " (in 'simulate_secondary', line 871, column 6 to column 23)",
+  " (in 'simulate_secondary', line 871, column 0 to column 51)",
+  " (in 'simulate_secondary', line 873, column 0 to column 40)",
+  " (in 'simulate_secondary', line 874, column 7 to column 31)",
+  " (in 'simulate_secondary', line 874, column 0 to column 51)",
+  " (in 'simulate_secondary', line 876, column 0 to column 42)",
+  " (in 'simulate_secondary', line 877, column 0 to column 49)",
+  " (in 'simulate_secondary', line 878, column 9 to column 10)",
+  " (in 'simulate_secondary', line 878, column 12 to column 29)",
+  " (in 'simulate_secondary', line 878, column 2 to column 38)",
+  " (in 'simulate_secondary', line 881, column 8 to column 19)",
+  " (in 'simulate_secondary', line 881, column 2 to line 884, column 4)",
+  " (in 'simulate_secondary', line 887, column 8 to column 9)",
+  " (in 'simulate_secondary', line 887, column 11 to column 34)",
+  " (in 'simulate_secondary', line 23, column 2 to column 30)",
+  " (in 'simulate_secondary', line 24, column 2 to column 41)",
+  " (in 'simulate_secondary', line 25, column 2 to column 16)",
+  " (in 'simulate_secondary', line 26, column 2 to column 41)",
+  " (in 'simulate_secondary', line 27, column 2 to column 19)",
+  " (in 'simulate_secondary', line 28, column 2 to column 42)",
+  " (in 'simulate_secondary', line 22, column 62 to line 29, column 1)",
+  " (in 'simulate_secondary', line 42, column 2 to column 30)",
+  " (in 'simulate_secondary', line 43, column 2 to column 41)",
+  " (in 'simulate_secondary', line 44, column 2 to column 19)",
+  " (in 'simulate_secondary', line 45, column 2 to column 41)",
+  " (in 'simulate_secondary', line 45, column 41 to column 42)",
+  " (in 'simulate_secondary', line 46, column 2 to column 30)",
+  " (in 'simulate_secondary', line 47, column 2 to column 42)",
+  " (in 'simulate_secondary', line 41, column 61 to line 48, column 1)",
+  " (in 'simulate_secondary', line 65, column 2 to column 29)",
+  " (in 'simulate_secondary', line 66, column 2 to column 29)",
+  " (in 'simulate_secondary', line 67, column 9 to column 12)",
+  " (in 'simulate_secondary', line 67, column 2 to column 16)",
+  " (in 'simulate_secondary', line 70, column 4 to column 74)",
+  " (in 'simulate_secondary', line 69, column 29 to line 71, column 3)",
+  " (in 'simulate_secondary', line 69, column 2 to line 71, column 3)",
+  " (in 'simulate_secondary', line 74, column 4 to column 59)",
+  " (in 'simulate_secondary', line 73, column 18 to line 75, column 3)",
+  " (in 'simulate_secondary', line 73, column 2 to line 75, column 3)",
+  " (in 'simulate_secondary', line 78, column 4 to column 65)",
+  " (in 'simulate_secondary', line 79, column 4 to column 75)",
+  " (in 'simulate_secondary', line 77, column 20 to line 80, column 3)",
+  " (in 'simulate_secondary', line 77, column 2 to line 80, column 3)",
+  " (in 'simulate_secondary', line 84, column 6 to column 66)",
+  " (in 'simulate_secondary', line 85, column 6 to column 77)",
+  " (in 'simulate_secondary', line 83, column 30 to line 86, column 5)",
+  " (in 'simulate_secondary', line 83, column 4 to line 86, column 5)",
+  " (in 'simulate_secondary', line 82, column 18 to line 87, column 3)",
+  " (in 'simulate_secondary', line 82, column 2 to line 87, column 3)",
+  " (in 'simulate_secondary', line 89, column 2 to column 11)",
+  " (in 'simulate_secondary', line 64, column 58 to line 90, column 1)",
+  " (in 'simulate_secondary', line 110, column 2 to column 35)",
+  " (in 'simulate_secondary', line 111, column 2 to column 43)",
+  " (in 'simulate_secondary', line 114, column 4 to column 44)",
+  " (in 'simulate_secondary', line 113, column 19 to line 115, column 3)",
+  " (in 'simulate_secondary', line 113, column 2 to line 115, column 3)",
+  " (in 'simulate_secondary', line 117, column 9 to column 10)",
+  " (in 'simulate_secondary', line 117, column 2 to column 80)",
+  " (in 'simulate_secondary', line 118, column 2 to column 45)",
+  " (in 'simulate_secondary', line 109, column 44 to line 119, column 1)",
+  " (in 'simulate_secondary', line 148, column 9 to column 10)",
+  " (in 'simulate_secondary', line 148, column 2 to column 17)",
+  " (in 'simulate_secondary', line 149, column 9 to column 10)",
+  " (in 'simulate_secondary', line 149, column 2 to column 23)",
+  " (in 'simulate_secondary', line 159, column 4 to column 54)",
+  " (in 'simulate_secondary', line 158, column 9 to line 160, column 3)",
+  " (in 'simulate_secondary', line 156, column 6 to column 59)",
+  " (in 'simulate_secondary', line 155, column 19 to line 157, column 5)",
+  " (in 'simulate_secondary', line 155, column 4 to line 157, column 5)",
+  " (in 'simulate_secondary', line 154, column 24 to line 158, column 3)",
+  " (in 'simulate_secondary', line 154, column 9 to line 160, column 3)",
+  " (in 'simulate_secondary', line 152, column 6 to column 63)",
+  " (in 'simulate_secondary', line 151, column 19 to line 153, column 5)",
+  " (in 'simulate_secondary', line 151, column 4 to line 153, column 5)",
+  " (in 'simulate_secondary', line 150, column 17 to line 154, column 3)",
+  " (in 'simulate_secondary', line 150, column 2 to line 160, column 3)",
+  " (in 'simulate_secondary', line 171, column 4 to column 16)",
+  " (in 'simulate_secondary', line 170, column 9 to line 172, column 3)",
+  " (in 'simulate_secondary', line 163, column 4 to column 28)",
+  " (in 'simulate_secondary', line 164, column 4 to column 28)",
+  " (in 'simulate_secondary', line 166, column 6 to column 71)",
+  " (in 'simulate_secondary', line 165, column 15 to line 167, column 5)",
+  " (in 'simulate_secondary', line 165, column 4 to line 167, column 5)",
+  " (in 'simulate_secondary', line 169, column 4 to column 53)",
+  " (in 'simulate_secondary', line 162, column 13 to line 170, column 3)",
+  " (in 'simulate_secondary', line 162, column 2 to line 172, column 3)",
+  " (in 'simulate_secondary', line 173, column 2 to column 20)",
+  " (in 'simulate_secondary', line 147, column 55 to line 174, column 1)",
+  " (in 'simulate_secondary', line 203, column 8 to column 19)",
+  " (in 'simulate_secondary', line 203, column 2 to column 29)",
+  " (in 'simulate_secondary', line 205, column 4 to column 15)",
+  " (in 'simulate_secondary', line 210, column 8 to line 211, column 53)",
+  " (in 'simulate_secondary', line 209, column 13 to line 212, column 7)",
+  " (in 'simulate_secondary', line 208, column 8 to column 47)",
+  " (in 'simulate_secondary', line 207, column 28 to line 209, column 7)",
+  " (in 'simulate_secondary', line 207, column 6 to line 212, column 7)",
+  " (in 'simulate_secondary', line 206, column 69 to line 213, column 5)",
+  " (in 'simulate_secondary', line 206, column 4 to line 213, column 5)",
+  " (in 'simulate_secondary', line 204, column 27 to line 214, column 3)",
+  " (in 'simulate_secondary', line 204, column 2 to line 214, column 3)",
+  " (in 'simulate_secondary', line 215, column 2 to column 13)",
+  " (in 'simulate_secondary', line 202, column 2 to line 216, column 1)",
+  " (in 'simulate_secondary', line 247, column 9 to column 12)",
+  " (in 'simulate_secondary', line 247, column 2 to column 39)",
+  " (in 'simulate_secondary', line 248, column 2 to column 22)",
+  " (in 'simulate_secondary', line 249, column 2 to column 14)",
+  " (in 'simulate_secondary', line 270, column 6 to column 57)",
+  " (in 'simulate_secondary', line 271, column 6 to column 63)",
+  " (in 'simulate_secondary', line 272, column 6 to column 42)",
+  " (in 'simulate_secondary', line 276, column 8 to line 278, column 10)",
+  " (in 'simulate_secondary', line 275, column 13 to line 279, column 7)",
+  " (in 'simulate_secondary', line 274, column 8 to column 49)",
+  " (in 'simulate_secondary', line 273, column 28 to line 275, column 7)",
+  " (in 'simulate_secondary', line 273, column 6 to line 279, column 7)",
+  " (in 'simulate_secondary', line 269, column 11 to line 280, column 5)",
+  " (in 'simulate_secondary', line 253, column 6 to column 57)",
+  " (in 'simulate_secondary', line 254, column 6 to column 63)",
+  " (in 'simulate_secondary', line 255, column 13 to column 45)",
+  " (in 'simulate_secondary', line 255, column 6 to line 260, column 8)",
+  " (in 'simulate_secondary', line 261, column 6 to column 59)",
+  " (in 'simulate_secondary', line 265, column 8 to line 267, column 10)",
+  " (in 'simulate_secondary', line 264, column 13 to line 268, column 7)",
+  " (in 'simulate_secondary', line 263, column 8 to column 42)",
+  " (in 'simulate_secondary', line 262, column 28 to line 264, column 7)",
+  " (in 'simulate_secondary', line 262, column 6 to line 268, column 7)",
+  " (in 'simulate_secondary', line 252, column 26 to line 269, column 5)",
+  " (in 'simulate_secondary', line 252, column 4 to line 280, column 5)",
+  " (in 'simulate_secondary', line 281, column 4 to column 26)",
+  " (in 'simulate_secondary', line 251, column 78 to line 282, column 3)",
+  " (in 'simulate_secondary', line 250, column 2 to line 282, column 3)",
+  " (in 'simulate_secondary', line 284, column 4 to line 287, column 6)",
+  " (in 'simulate_secondary', line 283, column 21 to line 288, column 3)",
+  " (in 'simulate_secondary', line 283, column 2 to line 288, column 3)",
+  " (in 'simulate_secondary', line 290, column 4 to column 30)",
+  " (in 'simulate_secondary', line 289, column 18 to line 291, column 3)",
+  " (in 'simulate_secondary', line 289, column 2 to line 291, column 3)",
+  " (in 'simulate_secondary', line 293, column 4 to column 23)",
+  " (in 'simulate_secondary', line 292, column 19 to line 294, column 3)",
+  " (in 'simulate_secondary', line 292, column 2 to line 294, column 3)",
+  " (in 'simulate_secondary', line 295, column 2 to column 13)",
+  " (in 'simulate_secondary', line 245, column 2 to line 296, column 1)",
+  " (in 'simulate_secondary', line 314, column 2 to column 55)",
+  " (in 'simulate_secondary', line 316, column 4 to column 11)",
+  " (in 'simulate_secondary', line 315, column 21 to line 317, column 3)",
+  " (in 'simulate_secondary', line 315, column 2 to line 317, column 3)",
+  " (in 'simulate_secondary', line 319, column 4 to column 39)",
+  " (in 'simulate_secondary', line 320, column 4 to column 45)",
+  " (in 'simulate_secondary', line 329, column 10 to column 77)",
+  " (in 'simulate_secondary', line 328, column 15 to line 330, column 9)",
+  " (in 'simulate_secondary', line 324, column 10 to line 327, column 14)",
+  " (in 'simulate_secondary', line 323, column 27 to line 328, column 9)",
+  " (in 'simulate_secondary', line 323, column 8 to line 330, column 9)",
+  " (in 'simulate_secondary', line 322, column 34 to line 331, column 7)",
+  " (in 'simulate_secondary', line 322, column 6 to line 331, column 7)",
+  " (in 'simulate_secondary', line 321, column 25 to line 332, column 5)",
+  " (in 'simulate_secondary', line 321, column 4 to line 332, column 5)",
+  " (in 'simulate_secondary', line 318, column 24 to line 333, column 3)",
+  " (in 'simulate_secondary', line 318, column 2 to line 333, column 3)",
+  " (in 'simulate_secondary', line 313, column 59 to line 334, column 1)",
+  " (in 'simulate_secondary', line 347, column 2 to column 29)",
+  " (in 'simulate_secondary', line 348, column 9 to column 12)",
+  " (in 'simulate_secondary', line 348, column 2 to column 18)",
+  " (in 'simulate_secondary', line 350, column 4 to column 49)",
+  " (in 'simulate_secondary', line 351, column 4 to column 31)",
+  " (in 'simulate_secondary', line 352, column 4 to column 45)",
+  " (in 'simulate_secondary', line 349, column 19 to line 353, column 3)",
+  " (in 'simulate_secondary', line 349, column 2 to line 353, column 3)",
+  " (in 'simulate_secondary', line 354, column 2 to column 13)",
+  " (in 'simulate_secondary', line 346, column 57 to line 355, column 1)",
+  " (in 'simulate_secondary', line 373, column 2 to column 32)",
+  " (in 'simulate_secondary', line 374, column 9 to column 11)",
+  " (in 'simulate_secondary', line 374, column 2 to column 41)",
+  " (in 'simulate_secondary', line 375, column 2 to column 47)",
+  " (in 'simulate_secondary', line 372, column 41 to line 376, column 1)",
+  " (in 'simulate_secondary', line 391, column 2 to column 32)",
+  " (in 'simulate_secondary', line 392, column 9 to column 10)",
+  " (in 'simulate_secondary', line 392, column 2 to column 27)",
+  " (in 'simulate_secondary', line 393, column 2 to column 47)",
+  " (in 'simulate_secondary', line 394, column 2 to column 25)",
+  " (in 'simulate_secondary', line 390, column 57 to line 395, column 1)",
+  " (in 'simulate_secondary', line 414, column 2 to column 32)",
+  " (in 'simulate_secondary', line 415, column 2 to column 46)",
+  " (in 'simulate_secondary', line 416, column 9 to column 10)",
+  " (in 'simulate_secondary', line 416, column 2 to column 36)",
+  " (in 'simulate_secondary', line 418, column 2 to column 36)",
+  " (in 'simulate_secondary', line 419, column 2 to column 34)",
+  " (in 'simulate_secondary', line 420, column 2 to column 46)",
+  " (in 'simulate_secondary', line 426, column 4 to column 70)",
+  " (in 'simulate_secondary', line 425, column 9 to line 427, column 3)",
+  " (in 'simulate_secondary', line 424, column 4 to column 70)",
+  " (in 'simulate_secondary', line 423, column 19 to line 425, column 3)",
+  " (in 'simulate_secondary', line 423, column 2 to line 427, column 3)",
+  " (in 'simulate_secondary', line 428, column 2 to column 24)",
+  " (in 'simulate_secondary', line 413, column 75 to line 429, column 1)",
+  " (in 'simulate_secondary', line 452, column 2 to column 49)",
+  " (in 'simulate_secondary', line 456, column 6 to column 63)",
+  " (in 'simulate_secondary', line 454, column 30 to line 457, column 5)",
+  " (in 'simulate_secondary', line 454, column 4 to line 457, column 5)",
+  " (in 'simulate_secondary', line 460, column 6 to column 57)",
+  " (in 'simulate_secondary', line 458, column 28 to line 461, column 5)",
+  " (in 'simulate_secondary', line 458, column 4 to line 461, column 5)",
+  " (in 'simulate_secondary', line 453, column 18 to line 462, column 3)",
+  " (in 'simulate_secondary', line 453, column 2 to line 462, column 3)",
+  " (in 'simulate_secondary', line 451, column 73 to line 463, column 1)",
+  " (in 'simulate_secondary', line 483, column 2 to column 35)",
+  " (in 'simulate_secondary', line 484, column 9 to column 10)",
+  " (in 'simulate_secondary', line 484, column 2 to column 46)",
+  " (in 'simulate_secondary', line 498, column 6 to column 59)",
+  " (in 'simulate_secondary', line 497, column 11 to line 499, column 5)",
+  " (in 'simulate_secondary', line 496, column 6 to column 35)",
+  " (in 'simulate_secondary', line 495, column 21 to line 497, column 5)",
+  " (in 'simulate_secondary', line 495, column 4 to line 499, column 5)",
+  " (in 'simulate_secondary', line 494, column 9 to line 500, column 3)",
+  " (in 'simulate_secondary', line 486, column 4 to column 52)",
+  " (in 'simulate_secondary', line 490, column 6 to line 492, column 17)",
+  " (in 'simulate_secondary', line 489, column 11 to line 493, column 5)",
+  " (in 'simulate_secondary', line 488, column 6 to column 47)",
+  " (in 'simulate_secondary', line 487, column 21 to line 489, column 5)",
+  " (in 'simulate_secondary', line 487, column 4 to line 493, column 5)",
+  " (in 'simulate_secondary', line 485, column 18 to line 494, column 3)",
+  " (in 'simulate_secondary', line 485, column 2 to line 500, column 3)",
+  " (in 'simulate_secondary', line 482, column 75 to line 501, column 1)",
+  " (in 'simulate_secondary', line 518, column 2 to column 35)",
+  " (in 'simulate_secondary', line 519, column 9 to column 13)",
+  " (in 'simulate_secondary', line 519, column 2 to column 45)",
+  " (in 'simulate_secondary', line 522, column 6 to column 59)",
+  " (in 'simulate_secondary', line 521, column 23 to line 523, column 5)",
+  " (in 'simulate_secondary', line 521, column 4 to line 523, column 5)",
+  " (in 'simulate_secondary', line 520, column 26 to line 524, column 3)",
+  " (in 'simulate_secondary', line 520, column 2 to line 524, column 3)",
+  " (in 'simulate_secondary', line 525, column 2 to column 29)",
+  " (in 'simulate_secondary', line 517, column 66 to line 526, column 1)",
+  " (in 'simulate_secondary', line 547, column 2 to column 32)",
+  " (in 'simulate_secondary', line 548, column 9 to column 10)",
+  " (in 'simulate_secondary', line 548, column 2 to column 20)",
+  " (in 'simulate_secondary', line 556, column 4 to column 52)",
+  " (in 'simulate_secondary', line 558, column 6 to line 560, column 17)",
+  " (in 'simulate_secondary', line 557, column 19 to line 561, column 5)",
+  " (in 'simulate_secondary', line 557, column 4 to line 561, column 5)",
+  " (in 'simulate_secondary', line 555, column 9 to line 562, column 3)",
+  " (in 'simulate_secondary', line 553, column 6 to column 64)",
+  " (in 'simulate_secondary', line 552, column 19 to line 554, column 5)",
+  " (in 'simulate_secondary', line 552, column 4 to line 554, column 5)",
+  " (in 'simulate_secondary', line 551, column 23 to line 555, column 3)",
+  " (in 'simulate_secondary', line 551, column 2 to line 562, column 3)",
+  " (in 'simulate_secondary', line 563, column 2 to column 18)",
+  " (in 'simulate_secondary', line 546, column 82 to line 564, column 1)",
+  " (in 'simulate_secondary', line 593, column 4 to column 47)",
+  " (in 'simulate_secondary', line 594, column 4 to column 61)",
+  " (in 'simulate_secondary', line 592, column 9 to line 595, column 3)",
+  " (in 'simulate_secondary', line 591, column 4 to column 45)",
+  " (in 'simulate_secondary', line 590, column 24 to line 592, column 3)",
+  " (in 'simulate_secondary', line 590, column 9 to line 595, column 3)",
+  " (in 'simulate_secondary', line 589, column 4 to column 14)",
+  " (in 'simulate_secondary', line 588, column 17 to line 590, column 3)",
+  " (in 'simulate_secondary', line 588, column 2 to line 595, column 3)",
+  " (in 'simulate_secondary', line 587, column 47 to line 596, column 1)",
+  " (in 'simulate_secondary', line 614, column 2 to column 32)",
+  " (in 'simulate_secondary', line 615, column 8 to column 9)",
+  " (in 'simulate_secondary', line 615, column 2 to column 31)",
+  " (in 'simulate_secondary', line 616, column 2 to column 17)",
+  " (in 'simulate_secondary', line 618, column 4 to column 47)",
+  " (in 'simulate_secondary', line 617, column 18 to line 619, column 3)",
+  " (in 'simulate_secondary', line 617, column 2 to line 619, column 3)",
+  " (in 'simulate_secondary', line 622, column 4 to column 66)",
+  " (in 'simulate_secondary', line 621, column 17 to line 623, column 3)",
+  " (in 'simulate_secondary', line 621, column 2 to line 623, column 3)",
+  " (in 'simulate_secondary', line 624, column 2 to column 26)",
+  " (in 'simulate_secondary', line 613, column 86 to line 625, column 1)",
+  " (in 'simulate_secondary', line 662, column 2 to column 39)",
+  " (in 'simulate_secondary', line 663, column 9 to column 10)",
+  " (in 'simulate_secondary', line 663, column 2 to column 51)",
+  " (in 'simulate_secondary', line 672, column 8 to column 42)",
+  " (in 'simulate_secondary', line 671, column 12 to line 673, column 7)",
+  " (in 'simulate_secondary', line 670, column 8 to column 56)",
+  " (in 'simulate_secondary', line 669, column 23 to line 671, column 7)",
+  " (in 'simulate_secondary', line 669, column 6 to line 673, column 7)",
+  " (in 'simulate_secondary', line 668, column 29 to line 674, column 5)",
+  " (in 'simulate_secondary', line 668, column 4 to line 674, column 5)",
+  " (in 'simulate_secondary', line 680, column 8 to column 79)",
+  " (in 'simulate_secondary', line 679, column 12 to line 681, column 7)",
+  " (in 'simulate_secondary', line 678, column 8 to column 48)",
+  " (in 'simulate_secondary', line 677, column 33 to line 679, column 7)",
+  " (in 'simulate_secondary', line 677, column 6 to line 681, column 7)",
+  " (in 'simulate_secondary', line 676, column 18 to line 682, column 5)",
+  " (in 'simulate_secondary', line 676, column 4 to line 682, column 5)",
+  " (in 'simulate_secondary', line 688, column 8 to column 50)",
+  " (in 'simulate_secondary', line 687, column 12 to line 689, column 7)",
+  " (in 'simulate_secondary', line 686, column 8 to column 50)",
+  " (in 'simulate_secondary', line 685, column 36 to line 687, column 7)",
+  " (in 'simulate_secondary', line 685, column 6 to line 689, column 7)",
+  " (in 'simulate_secondary', line 684, column 17 to line 690, column 5)",
+  " (in 'simulate_secondary', line 684, column 4 to line 690, column 5)",
+  " (in 'simulate_secondary', line 691, column 4 to column 55)",
+  " (in 'simulate_secondary', line 666, column 17 to line 692, column 3)",
+  " (in 'simulate_secondary', line 666, column 2 to line 692, column 3)",
+  " (in 'simulate_secondary', line 693, column 2 to column 28)",
+  " (in 'simulate_secondary', line 661, column 2 to line 694, column 1)",
+  " (in 'simulate_secondary', line 728, column 4 to column 46)",
+  " (in 'simulate_secondary', line 727, column 9 to line 729, column 3)",
+  " (in 'simulate_secondary', line 726, column 4 to column 49)",
+  " (in 'simulate_secondary', line 725, column 38 to line 727, column 3)",
+  " (in 'simulate_secondary', line 725, column 9 to line 729, column 3)",
+  " (in 'simulate_secondary', line 724, column 4 to column 13)",
+  " (in 'simulate_secondary', line 723, column 15 to line 725, column 3)",
+  " (in 'simulate_secondary', line 723, column 2 to line 729, column 3)",
+  " (in 'simulate_secondary', line 722, column 51 to line 730, column 1)",
+  " (in 'simulate_secondary', line 751, column 2 to column 31)",
+  " (in 'simulate_secondary', line 757, column 4 to column 48)",
+  " (in 'simulate_secondary', line 756, column 9 to line 758, column 3)",
+  " (in 'simulate_secondary', line 755, column 4 to column 72)",
+  " (in 'simulate_secondary', line 754, column 38 to line 756, column 3)",
+  " (in 'simulate_secondary', line 754, column 9 to line 758, column 3)",
+  " (in 'simulate_secondary', line 753, column 4 to column 37)",
+  " (in 'simulate_secondary', line 752, column 15 to line 754, column 3)",
+  " (in 'simulate_secondary', line 752, column 2 to line 758, column 3)",
+  " (in 'simulate_secondary', line 750, column 53 to line 759, column 1)",
+  " (in 'simulate_secondary', line 778, column 2 to column 20)",
+  " (in 'simulate_secondary', line 779, column 2 to column 40)",
+  " (in 'simulate_secondary', line 799, column 6 to column 34)",
+  " (in 'simulate_secondary', line 798, column 11 to line 800, column 5)",
+  " (in 'simulate_secondary', line 794, column 6 to line 796, column 46)",
+  " (in 'simulate_secondary', line 796, column 28 to column 44)",
+  " (in 'simulate_secondary', line 796, column 10 to column 26)",
+  " (in 'simulate_secondary', line 797, column 6 to column 21)",
+  " (in 'simulate_secondary', line 793, column 36 to line 798, column 5)",
+  " (in 'simulate_secondary', line 793, column 11 to line 800, column 5)",
+  " (in 'simulate_secondary', line 789, column 6 to line 791, column 46)",
+  " (in 'simulate_secondary', line 791, column 28 to column 44)",
+  " (in 'simulate_secondary', line 791, column 10 to column 26)",
+  " (in 'simulate_secondary', line 792, column 6 to column 21)",
+  " (in 'simulate_secondary', line 788, column 36 to line 793, column 5)",
+  " (in 'simulate_secondary', line 788, column 11 to line 800, column 5)",
+  " (in 'simulate_secondary', line 782, column 6 to line 786, column 46)",
+  " (in 'simulate_secondary', line 786, column 28 to column 44)",
+  " (in 'simulate_secondary', line 786, column 10 to column 26)",
+  " (in 'simulate_secondary', line 787, column 6 to column 21)",
+  " (in 'simulate_secondary', line 781, column 29 to line 788, column 5)",
+  " (in 'simulate_secondary', line 781, column 4 to line 800, column 5)",
+  " (in 'simulate_secondary', line 780, column 27 to line 801, column 3)",
+  " (in 'simulate_secondary', line 780, column 2 to line 801, column 3)",
+  " (in 'simulate_secondary', line 777, column 35 to line 802, column 1)"};
 std::vector<int>
 calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
                        std::ostream* pstream__);
@@ -566,8 +566,8 @@ template <typename T0__, typename T1__,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>, T1__>,-1,1>
-scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
-          pstream__);
+scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
+          std::ostream* pstream__);
 template <typename T0__, typename T1__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -602,9 +602,9 @@ template <bool propto__, typename T2__, typename T3__, typename T5__,
                               stan::is_stan_scalar<T5__>>* = nullptr>
 void
 report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
-          const T2__& reports_arg__, const T3__& dispersion, const int&
-          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
-          lp_accum__, std::ostream* pstream__);
+          const T2__& reports_arg__, const T3__& reporting_overdispersion,
+          const int& model_type, const T5__& weight, T_lp__& lp__,
+          T_lp_accum__& lp_accum__, std::ostream* pstream__);
 template <typename T0__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>>* = nullptr>
@@ -618,8 +618,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const T2__& dispersion, const int& model_type, const T4__&
-               weight, std::ostream* pstream__);
+               const T2__& reporting_overdispersion, const int& model_type,
+               const T4__& weight, std::ostream* pstream__);
 template <typename T0__, typename T1__, typename RNG,
           stan::require_all_t<stan::is_stan_scalar<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
@@ -631,8 +631,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
-           model_type, RNG& base_rng__, std::ostream* pstream__);
+report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
+           const int& model_type, RNG& base_rng__, std::ostream* pstream__);
 template <typename T0__, typename T1__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -1439,8 +1439,8 @@ template <typename T0__, typename T1__,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>, T1__>,-1,1>
-scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
-          pstream__) {
+scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
+          std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -1461,7 +1461,7 @@ scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
     current_statement__ = 278;
     stan::model::assign(scaled_reports,
-      stan::math::multiply(reports, frac_obs),
+      stan::math::multiply(reports, fraction_observed),
       "assigning variable scaled_reports");
     current_statement__ = 279;
     return scaled_reports;
@@ -1600,9 +1600,9 @@ template <bool propto__, typename T2__, typename T3__, typename T5__,
                               stan::is_stan_scalar<T5__>>*>
 void
 report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
-          const T2__& reports_arg__, const T3__& dispersion, const int&
-          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
-          lp_accum__, std::ostream* pstream__) {
+          const T2__& reports_arg__, const T3__& reporting_overdispersion,
+          const int& model_type, const T5__& weight, T_lp__& lp__,
+          T_lp_accum__& lp_accum__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T2__>,
                              T3__, T5__>;
   int current_statement__ = 0;
@@ -1627,7 +1627,7 @@ report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
     if (model_type) {
       local_scalar_t__ phi = DUMMY_VAR__;
       current_statement__ = 314;
-      phi = stan::math::inv_square(dispersion);
+      phi = stan::math::inv_square(reporting_overdispersion);
       current_statement__ = 319;
       if (stan::math::logical_eq(weight, 1)) {
         current_statement__ = 317;
@@ -1708,8 +1708,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const T2__& dispersion, const int& model_type, const T4__&
-               weight, std::ostream* pstream__) {
+               const T2__& reporting_overdispersion, const int& model_type,
+               const T4__& weight, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T1__>,
                              T2__, T4__>;
   int current_statement__ = 0;
@@ -1743,7 +1743,7 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
     } else {
       local_scalar_t__ phi = DUMMY_VAR__;
       current_statement__ = 336;
-      phi = stan::math::inv_square(dispersion);
+      phi = stan::math::inv_square(reporting_overdispersion);
       current_statement__ = 339;
       for (int i = 1; i <= t; ++i) {
         current_statement__ = 337;
@@ -1751,7 +1751,7 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
           (stan::math::neg_binomial_2_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
              stan::model::rvalue(reports, "reports",
-               stan::model::index_uni(i)), dispersion) * weight),
+               stan::model::index_uni(i)), phi) * weight),
           "assigning variable log_lik", stan::model::index_uni(i));
       }
     }
@@ -1805,8 +1805,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
-           model_type, RNG& base_rng__, std::ostream* pstream__) {
+report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
+           const int& model_type, RNG& base_rng__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -1831,7 +1831,7 @@ report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
     current_statement__ = 364;
     if (model_type) {
       current_statement__ = 362;
-      phi = stan::math::inv_square(dispersion);
+      phi = stan::math::inv_square(reporting_overdispersion);
     }
     current_statement__ = 367;
     for (int s = 1; s <= t; ++s) {
@@ -2286,7 +2286,7 @@ class model_simulate_secondary final : public model_base_crtp<model_simulate_sec
 private:
   int n;
   int t;
-  int h;
+  int horizon;
   int all_dates;
   std::vector<int> obs;
   Eigen::Matrix<double,-1,-1> primary_data__;
@@ -2312,13 +2312,13 @@ private:
   std::vector<int> delay_types_p;
   std::vector<int> delay_types_id;
   std::vector<int> delay_types_groups;
-  int delay_id;
+  int delay_id_reporting;
   std::vector<int> day_of_week;
   int week_effect;
   std::vector<std::vector<double>> day_of_week_simplex;
   int obs_scale;
   int model_type;
-  int trunc_id;
+  int delay_id_truncation;
   int n_params_variable;
   int n_params_fixed;
   Eigen::Matrix<double,-1,1> params_lower_data__;
@@ -2329,8 +2329,8 @@ private:
   std::vector<int> prior_dist;
   int prior_dist_params_length;
   Eigen::Matrix<double,-1,1> prior_dist_params_data__;
-  int frac_obs_id;
-  int dispersion_id;
+  int param_id_fraction_observed;
+  int param_id_reporting_overdispersion;
   Eigen::Matrix<double,-1,-1> params_data__;
   std::vector<int> delay_type_max;
   int sim_secondary_2dim__;
@@ -2375,11 +2375,11 @@ public:
       current_statement__ = 38;
       t = context__.vals_i("t")[(1 - 1)];
       current_statement__ = 39;
-      context__.validate_dims("data initialization", "h", "int",
+      context__.validate_dims("data initialization", "horizon", "int",
         std::vector<size_t>{});
-      h = std::numeric_limits<int>::min();
+      horizon = std::numeric_limits<int>::min();
       current_statement__ = 39;
-      h = context__.vals_i("h")[(1 - 1)];
+      horizon = context__.vals_i("horizon")[(1 - 1)];
       current_statement__ = 40;
       context__.validate_dims("data initialization", "all_dates", "int",
         std::vector<size_t>{});
@@ -2387,11 +2387,12 @@ public:
       current_statement__ = 40;
       all_dates = context__.vals_i("all_dates")[(1 - 1)];
       current_statement__ = 41;
-      stan::math::validate_non_negative_index("obs", "t - h", (t - h));
+      stan::math::validate_non_negative_index("obs", "t - horizon", (t -
+        horizon));
       current_statement__ = 42;
       context__.validate_dims("data initialization", "obs", "int",
-        std::vector<size_t>{static_cast<size_t>((t - h))});
-      obs = std::vector<int>((t - h), std::numeric_limits<int>::min());
+        std::vector<size_t>{static_cast<size_t>((t - horizon))});
+      obs = std::vector<int>((t - horizon), std::numeric_limits<int>::min());
       current_statement__ = 42;
       obs = context__.vals_i("obs");
       current_statement__ = 42;
@@ -2684,13 +2685,14 @@ public:
       stan::math::check_greater_or_equal(function__, "delay_types_groups",
         delay_types_groups, 0);
       current_statement__ = 79;
-      context__.validate_dims("data initialization", "delay_id", "int",
-        std::vector<size_t>{});
-      delay_id = std::numeric_limits<int>::min();
+      context__.validate_dims("data initialization", "delay_id_reporting",
+        "int", std::vector<size_t>{});
+      delay_id_reporting = std::numeric_limits<int>::min();
       current_statement__ = 79;
-      delay_id = context__.vals_i("delay_id")[(1 - 1)];
+      delay_id_reporting = context__.vals_i("delay_id_reporting")[(1 - 1)];
       current_statement__ = 79;
-      stan::math::check_greater_or_equal(function__, "delay_id", delay_id, 0);
+      stan::math::check_greater_or_equal(function__, "delay_id_reporting",
+        delay_id_reporting, 0);
       current_statement__ = 80;
       stan::math::validate_non_negative_index("day_of_week",
         "t - seeding_time", (t - seeding_time));
@@ -2756,13 +2758,14 @@ public:
       current_statement__ = 87;
       model_type = context__.vals_i("model_type")[(1 - 1)];
       current_statement__ = 88;
-      context__.validate_dims("data initialization", "trunc_id", "int",
-        std::vector<size_t>{});
-      trunc_id = std::numeric_limits<int>::min();
+      context__.validate_dims("data initialization", "delay_id_truncation",
+        "int", std::vector<size_t>{});
+      delay_id_truncation = std::numeric_limits<int>::min();
       current_statement__ = 88;
-      trunc_id = context__.vals_i("trunc_id")[(1 - 1)];
+      delay_id_truncation = context__.vals_i("delay_id_truncation")[(1 - 1)];
       current_statement__ = 88;
-      stan::math::check_greater_or_equal(function__, "trunc_id", trunc_id, 0);
+      stan::math::check_greater_or_equal(function__, "delay_id_truncation",
+        delay_id_truncation, 0);
       current_statement__ = 89;
       context__.validate_dims("data initialization", "n_params_variable",
         "int", std::vector<size_t>{});
@@ -2948,23 +2951,26 @@ public:
         }
       }
       current_statement__ = 106;
-      context__.validate_dims("data initialization", "frac_obs_id", "int",
-        std::vector<size_t>{});
-      frac_obs_id = std::numeric_limits<int>::min();
+      context__.validate_dims("data initialization",
+        "param_id_fraction_observed", "int", std::vector<size_t>{});
+      param_id_fraction_observed = std::numeric_limits<int>::min();
       current_statement__ = 106;
-      frac_obs_id = context__.vals_i("frac_obs_id")[(1 - 1)];
+      param_id_fraction_observed = context__.vals_i("param_id_fraction_observed")[(1
+        - 1)];
       current_statement__ = 106;
-      stan::math::check_greater_or_equal(function__, "frac_obs_id",
-        frac_obs_id, 0);
+      stan::math::check_greater_or_equal(function__,
+        "param_id_fraction_observed", param_id_fraction_observed, 0);
       current_statement__ = 107;
-      context__.validate_dims("data initialization", "dispersion_id", "int",
-        std::vector<size_t>{});
-      dispersion_id = std::numeric_limits<int>::min();
+      context__.validate_dims("data initialization",
+        "param_id_reporting_overdispersion", "int", std::vector<size_t>{});
+      param_id_reporting_overdispersion = std::numeric_limits<int>::min();
       current_statement__ = 107;
-      dispersion_id = context__.vals_i("dispersion_id")[(1 - 1)];
+      param_id_reporting_overdispersion = context__.vals_i("param_id_reporting_overdispersion")[(1
+        - 1)];
       current_statement__ = 107;
-      stan::math::check_greater_or_equal(function__, "dispersion_id",
-        dispersion_id, 0);
+      stan::math::check_greater_or_equal(function__,
+        "param_id_reporting_overdispersion",
+        param_id_reporting_overdispersion, 0);
       current_statement__ = 108;
       stan::math::validate_non_negative_index("params", "n", n);
       current_statement__ = 109;
@@ -3015,10 +3021,10 @@ public:
       current_statement__ = 114;
       sim_secondary_2dim__ = std::numeric_limits<int>::min();
       current_statement__ = 114;
-      sim_secondary_2dim__ = (all_dates ? t : h);
+      sim_secondary_2dim__ = (all_dates ? t : horizon);
       current_statement__ = 114;
       stan::math::validate_non_negative_index("sim_secondary",
-        "all_dates ? t : h", sim_secondary_2dim__);
+        "all_dates ? t : horizon", sim_secondary_2dim__);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -3103,24 +3109,26 @@ public:
             std::numeric_limits<int>::min()));
       {
         current_statement__ = 2;
-        stan::math::validate_non_negative_index("dispersion", "n", n);
-        Eigen::Matrix<double,-1,1> dispersion =
+        stan::math::validate_non_negative_index("reporting_overdispersion",
+          "n", n);
+        Eigen::Matrix<double,-1,1> reporting_overdispersion =
           Eigen::Matrix<double,-1,1>::Constant(n,
             std::numeric_limits<double>::quiet_NaN());
         current_statement__ = 3;
-        stan::model::assign(dispersion,
-          get_param(dispersion_id, params_fixed_lookup,
+        stan::model::assign(reporting_overdispersion,
+          get_param(param_id_reporting_overdispersion, params_fixed_lookup,
             params_variable_lookup, params_value, params, pstream__),
-          "assigning variable dispersion");
+          "assigning variable reporting_overdispersion");
         current_statement__ = 4;
-        stan::math::validate_non_negative_index("frac_obs", "n", n);
-        Eigen::Matrix<double,-1,1> frac_obs =
+        stan::math::validate_non_negative_index("fraction_observed", "n", n);
+        Eigen::Matrix<double,-1,1> fraction_observed =
           Eigen::Matrix<double,-1,1>::Constant(n,
             std::numeric_limits<double>::quiet_NaN());
         current_statement__ = 5;
-        stan::model::assign(frac_obs,
-          get_param(frac_obs_id, params_fixed_lookup, params_variable_lookup,
-            params_value, params, pstream__), "assigning variable frac_obs");
+        stan::model::assign(fraction_observed,
+          get_param(param_id_fraction_observed, params_fixed_lookup,
+            params_variable_lookup, params_value, params, pstream__),
+          "assigning variable fraction_observed");
         current_statement__ = 35;
         for (int i = 1; i <= n; ++i) {
           current_statement__ = 6;
@@ -3149,7 +3157,7 @@ public:
                 stan::math::to_vector(
                   stan::model::rvalue(primary, "primary",
                     stan::model::index_uni(i))),
-                stan::model::rvalue(frac_obs, "frac_obs",
+                stan::model::rvalue(fraction_observed, "fraction_observed",
                   stan::model::index_uni(i)), pstream__),
               "assigning variable scaled");
           } else {
@@ -3160,34 +3168,34 @@ public:
                   stan::model::index_uni(i))), "assigning variable scaled");
           }
           current_statement__ = 23;
-          if (delay_id) {
+          if (delay_id_reporting) {
             current_statement__ = 19;
-            stan::math::validate_non_negative_index("delay_rev_pmf",
-              "delay_type_max[delay_id] + 1",
+            stan::math::validate_non_negative_index("reporting_rev_pmf",
+              "delay_type_max[delay_id_reporting] + 1",
               (stan::model::rvalue(delay_type_max, "delay_type_max",
-                 stan::model::index_uni(delay_id)) + 1));
-            Eigen::Matrix<double,-1,1> delay_rev_pmf =
+                 stan::model::index_uni(delay_id_reporting)) + 1));
+            Eigen::Matrix<double,-1,1> reporting_rev_pmf =
               Eigen::Matrix<double,-1,1>::Constant((stan::model::rvalue(
                                                       delay_type_max,
                                                       "delay_type_max",
                                                       stan::model::index_uni(
-                                                        delay_id)) + 1),
-                std::numeric_limits<double>::quiet_NaN());
+                                                        delay_id_reporting))
+                + 1), std::numeric_limits<double>::quiet_NaN());
             current_statement__ = 20;
-            stan::model::assign(delay_rev_pmf,
-              get_delay_rev_pmf(delay_id,
+            stan::model::assign(reporting_rev_pmf,
+              get_delay_rev_pmf(delay_id_reporting,
                 (stan::model::rvalue(delay_type_max, "delay_type_max",
-                   stan::model::index_uni(delay_id)) + 1), delay_types_p,
-                delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-                delay_np_pmf_groups,
+                   stan::model::index_uni(delay_id_reporting)) + 1),
+                delay_types_p, delay_types_id, delay_types_groups, delay_max,
+                delay_np_pmf, delay_np_pmf_groups,
                 stan::model::rvalue(delay_params, "delay_params",
                   stan::model::index_uni(i)), delay_params_groups,
                 delay_dist, 0, 1, 0, pstream__),
-              "assigning variable delay_rev_pmf");
+              "assigning variable reporting_rev_pmf");
             current_statement__ = 21;
             stan::model::assign(convolved,
               stan::math::add(stan::model::deep_copy(convolved),
-                convolve_to_report(scaled, delay_rev_pmf, 0, pstream__)),
+                convolve_to_report(scaled, reporting_rev_pmf, 0, pstream__)),
               "assigning variable convolved");
           } else {
             current_statement__ = 17;
@@ -3199,7 +3207,7 @@ public:
           stan::model::assign(secondary,
             calculate_secondary(scaled, convolved, obs, cumulative, historic,
               primary_hist_additive, current, primary_current_additive, ((t -
-              h) + 1), pstream__), "assigning variable secondary");
+              horizon) + 1), pstream__), "assigning variable secondary");
           current_statement__ = 27;
           if (stan::math::logical_gt(week_effect, 1)) {
             current_statement__ = 25;
@@ -3212,26 +3220,26 @@ public:
                 pstream__), "assigning variable secondary");
           }
           current_statement__ = 32;
-          if (trunc_id) {
+          if (delay_id_truncation) {
             current_statement__ = 28;
             stan::math::validate_non_negative_index("trunc_rev_cmf",
-              "delay_type_max[trunc_id] + 1",
+              "delay_type_max[delay_id_truncation] + 1",
               (stan::model::rvalue(delay_type_max, "delay_type_max",
-                 stan::model::index_uni(trunc_id)) + 1));
+                 stan::model::index_uni(delay_id_truncation)) + 1));
             Eigen::Matrix<double,-1,1> trunc_rev_cmf =
               Eigen::Matrix<double,-1,1>::Constant((stan::model::rvalue(
                                                       delay_type_max,
                                                       "delay_type_max",
                                                       stan::model::index_uni(
-                                                        trunc_id)) + 1),
-                std::numeric_limits<double>::quiet_NaN());
+                                                        delay_id_truncation))
+                + 1), std::numeric_limits<double>::quiet_NaN());
             current_statement__ = 29;
             stan::model::assign(trunc_rev_cmf,
-              get_delay_rev_pmf(trunc_id,
+              get_delay_rev_pmf(delay_id_truncation,
                 (stan::model::rvalue(delay_type_max, "delay_type_max",
-                   stan::model::index_uni(trunc_id)) + 1), delay_types_p,
-                delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-                delay_np_pmf_groups,
+                   stan::model::index_uni(delay_id_truncation)) + 1),
+                delay_types_p, delay_types_id, delay_types_groups, delay_max,
+                delay_np_pmf, delay_np_pmf_groups,
                 stan::model::rvalue(delay_params, "delay_params",
                   stan::model::index_uni(i)), delay_params_groups,
                 delay_dist, 0, 1, 1, pstream__),
@@ -3243,9 +3251,11 @@ public:
           }
           current_statement__ = 33;
           stan::model::assign(sim_secondary,
-            report_rng(stan::math::tail(secondary, (all_dates ? t : h)),
-              stan::model::rvalue(dispersion, "dispersion",
-                stan::model::index_uni(i)), model_type, base_rng__, pstream__),
+            report_rng(
+              stan::math::tail(secondary, (all_dates ? t : horizon)),
+              stan::model::rvalue(reporting_overdispersion,
+                "reporting_overdispersion", stan::model::index_uni(i)),
+              model_type, base_rng__, pstream__),
             "assigning variable sim_secondary", stan::model::index_uni(i));
         }
       }

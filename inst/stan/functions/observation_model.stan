@@ -9,6 +9,8 @@
  * @param effect Vector of day of week effects.
  *
  * @return A vector of reports adjusted for day of the week effects.
+ *
+ * @ingroup observation_model
  */
 vector day_of_week_effect(vector reports, array[] int day_of_week,
                           vector effect) {
@@ -23,14 +25,16 @@ vector day_of_week_effect(vector reports, array[] int day_of_week,
  * This function scales a vector of reports by a fraction observed.
  *
  * @param reports Vector of reports to be scaled.
- * @param frac_obs Real value representing the fraction observed.
+ * @param fraction_observed Real value representing the fraction observed.
  *
  * @return A vector of scaled reports.
+ *
+ * @ingroup observation_model
  */
-vector scale_obs(vector reports, real frac_obs) {
+vector scale_obs(vector reports, real fraction_observed) {
   int t = num_elements(reports);
   vector[t] scaled_reports;
-  scaled_reports = reports * frac_obs;
+  scaled_reports = reports * fraction_observed;
   return(scaled_reports);
 }
 
@@ -47,6 +51,8 @@ vector scale_obs(vector reports, real frac_obs) {
  * truncate (0) the data.
  *
  * @return A vector of truncated reports.
+ *
+ * @ingroup observation_model
  */
 vector truncate_obs(vector reports, vector trunc_rev_cmf, int reconstruct) {
   int t = num_elements(reports);
@@ -81,6 +87,8 @@ vector truncate_obs(vector reports, vector trunc_rev_cmf, int reconstruct) {
  * deviation prior.
  * @param trunc_sd_sd Array of real values for standard deviation of truncation
  * standard deviation prior.
+ *
+ * @ingroup observation_model
  */
 void truncation_lp(array[] real truncation_mean, array[] real truncation_sd,
                    array[] real trunc_mean_mean, array[] real trunc_mean_sd,
@@ -107,19 +115,19 @@ void truncation_lp(array[] real truncation_mean, array[] real truncation_sd,
  * @param cases Array of integer observed cases.
  * @param case_times Array of integer time indices for observed cases.
  * @param reports Vector of expected reports.
- * @param dispersion Real values for reporting overdispersion.
+ * @param reporting_overdispersion Real values for reporting overdispersion.
  * @param model_type Integer indicating the model type (0 for Poisson, >0 for
  * Negative Binomial).
  * @param weight Real value for weighting the log density contribution.
- * @param accumulate Array of integers indicating, for each time point, whether
- * to accumulate reports (1) or not (0).
+ *
+ * @ingroup observation_model
  */
 void report_lp(array[] int cases, array[] int case_times, vector reports,
-               real dispersion, int model_type, real weight) {
+               real reporting_overdispersion, int model_type, real weight) {
   int n = num_elements(case_times); // number of observations
   vector[n] obs_reports = reports[case_times]; // reports at observation time
   if (model_type) {
-    real phi = inv_square(dispersion);
+    real phi = inv_square(reporting_overdispersion);
     if (weight == 1) {
       cases ~ neg_binomial_2(obs_reports, phi);
     } else {
@@ -147,6 +155,8 @@ void report_lp(array[] int cases, array[] int case_times, vector reports,
  * to accumulate or not.
  *
  * @return A vector of accumulated reports.
+ *
+ * @ingroup observation_model
  */
 vector accumulate_reports(vector reports, array[] int accumulate) {
   int ot_h = num_elements(reports); // number of reporting time points modelled
@@ -167,15 +177,17 @@ vector accumulate_reports(vector reports, array[] int accumulate) {
  *
  * @param cases Array of integer observed cases.
  * @param reports Vector of expected reports.
- * @param dispersion Array of real values for reporting overdispersion.
+ * @param reporting_overdispersion Array of real values for reporting overdispersion.
  * @param model_type Integer indicating the model type (0 for Poisson, >0 for
  * Negative Binomial).
  * @param weight Real value for weighting the log likelihood contribution.
  *
  * @return A vector of log likelihoods for each time point.
+ *
+ * @ingroup observation_model
  */
 vector report_log_lik(array[] int cases, vector reports,
-                      real dispersion, int model_type, real weight) {
+                      real reporting_overdispersion, int model_type, real weight) {
   int t = num_elements(reports);
   vector[t] log_lik;
 
@@ -185,10 +197,10 @@ vector report_log_lik(array[] int cases, vector reports,
       log_lik[i] = poisson_lpmf(cases[i] | reports[i]) * weight;
     }
   } else {
-    real phi = inv_square(dispersion);
+    real phi = inv_square(reporting_overdispersion);
     for (i in 1:t) {
       log_lik[i] = neg_binomial_2_lpmf(
-        cases[i] | reports[i], dispersion
+        cases[i] | reports[i], phi
       ) * weight;
     }
   }
@@ -213,6 +225,8 @@ vector report_log_lik(array[] int cases, vector reports,
  * @param phi Real value for phi.
  *
  * @return A random sample
+ *
+ * @ingroup handlers_and_helpers
  */
 int neg_binomial_2_safe_rng(real mu, real phi) {
   if (mu < 1e-8) {
@@ -232,18 +246,20 @@ int neg_binomial_2_safe_rng(real mu, real phi) {
  * specified model type.
  *
  * @param reports Vector of expected reports.
- * @param dispersion Real value for reporting overdispersion.
+ * @param reporting_overdispersion Real value for reporting overdispersion.
  * @param model_type Integer indicating the model type (0 for Poisson, >0 for
  * Negative Binomial).
  *
  * @return An array of integer sampled reports.
+ *
+ * @ingroup observation_model
  */
-array[] int report_rng(vector reports, real dispersion, int model_type) {
+array[] int report_rng(vector reports, real reporting_overdispersion, int model_type) {
   int t = num_elements(reports);
   array[t] int sampled_reports;
   real phi = 1e5;
   if (model_type) {
-    phi = inv_square(dispersion);
+    phi = inv_square(reporting_overdispersion);
   }
 
   for (s in 1:t) {

@@ -29,355 +29,355 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 350> locations_array__ =
   {" (found before start of program)",
-  " (in 'estimate_truncation', line 561, column 2 to column 71)",
-  " (in 'estimate_truncation', line 562, column 2 to column 27)",
-  " (in 'estimate_truncation', line 563, column 2 to column 22)",
-  " (in 'estimate_truncation', line 566, column 2 to column 34)",
-  " (in 'estimate_truncation', line 567, column 2 to line 569, column 4)",
-  " (in 'estimate_truncation', line 570, column 2 to line 575, column 4)",
-  " (in 'estimate_truncation', line 605, column 2 to line 607, column 4)",
-  " (in 'estimate_truncation', line 608, column 2 to column 61)",
-  " (in 'estimate_truncation', line 577, column 11 to column 12)",
-  " (in 'estimate_truncation', line 577, column 4 to column 23)",
-  " (in 'estimate_truncation', line 579, column 4 to column 74)",
-  " (in 'estimate_truncation', line 583, column 6 to line 584, column 78)",
-  " (in 'estimate_truncation', line 582, column 32 to line 585, column 5)",
-  " (in 'estimate_truncation', line 582, column 4 to line 585, column 5)",
-  " (in 'estimate_truncation', line 576, column 2 to line 586, column 3)",
-  " (in 'estimate_truncation', line 611, column 4 to line 613, column 6)",
-  " (in 'estimate_truncation', line 610, column 24 to line 614, column 3)",
-  " (in 'estimate_truncation', line 610, column 2 to line 614, column 3)",
-  " (in 'estimate_truncation', line 621, column 8 to column 65)",
-  " (in 'estimate_truncation', line 620, column 13 to line 622, column 7)",
-  " (in 'estimate_truncation', line 619, column 8 to column 26)",
-  " (in 'estimate_truncation', line 618, column 32 to line 620, column 7)",
-  " (in 'estimate_truncation', line 618, column 6 to line 622, column 7)",
-  " (in 'estimate_truncation', line 617, column 48 to line 623, column 5)",
-  " (in 'estimate_truncation', line 617, column 4 to line 623, column 5)",
-  " (in 'estimate_truncation', line 616, column 30 to line 624, column 3)",
-  " (in 'estimate_truncation', line 616, column 2 to line 624, column 3)",
-  " (in 'estimate_truncation', line 590, column 2 to line 593, column 4)",
-  " (in 'estimate_truncation', line 594, column 2 to column 34)",
-  " (in 'estimate_truncation', line 594, column 30 to column 31)",
-  " (in 'estimate_truncation', line 595, column 2 to column 29)",
-  " (in 'estimate_truncation', line 595, column 25 to column 26)",
-  " (in 'estimate_truncation', line 600, column 6 to column 72)",
-  " (in 'estimate_truncation', line 599, column 45 to line 601, column 5)",
-  " (in 'estimate_truncation', line 599, column 4 to line 601, column 5)",
-  " (in 'estimate_truncation', line 598, column 30 to line 602, column 3)",
-  " (in 'estimate_truncation', line 598, column 2 to line 602, column 3)",
-  " (in 'estimate_truncation', line 509, column 2 to column 8)",
-  " (in 'estimate_truncation', line 510, column 2 to column 15)",
-  " (in 'estimate_truncation', line 511, column 8 to column 9)",
-  " (in 'estimate_truncation', line 511, column 11 to column 19)",
-  " (in 'estimate_truncation', line 511, column 2 to column 29)",
-  " (in 'estimate_truncation', line 512, column 8 to column 16)",
-  " (in 'estimate_truncation', line 512, column 2 to column 31)",
-  " (in 'estimate_truncation', line 514, column 0 to column 23)",
-  " (in 'estimate_truncation', line 515, column 0 to column 25)",
-  " (in 'estimate_truncation', line 516, column 0 to column 26)",
-  " (in 'estimate_truncation', line 517, column 6 to column 15)",
-  " (in 'estimate_truncation', line 517, column 0 to column 42)",
-  " (in 'estimate_truncation', line 518, column 6 to column 15)",
-  " (in 'estimate_truncation', line 518, column 0 to column 43)",
-  " (in 'estimate_truncation', line 520, column 0 to column 35)",
-  " (in 'estimate_truncation', line 522, column 29 to column 48)",
-  " (in 'estimate_truncation', line 522, column 0 to column 63)",
-  " (in 'estimate_truncation', line 524, column 6 to column 20)",
-  " (in 'estimate_truncation', line 524, column 0 to column 57)",
-  " (in 'estimate_truncation', line 527, column 0 to column 35)",
-  " (in 'estimate_truncation', line 529, column 7 to column 26)",
-  " (in 'estimate_truncation', line 529, column 0 to column 47)",
-  " (in 'estimate_truncation', line 531, column 35 to column 54)",
-  " (in 'estimate_truncation', line 531, column 0 to column 74)",
-  " (in 'estimate_truncation', line 533, column 18 to column 37)",
-  " (in 'estimate_truncation', line 533, column 0 to column 55)",
-  " (in 'estimate_truncation', line 535, column 6 to column 19)",
-  " (in 'estimate_truncation', line 535, column 0 to column 56)",
-  " (in 'estimate_truncation', line 537, column 6 to column 15)",
-  " (in 'estimate_truncation', line 537, column 0 to column 45)",
-  " (in 'estimate_truncation', line 538, column 0 to column 27)",
-  " (in 'estimate_truncation', line 540, column 6 to column 13)",
-  " (in 'estimate_truncation', line 540, column 0 to column 44)",
-  " (in 'estimate_truncation', line 542, column 6 to column 13)",
-  " (in 'estimate_truncation', line 542, column 0 to column 45)",
-  " (in 'estimate_truncation', line 544, column 6 to column 21)",
-  " (in 'estimate_truncation', line 544, column 0 to column 57)",
-  " (in 'estimate_truncation', line 547, column 2 to column 19)",
-  " (in 'estimate_truncation', line 548, column 8 to column 16)",
-  " (in 'estimate_truncation', line 548, column 2 to column 39)",
-  " (in 'estimate_truncation', line 549, column 8 to column 16)",
-  " (in 'estimate_truncation', line 549, column 2 to column 41)",
-  " (in 'estimate_truncation', line 550, column 8 to column 19)",
-  " (in 'estimate_truncation', line 550, column 2 to column 40)",
-  " (in 'estimate_truncation', line 551, column 2 to line 554, column 4)",
-  " (in 'estimate_truncation', line 556, column 4 to column 31)",
-  " (in 'estimate_truncation', line 557, column 4 to column 61)",
-  " (in 'estimate_truncation', line 555, column 24 to line 558, column 3)",
-  " (in 'estimate_truncation', line 555, column 2 to line 558, column 3)",
-  " (in 'estimate_truncation', line 561, column 37 to column 56)",
-  " (in 'estimate_truncation', line 567, column 9 to column 37)",
-  " (in 'estimate_truncation', line 567, column 39 to column 51)",
-  " (in 'estimate_truncation', line 570, column 9 to column 37)",
-  " (in 'estimate_truncation', line 605, column 9 to column 37)",
-  " (in 'estimate_truncation', line 605, column 39 to column 47)",
-  " (in 'estimate_truncation', line 608, column 9 to column 37)",
-  " (in 'estimate_truncation', line 608, column 39 to column 51)",
-  " (in 'estimate_truncation', line 12, column 2 to column 30)",
-  " (in 'estimate_truncation', line 13, column 2 to column 41)",
-  " (in 'estimate_truncation', line 14, column 2 to column 16)",
-  " (in 'estimate_truncation', line 15, column 2 to column 41)",
-  " (in 'estimate_truncation', line 16, column 2 to column 19)",
-  " (in 'estimate_truncation', line 17, column 2 to column 42)",
-  " (in 'estimate_truncation', line 11, column 62 to line 18, column 1)",
-  " (in 'estimate_truncation', line 29, column 2 to column 30)",
-  " (in 'estimate_truncation', line 30, column 2 to column 41)",
-  " (in 'estimate_truncation', line 31, column 2 to column 19)",
-  " (in 'estimate_truncation', line 32, column 2 to column 41)",
-  " (in 'estimate_truncation', line 32, column 41 to column 42)",
-  " (in 'estimate_truncation', line 33, column 2 to column 30)",
-  " (in 'estimate_truncation', line 34, column 2 to column 42)",
-  " (in 'estimate_truncation', line 28, column 61 to line 35, column 1)",
-  " (in 'estimate_truncation', line 50, column 2 to column 29)",
-  " (in 'estimate_truncation', line 51, column 2 to column 29)",
-  " (in 'estimate_truncation', line 52, column 9 to column 12)",
-  " (in 'estimate_truncation', line 52, column 2 to column 16)",
-  " (in 'estimate_truncation', line 55, column 4 to column 74)",
-  " (in 'estimate_truncation', line 54, column 29 to line 56, column 3)",
-  " (in 'estimate_truncation', line 54, column 2 to line 56, column 3)",
-  " (in 'estimate_truncation', line 59, column 4 to column 59)",
-  " (in 'estimate_truncation', line 58, column 18 to line 60, column 3)",
-  " (in 'estimate_truncation', line 58, column 2 to line 60, column 3)",
-  " (in 'estimate_truncation', line 63, column 4 to column 65)",
-  " (in 'estimate_truncation', line 64, column 4 to column 75)",
-  " (in 'estimate_truncation', line 62, column 20 to line 65, column 3)",
-  " (in 'estimate_truncation', line 62, column 2 to line 65, column 3)",
-  " (in 'estimate_truncation', line 69, column 6 to column 66)",
-  " (in 'estimate_truncation', line 70, column 6 to column 77)",
-  " (in 'estimate_truncation', line 68, column 30 to line 71, column 5)",
-  " (in 'estimate_truncation', line 68, column 4 to line 71, column 5)",
-  " (in 'estimate_truncation', line 67, column 18 to line 72, column 3)",
-  " (in 'estimate_truncation', line 67, column 2 to line 72, column 3)",
-  " (in 'estimate_truncation', line 74, column 2 to column 11)",
-  " (in 'estimate_truncation', line 49, column 58 to line 75, column 1)",
-  " (in 'estimate_truncation', line 93, column 2 to column 35)",
-  " (in 'estimate_truncation', line 94, column 2 to column 43)",
-  " (in 'estimate_truncation', line 97, column 4 to column 44)",
-  " (in 'estimate_truncation', line 96, column 19 to line 98, column 3)",
-  " (in 'estimate_truncation', line 96, column 2 to line 98, column 3)",
-  " (in 'estimate_truncation', line 100, column 9 to column 10)",
-  " (in 'estimate_truncation', line 100, column 2 to column 80)",
-  " (in 'estimate_truncation', line 101, column 2 to column 45)",
-  " (in 'estimate_truncation', line 92, column 44 to line 102, column 1)",
-  " (in 'estimate_truncation', line 109, column 9 to column 10)",
-  " (in 'estimate_truncation', line 109, column 2 to column 17)",
-  " (in 'estimate_truncation', line 110, column 9 to column 10)",
-  " (in 'estimate_truncation', line 110, column 2 to column 23)",
-  " (in 'estimate_truncation', line 120, column 4 to column 54)",
-  " (in 'estimate_truncation', line 119, column 9 to line 121, column 3)",
-  " (in 'estimate_truncation', line 117, column 6 to column 59)",
-  " (in 'estimate_truncation', line 116, column 19 to line 118, column 5)",
-  " (in 'estimate_truncation', line 116, column 4 to line 118, column 5)",
-  " (in 'estimate_truncation', line 115, column 24 to line 119, column 3)",
-  " (in 'estimate_truncation', line 115, column 9 to line 121, column 3)",
-  " (in 'estimate_truncation', line 113, column 6 to column 63)",
-  " (in 'estimate_truncation', line 112, column 19 to line 114, column 5)",
-  " (in 'estimate_truncation', line 112, column 4 to line 114, column 5)",
-  " (in 'estimate_truncation', line 111, column 17 to line 115, column 3)",
-  " (in 'estimate_truncation', line 111, column 2 to line 121, column 3)",
-  " (in 'estimate_truncation', line 132, column 4 to column 16)",
-  " (in 'estimate_truncation', line 131, column 9 to line 133, column 3)",
-  " (in 'estimate_truncation', line 124, column 4 to column 28)",
-  " (in 'estimate_truncation', line 125, column 4 to column 28)",
-  " (in 'estimate_truncation', line 127, column 6 to column 71)",
-  " (in 'estimate_truncation', line 126, column 15 to line 128, column 5)",
-  " (in 'estimate_truncation', line 126, column 4 to line 128, column 5)",
-  " (in 'estimate_truncation', line 130, column 4 to column 53)",
-  " (in 'estimate_truncation', line 123, column 13 to line 131, column 3)",
-  " (in 'estimate_truncation', line 123, column 2 to line 133, column 3)",
-  " (in 'estimate_truncation', line 134, column 2 to column 20)",
-  " (in 'estimate_truncation', line 108, column 55 to line 135, column 1)",
-  " (in 'estimate_truncation', line 151, column 2 to column 32)",
-  " (in 'estimate_truncation', line 152, column 9 to column 11)",
-  " (in 'estimate_truncation', line 152, column 2 to column 41)",
-  " (in 'estimate_truncation', line 153, column 2 to column 47)",
-  " (in 'estimate_truncation', line 150, column 41 to line 154, column 1)",
-  " (in 'estimate_truncation', line 167, column 2 to column 32)",
-  " (in 'estimate_truncation', line 168, column 9 to column 10)",
-  " (in 'estimate_truncation', line 168, column 2 to column 27)",
-  " (in 'estimate_truncation', line 169, column 2 to column 38)",
-  " (in 'estimate_truncation', line 170, column 2 to column 25)",
-  " (in 'estimate_truncation', line 166, column 48 to line 171, column 1)",
-  " (in 'estimate_truncation', line 188, column 2 to column 32)",
-  " (in 'estimate_truncation', line 189, column 2 to column 46)",
-  " (in 'estimate_truncation', line 190, column 9 to column 10)",
-  " (in 'estimate_truncation', line 190, column 2 to column 36)",
-  " (in 'estimate_truncation', line 192, column 2 to column 36)",
-  " (in 'estimate_truncation', line 193, column 2 to column 34)",
-  " (in 'estimate_truncation', line 194, column 2 to column 46)",
-  " (in 'estimate_truncation', line 200, column 4 to column 70)",
-  " (in 'estimate_truncation', line 199, column 9 to line 201, column 3)",
-  " (in 'estimate_truncation', line 198, column 4 to column 70)",
-  " (in 'estimate_truncation', line 197, column 19 to line 199, column 3)",
-  " (in 'estimate_truncation', line 197, column 2 to line 201, column 3)",
-  " (in 'estimate_truncation', line 202, column 2 to column 24)",
-  " (in 'estimate_truncation', line 187, column 75 to line 203, column 1)",
-  " (in 'estimate_truncation', line 224, column 2 to column 49)",
-  " (in 'estimate_truncation', line 228, column 6 to column 63)",
-  " (in 'estimate_truncation', line 226, column 30 to line 229, column 5)",
-  " (in 'estimate_truncation', line 226, column 4 to line 229, column 5)",
-  " (in 'estimate_truncation', line 232, column 6 to column 57)",
-  " (in 'estimate_truncation', line 230, column 28 to line 233, column 5)",
-  " (in 'estimate_truncation', line 230, column 4 to line 233, column 5)",
-  " (in 'estimate_truncation', line 225, column 18 to line 234, column 3)",
-  " (in 'estimate_truncation', line 225, column 2 to line 234, column 3)",
-  " (in 'estimate_truncation', line 223, column 73 to line 235, column 1)",
-  " (in 'estimate_truncation', line 255, column 2 to column 35)",
-  " (in 'estimate_truncation', line 256, column 9 to column 10)",
-  " (in 'estimate_truncation', line 256, column 2 to column 46)",
-  " (in 'estimate_truncation', line 270, column 6 to column 59)",
-  " (in 'estimate_truncation', line 269, column 11 to line 271, column 5)",
-  " (in 'estimate_truncation', line 268, column 6 to column 35)",
-  " (in 'estimate_truncation', line 267, column 21 to line 269, column 5)",
-  " (in 'estimate_truncation', line 267, column 4 to line 271, column 5)",
-  " (in 'estimate_truncation', line 266, column 9 to line 272, column 3)",
-  " (in 'estimate_truncation', line 258, column 4 to column 38)",
-  " (in 'estimate_truncation', line 262, column 6 to line 264, column 17)",
-  " (in 'estimate_truncation', line 261, column 11 to line 265, column 5)",
-  " (in 'estimate_truncation', line 260, column 6 to column 47)",
-  " (in 'estimate_truncation', line 259, column 21 to line 261, column 5)",
-  " (in 'estimate_truncation', line 259, column 4 to line 265, column 5)",
-  " (in 'estimate_truncation', line 257, column 18 to line 266, column 3)",
-  " (in 'estimate_truncation', line 257, column 2 to line 272, column 3)",
-  " (in 'estimate_truncation', line 254, column 61 to line 273, column 1)",
-  " (in 'estimate_truncation', line 288, column 2 to column 35)",
-  " (in 'estimate_truncation', line 289, column 9 to column 13)",
-  " (in 'estimate_truncation', line 289, column 2 to column 45)",
-  " (in 'estimate_truncation', line 292, column 6 to column 59)",
-  " (in 'estimate_truncation', line 291, column 23 to line 293, column 5)",
-  " (in 'estimate_truncation', line 291, column 4 to line 293, column 5)",
-  " (in 'estimate_truncation', line 290, column 26 to line 294, column 3)",
-  " (in 'estimate_truncation', line 290, column 2 to line 294, column 3)",
-  " (in 'estimate_truncation', line 295, column 2 to column 29)",
-  " (in 'estimate_truncation', line 287, column 66 to line 296, column 1)",
-  " (in 'estimate_truncation', line 315, column 2 to column 32)",
-  " (in 'estimate_truncation', line 316, column 9 to column 10)",
-  " (in 'estimate_truncation', line 316, column 2 to column 20)",
-  " (in 'estimate_truncation', line 324, column 4 to column 38)",
-  " (in 'estimate_truncation', line 326, column 6 to line 328, column 17)",
-  " (in 'estimate_truncation', line 325, column 19 to line 329, column 5)",
-  " (in 'estimate_truncation', line 325, column 4 to line 329, column 5)",
-  " (in 'estimate_truncation', line 323, column 9 to line 330, column 3)",
-  " (in 'estimate_truncation', line 321, column 6 to column 64)",
-  " (in 'estimate_truncation', line 320, column 19 to line 322, column 5)",
-  " (in 'estimate_truncation', line 320, column 4 to line 322, column 5)",
-  " (in 'estimate_truncation', line 319, column 23 to line 323, column 3)",
-  " (in 'estimate_truncation', line 319, column 2 to line 330, column 3)",
-  " (in 'estimate_truncation', line 331, column 2 to column 18)",
-  " (in 'estimate_truncation', line 314, column 68 to line 332, column 1)",
-  " (in 'estimate_truncation', line 359, column 4 to column 47)",
-  " (in 'estimate_truncation', line 360, column 4 to column 61)",
-  " (in 'estimate_truncation', line 358, column 9 to line 361, column 3)",
-  " (in 'estimate_truncation', line 357, column 4 to column 45)",
-  " (in 'estimate_truncation', line 356, column 24 to line 358, column 3)",
-  " (in 'estimate_truncation', line 356, column 9 to line 361, column 3)",
-  " (in 'estimate_truncation', line 355, column 4 to column 14)",
-  " (in 'estimate_truncation', line 354, column 17 to line 356, column 3)",
-  " (in 'estimate_truncation', line 354, column 2 to line 361, column 3)",
-  " (in 'estimate_truncation', line 353, column 47 to line 362, column 1)",
-  " (in 'estimate_truncation', line 378, column 2 to column 32)",
-  " (in 'estimate_truncation', line 379, column 8 to column 9)",
-  " (in 'estimate_truncation', line 379, column 2 to column 31)",
-  " (in 'estimate_truncation', line 380, column 2 to column 17)",
-  " (in 'estimate_truncation', line 382, column 4 to column 33)",
-  " (in 'estimate_truncation', line 381, column 18 to line 383, column 3)",
-  " (in 'estimate_truncation', line 381, column 2 to line 383, column 3)",
-  " (in 'estimate_truncation', line 386, column 4 to column 66)",
-  " (in 'estimate_truncation', line 385, column 17 to line 387, column 3)",
-  " (in 'estimate_truncation', line 385, column 2 to line 387, column 3)",
-  " (in 'estimate_truncation', line 388, column 2 to column 26)",
-  " (in 'estimate_truncation', line 377, column 72 to line 389, column 1)",
-  " (in 'estimate_truncation', line 396, column 8 to column 19)",
-  " (in 'estimate_truncation', line 396, column 2 to column 29)",
-  " (in 'estimate_truncation', line 398, column 4 to column 15)",
-  " (in 'estimate_truncation', line 403, column 8 to line 404, column 53)",
-  " (in 'estimate_truncation', line 402, column 13 to line 405, column 7)",
-  " (in 'estimate_truncation', line 401, column 8 to column 47)",
-  " (in 'estimate_truncation', line 400, column 28 to line 402, column 7)",
-  " (in 'estimate_truncation', line 400, column 6 to line 405, column 7)",
-  " (in 'estimate_truncation', line 399, column 69 to line 406, column 5)",
-  " (in 'estimate_truncation', line 399, column 4 to line 406, column 5)",
-  " (in 'estimate_truncation', line 397, column 27 to line 407, column 3)",
-  " (in 'estimate_truncation', line 397, column 2 to line 407, column 3)",
-  " (in 'estimate_truncation', line 408, column 2 to column 13)",
-  " (in 'estimate_truncation', line 395, column 2 to line 409, column 1)",
-  " (in 'estimate_truncation', line 419, column 9 to column 12)",
-  " (in 'estimate_truncation', line 419, column 2 to column 39)",
-  " (in 'estimate_truncation', line 420, column 2 to column 22)",
-  " (in 'estimate_truncation', line 421, column 2 to column 14)",
-  " (in 'estimate_truncation', line 442, column 6 to column 57)",
-  " (in 'estimate_truncation', line 443, column 6 to column 63)",
-  " (in 'estimate_truncation', line 444, column 6 to column 42)",
-  " (in 'estimate_truncation', line 448, column 8 to line 450, column 10)",
-  " (in 'estimate_truncation', line 447, column 13 to line 451, column 7)",
-  " (in 'estimate_truncation', line 446, column 8 to column 49)",
-  " (in 'estimate_truncation', line 445, column 28 to line 447, column 7)",
-  " (in 'estimate_truncation', line 445, column 6 to line 451, column 7)",
-  " (in 'estimate_truncation', line 441, column 11 to line 452, column 5)",
-  " (in 'estimate_truncation', line 425, column 6 to column 57)",
-  " (in 'estimate_truncation', line 426, column 6 to column 63)",
-  " (in 'estimate_truncation', line 427, column 13 to column 45)",
-  " (in 'estimate_truncation', line 427, column 6 to line 432, column 8)",
-  " (in 'estimate_truncation', line 433, column 6 to column 59)",
-  " (in 'estimate_truncation', line 437, column 8 to line 439, column 10)",
-  " (in 'estimate_truncation', line 436, column 13 to line 440, column 7)",
-  " (in 'estimate_truncation', line 435, column 8 to column 42)",
-  " (in 'estimate_truncation', line 434, column 28 to line 436, column 7)",
-  " (in 'estimate_truncation', line 434, column 6 to line 440, column 7)",
-  " (in 'estimate_truncation', line 424, column 26 to line 441, column 5)",
-  " (in 'estimate_truncation', line 424, column 4 to line 452, column 5)",
-  " (in 'estimate_truncation', line 453, column 4 to column 26)",
-  " (in 'estimate_truncation', line 423, column 78 to line 454, column 3)",
-  " (in 'estimate_truncation', line 422, column 2 to line 454, column 3)",
-  " (in 'estimate_truncation', line 456, column 4 to line 459, column 6)",
-  " (in 'estimate_truncation', line 455, column 21 to line 460, column 3)",
-  " (in 'estimate_truncation', line 455, column 2 to line 460, column 3)",
-  " (in 'estimate_truncation', line 462, column 4 to column 30)",
-  " (in 'estimate_truncation', line 461, column 18 to line 463, column 3)",
-  " (in 'estimate_truncation', line 461, column 2 to line 463, column 3)",
-  " (in 'estimate_truncation', line 465, column 4 to column 23)",
-  " (in 'estimate_truncation', line 464, column 19 to line 466, column 3)",
-  " (in 'estimate_truncation', line 464, column 2 to line 466, column 3)",
-  " (in 'estimate_truncation', line 467, column 2 to column 13)",
-  " (in 'estimate_truncation', line 417, column 2 to line 468, column 1)",
-  " (in 'estimate_truncation', line 475, column 2 to column 55)",
-  " (in 'estimate_truncation', line 477, column 4 to column 11)",
-  " (in 'estimate_truncation', line 476, column 21 to line 478, column 3)",
-  " (in 'estimate_truncation', line 476, column 2 to line 478, column 3)",
-  " (in 'estimate_truncation', line 480, column 4 to column 39)",
-  " (in 'estimate_truncation', line 481, column 4 to column 45)",
-  " (in 'estimate_truncation', line 490, column 10 to column 77)",
-  " (in 'estimate_truncation', line 489, column 15 to line 491, column 9)",
-  " (in 'estimate_truncation', line 485, column 10 to line 488, column 14)",
-  " (in 'estimate_truncation', line 484, column 27 to line 489, column 9)",
-  " (in 'estimate_truncation', line 484, column 8 to line 491, column 9)",
-  " (in 'estimate_truncation', line 483, column 34 to line 492, column 7)",
-  " (in 'estimate_truncation', line 483, column 6 to line 492, column 7)",
-  " (in 'estimate_truncation', line 482, column 25 to line 493, column 5)",
-  " (in 'estimate_truncation', line 482, column 4 to line 493, column 5)",
-  " (in 'estimate_truncation', line 479, column 24 to line 494, column 3)",
-  " (in 'estimate_truncation', line 479, column 2 to line 494, column 3)",
-  " (in 'estimate_truncation', line 474, column 59 to line 495, column 1)",
-  " (in 'estimate_truncation', line 498, column 2 to column 29)",
-  " (in 'estimate_truncation', line 499, column 9 to column 12)",
-  " (in 'estimate_truncation', line 499, column 2 to column 18)",
-  " (in 'estimate_truncation', line 501, column 4 to column 49)",
-  " (in 'estimate_truncation', line 502, column 4 to column 31)",
-  " (in 'estimate_truncation', line 503, column 4 to column 45)",
-  " (in 'estimate_truncation', line 500, column 19 to line 504, column 3)",
-  " (in 'estimate_truncation', line 500, column 2 to line 504, column 3)",
-  " (in 'estimate_truncation', line 505, column 2 to column 13)",
-  " (in 'estimate_truncation', line 497, column 57 to line 506, column 1)"};
+  " (in 'estimate_truncation', line 680, column 2 to column 71)",
+  " (in 'estimate_truncation', line 681, column 2 to column 41)",
+  " (in 'estimate_truncation', line 682, column 2 to column 22)",
+  " (in 'estimate_truncation', line 685, column 2 to column 48)",
+  " (in 'estimate_truncation', line 686, column 2 to line 687, column 73)",
+  " (in 'estimate_truncation', line 688, column 2 to line 694, column 6)",
+  " (in 'estimate_truncation', line 724, column 2 to line 725, column 69)",
+  " (in 'estimate_truncation', line 726, column 2 to column 72)",
+  " (in 'estimate_truncation', line 696, column 11 to column 12)",
+  " (in 'estimate_truncation', line 696, column 4 to column 23)",
+  " (in 'estimate_truncation', line 698, column 4 to column 74)",
+  " (in 'estimate_truncation', line 702, column 6 to line 703, column 78)",
+  " (in 'estimate_truncation', line 701, column 32 to line 704, column 5)",
+  " (in 'estimate_truncation', line 701, column 4 to line 704, column 5)",
+  " (in 'estimate_truncation', line 695, column 2 to line 705, column 3)",
+  " (in 'estimate_truncation', line 729, column 4 to line 731, column 6)",
+  " (in 'estimate_truncation', line 728, column 24 to line 732, column 3)",
+  " (in 'estimate_truncation', line 728, column 2 to line 732, column 3)",
+  " (in 'estimate_truncation', line 739, column 8 to column 65)",
+  " (in 'estimate_truncation', line 738, column 13 to line 740, column 7)",
+  " (in 'estimate_truncation', line 737, column 8 to column 26)",
+  " (in 'estimate_truncation', line 736, column 32 to line 738, column 7)",
+  " (in 'estimate_truncation', line 736, column 6 to line 740, column 7)",
+  " (in 'estimate_truncation', line 735, column 59 to line 741, column 5)",
+  " (in 'estimate_truncation', line 735, column 4 to line 741, column 5)",
+  " (in 'estimate_truncation', line 734, column 30 to line 742, column 3)",
+  " (in 'estimate_truncation', line 734, column 2 to line 742, column 3)",
+  " (in 'estimate_truncation', line 709, column 2 to line 712, column 4)",
+  " (in 'estimate_truncation', line 713, column 2 to column 48)",
+  " (in 'estimate_truncation', line 713, column 44 to column 45)",
+  " (in 'estimate_truncation', line 714, column 2 to column 29)",
+  " (in 'estimate_truncation', line 714, column 25 to column 26)",
+  " (in 'estimate_truncation', line 719, column 6 to column 72)",
+  " (in 'estimate_truncation', line 718, column 45 to line 720, column 5)",
+  " (in 'estimate_truncation', line 718, column 4 to line 720, column 5)",
+  " (in 'estimate_truncation', line 717, column 30 to line 721, column 3)",
+  " (in 'estimate_truncation', line 717, column 2 to line 721, column 3)",
+  " (in 'estimate_truncation', line 628, column 2 to column 8)",
+  " (in 'estimate_truncation', line 629, column 2 to column 15)",
+  " (in 'estimate_truncation', line 630, column 8 to column 9)",
+  " (in 'estimate_truncation', line 630, column 11 to column 19)",
+  " (in 'estimate_truncation', line 630, column 2 to column 29)",
+  " (in 'estimate_truncation', line 631, column 8 to column 16)",
+  " (in 'estimate_truncation', line 631, column 2 to column 31)",
+  " (in 'estimate_truncation', line 633, column 0 to column 23)",
+  " (in 'estimate_truncation', line 634, column 0 to column 25)",
+  " (in 'estimate_truncation', line 635, column 0 to column 26)",
+  " (in 'estimate_truncation', line 636, column 6 to column 15)",
+  " (in 'estimate_truncation', line 636, column 0 to column 42)",
+  " (in 'estimate_truncation', line 637, column 6 to column 15)",
+  " (in 'estimate_truncation', line 637, column 0 to column 43)",
+  " (in 'estimate_truncation', line 639, column 0 to column 35)",
+  " (in 'estimate_truncation', line 641, column 29 to column 48)",
+  " (in 'estimate_truncation', line 641, column 0 to column 63)",
+  " (in 'estimate_truncation', line 643, column 6 to column 20)",
+  " (in 'estimate_truncation', line 643, column 0 to column 57)",
+  " (in 'estimate_truncation', line 646, column 0 to column 35)",
+  " (in 'estimate_truncation', line 648, column 7 to column 26)",
+  " (in 'estimate_truncation', line 648, column 0 to column 47)",
+  " (in 'estimate_truncation', line 650, column 35 to column 54)",
+  " (in 'estimate_truncation', line 650, column 0 to column 74)",
+  " (in 'estimate_truncation', line 652, column 18 to column 37)",
+  " (in 'estimate_truncation', line 652, column 0 to column 55)",
+  " (in 'estimate_truncation', line 654, column 6 to column 19)",
+  " (in 'estimate_truncation', line 654, column 0 to column 56)",
+  " (in 'estimate_truncation', line 656, column 6 to column 15)",
+  " (in 'estimate_truncation', line 656, column 0 to column 45)",
+  " (in 'estimate_truncation', line 657, column 0 to column 27)",
+  " (in 'estimate_truncation', line 659, column 6 to column 13)",
+  " (in 'estimate_truncation', line 659, column 0 to column 44)",
+  " (in 'estimate_truncation', line 661, column 6 to column 13)",
+  " (in 'estimate_truncation', line 661, column 0 to column 45)",
+  " (in 'estimate_truncation', line 663, column 6 to column 21)",
+  " (in 'estimate_truncation', line 663, column 0 to column 57)",
+  " (in 'estimate_truncation', line 666, column 2 to column 30)",
+  " (in 'estimate_truncation', line 667, column 8 to column 16)",
+  " (in 'estimate_truncation', line 667, column 2 to column 39)",
+  " (in 'estimate_truncation', line 668, column 8 to column 16)",
+  " (in 'estimate_truncation', line 668, column 2 to column 41)",
+  " (in 'estimate_truncation', line 669, column 8 to column 19)",
+  " (in 'estimate_truncation', line 669, column 2 to column 40)",
+  " (in 'estimate_truncation', line 670, column 2 to line 673, column 4)",
+  " (in 'estimate_truncation', line 675, column 4 to column 31)",
+  " (in 'estimate_truncation', line 676, column 4 to column 72)",
+  " (in 'estimate_truncation', line 674, column 24 to line 677, column 3)",
+  " (in 'estimate_truncation', line 674, column 2 to line 677, column 3)",
+  " (in 'estimate_truncation', line 680, column 37 to column 56)",
+  " (in 'estimate_truncation', line 686, column 9 to column 48)",
+  " (in 'estimate_truncation', line 686, column 50 to column 62)",
+  " (in 'estimate_truncation', line 688, column 9 to column 48)",
+  " (in 'estimate_truncation', line 724, column 9 to column 48)",
+  " (in 'estimate_truncation', line 724, column 50 to column 58)",
+  " (in 'estimate_truncation', line 726, column 9 to column 48)",
+  " (in 'estimate_truncation', line 726, column 50 to column 62)",
+  " (in 'estimate_truncation', line 23, column 2 to column 30)",
+  " (in 'estimate_truncation', line 24, column 2 to column 41)",
+  " (in 'estimate_truncation', line 25, column 2 to column 16)",
+  " (in 'estimate_truncation', line 26, column 2 to column 41)",
+  " (in 'estimate_truncation', line 27, column 2 to column 19)",
+  " (in 'estimate_truncation', line 28, column 2 to column 42)",
+  " (in 'estimate_truncation', line 22, column 62 to line 29, column 1)",
+  " (in 'estimate_truncation', line 42, column 2 to column 30)",
+  " (in 'estimate_truncation', line 43, column 2 to column 41)",
+  " (in 'estimate_truncation', line 44, column 2 to column 19)",
+  " (in 'estimate_truncation', line 45, column 2 to column 41)",
+  " (in 'estimate_truncation', line 45, column 41 to column 42)",
+  " (in 'estimate_truncation', line 46, column 2 to column 30)",
+  " (in 'estimate_truncation', line 47, column 2 to column 42)",
+  " (in 'estimate_truncation', line 41, column 61 to line 48, column 1)",
+  " (in 'estimate_truncation', line 65, column 2 to column 29)",
+  " (in 'estimate_truncation', line 66, column 2 to column 29)",
+  " (in 'estimate_truncation', line 67, column 9 to column 12)",
+  " (in 'estimate_truncation', line 67, column 2 to column 16)",
+  " (in 'estimate_truncation', line 70, column 4 to column 74)",
+  " (in 'estimate_truncation', line 69, column 29 to line 71, column 3)",
+  " (in 'estimate_truncation', line 69, column 2 to line 71, column 3)",
+  " (in 'estimate_truncation', line 74, column 4 to column 59)",
+  " (in 'estimate_truncation', line 73, column 18 to line 75, column 3)",
+  " (in 'estimate_truncation', line 73, column 2 to line 75, column 3)",
+  " (in 'estimate_truncation', line 78, column 4 to column 65)",
+  " (in 'estimate_truncation', line 79, column 4 to column 75)",
+  " (in 'estimate_truncation', line 77, column 20 to line 80, column 3)",
+  " (in 'estimate_truncation', line 77, column 2 to line 80, column 3)",
+  " (in 'estimate_truncation', line 84, column 6 to column 66)",
+  " (in 'estimate_truncation', line 85, column 6 to column 77)",
+  " (in 'estimate_truncation', line 83, column 30 to line 86, column 5)",
+  " (in 'estimate_truncation', line 83, column 4 to line 86, column 5)",
+  " (in 'estimate_truncation', line 82, column 18 to line 87, column 3)",
+  " (in 'estimate_truncation', line 82, column 2 to line 87, column 3)",
+  " (in 'estimate_truncation', line 89, column 2 to column 11)",
+  " (in 'estimate_truncation', line 64, column 58 to line 90, column 1)",
+  " (in 'estimate_truncation', line 110, column 2 to column 35)",
+  " (in 'estimate_truncation', line 111, column 2 to column 43)",
+  " (in 'estimate_truncation', line 114, column 4 to column 44)",
+  " (in 'estimate_truncation', line 113, column 19 to line 115, column 3)",
+  " (in 'estimate_truncation', line 113, column 2 to line 115, column 3)",
+  " (in 'estimate_truncation', line 117, column 9 to column 10)",
+  " (in 'estimate_truncation', line 117, column 2 to column 80)",
+  " (in 'estimate_truncation', line 118, column 2 to column 45)",
+  " (in 'estimate_truncation', line 109, column 44 to line 119, column 1)",
+  " (in 'estimate_truncation', line 148, column 9 to column 10)",
+  " (in 'estimate_truncation', line 148, column 2 to column 17)",
+  " (in 'estimate_truncation', line 149, column 9 to column 10)",
+  " (in 'estimate_truncation', line 149, column 2 to column 23)",
+  " (in 'estimate_truncation', line 159, column 4 to column 54)",
+  " (in 'estimate_truncation', line 158, column 9 to line 160, column 3)",
+  " (in 'estimate_truncation', line 156, column 6 to column 59)",
+  " (in 'estimate_truncation', line 155, column 19 to line 157, column 5)",
+  " (in 'estimate_truncation', line 155, column 4 to line 157, column 5)",
+  " (in 'estimate_truncation', line 154, column 24 to line 158, column 3)",
+  " (in 'estimate_truncation', line 154, column 9 to line 160, column 3)",
+  " (in 'estimate_truncation', line 152, column 6 to column 63)",
+  " (in 'estimate_truncation', line 151, column 19 to line 153, column 5)",
+  " (in 'estimate_truncation', line 151, column 4 to line 153, column 5)",
+  " (in 'estimate_truncation', line 150, column 17 to line 154, column 3)",
+  " (in 'estimate_truncation', line 150, column 2 to line 160, column 3)",
+  " (in 'estimate_truncation', line 171, column 4 to column 16)",
+  " (in 'estimate_truncation', line 170, column 9 to line 172, column 3)",
+  " (in 'estimate_truncation', line 163, column 4 to column 28)",
+  " (in 'estimate_truncation', line 164, column 4 to column 28)",
+  " (in 'estimate_truncation', line 166, column 6 to column 71)",
+  " (in 'estimate_truncation', line 165, column 15 to line 167, column 5)",
+  " (in 'estimate_truncation', line 165, column 4 to line 167, column 5)",
+  " (in 'estimate_truncation', line 169, column 4 to column 53)",
+  " (in 'estimate_truncation', line 162, column 13 to line 170, column 3)",
+  " (in 'estimate_truncation', line 162, column 2 to line 172, column 3)",
+  " (in 'estimate_truncation', line 173, column 2 to column 20)",
+  " (in 'estimate_truncation', line 147, column 55 to line 174, column 1)",
+  " (in 'estimate_truncation', line 192, column 2 to column 32)",
+  " (in 'estimate_truncation', line 193, column 9 to column 11)",
+  " (in 'estimate_truncation', line 193, column 2 to column 41)",
+  " (in 'estimate_truncation', line 194, column 2 to column 47)",
+  " (in 'estimate_truncation', line 191, column 41 to line 195, column 1)",
+  " (in 'estimate_truncation', line 210, column 2 to column 32)",
+  " (in 'estimate_truncation', line 211, column 9 to column 10)",
+  " (in 'estimate_truncation', line 211, column 2 to column 27)",
+  " (in 'estimate_truncation', line 212, column 2 to column 47)",
+  " (in 'estimate_truncation', line 213, column 2 to column 25)",
+  " (in 'estimate_truncation', line 209, column 57 to line 214, column 1)",
+  " (in 'estimate_truncation', line 233, column 2 to column 32)",
+  " (in 'estimate_truncation', line 234, column 2 to column 46)",
+  " (in 'estimate_truncation', line 235, column 9 to column 10)",
+  " (in 'estimate_truncation', line 235, column 2 to column 36)",
+  " (in 'estimate_truncation', line 237, column 2 to column 36)",
+  " (in 'estimate_truncation', line 238, column 2 to column 34)",
+  " (in 'estimate_truncation', line 239, column 2 to column 46)",
+  " (in 'estimate_truncation', line 245, column 4 to column 70)",
+  " (in 'estimate_truncation', line 244, column 9 to line 246, column 3)",
+  " (in 'estimate_truncation', line 243, column 4 to column 70)",
+  " (in 'estimate_truncation', line 242, column 19 to line 244, column 3)",
+  " (in 'estimate_truncation', line 242, column 2 to line 246, column 3)",
+  " (in 'estimate_truncation', line 247, column 2 to column 24)",
+  " (in 'estimate_truncation', line 232, column 75 to line 248, column 1)",
+  " (in 'estimate_truncation', line 271, column 2 to column 49)",
+  " (in 'estimate_truncation', line 275, column 6 to column 63)",
+  " (in 'estimate_truncation', line 273, column 30 to line 276, column 5)",
+  " (in 'estimate_truncation', line 273, column 4 to line 276, column 5)",
+  " (in 'estimate_truncation', line 279, column 6 to column 57)",
+  " (in 'estimate_truncation', line 277, column 28 to line 280, column 5)",
+  " (in 'estimate_truncation', line 277, column 4 to line 280, column 5)",
+  " (in 'estimate_truncation', line 272, column 18 to line 281, column 3)",
+  " (in 'estimate_truncation', line 272, column 2 to line 281, column 3)",
+  " (in 'estimate_truncation', line 270, column 73 to line 282, column 1)",
+  " (in 'estimate_truncation', line 302, column 2 to column 35)",
+  " (in 'estimate_truncation', line 303, column 9 to column 10)",
+  " (in 'estimate_truncation', line 303, column 2 to column 46)",
+  " (in 'estimate_truncation', line 317, column 6 to column 59)",
+  " (in 'estimate_truncation', line 316, column 11 to line 318, column 5)",
+  " (in 'estimate_truncation', line 315, column 6 to column 35)",
+  " (in 'estimate_truncation', line 314, column 21 to line 316, column 5)",
+  " (in 'estimate_truncation', line 314, column 4 to line 318, column 5)",
+  " (in 'estimate_truncation', line 313, column 9 to line 319, column 3)",
+  " (in 'estimate_truncation', line 305, column 4 to column 52)",
+  " (in 'estimate_truncation', line 309, column 6 to line 311, column 17)",
+  " (in 'estimate_truncation', line 308, column 11 to line 312, column 5)",
+  " (in 'estimate_truncation', line 307, column 6 to column 47)",
+  " (in 'estimate_truncation', line 306, column 21 to line 308, column 5)",
+  " (in 'estimate_truncation', line 306, column 4 to line 312, column 5)",
+  " (in 'estimate_truncation', line 304, column 18 to line 313, column 3)",
+  " (in 'estimate_truncation', line 304, column 2 to line 319, column 3)",
+  " (in 'estimate_truncation', line 301, column 75 to line 320, column 1)",
+  " (in 'estimate_truncation', line 337, column 2 to column 35)",
+  " (in 'estimate_truncation', line 338, column 9 to column 13)",
+  " (in 'estimate_truncation', line 338, column 2 to column 45)",
+  " (in 'estimate_truncation', line 341, column 6 to column 59)",
+  " (in 'estimate_truncation', line 340, column 23 to line 342, column 5)",
+  " (in 'estimate_truncation', line 340, column 4 to line 342, column 5)",
+  " (in 'estimate_truncation', line 339, column 26 to line 343, column 3)",
+  " (in 'estimate_truncation', line 339, column 2 to line 343, column 3)",
+  " (in 'estimate_truncation', line 344, column 2 to column 29)",
+  " (in 'estimate_truncation', line 336, column 66 to line 345, column 1)",
+  " (in 'estimate_truncation', line 366, column 2 to column 32)",
+  " (in 'estimate_truncation', line 367, column 9 to column 10)",
+  " (in 'estimate_truncation', line 367, column 2 to column 20)",
+  " (in 'estimate_truncation', line 375, column 4 to column 52)",
+  " (in 'estimate_truncation', line 377, column 6 to line 379, column 17)",
+  " (in 'estimate_truncation', line 376, column 19 to line 380, column 5)",
+  " (in 'estimate_truncation', line 376, column 4 to line 380, column 5)",
+  " (in 'estimate_truncation', line 374, column 9 to line 381, column 3)",
+  " (in 'estimate_truncation', line 372, column 6 to column 64)",
+  " (in 'estimate_truncation', line 371, column 19 to line 373, column 5)",
+  " (in 'estimate_truncation', line 371, column 4 to line 373, column 5)",
+  " (in 'estimate_truncation', line 370, column 23 to line 374, column 3)",
+  " (in 'estimate_truncation', line 370, column 2 to line 381, column 3)",
+  " (in 'estimate_truncation', line 382, column 2 to column 18)",
+  " (in 'estimate_truncation', line 365, column 82 to line 383, column 1)",
+  " (in 'estimate_truncation', line 412, column 4 to column 47)",
+  " (in 'estimate_truncation', line 413, column 4 to column 61)",
+  " (in 'estimate_truncation', line 411, column 9 to line 414, column 3)",
+  " (in 'estimate_truncation', line 410, column 4 to column 45)",
+  " (in 'estimate_truncation', line 409, column 24 to line 411, column 3)",
+  " (in 'estimate_truncation', line 409, column 9 to line 414, column 3)",
+  " (in 'estimate_truncation', line 408, column 4 to column 14)",
+  " (in 'estimate_truncation', line 407, column 17 to line 409, column 3)",
+  " (in 'estimate_truncation', line 407, column 2 to line 414, column 3)",
+  " (in 'estimate_truncation', line 406, column 47 to line 415, column 1)",
+  " (in 'estimate_truncation', line 433, column 2 to column 32)",
+  " (in 'estimate_truncation', line 434, column 8 to column 9)",
+  " (in 'estimate_truncation', line 434, column 2 to column 31)",
+  " (in 'estimate_truncation', line 435, column 2 to column 17)",
+  " (in 'estimate_truncation', line 437, column 4 to column 47)",
+  " (in 'estimate_truncation', line 436, column 18 to line 438, column 3)",
+  " (in 'estimate_truncation', line 436, column 2 to line 438, column 3)",
+  " (in 'estimate_truncation', line 441, column 4 to column 66)",
+  " (in 'estimate_truncation', line 440, column 17 to line 442, column 3)",
+  " (in 'estimate_truncation', line 440, column 2 to line 442, column 3)",
+  " (in 'estimate_truncation', line 443, column 2 to column 26)",
+  " (in 'estimate_truncation', line 432, column 86 to line 444, column 1)",
+  " (in 'estimate_truncation', line 473, column 8 to column 19)",
+  " (in 'estimate_truncation', line 473, column 2 to column 29)",
+  " (in 'estimate_truncation', line 475, column 4 to column 15)",
+  " (in 'estimate_truncation', line 480, column 8 to line 481, column 53)",
+  " (in 'estimate_truncation', line 479, column 13 to line 482, column 7)",
+  " (in 'estimate_truncation', line 478, column 8 to column 47)",
+  " (in 'estimate_truncation', line 477, column 28 to line 479, column 7)",
+  " (in 'estimate_truncation', line 477, column 6 to line 482, column 7)",
+  " (in 'estimate_truncation', line 476, column 69 to line 483, column 5)",
+  " (in 'estimate_truncation', line 476, column 4 to line 483, column 5)",
+  " (in 'estimate_truncation', line 474, column 27 to line 484, column 3)",
+  " (in 'estimate_truncation', line 474, column 2 to line 484, column 3)",
+  " (in 'estimate_truncation', line 485, column 2 to column 13)",
+  " (in 'estimate_truncation', line 472, column 2 to line 486, column 1)",
+  " (in 'estimate_truncation', line 517, column 9 to column 12)",
+  " (in 'estimate_truncation', line 517, column 2 to column 39)",
+  " (in 'estimate_truncation', line 518, column 2 to column 22)",
+  " (in 'estimate_truncation', line 519, column 2 to column 14)",
+  " (in 'estimate_truncation', line 540, column 6 to column 57)",
+  " (in 'estimate_truncation', line 541, column 6 to column 63)",
+  " (in 'estimate_truncation', line 542, column 6 to column 42)",
+  " (in 'estimate_truncation', line 546, column 8 to line 548, column 10)",
+  " (in 'estimate_truncation', line 545, column 13 to line 549, column 7)",
+  " (in 'estimate_truncation', line 544, column 8 to column 49)",
+  " (in 'estimate_truncation', line 543, column 28 to line 545, column 7)",
+  " (in 'estimate_truncation', line 543, column 6 to line 549, column 7)",
+  " (in 'estimate_truncation', line 539, column 11 to line 550, column 5)",
+  " (in 'estimate_truncation', line 523, column 6 to column 57)",
+  " (in 'estimate_truncation', line 524, column 6 to column 63)",
+  " (in 'estimate_truncation', line 525, column 13 to column 45)",
+  " (in 'estimate_truncation', line 525, column 6 to line 530, column 8)",
+  " (in 'estimate_truncation', line 531, column 6 to column 59)",
+  " (in 'estimate_truncation', line 535, column 8 to line 537, column 10)",
+  " (in 'estimate_truncation', line 534, column 13 to line 538, column 7)",
+  " (in 'estimate_truncation', line 533, column 8 to column 42)",
+  " (in 'estimate_truncation', line 532, column 28 to line 534, column 7)",
+  " (in 'estimate_truncation', line 532, column 6 to line 538, column 7)",
+  " (in 'estimate_truncation', line 522, column 26 to line 539, column 5)",
+  " (in 'estimate_truncation', line 522, column 4 to line 550, column 5)",
+  " (in 'estimate_truncation', line 551, column 4 to column 26)",
+  " (in 'estimate_truncation', line 521, column 78 to line 552, column 3)",
+  " (in 'estimate_truncation', line 520, column 2 to line 552, column 3)",
+  " (in 'estimate_truncation', line 554, column 4 to line 557, column 6)",
+  " (in 'estimate_truncation', line 553, column 21 to line 558, column 3)",
+  " (in 'estimate_truncation', line 553, column 2 to line 558, column 3)",
+  " (in 'estimate_truncation', line 560, column 4 to column 30)",
+  " (in 'estimate_truncation', line 559, column 18 to line 561, column 3)",
+  " (in 'estimate_truncation', line 559, column 2 to line 561, column 3)",
+  " (in 'estimate_truncation', line 563, column 4 to column 23)",
+  " (in 'estimate_truncation', line 562, column 19 to line 564, column 3)",
+  " (in 'estimate_truncation', line 562, column 2 to line 564, column 3)",
+  " (in 'estimate_truncation', line 565, column 2 to column 13)",
+  " (in 'estimate_truncation', line 515, column 2 to line 566, column 1)",
+  " (in 'estimate_truncation', line 584, column 2 to column 55)",
+  " (in 'estimate_truncation', line 586, column 4 to column 11)",
+  " (in 'estimate_truncation', line 585, column 21 to line 587, column 3)",
+  " (in 'estimate_truncation', line 585, column 2 to line 587, column 3)",
+  " (in 'estimate_truncation', line 589, column 4 to column 39)",
+  " (in 'estimate_truncation', line 590, column 4 to column 45)",
+  " (in 'estimate_truncation', line 599, column 10 to column 77)",
+  " (in 'estimate_truncation', line 598, column 15 to line 600, column 9)",
+  " (in 'estimate_truncation', line 594, column 10 to line 597, column 14)",
+  " (in 'estimate_truncation', line 593, column 27 to line 598, column 9)",
+  " (in 'estimate_truncation', line 593, column 8 to line 600, column 9)",
+  " (in 'estimate_truncation', line 592, column 34 to line 601, column 7)",
+  " (in 'estimate_truncation', line 592, column 6 to line 601, column 7)",
+  " (in 'estimate_truncation', line 591, column 25 to line 602, column 5)",
+  " (in 'estimate_truncation', line 591, column 4 to line 602, column 5)",
+  " (in 'estimate_truncation', line 588, column 24 to line 603, column 3)",
+  " (in 'estimate_truncation', line 588, column 2 to line 603, column 3)",
+  " (in 'estimate_truncation', line 583, column 59 to line 604, column 1)",
+  " (in 'estimate_truncation', line 617, column 2 to column 29)",
+  " (in 'estimate_truncation', line 618, column 9 to column 12)",
+  " (in 'estimate_truncation', line 618, column 2 to column 18)",
+  " (in 'estimate_truncation', line 620, column 4 to column 49)",
+  " (in 'estimate_truncation', line 621, column 4 to column 31)",
+  " (in 'estimate_truncation', line 622, column 4 to column 45)",
+  " (in 'estimate_truncation', line 619, column 19 to line 623, column 3)",
+  " (in 'estimate_truncation', line 619, column 2 to line 623, column 3)",
+  " (in 'estimate_truncation', line 624, column 2 to column 13)",
+  " (in 'estimate_truncation', line 616, column 57 to line 625, column 1)"};
 std::vector<int>
 calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
                        std::ostream* pstream__);
@@ -424,8 +424,8 @@ template <typename T0__, typename T1__,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>, T1__>,-1,1>
-scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
-          pstream__);
+scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
+          std::ostream* pstream__);
 template <typename T0__, typename T1__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -460,9 +460,9 @@ template <bool propto__, typename T2__, typename T3__, typename T5__,
                               stan::is_stan_scalar<T5__>>* = nullptr>
 void
 report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
-          const T2__& reports_arg__, const T3__& dispersion, const int&
-          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
-          lp_accum__, std::ostream* pstream__);
+          const T2__& reports_arg__, const T3__& reporting_overdispersion,
+          const int& model_type, const T5__& weight, T_lp__& lp__,
+          T_lp_accum__& lp_accum__, std::ostream* pstream__);
 template <typename T0__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>>* = nullptr>
@@ -476,8 +476,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const T2__& dispersion, const int& model_type, const T4__&
-               weight, std::ostream* pstream__);
+               const T2__& reporting_overdispersion, const int& model_type,
+               const T4__& weight, std::ostream* pstream__);
 template <typename T0__, typename T1__, typename RNG,
           stan::require_all_t<stan::is_stan_scalar<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
@@ -489,8 +489,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>* = nullptr>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
-           model_type, RNG& base_rng__, std::ostream* pstream__);
+report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
+           const int& model_type, RNG& base_rng__, std::ostream* pstream__);
 std::vector<int>
 get_delay_type_max(const int& delay_types, const std::vector<int>&
                    delay_types_p, const std::vector<int>& delay_types_id,
@@ -903,8 +903,8 @@ template <typename T0__, typename T1__,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>, T1__>,-1,1>
-scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
-          pstream__) {
+scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
+          std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -925,7 +925,7 @@ scale_obs(const T0__& reports_arg__, const T1__& frac_obs, std::ostream*
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
     current_statement__ = 177;
     stan::model::assign(scaled_reports,
-      stan::math::multiply(reports, frac_obs),
+      stan::math::multiply(reports, fraction_observed),
       "assigning variable scaled_reports");
     current_statement__ = 178;
     return scaled_reports;
@@ -1064,9 +1064,9 @@ template <bool propto__, typename T2__, typename T3__, typename T5__,
                               stan::is_stan_scalar<T5__>>*>
 void
 report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
-          const T2__& reports_arg__, const T3__& dispersion, const int&
-          model_type, const T5__& weight, T_lp__& lp__, T_lp_accum__&
-          lp_accum__, std::ostream* pstream__) {
+          const T2__& reports_arg__, const T3__& reporting_overdispersion,
+          const int& model_type, const T5__& weight, T_lp__& lp__,
+          T_lp_accum__& lp_accum__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T2__>,
                              T3__, T5__>;
   int current_statement__ = 0;
@@ -1091,7 +1091,7 @@ report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
     if (model_type) {
       local_scalar_t__ phi = DUMMY_VAR__;
       current_statement__ = 213;
-      phi = stan::math::inv_square(dispersion);
+      phi = stan::math::inv_square(reporting_overdispersion);
       current_statement__ = 218;
       if (stan::math::logical_eq(weight, 1)) {
         current_statement__ = 216;
@@ -1172,8 +1172,8 @@ template <typename T1__, typename T2__, typename T4__,
                               stan::is_stan_scalar<T4__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T1__>, T2__, T4__>,-1,1>
 report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
-               const T2__& dispersion, const int& model_type, const T4__&
-               weight, std::ostream* pstream__) {
+               const T2__& reporting_overdispersion, const int& model_type,
+               const T4__& weight, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T1__>,
                              T2__, T4__>;
   int current_statement__ = 0;
@@ -1207,7 +1207,7 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
     } else {
       local_scalar_t__ phi = DUMMY_VAR__;
       current_statement__ = 235;
-      phi = stan::math::inv_square(dispersion);
+      phi = stan::math::inv_square(reporting_overdispersion);
       current_statement__ = 238;
       for (int i = 1; i <= t; ++i) {
         current_statement__ = 236;
@@ -1215,7 +1215,7 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
           (stan::math::neg_binomial_2_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
              stan::model::rvalue(reports, "reports",
-               stan::model::index_uni(i)), dispersion) * weight),
+               stan::model::index_uni(i)), phi) * weight),
           "assigning variable log_lik", stan::model::index_uni(i));
       }
     }
@@ -1269,8 +1269,8 @@ template <typename T0__, typename T1__, typename RNG,
                               stan::is_vt_not_complex<T0__>,
                               stan::is_stan_scalar<T1__>>*>
 std::vector<int>
-report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
-           model_type, RNG& base_rng__, std::ostream* pstream__) {
+report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
+           const int& model_type, RNG& base_rng__, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
                              T1__>;
   int current_statement__ = 0;
@@ -1295,7 +1295,7 @@ report_rng(const T0__& reports_arg__, const T1__& dispersion, const int&
     current_statement__ = 263;
     if (model_type) {
       current_statement__ = 261;
-      phi = stan::math::inv_square(dispersion);
+      phi = stan::math::inv_square(reporting_overdispersion);
     }
     current_statement__ = 266;
     for (int s = 1; s <= t; ++s) {
@@ -1731,7 +1731,7 @@ private:
   std::vector<int> delay_types_p;
   std::vector<int> delay_types_id;
   std::vector<int> delay_types_groups;
-  int trunc_id;
+  int delay_id_truncation;
   std::vector<int> end_t;
   std::vector<int> start_t;
   std::vector<int> delay_type_max;
@@ -2102,9 +2102,9 @@ public:
       stan::math::check_greater_or_equal(function__, "delay_types_groups",
         delay_types_groups, 0);
       current_statement__ = 75;
-      trunc_id = std::numeric_limits<int>::min();
+      delay_id_truncation = std::numeric_limits<int>::min();
       current_statement__ = 75;
-      trunc_id = 1;
+      delay_id_truncation = 1;
       current_statement__ = 76;
       stan::math::validate_non_negative_index("end_t", "obs_sets", obs_sets);
       current_statement__ = 77;
@@ -2135,7 +2135,7 @@ public:
           stan::math::max(1,
             (stan::model::rvalue(end_t, "end_t", stan::model::index_uni(i)) -
             stan::model::rvalue(delay_type_max, "delay_type_max",
-              stan::model::index_uni(trunc_id)))),
+              stan::model::index_uni(delay_id_truncation)))),
           "assigning variable start_t", stan::model::index_uni(i));
       }
       current_statement__ = 77;
@@ -2150,11 +2150,11 @@ public:
       current_statement__ = 88;
       trunc_obs_1dim__ = (stan::model::rvalue(delay_type_max,
                             "delay_type_max",
-                            stan::model::index_uni(trunc_id))
+                            stan::model::index_uni(delay_id_truncation))
         + 1);
       current_statement__ = 88;
       stan::math::validate_non_negative_index("trunc_obs",
-        "delay_type_max[trunc_id] + 1", trunc_obs_1dim__);
+        "delay_type_max[delay_id_truncation] + 1", trunc_obs_1dim__);
       current_statement__ = 89;
       trunc_obs_2dim__ = std::numeric_limits<int>::min();
       current_statement__ = 89;
@@ -2167,21 +2167,21 @@ public:
       current_statement__ = 90;
       trunc_rev_cmf_1dim__ = (stan::model::rvalue(delay_type_max,
                                 "delay_type_max",
-                                stan::model::index_uni(trunc_id))
+                                stan::model::index_uni(delay_id_truncation))
         + 1);
       current_statement__ = 90;
       stan::math::validate_non_negative_index("trunc_rev_cmf",
-        "delay_type_max[trunc_id] + 1", trunc_rev_cmf_1dim__);
+        "delay_type_max[delay_id_truncation] + 1", trunc_rev_cmf_1dim__);
       current_statement__ = 91;
       recon_obs_1dim__ = std::numeric_limits<int>::min();
       current_statement__ = 91;
       recon_obs_1dim__ = (stan::model::rvalue(delay_type_max,
                             "delay_type_max",
-                            stan::model::index_uni(trunc_id))
+                            stan::model::index_uni(delay_id_truncation))
         + 1);
       current_statement__ = 91;
       stan::math::validate_non_negative_index("recon_obs",
-        "delay_type_max[trunc_id] + 1", recon_obs_1dim__);
+        "delay_type_max[delay_id_truncation] + 1", recon_obs_1dim__);
       current_statement__ = 92;
       stan::math::validate_non_negative_index("recon_obs", "obs_sets",
         obs_sets);
@@ -2189,11 +2189,11 @@ public:
       gen_obs_1dim__ = std::numeric_limits<int>::min();
       current_statement__ = 93;
       gen_obs_1dim__ = (stan::model::rvalue(delay_type_max, "delay_type_max",
-                          stan::model::index_uni(trunc_id))
+                          stan::model::index_uni(delay_id_truncation))
         + 1);
       current_statement__ = 93;
       stan::math::validate_non_negative_index("gen_obs",
-        "delay_type_max[trunc_id] + 1", gen_obs_1dim__);
+        "delay_type_max[delay_id_truncation] + 1", gen_obs_1dim__);
       current_statement__ = 94;
       gen_obs_2dim__ = std::numeric_limits<int>::min();
       current_statement__ = 94;
@@ -2244,17 +2244,17 @@ public:
       current_statement__ = 1;
       stan::math::check_matching_dims("constraint", "delay_params",
         delay_params, "lower", delay_params_lower);
-      local_scalar_t__ dispersion = DUMMY_VAR__;
+      local_scalar_t__ reporting_overdispersion = DUMMY_VAR__;
       current_statement__ = 2;
-      dispersion = in__.template read_constrain_lb<local_scalar_t__,
-                     jacobian__>(0, lp__);
+      reporting_overdispersion = in__.template read_constrain_lb<
+                                   local_scalar_t__, jacobian__>(0, lp__);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
       local_scalar_t__ phi = DUMMY_VAR__;
       current_statement__ = 4;
-      phi = (1 / stan::math::sqrt(dispersion));
+      phi = (1 / stan::math::sqrt(reporting_overdispersion));
       Eigen::Matrix<local_scalar_t__,-1,-1> trunc_obs =
         Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(trunc_obs_1dim__,
           trunc_obs_2dim__, DUMMY_VAR__);
@@ -2262,19 +2262,20 @@ public:
       stan::model::assign(trunc_obs,
         stan::math::rep_matrix(0,
           (stan::model::rvalue(delay_type_max, "delay_type_max",
-             stan::model::index_uni(trunc_id)) + 1), (obs_sets - 1)),
-        "assigning variable trunc_obs");
+             stan::model::index_uni(delay_id_truncation)) + 1), (obs_sets -
+          1)), "assigning variable trunc_obs");
       Eigen::Matrix<local_scalar_t__,-1,1> trunc_rev_cmf =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(trunc_rev_cmf_1dim__,
           DUMMY_VAR__);
       current_statement__ = 6;
       stan::model::assign(trunc_rev_cmf,
-        get_delay_rev_pmf(trunc_id,
+        get_delay_rev_pmf(delay_id_truncation,
           (stan::model::rvalue(delay_type_max, "delay_type_max",
-             stan::model::index_uni(trunc_id)) + 1), delay_types_p,
-          delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-          delay_np_pmf_groups, delay_params, delay_params_groups, delay_dist,
-          0, 1, 1, pstream__), "assigning variable trunc_rev_cmf");
+             stan::model::index_uni(delay_id_truncation)) + 1),
+          delay_types_p, delay_types_id, delay_types_groups, delay_max,
+          delay_np_pmf, delay_np_pmf_groups, delay_params,
+          delay_params_groups, delay_dist, 0, 1, 1, pstream__),
+        "assigning variable trunc_rev_cmf");
       {
         current_statement__ = 9;
         stan::math::validate_non_negative_index("last_obs", "t", t);
@@ -2313,9 +2314,10 @@ public:
           delay_params_groups, delay_dist, delay_weight, lp__, lp_accum__,
           pstream__);
         current_statement__ = 29;
-        lp_accum__.add(stan::math::normal_lpdf<propto__>(dispersion, 0, 1));
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(
+                         reporting_overdispersion, 0, 1));
         current_statement__ = 30;
-        if (stan::math::logical_lt(dispersion, 0)) {
+        if (stan::math::logical_lt(reporting_overdispersion, 0)) {
           current_statement__ = 30;
           lp_accum__.add(stan::math::negative_infinity());
         } else {
@@ -2401,10 +2403,11 @@ public:
       current_statement__ = 1;
       stan::math::check_matching_dims("constraint", "delay_params",
         delay_params, "lower", delay_params_lower);
-      double dispersion = std::numeric_limits<double>::quiet_NaN();
+      double reporting_overdispersion =
+        std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 2;
-      dispersion = in__.template read_constrain_lb<local_scalar_t__,
-                     jacobian__>(0, lp__);
+      reporting_overdispersion = in__.template read_constrain_lb<
+                                   local_scalar_t__, jacobian__>(0, lp__);
       double sigma = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
@@ -2417,7 +2420,7 @@ public:
         Eigen::Matrix<double,-1,1>::Constant(trunc_rev_cmf_1dim__,
           std::numeric_limits<double>::quiet_NaN());
       out__.write(delay_params);
-      out__.write(dispersion);
+      out__.write(reporting_overdispersion);
       out__.write(sigma);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
@@ -2425,21 +2428,22 @@ public:
         return ;
       }
       current_statement__ = 4;
-      phi = (1 / stan::math::sqrt(dispersion));
+      phi = (1 / stan::math::sqrt(reporting_overdispersion));
       current_statement__ = 5;
       stan::model::assign(trunc_obs,
         stan::math::rep_matrix(0,
           (stan::model::rvalue(delay_type_max, "delay_type_max",
-             stan::model::index_uni(trunc_id)) + 1), (obs_sets - 1)),
-        "assigning variable trunc_obs");
+             stan::model::index_uni(delay_id_truncation)) + 1), (obs_sets -
+          1)), "assigning variable trunc_obs");
       current_statement__ = 6;
       stan::model::assign(trunc_rev_cmf,
-        get_delay_rev_pmf(trunc_id,
+        get_delay_rev_pmf(delay_id_truncation,
           (stan::model::rvalue(delay_type_max, "delay_type_max",
-             stan::model::index_uni(trunc_id)) + 1), delay_types_p,
-          delay_types_id, delay_types_groups, delay_max, delay_np_pmf,
-          delay_np_pmf_groups, delay_params, delay_params_groups, delay_dist,
-          0, 1, 1, pstream__), "assigning variable trunc_rev_cmf");
+             stan::model::index_uni(delay_id_truncation)) + 1),
+          delay_types_p, delay_types_id, delay_types_groups, delay_max,
+          delay_np_pmf, delay_np_pmf_groups, delay_params,
+          delay_params_groups, delay_dist, 0, 1, 1, pstream__),
+        "assigning variable trunc_rev_cmf");
       {
         current_statement__ = 9;
         stan::math::validate_non_negative_index("last_obs", "t", t);
@@ -2488,7 +2492,7 @@ public:
       stan::model::assign(recon_obs,
         stan::math::rep_matrix(0,
           (stan::model::rvalue(delay_type_max, "delay_type_max",
-             stan::model::index_uni(trunc_id)) + 1), obs_sets),
+             stan::model::index_uni(delay_id_truncation)) + 1), obs_sets),
         "assigning variable recon_obs");
       Eigen::Matrix<double,-1,-1> gen_obs =
         Eigen::Matrix<double,-1,-1>::Constant(gen_obs_1dim__, gen_obs_2dim__,
@@ -2517,7 +2521,7 @@ public:
         current_statement__ = 25;
         for (int j = 1; j <=
              (stan::model::rvalue(delay_type_max, "delay_type_max",
-                stan::model::index_uni(trunc_id)) + 1); ++j) {
+                stan::model::index_uni(delay_id_truncation)) + 1); ++j) {
           current_statement__ = 23;
           if (stan::math::logical_eq(
                 stan::model::rvalue(trunc_obs, "trunc_obs",
@@ -2566,10 +2570,10 @@ public:
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(delay_params_length),
         "assigning variable delay_params");
       out__.write_free_lb(delay_params_lower, delay_params);
-      local_scalar_t__ dispersion = DUMMY_VAR__;
+      local_scalar_t__ reporting_overdispersion = DUMMY_VAR__;
       current_statement__ = 2;
-      dispersion = in__.read<local_scalar_t__>();
-      out__.write_free_lb(0, dispersion);
+      reporting_overdispersion = in__.read<local_scalar_t__>();
+      out__.write_free_lb(0, reporting_overdispersion);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.read<local_scalar_t__>();
@@ -2594,8 +2598,8 @@ public:
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_params_length)});
       current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "dispersion",
-        "double", std::vector<size_t>{});
+      context__.validate_dims("parameter initialization",
+        "reporting_overdispersion", "double", std::vector<size_t>{});
       current_statement__ = 3;
       context__.validate_dims("parameter initialization", "sigma", "double",
         std::vector<size_t>{});
@@ -2620,10 +2624,11 @@ public:
         }
       }
       out__.write_free_lb(delay_params_lower, delay_params);
-      local_scalar_t__ dispersion = DUMMY_VAR__;
+      local_scalar_t__ reporting_overdispersion = DUMMY_VAR__;
       current_statement__ = 2;
-      dispersion = context__.vals_r("dispersion")[(1 - 1)];
-      out__.write_free_lb(0, dispersion);
+      reporting_overdispersion = context__.vals_r("reporting_overdispersion")[(1
+        - 1)];
+      out__.write_free_lb(0, reporting_overdispersion);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = context__.vals_r("sigma")[(1 - 1)];
@@ -2636,7 +2641,8 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"delay_params", "dispersion", "sigma"};
+    names__ = std::vector<std::string>{"delay_params",
+                "reporting_overdispersion", "sigma"};
     if (emit_transformed_parameters__) {
       std::vector<std::string> temp{"phi", "trunc_obs", "trunc_rev_cmf"};
       names__.reserve(names__.size() + temp.size());
@@ -2683,7 +2689,7 @@ public:
       param_names__.emplace_back(std::string() + "delay_params" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "dispersion");
+    param_names__.emplace_back(std::string() + "reporting_overdispersion");
     param_names__.emplace_back(std::string() + "sigma");
     if (emit_transformed_parameters__) {
       param_names__.emplace_back(std::string() + "phi");
@@ -2721,7 +2727,7 @@ public:
       param_names__.emplace_back(std::string() + "delay_params" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "dispersion");
+    param_names__.emplace_back(std::string() + "reporting_overdispersion");
     param_names__.emplace_back(std::string() + "sigma");
     if (emit_transformed_parameters__) {
       param_names__.emplace_back(std::string() + "phi");
@@ -2752,10 +2758,10 @@ public:
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"dispersion\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"reporting_overdispersion\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"dispersion\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"reporting_overdispersion\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(trunc_obs_1dim__) + ",\"cols\":" + std::to_string(trunc_obs_2dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"trunc_rev_cmf\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(trunc_rev_cmf_1dim__) + "},\"block\":\"transformed_parameters\"},{\"name\":\"recon_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(recon_obs_1dim__) + ",\"cols\":" + std::to_string(obs_sets) + "},\"block\":\"generated_quantities\"},{\"name\":\"gen_obs\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(gen_obs_1dim__) + ",\"cols\":" + std::to_string(gen_obs_2dim__) + "},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
