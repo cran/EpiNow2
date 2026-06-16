@@ -1,6 +1,6 @@
 #' Real-time Rt Estimation, Forecasting and Reporting by Region
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description
 #' Efficiently runs [epinow()] across multiple regions in an efficient manner
 #' and conducts basic data checks and cleaning such as removing regions with
 #' fewer than `non_zero_points` as these are unlikely to produce reasonable
@@ -96,7 +96,6 @@ regional_epinow <- function(data,
                             obs = obs_opts(),
                             forecast = forecast_opts(),
                             stan = stan_opts(),
-                            horizon,
                             CrIs = c(0.2, 0.5, 0.9),
                             target_folder = NULL,
                             target_date,
@@ -110,15 +109,6 @@ regional_epinow <- function(data,
                             verbose = FALSE,
                             logs = tempdir(check = TRUE),
                             ...) {
-  if (!missing(horizon)) {
-    lifecycle::deprecate_stop(
-      "1.7.0",
-      "regional_epinow(horizon)",
-      "regional_epinow(forecast)",
-      details = "The `horizon` argument passed to `regional_epinow()` will
-        override any `horizon` argument passed via `forecast_opts()`."
-    )
-  }
 
   # supported output
   output <- match_output_arguments(output,
@@ -260,7 +250,7 @@ regional_epinow <- function(data,
 
 #' Clean Regions
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Removes regions with insufficient time points, and provides logging
 #' information on the input.
 #'
@@ -316,7 +306,7 @@ clean_regions <- function(data, non_zero_points) {
 
 #' Run epinow with Regional Processing Code
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description
 #' Internal function that handles calling [epinow()]. Future work will extend
 #' this function to better handle stan logs and allow the user to modify
 #' settings between regions.
@@ -342,7 +332,6 @@ run_region <- function(target_region,
                        gp,
                        obs,
                        stan,
-                       horizon,
                        CrIs,
                        data,
                        target_folder,
@@ -381,7 +370,6 @@ run_region <- function(target_region,
     gp = filter_opts(gp, target_region),
     obs = filter_opts(obs, target_region),
     stan = filter_opts(stan, target_region),
-    horizon = horizon,
     CrIs = CrIs,
     data = regional_cases,
     target_folder = target_folder,
@@ -408,7 +396,7 @@ run_region <- function(target_region,
 
 #' Process regional estimate
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description
 #' Internal function that removes output that is not required, and returns
 #' logging information.
 #' @param out List of output returned by [epinow()]
@@ -454,7 +442,7 @@ process_region <- function(out, target_region, timing,
 
 #' Process all Region Estimates
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Internal function that processes the output from multiple [epinow()] runs,
 #' adds summary logging information.
 #' @param regional_out A list of output from multiple runs of

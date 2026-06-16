@@ -23,10 +23,7 @@ epinow(
   target_date,
   logs = tempdir(),
   id = "epinow",
-  verbose = interactive(),
-  filter_leading_zeros = TRUE,
-  zero_threshold = Inf,
-  horizon
+  verbose = interactive()
 )
 }
 \arguments{
@@ -115,17 +112,6 @@ run with error catching.}
 otherwise \code{FALSE}. Should verbose debug progress messages be printed.
 Corresponds to the "DEBUG" level from \code{futile.logger}. See \code{setup_logging}
 for more detailed logging options.}
-
-\item{filter_leading_zeros}{Logical, defaults to TRUE. Should zeros at the
-start of the time series be filtered out.}
-
-\item{zero_threshold}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} Numeric defaults
-to Inf. Indicates if detected zero cases are meaningful by using a threshold
-number of cases based on the 7-day average. If the average is above this
-threshold then the zero is replaced using \code{fill}.}
-
-\item{horizon}{Deprecated; use \code{forecast} instead to specify the predictive
-horizon}
 }
 \value{
 An \verb{<epinow>} object (inheriting from \verb{<estimate_infections>})
@@ -138,7 +124,6 @@ containing:
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 This function wraps the functionality of \code{\link[=estimate_infections]{estimate_infections()}} in order
 to estimate Rt and cases by date of infection and forecast these infections
 into the future. In addition to the functionality of

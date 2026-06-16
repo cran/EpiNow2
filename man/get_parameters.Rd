@@ -4,6 +4,7 @@
 \alias{get_parameters}
 \alias{get_parameters.dist_spec}
 \alias{get_parameters.epinowfit}
+\alias{get_parameters.estimate_dist}
 \title{Get parameters from distributions or fitted models}
 \usage{
 get_parameters(x, ...)
@@ -11,6 +12,8 @@ get_parameters(x, ...)
 \method{get_parameters}{dist_spec}(x, id = NULL, ...)
 
 \method{get_parameters}{epinowfit}(x, ...)
+
+\method{get_parameters}{estimate_dist}(x, ...)
 }
 \arguments{
 \item{x}{A \code{dist_spec} object or fitted model object}
@@ -26,7 +29,6 @@ For \code{dist_spec}: a list of distribution parameters.
 For fitted models: a named list of \code{dist_spec} objects.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 Generic function to extract parameters. For \code{dist_spec} objects, extracts
 the distribution parameters (e.g., shape and rate for Gamma). For fitted
 model objects, extracts estimated parameters and delays as \code{dist_spec}

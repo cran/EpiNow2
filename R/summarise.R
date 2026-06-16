@@ -1,6 +1,6 @@
 #' Summarise Real-time Results
 #'
-#' @description `r lifecycle::badge("questioning")`
+#' @description
 #' Used internally by `regional_summary` to produce a summary table of results.
 #' May be streamlined in later releases.
 #'
@@ -139,7 +139,7 @@ summarise_results <- function(regions,
 
 #' Regional Summary Output
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description
 #' Used to produce summary output either internally in `regional_epinow` or
 #'  externally.
 #' @param summary_dir A character string giving the directory
@@ -169,6 +169,7 @@ summarise_results <- function(regions,
 #' @importFrom futile.logger flog.info
 #' @importFrom cli cli_abort
 #' @examples
+#' data.table::setDTthreads(1) # limit threads, for example use only
 #' # get example output from regional_epinow model
 #' regional_out <- readRDS(system.file(
 #'   package = "EpiNow2", "extdata", "example_regional_epinow.rds"
@@ -426,7 +427,7 @@ regional_summary <- function(regional_output = NULL,
 
 #' Summarise rt and cases
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description
 #' Produces summarised `<data.frame>`s of output across regions.
 #' Used internally by `regional_summary`.
 #'
@@ -521,7 +522,7 @@ summarise_key_measures <- function(regional_results = NULL,
 
 #' Summarise Regional Runtimes
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description
 #' Used internally by `regional_epinow` to summarise region run times.
 #'
 #' @seealso [regional_summary()] [regional_epinow()]
@@ -592,7 +593,7 @@ regional_runtimes <- function(regional_output = NULL,
 
 #' Calculate Credible Interval
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Adds symmetric a credible interval based on quantiles.
 #' @param samples A data.table containing at least a value variable
 #' @param summarise_by A character vector of variables to group by.
@@ -628,7 +629,7 @@ calc_CrI <- function(samples, summarise_by = NULL, CrI = 0.9) {
 
 #' Calculate Credible Intervals
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Adds symmetric credible intervals based on quantiles.
 #'
 #' @param CrIs Numeric vector of credible intervals to calculate.
@@ -671,7 +672,7 @@ calc_CrIs <- function(samples, summarise_by = NULL, CrIs = c(0.2, 0.5, 0.9)) {
 
 #' Extract Credible Intervals Present
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Helper function to extract the credible intervals present in a
 #' `<data.frame>`.
 #' @param summarised A `<data.frame>` as processed by `calc_CrIs`
@@ -693,7 +694,7 @@ extract_CrIs <- function(summarised) {
 
 #' Calculate Summary Statistics
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Calculate summary statistics from a `<data.frame>` by group.
 #' Currently supports the mean, median and standard deviation.
 #' @return A data.table containing the upper and lower bounds for the specified
@@ -722,7 +723,7 @@ calc_summary_stats <- function(samples, summarise_by = NULL) {
 
 #' Calculate All Summary Measures
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Calculate summary statistics and credible intervals from a `<data.frame>` by
 #' group.
 #'
@@ -769,7 +770,7 @@ calc_summary_measures <- function(samples,
 
 #' Summary output from epinow
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' \code{summary} method for class "epinow". This method inherits from
 #' [summary.estimate_infections()] and supports the same arguments.
 #'
@@ -807,8 +808,8 @@ summary.epinow <- function(object,
 
   # Handle deprecated output argument
   if (!is.null(output)) {
-    lifecycle::deprecate_warn(
-      "1.8.0",
+    lifecycle::deprecate_stop(
+      "1.9.0",
       "summary.epinow(output)",
       "summary.epinow(type)",
       details = paste(
@@ -817,40 +818,6 @@ summary.epinow <- function(object,
         "For predictions, use get_predictions()."
       )
     )
-    # Provide backward compatibility
-    out <- switch(output,
-      estimates = {
-        # Compute on-the-fly like the deprecated $summary accessor
-        latest_date <- max(object$observations$date, na.rm = TRUE)
-        summarised <- summary(object, type = "parameters", CrIs = CrIs)
-        summarised <- summarised[date == latest_date]
-        rt_samples <- get_samples(object)[variable == "R" & date == latest_date]
-        report_summary(summarised, rt_samples, return_numeric = TRUE)
-      },
-      forecast = {
-        out <- summary(object, type = "parameters", CrIs = CrIs)
-        if (!is.null(target_date)) {
-          out <- out[date == as.Date(target_date)]
-        }
-        if (!is.null(params)) {
-          out <- out[variable == params]
-        }
-        out
-      },
-      estimated_reported_cases = {
-        out <- estimates_by_report_date(object, CrIs = CrIs)
-        if (!is.null(out)) {
-          if (!is.null(target_date)) {
-            out <- out[date == as.Date(target_date)]
-          }
-          if (!is.null(params)) {
-            out <- out[variable == params]
-          }
-        }
-        out
-      }
-    )
-    return(out)
   }
 
   # Forward to estimate_infections summary
@@ -859,7 +826,7 @@ summary.epinow <- function(object,
 
 #' Summary output from estimate_infections
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' \code{summary} method for class "estimate_infections".
 #'
 #' @param object A list of output as produced by "estimate_infections".
@@ -890,12 +857,11 @@ summary.estimate_infections <- function(object,
                                         CrIs = c(0.2, 0.5, 0.9), ...) {
   # Handle deprecated type = "samples" before arg_match
   if (length(type) == 1 && type == "samples") {
-    lifecycle::deprecate_warn(
-      "1.8.0",
+    lifecycle::deprecate_stop(
+      "1.9.0",
       "summary.estimate_infections(type = 'samples')",
       "get_samples()"
     )
-    return(get_samples(object))
   }
 
   create_infection_summary(object, type, target_date, params, CrIs, ...)
@@ -903,7 +869,7 @@ summary.estimate_infections <- function(object,
 
 #' Summary output from forecast_infections
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' \code{summary} method for class "forecast_infections".
 #'
 #' @param object A list of output as produced by "forecast_infections".
@@ -942,7 +908,7 @@ print.epinowfit <- function(x, ...) {
 
 #' Summarise results from estimate_secondary
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Returns a summary of the fitted secondary model including posterior
 #' parameter estimates with credible intervals.
 #'
@@ -999,7 +965,7 @@ summary.estimate_secondary <- function(object,
 
 #' Summarise results from estimate_truncation
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Returns parameter summary statistics for the fitted truncation model.
 #'
 #' @param object A fitted model object from `estimate_truncation()`
@@ -1024,8 +990,7 @@ summary.estimate_truncation <- function(object, CrIs = c(0.2, 0.5, 0.9), ...) {
   )
 
   # Map generic parameter names to distribution-specific names
-  dist_idx <- object$args$delay_dist[1] + 1
-  dist_type <- dist_spec_distributions()[dist_idx]
+  dist_type <- dist_id_to_name(object$args$delay_dist[1])
   param_names <- natural_params(dist_type)
   idx <- suppressWarnings(
     as.integer(gsub(".*\\[(\\d+)\\]", "\\1", out$variable))
@@ -1042,6 +1007,92 @@ summary.estimate_truncation <- function(object, CrIs = c(0.2, 0.5, 0.9), ...) {
   class(out) <- c("summary.estimate_truncation", class(out))
 
   out
+}
+
+#' Summarise results from estimate_dist
+#'
+#' @description `r lifecycle::badge("experimental")`
+#' Returns parameter summary statistics for the fitted delay
+#' distribution model.
+#'
+#' @param object A fitted model object from `estimate_dist()`
+#' @inheritParams calc_summary_measures
+#' @param ... Additional arguments (currently unused)
+#'
+#' @return A `<data.table>` with summary statistics for the delay
+#'   distribution parameters.
+#' @method summary estimate_dist
+#' @export
+summary.estimate_dist <- function(object,
+                                  CrIs = c(0.2, 0.5, 0.9),
+                                  ...) {
+  raw_samples <- extract_samples(
+    object$fit,
+    pars = "delay_params"
+  )
+  param_mat <- raw_samples$delay_params
+
+  dist_name <- object$args$dist
+  param_names <- .get_param_names(dist_name)
+
+  # Build long-format samples table
+  samples_list <- lapply(seq_along(param_names), function(i) {
+    data.table::data.table(
+      variable = param_names[i],
+      value = param_mat[, i]
+    )
+  })
+  param_samples <- data.table::rbindlist(samples_list)
+
+  out <- calc_summary_measures(
+    param_samples,
+    summarise_by = "variable",
+    order_by = "variable",
+    CrIs = CrIs
+  )
+
+  attr(out, "distribution") <- dist_name
+  attr(out, "max_value") <- object$args$max_value
+  attr(out, "n_obs") <- sum(object$args$n_obs)
+  attr(out, "n_strata") <- object$args$n
+  attr(out, "primary") <- object$args$primary
+  D_vals <- object$args$D
+  finite_D <- D_vals[is.finite(D_vals)]
+  attr(out, "max_delay") <- max(object$args$delay_upper)
+  attr(out, "max_obs_time") <- if (length(finite_D) > 0) {
+    max(finite_D)
+  } else {
+    Inf
+  }
+  attr(out, "n_untruncated") <- sum(!is.finite(D_vals))
+  class(out) <- c("summary.estimate_dist", class(out))
+
+  out
+}
+
+#' @export
+print.summary.estimate_dist <- function(x, ...) {
+  cat("Delay distribution:", attr(x, "distribution"))
+  cat(paste0(" (max: ", attr(x, "max_value"), ")\n"))
+  cat(
+    "Observations:", attr(x, "n_obs"),
+    paste0("(", attr(x, "n_strata"), " unique strata)\n")
+  )
+  cat("Primary event:", attr(x, "primary"), "\n")
+  cat(
+    "Max delay:", attr(x, "max_delay"),
+    "| Max obs time:", attr(x, "max_obs_time")
+  )
+  n_untrunc <- attr(x, "n_untruncated")
+  if (n_untrunc > 0) {
+    cat(
+      paste0(" (", n_untrunc, " strata untruncated)")
+    )
+  }
+  cat("\n\n")
+  cat("Parameter estimates:\n")
+  print(data.table::as.data.table(x), ...)
+  invisible(x)
 }
 
 #' @export

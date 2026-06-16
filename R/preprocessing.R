@@ -1,6 +1,6 @@
 ##' Fill missing data in a data set to prepare it for use within the package
 ##'
-##' @description `r lifecycle::badge("experimental")`
+##' @description
 ##' This function ensures that all days between the first and last date in the
 ##'   data are present. It adds an `accumulate` column that indicates whether
 ##'   modelled observations should be accumulated onto a later data point.
@@ -165,29 +165,6 @@ fill_missing <- function(data,
   data[, ..present := NULL]
 
   data[]
-}
-
-##' Temporary function to support the transition to full support of missing
-##' data.
-##'
-##' @description `r lifecycle::badge("deprecated")`
-##'
-##' @inheritParams create_stan_data
-##' @inheritParams fill_missing
-##' @return data set with missing dates filled in as na values
-##' @keywords internal
-default_fill_missing_obs <- function(data, obs, obs_column) {
-  if (!("accumulate" %in% colnames(data))) {
-    data_rows <- nrow(data)
-    data <- fill_missing(data = data, obs_column = obs_column)
-    if (nrow(data) > data_rows && !obs$accumulate) {
-      cli_abort(c(
-        "!" = "Data contains missing dates.",
-        "i" = "Complete data can be created using the `fill_missing` function."
-      ))
-    }
-  }
-  data
 }
 
 ##' Add missing values for future dates

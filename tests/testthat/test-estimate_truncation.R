@@ -58,6 +58,34 @@ test_that("prepare_truncation_obs handles datasets with different start dates", 
   expect_equal(result$obs_sets, 2)
 })
 
+test_that("estimate_truncation accepts obs argument", {
+  expect_no_error(
+    match.arg("obs", names(formals(estimate_truncation)))
+  )
+})
+
+test_that("Stan data includes model_type from obs_opts", {
+  obs_prep <- EpiNow2:::prepare_truncation_obs(
+    example_truncated,
+    trunc_max = 10
+  )
+  dates <- obs_prep$dirty_obs[[length(obs_prep$dirty_obs)]]$date
+
+  # NegBin (default)
+  obs_negbin <- EpiNow2:::create_obs_model(
+    obs_opts(),
+    dates = dates
+  )
+  expect_equal(obs_negbin$model_type, 1)
+
+  # Poisson
+  obs_poisson <- EpiNow2:::create_obs_model(
+    obs_opts(family = "poisson"),
+    dates = dates
+  )
+  expect_equal(obs_poisson$model_type, 0)
+})
+
 test_that("merge_trunc_pred_obs correctly merges predictions with observations", {
   # Create simple test observations: 2 snapshots
   obs1 <- data.frame(
@@ -126,6 +154,20 @@ test_that("estimate_truncation can return values from simulated data and plot
   expect_error(plot(est), NA)
 })
 
+test_that("as_forecast_sample.estimate_truncation produces a valid forecast_sample", {
+  skip_if_not_installed("scoringutils")
+
+  latest <- example_truncated[[length(example_truncated)]]
+  forecast_obj <- scoringutils::as_forecast_sample(
+    default_est,
+    observations = latest
+  )
+  expect_s3_class(forecast_obj, "forecast_sample")
+  expect_no_error(
+    scoringutils::assert_forecast(forecast_obj, verbose = FALSE)
+  )
+})
+
 test_that("get_parameters returns valid truncation distribution", {
   est <- default_est
 
@@ -143,41 +185,15 @@ test_that("get_parameters returns valid truncation distribution", {
   expect_equal(trunc_dist$parameters$sdlog$distribution, "normal")
 })
 
-test_that("deprecated accessors return correct values with warnings", {
+test_that("deprecated accessors error", {
   est <- default_est
 
-  # $obs returns merged predictions+observations with deprecation warning
-  lifecycle::expect_deprecated(obs_result <- est$obs)
-  expect_s3_class(obs_result, "data.table")
-  expect_true("confirm" %in% names(obs_result))
-  expect_true("last_confirm" %in% names(obs_result))
-  expect_true("median" %in% names(obs_result))
-
-  # $data returns args with deprecation warning
-  lifecycle::expect_deprecated(data_result <- est$data)
-  expect_equal(data_result, est$args)
-
-  # $dist returns dist_spec with deprecation warning
-  lifecycle::expect_deprecated(dist_result <- est$dist)
-  expect_s3_class(dist_result, "dist_spec")
-
-  # $last_obs returns data.table with deprecation warning
-  lifecycle::expect_deprecated(last_obs_result <- est$last_obs)
-  expect_s3_class(last_obs_result, "data.table")
-  expect_true("date" %in% names(last_obs_result))
-  expect_true("confirm" %in% names(last_obs_result))
-
-  # $cmf returns numeric vector with deprecation warning
-  lifecycle::expect_deprecated(cmf_result <- est$cmf)
-  expect_type(cmf_result, "double")
-  # Use tolerance for floating point comparison
-  expect_true(all(cmf_result >= -1e-10 & cmf_result <= 1 + 1e-10))
-
-  # [[ accessor delegates to $ (deprecation warnings already fired above)
-  # Just verify it returns the correct result
-  suppressWarnings(obs_bracket <- est[["obs"]])
-  expect_s3_class(obs_bracket, "data.table")
-  expect_true("confirm" %in% names(obs_bracket))
+  expect_error(est$obs, "get_predictions")
+  expect_error(est$data, "args")
+  expect_error(est$dist, "get_parameters")
+  expect_error(est$last_obs, "observations")
+  expect_error(est$cmf, "get_parameters")
+  expect_error(est[["obs"]], "get_predictions")
 })
 
 test_that("get_parameters returns truncation distribution from estimate_truncation", {
@@ -186,7 +202,9 @@ test_that("get_parameters returns truncation distribution from estimate_truncati
   # Test getting all delays as named list
   delays <- get_parameters(est)
   expect_type(delays, "list")
-  expect_named(delays, "truncation")
+  expect_named(
+    delays, c("truncation", "reporting_overdispersion", "sigma")
+  )
   expect_s3_class(delays$truncation, "dist_spec")
 })
 
@@ -269,6 +287,113 @@ test_that("estimate_truncation works with zero_threshold set", {
   )
   expect_named(out, c("observations", "args", "fit"))
   expect_s3_class(get_parameters(out)$truncation, "dist_spec")
+})
+
+test_that("estimate_truncation works with Poisson observation model", {
+  skip_integration()
+  est <- estimate_truncation(example_truncated,
+    obs = obs_opts(family = "poisson"),
+    verbose = FALSE, chains = 2, iter = 1000, warmup = 250
+  )
+  expect_equal(
+    names(est),
+    c("observations", "args", "fit")
+  )
+  expect_equal(est$args$model_type, 0)
+  # reporting_overdispersion is unused under Poisson and should not appear
+  # in get_parameters() output.
+  expect_named(get_parameters(est), c("truncation", "sigma"))
+  expect_s3_class(get_parameters(est)$truncation, "dist_spec")
+  expect_error(plot(est), NA)
+})
+
+test_that("estimate_truncation accepts a non-default noise prior", {
+  skip_integration()
+  est <- estimate_truncation(example_truncated,
+    noise = Fixed(0.1),
+    verbose = FALSE, chains = 2, iter = 1000, warmup = 250
+  )
+  expect_equal(
+    names(est),
+    c("observations", "args", "fit")
+  )
+  # A Fixed noise prior should be wired through as a fixed param,
+  # so sigma is no longer in the variable parameter set.
+  expect_named(get_parameters(est), c("truncation", "reporting_overdispersion"))
+  expect_s3_class(get_parameters(est)$truncation, "dist_spec")
+})
+
+test_that("check_truncation_obs_opts warns on unsupported non-default settings", {
+  expect_warning(
+    EpiNow2:::check_truncation_obs_opts(obs_opts(week_effect = FALSE)),
+    "ignored by"
+  )
+  expect_warning(
+    EpiNow2:::check_truncation_obs_opts(obs_opts(scale = Normal(0.5, 0.1))),
+    "ignored by"
+  )
+  expect_no_warning(
+    EpiNow2:::check_truncation_obs_opts(obs_opts())
+  )
+  expect_no_warning(
+    EpiNow2:::check_truncation_obs_opts(obs_opts(family = "poisson"))
+  )
+  expect_no_warning(
+    EpiNow2:::check_truncation_obs_opts(
+      obs_opts(dispersion = Normal(0, 0.5))
+    )
+  )
+  expect_no_warning(
+    EpiNow2:::check_truncation_obs_opts(obs_opts(likelihood = FALSE))
+  )
+  expect_no_warning(
+    EpiNow2:::check_truncation_obs_opts(obs_opts(return_likelihood = TRUE))
+  )
+})
+
+test_that("estimate_truncation passes likelihood/return_likelihood to Stan", {
+  skip_integration()
+  est <- estimate_truncation(example_truncated,
+    obs = obs_opts(return_likelihood = TRUE),
+    verbose = FALSE, chains = 2, iter = 500, warmup = 200
+  )
+  expect_equal(est$args$likelihood, 1)
+  expect_equal(est$args$return_likelihood, 1)
+  log_lik <- rstan::extract(est$fit, "log_lik")$log_lik
+  expect_true(is.matrix(log_lik) || is.array(log_lik))
+  expect_true(ncol(log_lik) > 0)
+  expect_true(all(is.finite(log_lik)))
+})
+
+test_that("estimate_truncation runs with likelihood = FALSE (priors only)", {
+  skip_integration()
+  est <- estimate_truncation(example_truncated,
+    obs = obs_opts(likelihood = FALSE),
+    verbose = FALSE, chains = 2, iter = 500, warmup = 200
+  )
+  expect_equal(est$args$likelihood, 0)
+  expect_s3_class(get_parameters(est)$truncation, "dist_spec")
+})
+
+test_that("estimate_truncation works with Gamma truncation distribution", {
+  skip_integration()
+  est <- estimate_truncation(example_truncated,
+    truncation = trunc_opts(
+      Gamma(
+        shape = Normal(1, 0.5),
+        rate = Normal(1, 0.5),
+        max = 10
+      )
+    ),
+    verbose = FALSE, chains = 2, iter = 1000, warmup = 250
+  )
+  expect_equal(
+    names(est),
+    c("observations", "args", "fit")
+  )
+  trunc_dist <- get_parameters(est)$truncation
+  expect_s3_class(trunc_dist, "dist_spec")
+  expect_equal(trunc_dist$distribution, "gamma")
 })
 
 test_that("estimate_truncation recovers true truncation parameters", {

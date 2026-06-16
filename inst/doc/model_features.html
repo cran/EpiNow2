@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Model features</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Model features</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#component-overview" id="toc-component-overview"><span class="toc-section-number">1</span> Component overview</a></li>
+<li><a href="#estimation-models" id="toc-estimation-models"><span class="toc-section-number">2</span> Estimation models</a>
+<ul>
+<li><a href="#infection-model" id="toc-infection-model"><span class="toc-section-number">2.1</span> Infection model</a></li>
+<li><a href="#secondary-model" id="toc-secondary-model"><span class="toc-section-number">2.2</span> Secondary model</a></li>
+<li><a href="#truncation-nowcasting" id="toc-truncation-nowcasting"><span class="toc-section-number">2.3</span> Truncation / nowcasting</a></li>
+<li><a href="#delay-distribution-fitting" id="toc-delay-distribution-fitting"><span class="toc-section-number">2.4</span> Delay distribution
+fitting</a></li>
+</ul></li>
+<li><a href="#model-configuration" id="toc-model-configuration"><span class="toc-section-number">3</span> Model configuration</a>
+<ul>
+<li><a href="#reproduction-number" id="toc-reproduction-number"><span class="toc-section-number">3.1</span> Reproduction number</a></li>
+<li><a href="#gaussian-process" id="toc-gaussian-process"><span class="toc-section-number">3.2</span> Gaussian process</a></li>
+<li><a href="#delay-distributions" id="toc-delay-distributions"><span class="toc-section-number">3.3</span> Delay distributions</a></li>
+<li><a href="#observation-model" id="toc-observation-model"><span class="toc-section-number">3.4</span> Observation model</a></li>
+<li><a href="#options-summary" id="toc-options-summary"><span class="toc-section-number">3.5</span> Options summary</a></li>
+</ul></li>
+<li><a href="#forward-simulation-and-forecasting" id="toc-forward-simulation-and-forecasting"><span class="toc-section-number">4</span> Forward simulation and
+forecasting</a>
+<ul>
+<li><a href="#simulation" id="toc-simulation"><span class="toc-section-number">4.1</span> Simulation</a></li>
+<li><a href="#forecasting" id="toc-forecasting"><span class="toc-section-number">4.2</span> Forecasting</a></li>
+</ul></li>
+<li><a href="#supporting-utilities" id="toc-supporting-utilities"><span class="toc-section-number">5</span> Supporting utilities</a>
+<ul>
+<li><a href="#data-preprocessing" id="toc-data-preprocessing"><span class="toc-section-number">5.1</span> Data preprocessing</a></li>
+<li><a href="#workflow-wrappers" id="toc-workflow-wrappers"><span class="toc-section-number">5.2</span> Workflow wrappers</a></li>
+<li><a href="#stan-backend" id="toc-stan-backend"><span class="toc-section-number">5.3</span> Stan backend</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>This vignette provides a quick reference to the modelling features
+available in EpiNow2. For an overview of how these models connect see
+the <a href="model_overview.html">model overview</a>. For mathematical
+details see the model definition vignettes (<a href="estimate_infections.html">infection model</a>, <a href="estimate_secondary.html">secondary model</a>, <a href="estimate_truncation.html">truncation model</a>, <a href="estimate_dist.html">distribution model</a>). For applied examples
+see the <a href="estimate_infections_options.html">options vignette</a>.
+For prior guidance see the <a href="prior_choice_guide.html">prior
+choice guide</a>.</p>
+<div id="component-overview" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Component overview</h1>
+<p>The package’s modelling features fall into four groups.</p>
+<p><strong>Estimation models</strong> fit a Stan model to data:</p>
+<ul>
+<li><a href="#infection-model">Infection model</a> —
+<code>estimate_infections()</code></li>
+<li><a href="#secondary-model">Secondary model</a> —
+<code>estimate_secondary()</code></li>
+<li><a href="#truncation-nowcasting">Truncation / nowcasting</a> —
+<code>estimate_truncation()</code></li>
+<li><a href="#delay-distribution-fitting">Delay distribution fitting</a>
+— <code>estimate_dist()</code></li>
+</ul>
+<p><strong>Model configuration</strong> controls how the estimation
+models behave:</p>
+<ul>
+<li><a href="#reproduction-number">Reproduction number</a> —
+<code>rt_opts()</code></li>
+<li><a href="#gaussian-process">Gaussian process</a> —
+<code>gp_opts()</code></li>
+<li><a href="#delay-distributions">Delay distributions</a> —
+<code>gt_opts()</code>, <code>delay_opts()</code>,
+<code>trunc_opts()</code></li>
+<li><a href="#observation-model">Observation model</a> —
+<code>obs_opts()</code></li>
+<li><a href="#options-summary">Options summary</a> — defaults and which
+models use each</li>
+</ul>
+<p><strong>Forward simulation and forecasting</strong> generate
+observations:</p>
+<ul>
+<li><a href="#simulation">Simulation</a> —
+<code>simulate_infections()</code>,
+<code>simulate_secondary()</code></li>
+<li><a href="#forecasting">Forecasting</a> —
+<code>forecast_infections()</code>,
+<code>forecast_secondary()</code></li>
+</ul>
+<p><strong>Supporting utilities</strong>:</p>
+<ul>
+<li><a href="#data-preprocessing">Data preprocessing</a> —
+<code>fill_missing()</code></li>
+<li><a href="#workflow-wrappers">Workflow wrappers</a> —
+<code>epinow()</code>, <code>regional_epinow()</code></li>
+<li><a href="#stan-backend">Stan backend</a> —
+<code>stan_opts()</code></li>
+</ul>
+</div>
+<div id="estimation-models" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Estimation models</h1>
+<div id="infection-model" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Infection model</h2>
+<p><code>estimate_infections()</code> reconstructs infections from a
+count time series (e.g. reported cases) using either a generative
+renewal model or non-parametric back-calculation.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Renewal equation (default)</td>
+<td><code>rt = rt_opts(...)</code></td>
+<td>Generative model using the reproduction number and generation
+time</td>
+<td><a href="estimate_infections.html">Model definition</a></td>
+</tr>
+<tr class="even">
+<td>Back-calculation</td>
+<td><code>rt = NULL</code>,
+<code>backcalc = backcalc_opts(...)</code></td>
+<td>Non-parametric deconvolution of reported cases</td>
+<td><a href="estimate_infections.html">Model definition</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_infections_workflow.html">estimate_infections
+workflow</a></p>
+</div>
+<div id="secondary-model" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Secondary model</h2>
+<p><code>estimate_secondary()</code> estimates the relationship between
+a primary and secondary observation (e.g. cases and deaths, admissions
+and bed occupancy).</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Incidence model</td>
+<td><code>secondary_opts(type = &quot;incidence&quot;)</code></td>
+<td>Secondary reports as a convolution of primary cases</td>
+<td><a href="estimate_secondary.html">Secondary model
+definition</a></td>
+</tr>
+<tr class="even">
+<td>Prevalence model</td>
+<td><code>secondary_opts(type = &quot;prevalence&quot;)</code></td>
+<td>Cumulative secondary reports (e.g. bed occupancy)</td>
+<td><a href="estimate_secondary.html">Secondary model
+definition</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_secondary.html">estimate_secondary model
+definition</a></p>
+</div>
+<div id="truncation-nowcasting" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Truncation /
+nowcasting</h2>
+<p>Recent observations are typically incomplete due to reporting delays
+(right truncation). <code>estimate_truncation()</code> estimates a
+truncation distribution from multiple snapshots of the same data source
+over time and produces a nowcast (predicted complete observations). The
+reconstructed observations can be obtained from the fit with
+<code>get_predictions()</code>. The estimated distribution can be passed
+to <code>estimate_infections()</code> via <code>trunc_opts()</code> for
+truncation-adjusted inference.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estimate truncation and nowcast</td>
+<td><code>estimate_truncation(data = list_of_snapshots)</code></td>
+<td>Fit a truncation distribution and produce a nowcast from data
+snapshots</td>
+<td><a href="estimate_truncation.html">Truncation model
+definition</a></td>
+</tr>
+<tr class="even">
+<td>Truncation-adjusted inference</td>
+<td><code>estimate_infections(truncation = trunc_opts(dist = ...))</code></td>
+<td>Adjust for right-truncation of recent data in the observation
+model</td>
+<td><a href="estimate_truncation.html">Truncation model
+definition</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_truncation.html">estimate_truncation
+model definition</a></p>
+</div>
+<div id="delay-distribution-fitting" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Delay distribution
+fitting</h2>
+<p><code>estimate_dist()</code> fits delay distributions from linelist
+data using likelihood functions vendored from <a href="https://primarycensored.epinowcast.org/">primarycensored</a>.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Double interval censoring</td>
+<td>Date columns in linelist</td>
+<td>Accounts for censoring of both primary and secondary events</td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+<tr class="even">
+<td>Variable censoring windows</td>
+<td><code>pdate_upr</code>, <code>sdate_upr</code> columns</td>
+<td>Per-observation primary and secondary censoring window widths</td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+<tr class="odd">
+<td>Right truncation</td>
+<td><code>obs_date</code> column</td>
+<td>Per-observation truncation times from reporting delays</td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+<tr class="even">
+<td>Primary event distribution</td>
+<td><code>estimate_dist(primary = &quot;expgrowth&quot;)</code></td>
+<td>Account for exponential growth in primary events</td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+<tr class="odd">
+<td>Distribution families</td>
+<td><code>estimate_dist(dist = ...)</code></td>
+<td><code>&quot;lognormal&quot;</code> (default), <code>&quot;gamma&quot;</code>,
+<code>&quot;normal&quot;</code>, <code>&quot;exp&quot;</code>, <code>&quot;weibull&quot;</code></td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+<tr class="even">
+<td>Untruncated approximation</td>
+<td><code>estimate_dist(obs_time_threshold = ...)</code></td>
+<td>Skip the right-truncation renormalisation when observation times are
+far beyond the largest observed delay</td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+<tr class="odd">
+<td>Observation aggregation</td>
+<td>Automatic</td>
+<td>Identical delay-censoring-truncation strata are aggregated to speed
+up fitting</td>
+<td><a href="estimate_dist.html">Distribution model</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_dist.html">distribution model</a>, <a href="estimate_dist_workflow.html">worked example</a></p>
+</div>
+</div>
+<div id="model-configuration" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Model
+configuration</h1>
+<div id="reproduction-number" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Reproduction
+number</h2>
+<p>When using the renewal equation, several options control how the
+time-varying reproduction number is modelled.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GP on differences of log Rt (default)</td>
+<td><code>rt_opts(gp_on = &quot;R_t-1&quot;)</code></td>
+<td>Gaussian process applied to successive Rt values</td>
+<td><a href="estimate_infections_options.html">Options examples</a></td>
+</tr>
+<tr class="even">
+<td>GP on deviations from R0</td>
+<td><code>rt_opts(gp_on = &quot;R0&quot;)</code></td>
+<td>Gaussian process applied as deviations from a global mean</td>
+<td><a href="estimate_infections_options.html">Options examples</a></td>
+</tr>
+<tr class="odd">
+<td>Random walk</td>
+<td><code>rt_opts(rw = 7)</code> with <code>gp = NULL</code></td>
+<td>Piecewise-constant Rt with specified step size</td>
+<td><a href="estimate_infections_options.html">Options examples</a></td>
+</tr>
+<tr class="even">
+<td>Breakpoints</td>
+<td>Add a <code>breakpoint</code> column to the input data</td>
+<td>Step changes in Rt at user-specified dates; on by default in
+<code>rt_opts()</code>, set <code>use_breakpoints = FALSE</code> to
+disable</td>
+<td><a href="estimate_infections_options.html">Options examples</a></td>
+</tr>
+<tr class="odd">
+<td>Fixed Rt</td>
+<td><code>gp = NULL</code> (and default <code>rt_opts()</code>)</td>
+<td>Constant reproduction number sampled from the prior; no GP, no
+random walk</td>
+<td><a href="estimate_infections_options.html">Options examples</a></td>
+</tr>
+<tr class="even">
+<td>Population adjustment</td>
+<td><code>rt_opts(pop = Fixed(N))</code></td>
+<td>Adjust Rt for susceptible depletion; <code>pop</code> accepts any
+<code>&lt;dist_spec&gt;</code></td>
+<td><a href="estimate_infections_options.html">Options examples</a></td>
+</tr>
+<tr class="odd">
+<td>Growth rate method</td>
+<td><code>rt_opts(growth_method = &quot;infectiousness&quot;)</code></td>
+<td>Alternative growth rate calculation via infectiousness</td>
+<td><a href="estimate_infections.html">Model definition</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_infections.html">estimate_infections
+model definition</a>, <a href="estimate_infections_options.html">options
+examples</a></p>
+</div>
+<div id="gaussian-process" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Gaussian process</h2>
+<p>The Gaussian process controls the flexibility of the time-varying
+reproduction number or infection trajectory. Configured via
+<code>gp_opts()</code>. For kernel mathematics and the Hilbert space
+spectral approximation see the <a href="gaussian_process_implementation_details.html">GP implementation
+details</a> vignette.</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Kernel choice</td>
+<td><code>gp_opts(kernel = ...)</code></td>
+<td><code>&quot;matern&quot;</code> (default), <code>&quot;se&quot;</code>,
+<code>&quot;ou&quot;</code>, or <code>&quot;periodic&quot;</code></td>
+</tr>
+<tr class="even">
+<td>Disable GP</td>
+<td><code>gp = NULL</code> in <code>estimate_infections()</code></td>
+<td>Remove the Gaussian process entirely</td>
+</tr>
+<tr class="odd">
+<td>Accuracy/speed tradeoff</td>
+<td><code>gp_opts(basis_prop = ...)</code></td>
+<td>Higher values increase accuracy; lower values are faster (default
+0.2)</td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="gaussian_process_implementation_details.html">GP
+implementation details</a>, <a href="estimate_infections_options.html">options examples</a>, <a href="prior_choice_guide.html">prior choice guide</a></p>
+</div>
+<div id="delay-distributions" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Delay
+distributions</h2>
+<p>Delay distributions map latent infections to observed quantities. See
+the <a href="estimate_infections_workflow.html">workflow vignette</a>
+for a practical guide and the <a href="prior_choice_guide.html">prior
+choice guide</a> for default priors.</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Generation time</td>
+<td><code>gt_opts(dist = ...)</code></td>
+<td>Time between successive infections</td>
+</tr>
+<tr class="even">
+<td>Reporting delay</td>
+<td><code>delay_opts(dist = ...)</code></td>
+<td>Delay from infection to report</td>
+</tr>
+<tr class="odd">
+<td>Composite delays</td>
+<td><code>delay_opts(dist = dist1 + dist2)</code></td>
+<td>Sum of independent delay distributions</td>
+</tr>
+<tr class="even">
+<td>Non-parametric delays</td>
+<td><code>dist = NonParametric(...)</code></td>
+<td>Fixed PMF rather than a parametric family</td>
+</tr>
+<tr class="odd">
+<td>Uncertain parameters</td>
+<td>e.g. <code>LogNormal(meanlog = Normal(...), ...)</code></td>
+<td>Parameters drawn from prior distributions</td>
+</tr>
+<tr class="even">
+<td>Truncation correction</td>
+<td><code>trunc_opts(dist = ...)</code></td>
+<td>Adjust for right-truncation of recent data</td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_infections_workflow.html">workflow
+vignette</a>, <a href="prior_choice_guide.html">prior choice guide</a>,
+<a href="estimate_dist_workflow.html">fitting delay
+distributions</a></p>
+</div>
+<div id="observation-model" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Observation
+model</h2>
+<p>The observation model links latent expected cases to reported data.
+Configured via <code>obs_opts()</code>. For default prior values see the
+<a href="prior_choice_guide.html">prior choice guide</a>.</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Negative binomial (default)</td>
+<td><code>obs_opts(family = &quot;negbin&quot;)</code></td>
+<td>Overdispersed count model</td>
+</tr>
+<tr class="even">
+<td>Poisson</td>
+<td><code>obs_opts(family = &quot;poisson&quot;)</code></td>
+<td>No overdispersion</td>
+</tr>
+<tr class="odd">
+<td>Day-of-week effect</td>
+<td><code>obs_opts(week_effect = TRUE)</code></td>
+<td>Separate reporting rate per day of the week (default on)</td>
+</tr>
+<tr class="even">
+<td>Scaling / ascertainment</td>
+<td><code>obs_opts(scale = Normal(...))</code></td>
+<td>Fraction of infections observed; accepts any
+<code>&lt;dist_spec&gt;</code></td>
+</tr>
+<tr class="odd">
+<td>Likelihood weighting</td>
+<td><code>obs_opts(weight = ...)</code></td>
+<td>Re-weight observations in the log density</td>
+</tr>
+<tr class="even">
+<td>Aggregated data</td>
+<td><code>fill_missing(missing_dates = &quot;accumulate&quot;)</code></td>
+<td>Latent daily expectations are accumulated in the model before
+likelihood evaluation</td>
+</tr>
+<tr class="odd">
+<td>Missing observations</td>
+<td>NA values in data</td>
+<td>Time points with NA observations are excluded from the
+likelihood</td>
+</tr>
+</tbody>
+</table>
+<p>Aggregation and missing data are handled at the model level in Stan,
+not just in preprocessing. <code>fill_missing()</code> constructs the
+flags that the Stan model uses; the model itself accumulates latent
+expected reports and drops missing observations from the likelihood.
+Both <code>estimate_infections()</code> and
+<code>estimate_secondary()</code> support these features.</p>
+<p>See also: <a href="estimate_infections_workflow.html">workflow
+vignette</a>, <a href="prior_choice_guide.html">prior choice
+guide</a></p>
+</div>
+<div id="options-summary" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Options summary</h2>
+<p>The table below summarises the options functions, what they
+configure, their defaults, and which estimation functions use them.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="28%" />
+<col width="23%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Configures</th>
+<th>Default</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>rt_opts()</code></td>
+<td>Reproduction number model</td>
+<td>GP on log Rt differences</td>
+<td><code>estimate_infections()</code></td>
+</tr>
+<tr class="even">
+<td><code>gp_opts()</code></td>
+<td>Gaussian process prior</td>
+<td>Matern 3/2 kernel</td>
+<td><code>estimate_infections()</code></td>
+</tr>
+<tr class="odd">
+<td><code>gt_opts()</code></td>
+<td>Generation time distribution</td>
+<td><code>Fixed(1)</code> (degenerate 1-day generation interval; users
+normally override)</td>
+<td><code>estimate_infections()</code></td>
+</tr>
+<tr class="even">
+<td><code>delay_opts()</code></td>
+<td>Reporting delay distributions</td>
+<td><code>Fixed(0)</code> (no delay)</td>
+<td><code>estimate_infections()</code>,
+<code>estimate_secondary()</code></td>
+</tr>
+<tr class="odd">
+<td><code>obs_opts()</code></td>
+<td>Observation model</td>
+<td>Negative binomial with day-of-week effect</td>
+<td><code>estimate_infections()</code>,
+<code>estimate_secondary()</code></td>
+</tr>
+<tr class="even">
+<td><code>trunc_opts()</code></td>
+<td>Truncation distribution</td>
+<td><code>Fixed(0)</code> (no truncation)</td>
+<td><code>estimate_infections()</code></td>
+</tr>
+<tr class="odd">
+<td><code>backcalc_opts()</code></td>
+<td>Back-calculation settings</td>
+<td>Smoothed reports as prior</td>
+<td><code>estimate_infections()</code> (when
+<code>rt = NULL</code>)</td>
+</tr>
+<tr class="even">
+<td><code>secondary_opts()</code></td>
+<td>Secondary model type</td>
+<td>Incidence</td>
+<td><code>estimate_secondary()</code></td>
+</tr>
+</tbody>
+</table>
+<p>See the <a href="prior_choice_guide.html">prior choice guide</a> for
+default values and guidance.</p>
+</div>
+</div>
+<div id="forward-simulation-and-forecasting" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Forward simulation and
+forecasting</h1>
+<p>The estimation models already produce forecasts as part of their fit,
+projecting forward over a horizon set by the <code>horizon</code>
+argument. The functions below are for the cases where you want to
+simulate or forecast separately from a fit: generating synthetic
+observations from known parameters, or extending a fitted model with new
+inputs (e.g. a new Rt trajectory or new primary data).</p>
+<div id="simulation" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Simulation</h2>
+<p>Simulation functions generate observations from known or fixed
+parameters, useful for model checking and scenario analysis.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Simulate infections</td>
+<td><code>simulate_infections(R, initial_infections)</code></td>
+<td>Forward-simulate from a given Rt trajectory via the renewal
+equation</td>
+<td><a href="estimate_infections_workflow.html">Workflow</a></td>
+</tr>
+<tr class="even">
+<td>Simulate secondary</td>
+<td><code>simulate_secondary(primary, ...)</code></td>
+<td>Simulate secondary observations from primary data</td>
+<td><a href="estimate_secondary.html">Secondary model
+definition</a></td>
+</tr>
+<tr class="odd">
+<td>Convolve and scale</td>
+<td><code>convolve_and_scale(data, ...)</code></td>
+<td>R-based convolution with time-varying parameters</td>
+<td><a href="estimate_secondary.html">Secondary model
+definition</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_infections_workflow.html">workflow
+vignette</a></p>
+</div>
+<div id="forecasting" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Forecasting</h2>
+<p>Forecasts can be generated from fitted models by projecting forward
+with specified or estimated parameters.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Infection forecast</td>
+<td><code>forecast_infections(estimates, R)</code></td>
+<td>Simulate future infections from a fitted model with a new Rt
+trajectory</td>
+<td><a href="estimate_infections_workflow.html">Workflow</a></td>
+</tr>
+<tr class="even">
+<td>Secondary forecast</td>
+<td><code>forecast_secondary(estimate, primary)</code></td>
+<td>Forecast secondary observations from new primary data</td>
+<td><a href="estimate_secondary.html">Secondary model
+definition</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_infections_workflow.html">workflow
+vignette</a></p>
+</div>
+</div>
+<div id="supporting-utilities" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Supporting
+utilities</h1>
+<div id="data-preprocessing" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Data
+preprocessing</h2>
+<p><code>fill_missing()</code> is an R-side utility that prepares data
+for the estimation functions by constructing the accumulation and
+missingness flags that the Stan models require.</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Accumulate missing dates</td>
+<td><code>fill_missing(missing_dates = &quot;accumulate&quot;)</code></td>
+<td>Mark missing dates for model-level accumulation</td>
+</tr>
+<tr class="even">
+<td>Zero-fill missing dates</td>
+<td><code>fill_missing(missing_dates = &quot;zero&quot;)</code></td>
+<td>Insert zero observations for missing dates</td>
+</tr>
+<tr class="odd">
+<td>Ignore missing dates (default)</td>
+<td><code>fill_missing(missing_dates = &quot;ignore&quot;)</code></td>
+<td>Skip missing dates in the likelihood</td>
+</tr>
+<tr class="even">
+<td>Handle NA observations</td>
+<td><code>fill_missing(missing_obs = ...)</code></td>
+<td>Accumulate or zero-fill NA values</td>
+</tr>
+<tr class="odd">
+<td>Weekly reporting</td>
+<td><code>fill_missing(initial_accumulate = 7)</code></td>
+<td>Set accumulation window for weekly data</td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="estimate_infections_workflow.html">workflow
+vignette</a></p>
+</div>
+<div id="workflow-wrappers" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Workflow
+wrappers</h2>
+<p>Convenience functions wrap the core estimation and reporting
+steps.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Argument</th>
+<th>Description</th>
+<th>See also</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Production wrapper</td>
+<td><code>epinow()</code></td>
+<td>Wraps <code>estimate_infections()</code> with logging and formatted
+output</td>
+<td><a href="epinow.html">epinow vignette</a></td>
+</tr>
+<tr class="even">
+<td>Multi-region</td>
+<td><code>regional_epinow()</code></td>
+<td>Runs <code>epinow()</code> across regions in parallel</td>
+<td><a href="EpiNow2.html">Getting started</a></td>
+</tr>
+<tr class="odd">
+<td>Region-specific options</td>
+<td><code>opts_list()</code></td>
+<td>Generate per-region configuration lists</td>
+<td><a href="EpiNow2.html">Getting started</a></td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a href="epinow.html">epinow vignette</a>, <a href="EpiNow2.html">getting started</a></p>
+</div>
+<div id="stan-backend" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Stan backend</h2>
+<p>Models are implemented in Stan. Users can switch between MCMC
+sampling (default, via <code>cmdstanr</code> or <code>rstan</code>),
+variational inference, the Laplace approximation, or pathfinder using
+<code>stan_opts(method = ...)</code>. See the <a href="estimate_infections_workflow.html">workflow vignette</a> for
+details on configuring the backend.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

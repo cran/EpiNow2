@@ -15,8 +15,7 @@
 #'   date format.
 #' @inheritParams simulate_infections
 #' @inheritParams estimate_secondary
-#' @importFrom checkmate assert_data_frame assert_date assert_numeric
-#'   assert_subset
+#' @importFrom checkmate assert_numeric
 #' @importFrom cli cli_abort
 #' @return A data.table of simulated secondary observations (column `secondary`)
 #'   by date.
@@ -40,10 +39,7 @@ simulate_secondary <- function(primary,
                                obs = obs_opts(),
                                CrIs = c(0.2, 0.5, 0.9),
                                backend = "rstan") {
-  assert_data_frame(primary, any.missing = FALSE)
-  assert_subset(c("date", "primary"), colnames(primary))
-  assert_date(primary$date)
-  assert_numeric(primary$primary, lower = 0)
+  check_simulation_input(primary, "primary")
   assert_numeric(day_of_week_effect, lower = 0, null.ok = TRUE)
   assert_class(secondary, "secondary_opts")
   assert_class(delays, "delay_opts")
@@ -84,6 +80,15 @@ simulate_secondary <- function(primary,
       )
     )
   }
+  if (stan_data$delay_n_np_est > 0) {
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from estimated nonparametric delays.",
+        "i" = "Use {.fn fix_parameters} to resolve the Dirichlet prior to a
+        fixed PMF using either the prior mean or a randomly sampled PMF."
+      )
+    )
+  }
   stan_data$delay_params <- array(
     stan_data$delay_params_mean,
     dim = c(1, length(stan_data$delay_params_mean))
@@ -104,17 +109,14 @@ simulate_secondary <- function(primary,
     )
   }
 
-  if (obs$family == "negbin") {
-    if (get_distribution(obs$dispersion) != "fixed") {
-      cli_abort(
-        c(
-          "!" = "Cannot simulate from uncertain overdispersion.",
-          "i" = "Use fixed overdispersion instead."
-        )
+  if (!is.null(obs$dispersion) &&
+        get_distribution(obs$dispersion) != "fixed") {
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from uncertain overdispersion.",
+        "i" = "Use fixed overdispersion instead."
       )
-    }
-  } else {
-    obs$dispersion <- NULL
+    )
   }
 
   params <- list(

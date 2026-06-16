@@ -13,6 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4dist_fit_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4estimate_dist_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4estimate_infections_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4estimate_secondary_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4estimate_truncation_mod();
@@ -21,6 +22,7 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4simulate_secondary_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4dist_fit_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4dist_fit_mod, 0},
+    {"_rcpp_module_boot_stan_fit4estimate_dist_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4estimate_dist_mod, 0},
     {"_rcpp_module_boot_stan_fit4estimate_infections_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4estimate_infections_mod, 0},
     {"_rcpp_module_boot_stan_fit4estimate_secondary_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4estimate_secondary_mod, 0},
     {"_rcpp_module_boot_stan_fit4estimate_truncation_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4estimate_truncation_mod, 0},

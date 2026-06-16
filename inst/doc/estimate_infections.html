@@ -409,6 +409,10 @@ arbitrary length <span class="math inline">\(w\)</span>.</p>
 interval-valued division (i.e. the floor of the division), such that for
 example <span class="math inline">\(w=1\)</span> indicates a daily and
 <span class="math inline">\(w=7\)</span> a weekly random walk.</p>
+<p>When the random walk option is used, its contribution to <span class="math inline">\(\log R_t\)</span> is centred over the observation
+window to remove an identifiability ridge with <span class="math inline">\(\log R_0\)</span>. See <a href="gaussian_process_implementation_details.html#modelling-the-reproduction-number">Modelling
+the reproduction number</a> in the GP implementation details vignette
+for the full derivation.</p>
 <p>The choice of prior for the time-varying reproduction number impact
 run-time, smoothness of the estimates and real-time behaviour and may
 alter the best use-case for the model.</p>

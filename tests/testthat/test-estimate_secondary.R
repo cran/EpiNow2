@@ -100,6 +100,22 @@ test_that("forecast_secondary can return values from simulated data and plot
   expect_error(plot(inc_preds, new_obs = inc_cases, from = "2020-05-01"), NA)
 })
 
+test_that("as_forecast_sample.forecast_secondary produces a valid forecast_sample", {
+  skip_if_not_installed("scoringutils")
+
+  inc_preds <- forecast_secondary(
+    default_inc, inc_cases[seq(61, .N)][, value := primary]
+  )
+  forecast_obj <- scoringutils::as_forecast_sample(
+    inc_preds,
+    observations = inc_cases
+  )
+  expect_s3_class(forecast_obj, "forecast_sample")
+  expect_no_error(
+    scoringutils::assert_forecast(forecast_obj, verbose = FALSE)
+  )
+})
+
 test_that("estimate_secondary recovers scaling parameter from incidence data", {
   # Basic parameter recovery check using pre-computed fit
   # inc_cases was set up with scaling = 0.4, meanlog = 1.8, sdlog = 0.5
@@ -177,6 +193,20 @@ test_that("estimate_secondary successfully returns estimates when accumulating t
     ), verbose = FALSE
   )
   expect_true(is.list(inc_weekly$args))
+})
+
+test_that("estimate_secondary omits reporting_overdispersion under Poisson", {
+  skip_integration()
+  inc_cases <- setup_incidence_data()
+  inc <- estimate_secondary(inc_cases[1:60],
+    obs = obs_opts(
+      family = "poisson",
+      scale = Normal(mean = 0.2, sd = 0.2, max = 1),
+      week_effect = FALSE
+    ),
+    verbose = FALSE
+  )
+  expect_false("reporting_overdispersion" %in% names(get_parameters(inc)))
 })
 
 test_that("estimate_secondary works when only estimating scaling", {
@@ -328,34 +358,30 @@ test_that("estimate_secondary works with weigh_delay_priors = TRUE", {
   expect_s3_class(inc_weigh, "estimate_secondary")
 })
 
-test_that("estimate_secondary works with filter_leading_zeros set", {
+test_that("estimate_secondary works with pre-filtered data", {
   skip_integration()
   inc_cases <- setup_incidence_data()
 
-  ## testing deprecated functionality
-  withr::local_options(lifecycle_verbosity = "quiet")
   modified_data <- inc_cases[1:10, secondary := 0]
   modified_data <- filter_leading_zeros(modified_data, obs_column = "secondary")
-  out <- suppressWarnings(estimate_secondary(
+  out <- estimate_secondary(
     modified_data,
     obs = obs_opts(
       scale = Normal(mean = 0.2, sd = 0.2),
       week_effect = FALSE
     ),
     verbose = FALSE
-  ))
+  )
   expect_s3_class(out, "estimate_secondary")
   expect_named(out, c("fit", "args", "observations"))
   # Check that observations match filtered input data
   expect_equal(out$observations$primary, modified_data$primary)
 })
 
-test_that("estimate_secondary works with zero_threshold set", {
+test_that("estimate_secondary works with zero threshold applied", {
   skip_integration()
   inc_cases <- setup_incidence_data()
 
-  ## testing deprecated functionality
-  withr::local_options(lifecycle_verbosity = "quiet")
   modified_data <- inc_cases[sample(1:30, 10), primary := 0]
   modified_data <- apply_zero_threshold(
     modified_data,
@@ -388,28 +414,25 @@ test_that("get_parameters works as expected for estimate_secondary", {
 })
 
 test_that("[[ accessor handles deprecated elements", {
-  # Reuse pre-computed fit
   out <- default_inc
 
-  # Test deprecation warning for [[
-  expect_deprecated(out[["predictions"]])
-  expect_deprecated(out[["posterior"]])
-  expect_deprecated(out[["data"]])
+  expect_error(out[["predictions"]], "get_predictions")
+  expect_error(out[["posterior"]], "get_samples")
+  expect_error(out[["data"]], "observations")
 
-  # Test non-deprecated elements work without warning
-  expect_no_warning(out[["fit"]])
-  expect_no_warning(out[["args"]])
-  expect_no_warning(out[["observations"]])
+  # Test non-deprecated elements work without error
+  expect_no_error(out[["fit"]])
+  expect_no_error(out[["args"]])
+  expect_no_error(out[["observations"]])
 })
 
 test_that("$ accessor works for non-deprecated elements", {
-  # Reuse pre-computed fit
   out <- default_inc
 
   # Test direct access to non-deprecated elements
-  expect_no_warning(out$fit)
-  expect_no_warning(out$args)
-  expect_no_warning(out$observations)
+  expect_no_error(out$fit)
+  expect_no_error(out$args)
+  expect_no_error(out$observations)
 
   # Verify the elements are correct
   expect_s4_class(out$fit, "stanfit")

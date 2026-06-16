@@ -4,7 +4,7 @@
 \alias{format_fit}
 \title{Format Posterior Samples}
 \usage{
-format_fit(posterior_samples, horizon, shift, burn_in, start_date, CrIs)
+format_fit(posterior_samples, horizon, shift, CrIs)
 }
 \arguments{
 \item{posterior_samples}{A list of posterior samples as returned by
@@ -14,17 +14,12 @@ format_fit(posterior_samples, horizon, shift, burn_in, start_date, CrIs)
 
 \item{shift}{Numeric, the shift to apply to estimates.}
 
-\item{burn_in}{Deprecated; this functionality is no longer available.}
-
-\item{start_date}{Deprecated; this functionality is no longer available.}
-
 \item{CrIs}{Numeric vector of credible intervals to calculate.}
 }
 \value{
 A list of samples and summarised posterior parameter estimates.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Summaries posterior samples and adds additional custom variables.
 }
 \keyword{internal}

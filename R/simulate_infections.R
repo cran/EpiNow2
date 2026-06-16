@@ -33,10 +33,10 @@
 #'   growth roughly in line with the growth rate implied by the first value of
 #'   R.
 #' @inheritParams estimate_infections
+#' @inheritParams calc_CrIs
 #' @inheritParams rt_opts
 #' @inheritParams stan_opts
-#' @importFrom checkmate assert_data_frame assert_date assert_numeric
-#'   assert_subset assert_integer
+#' @importFrom checkmate assert_numeric assert_integer
 #' @importFrom data.table data.table merge.data.table nafill rbindlist
 #' @importFrom cli cli_abort
 #' @return A data.table of simulated infections (variable `infections`) and
@@ -74,13 +74,17 @@ simulate_infections <- function(R,
                                 growth_method = c("infections",
                                                   "infectiousness")) {
   if (is.numeric(pop)) {
-    lifecycle::deprecate_warn(
-      "1.7.0",
+    lifecycle::deprecate_stop(
+      "1.9.0",
       "simulate_infections(pop = 'must be a `<dist_spec>`')",
-      details = "For specifying a fixed population size, use `Fixed(pop)`"
+      details = paste(
+        "Population size must now be specified as a distribution.",
+        "For a fixed known population, wrap the value with `Fixed()`.",
+        "For example: `simulate_infections(..., pop = Fixed(1000000))`."
+      )
     )
-    pop <- Fixed(pop)
   }
+  assert_class(pop, "dist_spec")
   pop_period <- arg_match(pop_period)
   if (pop_period == "all" && pop == Fixed(0)) {
     cli_abort(
@@ -91,10 +95,7 @@ simulate_infections <- function(R,
   }
 
   ## check inputs
-  assert_data_frame(R, any.missing = FALSE)
-  assert_subset(c("date", "R"), colnames(R))
-  assert_date(R$date)
-  assert_numeric(R$R, lower = 0)
+  check_simulation_input(R, "R")
   assert_numeric(initial_infections, lower = 0)
   assert_numeric(day_of_week_effect, lower = 0, null.ok = TRUE)
   if (!is.null(seeding_time)) {
@@ -150,6 +151,15 @@ simulate_infections <- function(R,
       )
     )
   }
+  if (stan_data$delay_n_np_est > 0) {
+    cli_abort(
+      c(
+        "!" = "Cannot simulate from estimated nonparametric delays.",
+        "i" = "Use {.fn fix_parameters} to resolve the Dirichlet prior to a
+        fixed PMF using either the prior mean or a randomly sampled PMF."
+      )
+    )
+  }
   stan_data$delay_params <- array(
     stan_data$delay_params_mean,
     dim = c(1, length(stan_data$delay_params_mean))
@@ -197,6 +207,8 @@ simulate_infections <- function(R,
   ## set empty params matrix - variable parameters not supported here
   stan_data$params <- array(dim = c(1, 0))
 
+  stan_data <- c(stan_data, make_init_priors())
+
   ## day of week effect
   if (is.null(day_of_week_effect)) {
     day_of_week_effect <- rep(1, stan_data$week_effect)
@@ -240,7 +252,7 @@ simulate_infections <- function(R,
 #' Forecast infections from a given fit and trajectory of the time-varying
 #' reproduction number
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' This function simulates infections using an existing fit to observed cases
 #' but with a modified time-varying reproduction number. This can be used to
 #' explore forecast models or past counterfactuals. Simulations can be run in
@@ -268,7 +280,7 @@ simulate_infections <- function(R,
 #' @param verbose Logical defaults to [interactive()]. If the `progressr`
 #' package is available, a progress bar will be shown.
 #' @inheritParams stan_opts
-#' @importFrom rstan extract sampling
+#' @importFrom rstan sampling
 #' @importFrom purrr list_transpose map safely compact
 #' @importFrom data.table rbindlist as.data.table
 #' @importFrom lubridate days
@@ -339,8 +351,8 @@ forecast_infections <- function(estimates,
   assert_integerish(samples, lower = 1, null.ok = TRUE)
   assert_integerish(batch_size, lower = 2)
   assert_logical(verbose)
-  ## extract samples from given stanfit object
-  draws <- extract(estimates$fit,
+  ## extract samples from given stan fit object (rstan or cmdstanr backend)
+  draws <- extract_samples(estimates$fit,
     pars = c(
       "noise", "eta", "lp__", "infections",
       "reports", "imputed_reports", "r",
@@ -393,6 +405,9 @@ forecast_infections <- function(estimates,
     draws$R <- R_draws
   }
 
+  # Extract R dates from original fit before modifying args
+  summarised <- summary(estimates, type = "parameters")
+
   # redefine time if Rt != data$t
   est_time <- estimates$args$t
   horizon <- estimates$args$horizon
@@ -417,7 +432,6 @@ forecast_infections <- function(estimates,
   }
 
   # define dates of interest
-  summarised <- summary(estimates, type = "parameters")
   dates <- seq(
     min(na.omit(unique(summarised[variable == "R"]$date))) - days(shift),
     by = "day", length.out = dim(draws$R)[2] + shift

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Model definition: estimate_dist()</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Model definition: estimate_dist()</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#overview" id="toc-overview"><span class="toc-section-number">1</span> Overview</a></li>
+<li><a href="#data-and-notation" id="toc-data-and-notation"><span class="toc-section-number">2</span> Data and notation</a></li>
+<li><a href="#likelihood" id="toc-likelihood"><span class="toc-section-number">3</span> Likelihood</a>
+<ul>
+<li><a href="#continuous-formulation" id="toc-continuous-formulation"><span class="toc-section-number">3.1</span> Continuous formulation</a></li>
+<li><a href="#truncation" id="toc-truncation"><span class="toc-section-number">3.2</span> Truncation</a></li>
+<li><a href="#discrete-observation-likelihood" id="toc-discrete-observation-likelihood"><span class="toc-section-number">3.3</span> Discrete observation
+likelihood</a></li>
+<li><a href="#untruncated-approximation" id="toc-untruncated-approximation"><span class="toc-section-number">3.4</span> Untruncated approximation</a></li>
+</ul></li>
+<li><a href="#primary-event-distribution" id="toc-primary-event-distribution"><span class="toc-section-number">4</span> Primary event distribution</a></li>
+<li><a href="#delay-families-and-parameterisations" id="toc-delay-families-and-parameterisations"><span class="toc-section-number">5</span> Delay families and
+parameterisations</a>
+<ul>
+<li><a href="#priors" id="toc-priors"><span class="toc-section-number">5.1</span> Priors</a></li>
+</ul></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div id="overview" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Overview</h1>
+<p><code>estimate_dist()</code> fits a parametric delay distribution
+from interval-censored linelist data via MCMC. The model accounts for
+double interval censoring of the primary and secondary events, right
+truncation due to a finite observation period, and optional left
+truncation. The likelihood is provided by the <a href="https://primarycensored.epinowcast.org/">primarycensored</a>
+package<span class="citation"><sup>[1]</sup></span>; see its
+documentation for derivations and a fuller account of why these
+adjustments are needed<span class="citation"><sup>[2,3]</sup></span>.
+The conceptual motivation in <em>EpiNow2</em> is covered in
+<code>vignette(&quot;delays&quot;)</code>, and a worked example in
+<code>vignette(&quot;estimate_dist_workflow&quot;)</code>. For analyses needing
+time-varying delays, partial pooling across strata, or regression on
+covariates, <a href="https://epidist.epinowcast.org/"><code>epidist</code></a> builds
+on the same likelihood and is the recommended next step.</p>
+</div>
+<div id="data-and-notation" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Data and notation</h1>
+<p>Each observation <span class="math inline">\(i = 1, \ldots,
+N\)</span> is a record of a primary event (e.g. infection) and a
+secondary event (e.g. symptom onset). Both events are observed only as
+intervals. Let <span class="math inline">\(P_i = [p^{-}_i,
+p^{+}_i)\)</span> be the primary event window and <span class="math inline">\(S_i = [s^{-}_i, s^{+}_i)\)</span> be the secondary
+event window. We refer to <span class="math inline">\(w^{P}_i = p^{+}_i
+- p^{-}_i\)</span> as the primary window width and to <span class="math inline">\(w^{S}_i = s^{+}_i - s^{-}_i\)</span> as the
+secondary window width. At daily resolution both are typically equal to
+one.</p>
+<p>The observed delay interval is <span class="math inline">\([d^{-}_i,
+d^{+}_i) = [s^{-}_i - p^{-}_i,\, s^{+}_i - p^{-}_i)\)</span>, the
+difference between the secondary window and the start of the primary
+window. Each observation also has a relative observation time <span class="math inline">\(D_i\)</span> and an optional left truncation point
+<span class="math inline">\(L_i\)</span>, both measured from <span class="math inline">\(p^{-}_i\)</span>. <span class="math inline">\(D_i\)</span> is the time at which the data were
+extracted relative to the primary event start and acts as the right
+truncation point. Per-observation weights <span class="math inline">\(n_i\)</span> allow identical <span class="math inline">\((d^{-}_i, d^{+}_i, w^{P}_i, D_i)\)</span>
+combinations to be aggregated; this affects only computational
+efficiency, not the likelihood.</p>
+<p>The continuous, unobserved delay <span class="math inline">\(T_i\)</span> between the true primary event time
+<span class="math inline">\(T^{P}_i\)</span> and the true secondary
+event time <span class="math inline">\(T^{S}_i\)</span> is assumed to
+follow a parametric distribution with cumulative distribution function
+<span class="math inline">\(F(\cdot \,|\, \theta)\)</span>, where <span class="math inline">\(\theta\)</span> is the parameter vector. We denote
+the primary event distribution within its window by <span class="math inline">\(f_P\)</span>. The model treats <span class="math inline">\(\theta\)</span> as unknown and <span class="math inline">\(f_P\)</span> as known.</p>
+</div>
+<div id="likelihood" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Likelihood</h1>
+<div id="continuous-formulation" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Continuous
+formulation</h2>
+<p>If <span class="math inline">\(T^{P}_i\)</span> has density <span class="math inline">\(f_P\)</span> on <span class="math inline">\([p^{-}_i, p^{+}_i)\)</span>, the distribution of
+the delay <span class="math inline">\(T_i\)</span> from the primary
+event to a fixed reference point (e.g. <span class="math inline">\(p^{-}_i\)</span>) is the convolution of <span class="math inline">\(f_P\)</span> with the underlying delay
+distribution. The corresponding cumulative distribution function
+adjusted for primary event censoring is</p>
+<p><span class="math display">\[\begin{equation}
+  F^{*}(t \,|\, \theta, w^{P}_i)
+  = \int_{p^{-}_i}^{p^{+}_i} F(t - u \,|\, \theta) f_P(u) \, du.
+\end{equation}\]</span></p>
+<p>Without primary censoring the distribution of the discrete observed
+delay would simply be obtained by differencing <span class="math inline">\(F\)</span> at the secondary window boundaries.
+With primary censoring, <span class="math inline">\(F\)</span> is
+replaced by <span class="math inline">\(F^{*}\)</span> throughout. For
+uniform <span class="math inline">\(f_P\)</span> this can be evaluated
+analytically for the lognormal, gamma, and Weibull delay distributions;
+for other combinations the integral is evaluated numerically. The
+vendored Stan code dispatches to either branch through
+<code>check_for_analytical()</code> in
+<code>primarycensored.stan</code>.</p>
+</div>
+<div id="truncation" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Truncation</h2>
+<p>The model handles right truncation at <span class="math inline">\(D_i\)</span> and optional left truncation at <span class="math inline">\(L_i\)</span> by renormalising <span class="math inline">\(F^{*}\)</span>:</p>
+<p><span class="math display">\[\begin{equation}
+  F^{*}_{[L_i, D_i]}(t \,|\, \theta, w^{P}_i)
+  = \frac{F^{*}(t \,|\, \theta, w^{P}_i) - F^{*}(L_i \,|\, \theta,
+w^{P}_i)}
+         {F^{*}(D_i \,|\, \theta, w^{P}_i) - F^{*}(L_i \,|\, \theta,
+w^{P}_i)}
+\end{equation}\]</span></p>
+<p>for <span class="math inline">\(L_i \leq t \leq D_i\)</span> and zero
+outside the interval. <span class="math inline">\(D_i\)</span> may be
+set to <span class="math inline">\(\infty\)</span> to indicate no right
+truncation; in that case the denominator reduces to <span class="math inline">\(1 - F^{*}(L_i \,|\, \theta, w^{P}_i)\)</span>.
+<span class="math inline">\(L_i\)</span> defaults to <span class="math inline">\(0\)</span> and is not currently exposed at the R
+interface.</p>
+</div>
+<div id="discrete-observation-likelihood" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Discrete observation
+likelihood</h2>
+<p>The probability mass for observation <span class="math inline">\(i\)</span> is the difference of the truncated,
+primary-censored CDF at the secondary window boundaries:</p>
+<p><span class="math display">\[\begin{equation}
+  \Pr(d^{-}_i \leq T_i &lt; d^{+}_i \,|\, \theta, w^{P}_i, L_i, D_i)
+  = F^{*}_{[L_i, D_i]}(d^{+}_i \,|\, \theta, w^{P}_i)
+  - F^{*}_{[L_i, D_i]}(d^{-}_i \,|\, \theta, w^{P}_i).
+\end{equation}\]</span></p>
+<p>The aggregated log-likelihood used in <code>estimate_dist.stan</code>
+is</p>
+<p><span class="math display">\[\begin{equation}
+  \log \mathcal{L}(\theta) = \sum_{i=1}^{N} n_i \log
+    \Pr(d^{-}_i \leq T_i &lt; d^{+}_i \,|\, \theta, w^{P}_i, L_i, D_i),
+\end{equation}\]</span></p>
+<p>implemented as the call to <code>primarycensored_lpmf()</code> inside
+the model block.</p>
+</div>
+<div id="untruncated-approximation" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Untruncated
+approximation</h2>
+<p>When <span class="math inline">\(D_i\)</span> is much larger than the
+largest observed delay, the right truncation factor is numerically
+indistinguishable from one and the renormalisation in the equation above
+can be skipped. <code>estimate_dist()</code> applies this approximation
+by setting <span class="math inline">\(D_i\)</span> to <span class="math inline">\(\infty\)</span> whenever <span class="math inline">\(D_i &gt; c\, \max_j d^{+}_j\)</span>, where <span class="math inline">\(c\)</span> is the <code>obs_time_threshold</code>
+argument and defaults to <span class="math inline">\(2\)</span>
+following the same heuristic used by <a href="https://epidist.epinowcast.org/"><code>epidist</code></a>. Setting
+<code>obs_time_threshold = Inf</code> disables the approximation.</p>
+</div>
+</div>
+<div id="primary-event-distribution" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Primary event
+distribution</h1>
+<p>Two primary event distributions are supported:</p>
+<ul>
+<li><strong>Uniform</strong> (default): <span class="math inline">\(f_P\)</span> is uniform on <span class="math inline">\([p^{-}_i, p^{+}_i)\)</span>. This is appropriate
+for daily reporting where the within-day timing of the primary event is
+unknown and assumed equally likely at any point in the window.</li>
+<li><strong>Exponential growth</strong>: <span class="math inline">\(f_P\)</span> is proportional to <span class="math inline">\(\exp(r u)\)</span> on <span class="math inline">\([p^{-}_i, p^{+}_i)\)</span>, with growth rate
+<span class="math inline">\(r\)</span> supplied by the user via
+<code>primary_params</code>. This adjusts for the bias introduced when
+the primary event rate is changing rapidly within the window, for
+example in the early phase of an outbreak<span class="citation"><sup>[2]</sup></span>. The growth rate is treated as
+fixed data and is not estimated.</li>
+</ul>
+<p>The primary event parameters are passed to Stan in the
+<code>primary_id</code> and <code>primary_params</code> data fields and
+are not part of <span class="math inline">\(\theta\)</span>.</p>
+</div>
+<div id="delay-families-and-parameterisations" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Delay families and
+parameterisations</h1>
+<p>The model supports five delay families, selected by the
+<code>dist</code> argument. Parameter names match the natural
+parameterisation used elsewhere in <em>EpiNow2</em>.</p>
+<table>
+<thead>
+<tr class="header">
+<th><code>dist</code></th>
+<th>Parameters</th>
+<th>Density support</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>&quot;lognormal&quot;</code></td>
+<td><code>meanlog</code>, <code>sdlog</code></td>
+<td><span class="math inline">\(T &gt; 0\)</span></td>
+</tr>
+<tr class="even">
+<td><code>&quot;gamma&quot;</code></td>
+<td><code>shape</code>, <code>rate</code></td>
+<td><span class="math inline">\(T &gt; 0\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>&quot;normal&quot;</code></td>
+<td><code>mean</code>, <code>sd</code></td>
+<td><span class="math inline">\(T \in \mathbb{R}\)</span></td>
+</tr>
+<tr class="even">
+<td><code>&quot;exp&quot;</code></td>
+<td><code>rate</code></td>
+<td><span class="math inline">\(T &gt; 0\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>&quot;weibull&quot;</code></td>
+<td><code>shape</code>, <code>scale</code></td>
+<td><span class="math inline">\(T &gt; 0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>For <code>&quot;lognormal&quot;</code>, <code>&quot;gamma&quot;</code>, and
+<code>&quot;weibull&quot;</code> with a uniform primary, the primary-censored CDF
+<span class="math inline">\(F^{*}\)</span> has a closed form and is
+computed analytically. The other combinations use numerical integration
+over the primary window.</p>
+<div id="priors" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Priors</h2>
+<p>Priors are passed via the <code>priors</code> argument as a named
+list of <code>dist_spec</code> objects, with names matching the
+parameter names of the chosen family. Each prior is converted into a
+<code>Normal()</code> density on the parameter and applied
+independently. Lower bounds are imposed for parameters that must be
+positive (e.g. <code>sdlog</code>, <code>rate</code>,
+<code>shape</code>, <code>scale</code>); the truncation is handled by
+<code>params_lp()</code> in
+<code>inst/stan/functions/params.stan</code>.</p>
+<p>The default priors are family-specific:</p>
+<p><span class="math display">\[\begin{align}
+  \text{lognormal:}\quad \text{meanlog} &amp;\sim \mathrm{Normal}(1, 1),
+&amp;
+  \text{sdlog} &amp;\sim \mathrm{Normal}(0.5, 0.5), \\
+  \text{gamma:}\quad \text{shape} &amp;\sim \mathrm{Normal}(2, 2), &amp;
+  \text{rate} &amp;\sim \mathrm{Normal}(0.5, 0.5), \\
+  \text{normal:}\quad \text{mean} &amp;\sim \mathrm{Normal}(5, 5), &amp;
+  \text{sd} &amp;\sim \mathrm{Normal}(1, 1), \\
+  \text{exponential:}\quad \text{rate} &amp;\sim \mathrm{Normal}(0.5,
+0.5), \\
+  \text{Weibull:}\quad \text{shape} &amp;\sim \mathrm{Normal}(2, 2),
+&amp;
+  \text{scale} &amp;\sim \mathrm{Normal}(5, 5).
+\end{align}\]</span></p>
+<p>These defaults are deliberately wide and are intended as starting
+points rather than fits to any particular delay. Users are encouraged to
+set priors that reflect domain knowledge about the delay being
+estimated; see <code>vignette(&quot;estimate_dist_workflow&quot;)</code> for
+guidance on translating prior beliefs into the lognormal
+parameterisation.</p>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body" entry-spacing="0" line-spacing="2">
+<div id="ref-primarycensored" class="csl-entry">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Abbott, S., Brand, S., Azam, J. M., Pearson,
+C., Funk, S., &amp; Charniga, K. (2026). <em>Primarycensored: Primary
+event censored distributions</em>. <a href="https://doi.org/10.5281/zenodo.13632839">https://doi.org/10.5281/zenodo.13632839</a></div>
+</div>
+<div id="ref-Park2024" class="csl-entry">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Park, S. W., Akhmetzhanov, A. R., Charniga, K.,
+Cori, A., Davies, N. G., Dushoff, J., Funk, S., Gostic, K., Grenfell,
+B., Linton, N. M., Lipsitch, M., Lison, A., Overton, C. E., Ward, T.,
+&amp; Abbott, S. (2024). Estimating epidemiological delay distributions
+for infectious diseases. <em>medRxiv</em>. <a href="https://doi.org/10.1101/2024.01.12.24301247">https://doi.org/10.1101/2024.01.12.24301247</a></div>
+</div>
+<div id="ref-Charniga2024" class="csl-entry">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Charniga, K., Park, S. W., Akhmetzhanov, A. R.,
+Cori, A., Dushoff, J., Funk, S., Gostic, K. M., Linton, N. M., Lison,
+A., Overton, C. E., Pulliam, J. R. C., Ward, T., Cauchemez, S., &amp;
+Abbott, S. (2024). Best practices for estimating and reporting
+epidemiological delay distributions of infectious diseases. <em>PLoS
+Comput. Biol.</em>, <em>20</em>(10), e1012520. <a href="https://doi.org/10.1371/journal.pcbi.1012520">https://doi.org/10.1371/journal.pcbi.1012520</a></div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

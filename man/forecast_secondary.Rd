@@ -43,8 +43,7 @@ present the default is to use 1000 samples.}
 \item{all_dates}{Logical, defaults to FALSE. Should a forecast for all dates
 and not just those in the forecast horizon be returned.}
 
-\item{CrIs}{Deprecated; specify credible intervals when using \code{\link[=summary]{summary()}} or
-\code{\link[=plot]{plot()}}}
+\item{CrIs}{Numeric vector of credible intervals to calculate.}
 }
 \value{
 A list containing: \code{predictions} (a \verb{<data.frame>} ordered by date
@@ -55,7 +54,6 @@ of forecast secondary observation posterior samples, and \code{forecast} a summa
 of the forecast secondary observation posterior.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This function forecasts secondary observations using the output of
 \code{\link[=estimate_secondary]{estimate_secondary()}} and either observed primary data or a forecast of
 primary observations. See the examples of \code{\link[=estimate_secondary]{estimate_secondary()}}

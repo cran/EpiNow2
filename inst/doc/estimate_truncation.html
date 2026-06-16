@@ -240,46 +240,71 @@ estimate_truncation()</h1>
 
 
 
-<p><strong>This is a work in progress. Please consider submitting a PR
-to improve it.</strong></p>
 <p>This model deals with the problem of <em>nowcasting</em>, or
 adjusting for right-truncation in reported count data. This occurs when
 the quantity being observed, for example cases, hospitalisations or
 deaths, is reported with a delay, resulting in an underestimation of
-recent counts. The <code>estimate_truncation()</code> model attempts to
-infer parameters of the underlying delay distributions from multiple
-snapshots of past data. It is designed to be a simple model that can
-integrate with the other models in the package and therefore may not be
-ideal for all uses. For a more principled approach to nowcasting please
-consider using the <a href="https://package.epinowcast.org">epinowcast</a> package.</p>
+recent counts. The <code>estimate_truncation()</code> model infers
+parameters of the underlying delay distribution from multiple snapshots
+of past data. This can be thought of as a Bayesian form of the
+chain-ladder nowcasting approach implemented in the <a href="https://baselinenowcast.epinowcast.org/">baselinenowcast</a>
+package, with the added benefit of joint uncertainty quantification and
+delay estimation. For settings requiring time-varying delays or more
+detailed reporting structure, see the <a href="https://package.epinowcast.org">epinowcast</a> package.</p>
+<p>Both <code>estimate_truncation()</code> and
+<code>estimate_dist()</code> return a delay distribution that downstream
+functions such as <code>estimate_infections()</code>,
+<code>estimate_secondary()</code>, or a further call to
+<code>estimate_truncation()</code> can consume. The main difference is
+the data they expect: <code>estimate_truncation()</code> takes
+successive snapshots of the same aggregate counts (a reporting
+triangle), while <code>estimate_dist()</code> takes individual-level
+(linelist) data with primary and secondary event dates. Because it works
+from aggregate counts rather than individual records,
+<code>estimate_truncation()</code> also fits an observation model for
+the counts on top of the delay, whereas <code>estimate_dist()</code>
+estimates the delay distribution alone. As a rough decision rule, use
+<code>estimate_dist()</code> when you have a linelist and
+<code>estimate_truncation()</code> when you have repeated snapshots of
+aggregate counts.</p>
+<div id="model" class="section level2">
+<h2>Model</h2>
 <p>Given snapshots <span class="math inline">\(C^{i}_{t}\)</span>
 reflecting reported counts for time <span class="math inline">\(t\)</span> where <span class="math inline">\(i=1\ldots S\)</span> is in order of recency
 (earliest snapshots first) and <span class="math inline">\(S\)</span> is
-the number of past snapshots used for estimation, we try to infer the
-parameters of a discrete truncation distribution <span class="math inline">\(\zeta(\tau | \mu_{\zeta}, \sigma_{\zeta})\)</span>
-with corresponding probability mass function <span class="math inline">\(Z(\tau | \mu_{\zeta}\)</span>).</p>
+the number of past snapshots used for estimation, we infer the
+parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> of a
+discrete truncation distribution with cumulative mass function <span class="math inline">\(Z(\tau | \boldsymbol{\theta})\)</span>. The
+truncation distribution can be any family supported by
+<code>dist_spec</code> (e.g. log-normal, gamma).</p>
 <p>The model assumes that final counts <span class="math inline">\(D_{t}\)</span> are related to observed snapshots
 via the truncation distribution such that</p>
 <p><span class="math display">\[\begin{equation}
-C^{i &lt; S)_{t}_\sim \mathrm{NegBinom}\left(Z (T_i - t | \mu_{Z},
-\sigma_{Z}) D(t) + \sigma, \varphi\right)
+C^{i &lt; S}_{t} \sim F\left(Z(T_i - t | \boldsymbol{\theta}) \cdot D(t)
++ \sigma\right)
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(T_i\)</span> is the date of the
 final observation in snapshot <span class="math inline">\(i\)</span>,
 <span class="math inline">\(Z(\tau)\)</span> is defined to be zero for
-negative values of <span class="math inline">\(\tau\)</span> and <span class="math inline">\(\sigma\)</span> is an additional error term.</p>
+negative values of <span class="math inline">\(\tau\)</span>, <span class="math inline">\(\sigma\)</span> is an additive noise term
+(controlled via the <code>noise</code> argument), and <span class="math inline">\(F\)</span> is the observation model (Poisson or
+negative binomial, controlled via <code>obs_opts()</code>).</p>
 <p>The final counts <span class="math inline">\(D_{t}\)</span> are
 estimated from the most recent snapshot as</p>
 <p><span class="math display">\[\begin{equation}
-D_t = \frac{C^{S}}{Z (T_\mathrm{S} - t | \mu_{Z}, \sigma_{Z})}
+D_t = \frac{C^{S}_{t}}{Z(T_S - t | \boldsymbol{\theta})}
 \end{equation}\]</span></p>
-<p>Relevant priors are:</p>
+<div id="priors" class="section level3">
+<h3>Priors</h3>
 <p><span class="math display">\[\begin{align}
-\mu_\zeta &amp;\sim \mathrm{Normal}(0, 1)\\
-\sigma_\zeta &amp;\sim \mathrm{HalfNormal}(0, 1)\\
-\frac{1}{\sqrt{\varphi}} &amp;\sim \mathrm{HalfNormal}(0, 0.25)\\
-\sigma &amp;\sim \mathrm{HalfNormal}(0, 1)
+\boldsymbol{\theta} &amp;\sim \text{as specified by }
+\texttt{trunc\_opts()} \\
+\varphi &amp;\sim \text{as specified by } \texttt{obs\_opts()} \quad
+\text{(negative binomial only)} \\
+\sigma &amp;\sim \text{as specified by } \texttt{noise}
 \end{align}\]</span></p>
+</div>
+</div>
 
 
 

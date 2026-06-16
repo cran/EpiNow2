@@ -267,16 +267,18 @@ details</h1>
 <li><a href="#overview" id="toc-overview"><span class="toc-section-number">1</span> Overview</a></li>
 <li><a href="#definition" id="toc-definition"><span class="toc-section-number">2</span> Definition</a>
 <ul>
-<li><a href="#mat%C3%A9rn-32-covariance-kernel-the-default" id="toc-matérn-32-covariance-kernel-the-default"><span class="toc-section-number">2.1</span> Matérn 3/2 covariance kernel (the
+<li><a href="#matérn-32-covariance-kernel-the-default" id="toc-matérn-32-covariance-kernel-the-default"><span class="toc-section-number">2.1</span> Matérn 3/2 covariance kernel (the
 default)</a></li>
 <li><a href="#squared-exponential-kernel" id="toc-squared-exponential-kernel"><span class="toc-section-number">2.2</span> Squared exponential
 kernel</a></li>
-<li><a href="#ornstein-uhlenbeck-mat%C3%A9rn-12-kernel" id="toc-ornstein-uhlenbeck-matérn-12-kernel"><span class="toc-section-number">2.3</span> Ornstein-Uhlenbeck (Matérn 1/2)
+<li><a href="#ornstein-uhlenbeck-matérn-12-kernel" id="toc-ornstein-uhlenbeck-matérn-12-kernel"><span class="toc-section-number">2.3</span> Ornstein-Uhlenbeck (Matérn 1/2)
 kernel</a></li>
-<li><a href="#mat%C3%A9rn-52-covariance-kernel" id="toc-matérn-52-covariance-kernel"><span class="toc-section-number">2.4</span> Matérn 5/2 covariance
+<li><a href="#matérn-52-covariance-kernel" id="toc-matérn-52-covariance-kernel"><span class="toc-section-number">2.4</span> Matérn 5/2 covariance
 kernel</a></li>
 </ul></li>
 <li><a href="#hilbert-space-approximation" id="toc-hilbert-space-approximation"><span class="toc-section-number">3</span> Hilbert space approximation</a></li>
+<li><a href="#modelling-the-reproduction-number" id="toc-modelling-the-reproduction-number"><span class="toc-section-number">4</span> Modelling the reproduction
+number</a></li>
 <li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
@@ -347,8 +349,8 @@ k(\Delta t) = \alpha \left( 1 + \frac{\sqrt{5} \Delta t}{\rho} +
 approximation</h1>
 <p>In order to make our models computationally tractable, we approximate
 the Gaussian Process using a Hilbert space approximation to the Gaussian
-Process<span class="citation"><sup>[1]</sup></span>, centered around
-mean zero.</p>
+Process<span class="citation"><sup>[1]</sup></span>, centred around mean
+zero.</p>
 <p><span class="math display">\[\begin{equation}
 \mathrm{GP}(0, k(\Delta t)) \approx \sum_{j=1}^m
 \left(S_k(\sqrt{\lambda_j}) \right)^\frac{1}{2} \phi_j(t) \beta_j
@@ -431,6 +433,76 @@ L &amp;= 1.5
 \end{align}\]</span></p>
 <p>These values as well as the prior distributions of relevant
 parameters can all be changed by the user.</p>
+</div>
+<div id="modelling-the-reproduction-number" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Modelling the
+reproduction number</h1>
+<p>The default <code>estimate_infections()</code> model uses <a href="estimate_infections.html#time-varying-reproduction-number">the GP
+to model the first-order difference of <span class="math inline">\(\log
+R_t\)</span></a>, with the trajectory itself built by cumulative
+summation of GP values <span class="math inline">\(\mathrm{GP}_i\)</span>. Writing <span class="math inline">\(T_\mathrm{obs}\)</span> for the length of the
+observation window and <span class="math inline">\(R_1\)</span> for the
+initial reproduction number, this construction is</p>
+<p><span class="math display">\[\begin{equation}
+\log R_t = \log R_1 + \sum_{i = 1}^{t - 1} \mathrm{GP}_i
+\end{equation}\]</span></p>
+<p>Without further constraint this parameterisation makes inference
+difficult: a constant added to <span class="math inline">\(\log
+R_1\)</span> and subtracted from the cumulative sum of GP values leaves
+<span class="math inline">\(\log R_t\)</span> unchanged for all <span class="math inline">\(t\)</span>, so <span class="math inline">\(R_1\)</span> and the long-run drift of the GP are
+not jointly identified by the data. The likelihood is flat along this
+direction (a ridge in the joint posterior), giving the sampler poor
+geometry and, on some random seeds, stuck chains and large <span class="math inline">\(\hat R\)</span> values.</p>
+<p>This parallels a common issue in standard regression problems, where
+the intercept and the slope can trade off against each other unless the
+predictors are centred. There, a common fix is to <a href="https://mc-stan.org/docs/stan-users-guide/efficiency-tuning.html#standardizing-predictors">centre
+the predictors</a> so the intercept becomes the response value at the
+mean of the predictors rather than at zero, which decorrelates the
+intercept from the slope and gives the sampler a cleaner geometry; this
+is how, for example, <a href="https://paulbuerkner.com/brms/reference/brmsformula.html#parameterization-of-the-population-level-intercept"><code>brms</code></a>
+parameterises intercepts internally. Here the cumulative GP increments
+play the role of the slope (they determine the drift of <span class="math inline">\(\log R_t\)</span>) and <span class="math inline">\(\log R_1\)</span> plays the role of the
+intercept.</p>
+<p>To apply the same fix we look for an alternative parameter that
+<em>is</em> well-identified by the data. Averaging the construction
+above over the observation window gives</p>
+<p><span class="math display">\[\begin{equation}
+\overline{\log R} := \frac{1}{T_\mathrm{obs}} \sum_{t =
+1}^{T_\mathrm{obs}} \log R_t = \log R_1 + \overline{\mathrm{GP}}
+\end{equation}\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\begin{equation}
+\overline{\mathrm{GP}} = \frac{1}{T_\mathrm{obs}} \sum_{t =
+1}^{T_\mathrm{obs}} \sum_{i = 1}^{t - 1} \mathrm{GP}_i =
+\frac{1}{T_\mathrm{obs}} \sum_{i = 1}^{T_\mathrm{obs} - 1}
+(T_\mathrm{obs} - i) \, \mathrm{GP}_i
+\end{equation}\]</span></p>
+<p>is the empirical mean over the observation window of the cumulative
+sum of GP values. Unlike <span class="math inline">\(\log R_1\)</span>,
+the mean of <span class="math inline">\(\log R_t\)</span> over the
+observation window is informed by the entire data series and so does not
+suffer from the ridge. We therefore sample <span class="math inline">\(\overline{\log R}\)</span> as the internal
+parameter, recover <span class="math inline">\(\log R_1 = \overline{\log
+R} - \overline{\mathrm{GP}}\)</span>, and rewrite the construction
+as</p>
+<p><span class="math display">\[\begin{equation}
+\log R_t = \overline{\log R} + \sum_{i = 1}^{t - 1} \mathrm{GP}_i -
+\overline{\mathrm{GP}}.
+\end{equation}\]</span></p>
+<p>Centring only over the observation window (not the forecast horizon)
+ensures that the fitted historical <span class="math inline">\(R_t\)</span> does not shift when the forecast
+horizon is changed.</p>
+<p>The user’s prior on the initial reproduction number is then applied
+to the derived quantity</p>
+<p><span class="math display">\[\begin{equation}
+R_1 = \exp(\overline{\log R} - \overline{\mathrm{GP}})
+\end{equation}\]</span></p>
+<p>via a <a href="https://mc-stan.org/docs/stan-users-guide/reparameterization.html#changes-of-variables">change
+of variables</a>. The Jacobian of this transform is</p>
+<p><span class="math display">\[\begin{equation}
+\left| \frac{\partial R_1}{\partial \overline{\log R}} \right| = R_1
+\end{equation}\]</span></p>
+<p>so we need to add a Jacobian correction of <span class="math inline">\(\log R_1\)</span> to the target log density.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>

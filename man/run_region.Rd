@@ -14,7 +14,6 @@ run_region(
   gp,
   obs,
   stan,
-  horizon,
   CrIs,
   data,
   target_folder,
@@ -65,9 +64,6 @@ observation model. Defaults to \code{\link[=obs_opts]{obs_opts()}}.}
 to \code{\link[=stan_opts]{stan_opts()}}. Can be used to override \code{data}, \code{init}, and \code{verbose}
 settings if desired.}
 
-\item{horizon}{Deprecated; use \code{forecast} instead to specify the predictive
-horizon}
-
 \item{CrIs}{Numeric vector of credible intervals to calculate.}
 
 \item{data}{A \verb{<data.frame>} of disease reports (confirm) by date
@@ -108,7 +104,6 @@ the use of a  progress bar. If NULL (default), no progress bar is used.}
 A list of processed output as produced by \code{\link[=process_region]{process_region()}}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 Internal function that handles calling \code{\link[=epinow]{epinow()}}. Future work will extend
 this function to better handle stan logs and allow the user to modify
 settings between regions.

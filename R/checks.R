@@ -1,6 +1,6 @@
 #' Validate data input
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' `check_reports_valid()` checks that the supplied data is a `<data.frame>`,
 #' and that it has the right column names and types. In particular, it checks
 #' that the date column is in date format and does not contain NAs, and that
@@ -51,9 +51,33 @@ check_reports_valid <- function(data,
   invisible(data)
 }
 
+#' Validate simulation input data frame
+#'
+#' @description
+#' Checks that a data frame intended for simulation has the required `date`
+#' column and a named numeric value column, that the `date` column is in date
+#' format, and that the value column contains non-negative numeric values with
+#' no missing entries.
+#'
+#' @param data A data frame with at least a `date` column and a numeric value
+#'   column named `value_col`.
+#' @param value_col Character; name of the numeric value column to check.
+#' @importFrom checkmate assert_data_frame assert_date assert_numeric
+#'   assert_subset
+#' @return Called for its side effects.
+#' @keywords internal
+check_simulation_input <- function(data, value_col) {
+  data_name <- deparse(substitute(data))
+  assert_data_frame(data, any.missing = FALSE, .var.name = data_name)
+  assert_subset(c("date", value_col), colnames(data))
+  assert_date(data$date)
+  assert_numeric(data[[value_col]], lower = 0)
+  invisible(data)
+}
+
 #' Validate probability distribution for passing to stan
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' `check_stan_delay()` checks that the supplied data is a `<dist_spec>`,
 #' that it is a supported distribution, and that is has a finite maximum.
 #'
@@ -123,11 +147,10 @@ check_stan_delay <- function(dist) {
 
 #' Validate probability distribution for using as generation time
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' does all the checks in`check_stan_delay()` and additionally makes sure
 #' that if `dist` is nonparametric,  its first element is zero.
 #'
-#' @importFrom lifecycle deprecate_warn
 #' @inheritParams check_stan_delay
 #' @return Called for its side effects.
 #' @keywords internal
@@ -139,18 +162,10 @@ check_generation_time <- function(dist) {
     get_distribution(dist, i) == "nonparametric" && get_pmf(dist, i)[1] > 0
   }, logical(1))
   if (all(nonzero_first_element)) {
-    deprecate_stop(
-      "1.6.0",
-      I(
-        "Specifying nonparametric generation times with nonzero first element"
-      ),
-      details = c(
-        "Since zero generation times are not supported by the model, the
-         generation time will be left-truncated at one. ",
-        "In future versions this will cause an error. Please ensure that the
-         first element of the nonparametric generation interval is zero."
-      )
-    )
+    cli_abort(c(
+      "!" = "Nonparametric generation times must have zero as first element.",
+      "i" = "Zero generation times are not supported by the model."
+    ))
   }
 }
 
@@ -251,4 +266,37 @@ check_truncation_length <- function(stan_args, time_points) {
       .frequency_id = "truncation_longer_than_data"
     )
   }
+}
+
+#' Check that obs_opts settings unused by estimate_truncation are at defaults
+#'
+#' @description Internal check that warns when [obs_opts()] settings that are
+#' not consumed by the truncation model (week effect, scale, weight) have been
+#' set to non-default values. These settings are silently ignored by
+#' [estimate_truncation()] which only uses `family`, `dispersion`,
+#' `likelihood` and `return_likelihood`.
+#'
+#' @param obs An `<obs_opts>` object.
+#' @importFrom cli cli_warn
+#' @return Called for its side effects.
+#' @keywords internal
+check_truncation_obs_opts <- function(obs) {
+  defaults <- obs_opts()
+  unused <- c(
+    "weight", "week_effect", "week_length", "scale"
+  )
+  changed <- vapply(unused, function(field) {
+    !identical(obs[[field]], defaults[[field]])
+  }, logical(1))
+  if (any(changed)) {
+    cli_warn(
+      c(
+        "!" = "Some {.fun obs_opts} settings are ignored by
+          {.fun estimate_truncation}: {.field {unused[changed]}}.",
+        "i" = "Only {.field family} and {.field dispersion} are used by the
+          truncation model."
+      )
+    )
+  }
+  invisible()
 }

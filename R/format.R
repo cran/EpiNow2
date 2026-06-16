@@ -1,6 +1,6 @@
 #' Format Posterior Samples
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Summaries posterior samples and adds additional custom variables.
 #'
 #' @param posterior_samples A list of posterior samples as returned by
@@ -10,32 +10,13 @@
 #'
 #' @param shift Numeric, the shift to apply to estimates.
 #'
-#' @param burn_in Deprecated; this functionality is no longer available.
-#'
-#' @param start_date Deprecated; this functionality is no longer available.
-#'
 #' @inheritParams calc_summary_measures
 #' @importFrom data.table fcase rbindlist
 #' @importFrom lubridate days
 #' @importFrom futile.logger flog.info
 #' @return A list of samples and summarised posterior parameter estimates.
 #' @keywords internal
-format_fit <- function(posterior_samples, horizon, shift, burn_in, start_date,
-                       CrIs) {
-  if (!missing(burn_in)) {
-    lifecycle::deprecate_stop(
-      "1.8.0",
-      "format_fit(burn_in)",
-      detail = "This functionality is no longer available."
-    )
-  }
-  if (!missing(start_date)) {
-    lifecycle::deprecate_stop(
-      "1.8.0",
-      "format_fit(start_date)",
-      detail = "This functionality is no longer available."
-    )
-  }
+format_fit <- function(posterior_samples, horizon, shift, CrIs) {
   format_out <- list()
   # bind all samples together
   format_out$samples <- data.table::rbindlist(
@@ -70,7 +51,7 @@ format_fit <- function(posterior_samples, horizon, shift, burn_in, start_date,
 
 #' Format Simulation Output from Stan
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Formats simulation output from Stan models into structured data.tables with
 #' dates. This is an internal function used by [simulate_infections()] and
 #' [forecast_infections()] to process simulation results.

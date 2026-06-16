@@ -1,6 +1,6 @@
 #' Fit an Integer Adjusted Exponential, Gamma or Lognormal distributions
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Fits an integer adjusted exponential, gamma or lognormal distribution using
 #' stan.
 #' @param values Numeric vector of values
@@ -112,7 +112,7 @@ dist_fit <- function(values = NULL, samples = 1000, cores = 1,
 #' Fit a Subsampled Bootstrap to Integer Values and Summarise Distribution
 #' Parameters
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Fits an integer adjusted distribution to a subsampled bootstrap of data and
 #' then integrates the posterior samples into a single set of summary
 #' statistics. Can be used to generate a robust reporting delay that accounts
@@ -243,9 +243,11 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
 
 #' Estimate a Delay Distribution
 #'
-#' @description `r lifecycle::badge("maturing")`
+#' @description `r lifecycle::badge("deprecated")`
 #' Estimate a log normal delay distribution from a vector of integer delays.
-#' Currently this function is a simple wrapper for [bootstrapped_dist_fit()].
+#'
+#' **This function is deprecated.** Please use [estimate_dist()] instead,
+#' which provides better handling of censoring and truncation.
 #'
 #' @param delays Integer vector of delays
 #'
@@ -253,14 +255,23 @@ bootstrapped_dist_fit <- function(values, dist = "lognormal",
 #'
 #' @return A `<dist_spec>` summarising the bootstrapped distribution
 #' @export
-#' @seealso [bootstrapped_dist_fit()]
+#' @seealso [estimate_dist()] for the recommended replacement
 #' @examples
 #' \donttest{
-#' # bootstraps and samples have been reduced for this example
 #' delays <- rlnorm(500, log(5), 1)
-#' estimate_delay(delays, samples = 500, bootstraps = 2)
+#' # Old way (deprecated):
+#' # estimate_delay(delays, samples = 1000, bootstraps = 10)
+#'
+#' # New way: see ?estimate_dist and
+#' # vignette("estimate_dist_workflow") for date-based usage
 #' }
 estimate_delay <- function(delays, ...) {
+  lifecycle::deprecate_warn(
+    when = "1.9.0",
+    what = "estimate_delay()",
+    with = "estimate_dist()"
+  )
+
   bootstrapped_dist_fit(
     values = delays,
     dist = "lognormal", ...

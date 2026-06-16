@@ -72,9 +72,20 @@ test_that("forecast_infections methods respect CrIs argument", {
 test_that("forecast_infections works with cmdstanr backend", {
   skip_integration()
   skip_on_os("windows")
-  fixtures <- get_test_fixtures()
   output <- capture.output(suppressMessages(suppressWarnings(
-    sims <- forecast_infections(fixtures$estimate_infections, backend = "cmdstanr")
+    fit <- estimate_infections(
+      EpiNow2::example_confirmed[1:30],
+      generation_time = gt_opts(example_generation_time),
+      delays = delay_opts(example_incubation_period + example_reporting_delay),
+      rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.2)),
+      stan = stan_opts(
+        backend = "cmdstanr",
+        samples = 25, warmup = 25, chains = 2, cores = 1
+      )
+    )
+  )))
+  output <- capture.output(suppressMessages(suppressWarnings(
+    sims <- forecast_infections(fit, backend = "cmdstanr")
   )))
   expect_equal(names(sims), c("samples", "summarised", "observations"))
 })
@@ -172,4 +183,24 @@ test_that("get_predictions produces expected output with format = 'summary'", {
   expect_true("date" %in% names(preds))
   expect_true("mean" %in% names(preds))
   expect_false("confirm" %in% names(preds))
+})
+
+test_that("forecast_infections works with R extended beyond original fit", {
+  skip_integration()
+  fixtures <- get_test_fixtures()
+  # Get the original R length from the fit
+ original_R_length <- nrow(
+    summary(fixtures$estimate_infections, type = "parameters", param = "R")
+  )
+  # Create an R vector longer than the original fit (extend by 10 days)
+  extended_R <- c(rep(NA_real_, original_R_length), rep(0.8, 10))
+  # This would fail before the fix due to date-dimension mismatch
+  sims <- forecast_infections(
+    fixtures$estimate_infections, R = extended_R, samples = 10
+  )
+  expect_equal(names(sims), c("samples", "summarised", "observations"))
+  expect_true(nrow(sims$samples) > 0)
+  # Verify get_samples works (this was part of the failing call chain)
+  samples <- get_samples(sims)
+  expect_s3_class(samples, "data.table")
 })

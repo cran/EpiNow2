@@ -9,7 +9,7 @@ extract_latent_state(param, samples, dates)
 \arguments{
 \item{param}{Character string indicating the latent state to extract}
 
-\item{samples}{Extracted stan model (using \code{\link[rstan:stanfit-method-extract]{rstan::extract()}})}
+\item{samples}{Extracted stan model (using \code{\link[rstan:extract]{rstan::extract()}})}
 
 \item{dates}{A vector identifying the dimensionality of the latent state to
 extract. Generally this will be a date.}
@@ -26,7 +26,6 @@ date column}
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Extracts a time-varying latent state from a list of stan output and returns
 it as a \verb{<data.table>}.
 }

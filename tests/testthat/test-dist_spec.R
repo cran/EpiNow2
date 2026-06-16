@@ -68,6 +68,84 @@ test_that("dist_spec returns error when the wrong number of parameters are given
   expect_error(Gamma(shape = 1, rate = 2, mean = 3), "must be specified")
 })
 
+test_that("each supported distribution is fully wired through dist_spec", {
+  supported <- c("lognormal", "gamma", "normal", "exp", "weibull")
+  natural_values <- list(
+    lognormal = list(meanlog = 1, sdlog = 0.5),
+    gamma = list(shape = 2, rate = 1),
+    normal = list(mean = 4, sd = 1),
+    exp = list(rate = 0.5),
+    weibull = list(shape = 2, scale = 5)
+  )
+  constructors <- list(
+    lognormal = LogNormal, gamma = Gamma, normal = Normal,
+    exp = Exp, weibull = Weibull
+  )
+  weibull_m <- 5 * gamma(1 + 1 / 2)
+  weibull_s <- sqrt(5^2 * (gamma(1 + 2 / 2) - gamma(1 + 1 / 2)^2))
+  nonnatural_cases <- list(
+    gamma = list(
+      list(input = list(mean = 4, sd = 2),
+           expected = list(shape = 4, rate = 1)),
+      list(input = list(shape = 2, scale = 4),
+           expected = list(rate = 0.25))
+    ),
+    lognormal = list(
+      list(input = list(mean = 4, sd = 1),
+           expected = list(meanlog = log(16 / sqrt(17)),
+                           sdlog = sqrt(log(1 + 1 / 16))))
+    ),
+    weibull = list(
+      list(input = list(mean = weibull_m, sd = weibull_s),
+           expected = list(shape = 2, scale = 5))
+    )
+  )
+
+  for (d in supported) {
+    np <- EpiNow2:::natural_params(d)
+    expect_type(np, "character")
+    expect_gt(length(np), 0)
+
+    lb <- EpiNow2:::lower_bounds(d)
+    expect_true(
+      all(np %in% names(lb)),
+      info = paste("lower_bounds missing natural params for", d)
+    )
+
+    nat <- natural_values[[d]]
+    converted <- EpiNow2:::convert_to_natural(nat, d)
+    expect_equal(
+      converted[np], nat[np],
+      info = paste("convert_to_natural does not round-trip for", d)
+    )
+
+    for (case in nonnatural_cases[[d]]) {
+      converted <- EpiNow2:::convert_to_natural(case$input, d)
+      for (param in names(case$expected)) {
+        expect_equal(
+          converted[[param]], case$expected[[param]],
+          tolerance = 1e-6,
+          info = paste(
+            "convert_to_natural", d, "non-natural param", param,
+            "from", paste(names(case$input), collapse = ",")
+          )
+        )
+      }
+    }
+
+    spec <- do.call(constructors[[d]], nat)
+    expect_s3_class(spec, "dist_spec")
+    expect_equal(EpiNow2::get_distribution(spec), d)
+    expect_equal(EpiNow2::get_parameters(spec)[np], nat[np])
+
+    id <- primarycensored::pcd_stan_dist_id(d, "delay")
+    expect_equal(
+      EpiNow2:::dist_id_to_name(id), d,
+      info = paste("dist_id_to_name does not round-trip for", d)
+    )
+  }
+})
+
 test_that("c.dist_spec returns correct output for sum of two distributions", {
   dist1 <- LogNormal(meanlog = 5, sdlog = 1, max = 19)
   dist2 <- Gamma(shape = Normal(3, 0.5), rate = Normal(2, 0.5), max = 20)
@@ -297,15 +375,20 @@ test_that("delay distributions can be specified in different ways", {
     c(4, 1)
   )
   expect_equal(
-    unname(as.numeric(get_parameters(Normal(mean = 4, sd = 1)))), c(4, 1)
-  )
-  expect_equal(
     round(get_pmf(discretise(Normal(mean = 4, sd = 1, max = 5))), 2),
     c(0.00, 0.01, 0.10, 0.35, 0.54)
   )
   expect_equal(
     round(get_pmf(discretise(Normal(mean = 4, sd = 1, cdf_cutoff = 0.1))), 2),
     c(0.00, 0.01, 0.07, 0.26, 0.40, 0.26)
+  )
+  expect_equal(
+    round(get_pmf(discretise(Exp(rate = 0.5, max = 5))), 2),
+    c(0.24, 0.35, 0.21, 0.13, 0.08)
+  )
+  expect_equal(
+    round(get_pmf(discretise(Weibull(shape = 2, scale = 5, max = 5))), 2),
+    c(0.02, 0.14, 0.24, 0.30, 0.30)
   )
   expect_equal(get_pmf(discretise(Fixed(value = 3))), c(0, 0, 0, 1))
   ## fractional fixed values split probability across adjacent intervals
@@ -340,4 +423,44 @@ test_that("get functions report errors", {
   expect_error(get_parameters(c(
     Gamma(mean = 4, sd = 1), Gamma(mean = 4, sd = 1)
   )), "must be specified")
+})
+
+test_that("Dirichlet works with alpha vector", {
+  alpha <- c(1, 2, 3)
+  result <- Dirichlet(alpha)
+  expect_s3_class(result, "dist_spec")
+  expect_equal(get_distribution(result), "dirichlet")
+  expect_equal(get_parameters(result)$alpha, alpha)
+  expect_equal(mean(result), alpha / sum(alpha))
+})
+
+test_that("Dirichlet works with prior and concentration", {
+  prior <- c(0.1, 0.3, 0.4, 0.2)
+  conc <- 10
+  result <- Dirichlet(prior = prior, concentration = conc)
+  expect_s3_class(result, "dist_spec")
+  expect_equal(get_distribution(result), "dirichlet")
+  expect_equal(get_parameters(result)$alpha, conc * prior / sum(prior))
+  expect_equal(mean(result), prior / sum(prior))
+})
+
+test_that("NonParametric works with Dirichlet prior", {
+  prior <- c(0.1, 0.3, 0.4, 0.2)
+  conc <- 10
+  result <- NonParametric(pmf = Dirichlet(prior = prior, concentration = conc))
+  expect_s3_class(result, "dist_spec")
+  expect_equal(get_distribution(result), "nonparametric")
+  expect_true(isTRUE(result$estimated))
+  expect_equal(get_pmf(result), prior / sum(prior))
+  expect_equal(result$alpha, conc * prior / sum(prior))
+})
+
+test_that("Dirichlet works with dist_spec prior", {
+  dist <- LogNormal(meanlog = 1, sdlog = 0.5, max = 10)
+  result <- Dirichlet(prior = dist, concentration = 5)
+  expect_s3_class(result, "dist_spec")
+  expect_equal(get_distribution(result), "dirichlet")
+  expected_pmf <- get_pmf(discretise(dist))
+  expect_equal(mean(result), expected_pmf)
+  expect_equal(get_parameters(result)$alpha, 5 * expected_pmf)
 })

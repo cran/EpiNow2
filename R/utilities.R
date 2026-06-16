@@ -1,6 +1,6 @@
 #' Clean Nowcasts for a Supplied Date
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' This function removes nowcasts in the format produced by `EpiNow2` from a
 #' target directory for the date supplied.
 #'
@@ -36,7 +36,7 @@ clean_nowcasts <- function(date = Sys.Date(), nowcast_dir = ".") {
 
 #' Format Credible Intervals
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Combines a list of values into formatted credible intervals.
 #'
 #' @param value List of value to map into a string. Requires,
@@ -68,7 +68,7 @@ make_conf <- function(value, CrI = 90, reverse = FALSE) {
 
 #' Categorise the Probability of Change for Rt
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Categorises a numeric variable into "Increasing" (< 0.05),
 #' "Likely increasing" (<0.4), "Stable" (< 0.6),
 #' "Likely decreasing" (< 0.95), "Decreasing" (<= 1)
@@ -99,7 +99,7 @@ map_prob_change <- function(var) {
 
 #' Convert Growth Rates to Reproduction numbers.
 #'
-#' @description `r lifecycle::badge("questioning")`
+#' @description `r lifecycle::badge("superseded")`
 #' See [here](https://www.medrxiv.org/content/10.1101/2020.01.30.20019877v3.full.pdf) # nolint
 #' for justification. Now handled internally by stan so may be removed in
 #' future updates if no user demand.
@@ -120,7 +120,7 @@ growth_to_R <- function(r, gamma_mean, gamma_sd) {
 
 #' Convert Reproduction Numbers to Growth Rates
 #'
-#' @description `r lifecycle::badge("questioning")`
+#' @description `r lifecycle::badge("superseded")`
 #' See [here](https://www.medrxiv.org/content/10.1101/2020.01.30.20019877v3.full.pdf) # nolint
 #' for justification. Now handled internally by stan so may be removed in
 #' future updates if no user demand.
@@ -138,7 +138,7 @@ R_to_growth <- function(R, gamma_mean, gamma_sd) {
 
 #' Allocate Delays into Required Stan Format
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Allocate delays for stan. Used in [delay_opts()].
 #' @param delay_var List of numeric delays
 #' @param no_delays Numeric, number of delays
@@ -155,7 +155,7 @@ allocate_delays <- function(delay_var, no_delays) {
 
 #' Allocate Empty Parameters to a List
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Allocate missing parameters to be empty two dimensional arrays. Used
 #' internally by [forecast_infections()].
 #' @param data A list of parameters
@@ -174,7 +174,7 @@ allocate_empty <- function(data, params, n = 0) {
 }
 #' Match User Supplied Arguments with Supported Options
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Match user supplied arguments with supported options and return a logical
 #' list for internal usage.
 #'
@@ -231,7 +231,7 @@ match_output_arguments <- function(input_args = NULL,
 
 #' Expose internal package stan functions in R
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' his function exposes internal stan functions in R from a user
 #' supplied list of target files. Allows for testing of stan functions in R and
 #' potentially user use in R code.
@@ -265,7 +265,7 @@ expose_stan_fns <- function(files, target_dir, ...) {
 
 #' Convert mean and sd to log mean for a log normal distribution
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Convert from mean and standard deviation to the log mean of the
 #' lognormal distribution. Useful for defining distributions supported by
 #' [estimate_infections()], [epinow()], and [regional_epinow()].
@@ -284,7 +284,7 @@ convert_to_logmean <- function(mean, sd) {
 
 #' Convert mean and sd to log standard deviation for a log normal distribution
 #'
-#' @description `r lifecycle::badge("stable")`
+#' @description
 #' Convert from mean and standard deviation to the log standard deviation of the
 #' lognormal distribution. Useful for defining distributions supported by
 #' [estimate_infections()], [epinow()], and [regional_epinow()].
@@ -479,6 +479,78 @@ make_param <- function(name, dist = NULL, lower_bound = -Inf) {
   )
   class(params) <- c("EpiNow2.param", "list")
   params
+}
+
+##' Pack a dist_spec into stan-side init-prior fields
+##'
+##' Converts a `<dist_spec>` into the integer/vector representation consumed
+##' by the init-prior loop in `inst/stan/estimate_infections.stan` (data
+##' items `init_dists`, `init_dist_params`, `init_lower`, `init_upper`).
+##'
+##' @param dist A `<dist_spec>` (LogNormal, Gamma, or Normal).
+##' @param lower_bound Numeric, lower bound on the parameter's support.
+##' @return A list with elements `dist_type` (integer code: 0 = lognormal,
+##' 1 = gamma, 2 = normal), `params` (numeric, the distribution parameters),
+##' `lower` and `upper` (numeric scalars).
+##' @keywords internal
+pack_init_prior <- function(dist, lower_bound = 0) {
+  dist_name <- get_distribution(dist)
+  dist_type <- switch(dist_name,
+    lognormal = 0L,
+    gamma = 1L,
+    normal = 2L,
+    cli_abort(c(
+      "!" = "Init prior distribution {.val {dist_name}} not supported.",
+      "i" = "Use {.fn LogNormal}, {.fn Gamma}, or {.fn Normal}."
+    ))
+  )
+  params <- as.numeric(unlist(get_parameters(dist)))
+  list(
+    dist_type = dist_type,
+    params = params,
+    lower = lower_bound,
+    upper = max(dist)
+  )
+}
+
+##' Build the stan-side init-prior data block from a list of priors
+##'
+##' Bundles the data items consumed by the init-prior dispatch in
+##' `inst/stan/estimate_infections.stan` (`n_init_priors`, `init_param_ids`,
+##' `init_dists`, `init_lower`, `init_upper`, `init_dist_params_length`,
+##' `init_dist_params`). With no priors, returns empty arrays so callers
+##' (such as forward simulation) satisfy the shared data block.
+##'
+##' @param priors A list of `list(param_id, dist, lower_bound)` entries,
+##' one per init prior; defaults to an empty list.
+##' @return A named list of stan_data fields to be merged in via `c()`.
+##' @keywords internal
+make_init_priors <- function(priors = list()) {
+  if (length(priors) == 0) {
+    return(list(
+      n_init_priors = 0L,
+      init_param_ids = array(integer(0)),
+      init_dists = array(integer(0)),
+      init_lower = array(numeric(0)),
+      init_upper = array(numeric(0)),
+      init_dist_params_length = 0L,
+      init_dist_params = array(numeric(0))
+    ))
+  }
+  packed <- lapply(priors, function(p) {
+    pack_init_prior(p$dist, lower_bound = p$lower_bound %||% 0)
+  })
+  list(
+    n_init_priors = length(priors),
+    init_param_ids = array(vapply(priors, `[[`, integer(1), "param_id")),
+    init_dists = array(vapply(packed, `[[`, integer(1), "dist_type")),
+    init_lower = array(vapply(packed, `[[`, numeric(1), "lower")),
+    init_upper = array(vapply(packed, `[[`, numeric(1), "upper")),
+    init_dist_params_length = sum(
+      vapply(packed, function(p) length(p$params), integer(1))
+    ),
+    init_dist_params = array(unlist(lapply(packed, `[[`, "params")))
+  )
 }
 
 #' @importFrom stats glm median na.omit pexp pgamma plnorm quasipoisson rexp

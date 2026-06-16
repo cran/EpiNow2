@@ -27,471 +27,1030 @@ namespace model_estimate_secondary_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 464> locations_array__ =
+static constexpr std::array<const char*, 853> locations_array__ =
   {" (found before start of program)",
-  " (in 'estimate_secondary', line 893, column 2 to column 71)",
-  " (in 'estimate_secondary', line 894, column 2 to column 43)",
-  " (in 'estimate_secondary', line 895, column 2 to column 79)",
-  " (in 'estimate_secondary', line 898, column 2 to column 31)",
-  " (in 'estimate_secondary', line 977, column 2 to column 39)",
-  " (in 'estimate_secondary', line 978, column 2 to column 58)",
-  " (in 'estimate_secondary', line 901, column 11 to column 12)",
-  " (in 'estimate_secondary', line 901, column 4 to column 21)",
-  " (in 'estimate_secondary', line 902, column 11 to column 12)",
-  " (in 'estimate_secondary', line 902, column 4 to column 46)",
-  " (in 'estimate_secondary', line 911, column 6 to column 23)",
-  " (in 'estimate_secondary', line 910, column 11 to line 912, column 5)",
-  " (in 'estimate_secondary', line 905, column 6 to line 908, column 8)",
-  " (in 'estimate_secondary', line 909, column 6 to column 53)",
-  " (in 'estimate_secondary', line 904, column 19 to line 910, column 5)",
-  " (in 'estimate_secondary', line 904, column 4 to line 912, column 5)",
-  " (in 'estimate_secondary', line 923, column 6 to column 37)",
-  " (in 'estimate_secondary', line 922, column 11 to line 924, column 5)",
-  " (in 'estimate_secondary', line 914, column 13 to column 51)",
-  " (in 'estimate_secondary', line 914, column 6 to line 920, column 10)",
-  " (in 'estimate_secondary', line 921, column 6 to column 79)",
-  " (in 'estimate_secondary', line 913, column 28 to line 922, column 5)",
-  " (in 'estimate_secondary', line 913, column 4 to line 924, column 5)",
-  " (in 'estimate_secondary', line 925, column 4 to line 928, column 6)",
-  " (in 'estimate_secondary', line 900, column 2 to line 929, column 3)",
-  " (in 'estimate_secondary', line 932, column 4 to column 80)",
-  " (in 'estimate_secondary', line 931, column 23 to line 933, column 3)",
-  " (in 'estimate_secondary', line 931, column 2 to line 933, column 3)",
-  " (in 'estimate_secondary', line 936, column 11 to column 50)",
-  " (in 'estimate_secondary', line 936, column 4 to line 942, column 8)",
-  " (in 'estimate_secondary', line 943, column 4 to column 58)",
-  " (in 'estimate_secondary', line 935, column 27 to line 944, column 3)",
-  " (in 'estimate_secondary', line 935, column 2 to line 944, column 3)",
-  " (in 'estimate_secondary', line 948, column 6 to column 60)",
-  " (in 'estimate_secondary', line 947, column 4 to line 949, column 5)",
-  " (in 'estimate_secondary', line 946, column 22 to line 950, column 3)",
-  " (in 'estimate_secondary', line 946, column 2 to line 950, column 3)",
-  " (in 'estimate_secondary', line 980, column 4 to line 983, column 6)",
-  " (in 'estimate_secondary', line 985, column 4 to line 987, column 6)",
-  " (in 'estimate_secondary', line 990, column 6 to line 993, column 8)",
-  " (in 'estimate_secondary', line 989, column 27 to line 994, column 5)",
-  " (in 'estimate_secondary', line 989, column 4 to line 994, column 5)",
-  " (in 'estimate_secondary', line 979, column 2 to line 995, column 3)",
-  " (in 'estimate_secondary', line 954, column 2 to line 957, column 4)",
-  " (in 'estimate_secondary', line 960, column 4 to line 962, column 6)",
-  " (in 'estimate_secondary', line 959, column 2 to line 963, column 3)",
-  " (in 'estimate_secondary', line 966, column 4 to line 969, column 6)",
-  " (in 'estimate_secondary', line 970, column 4 to line 973, column 6)",
-  " (in 'estimate_secondary', line 965, column 18 to line 974, column 3)",
-  " (in 'estimate_secondary', line 965, column 2 to line 974, column 3)",
-  " (in 'estimate_secondary', line 806, column 2 to column 8)",
-  " (in 'estimate_secondary', line 807, column 2 to column 9)",
-  " (in 'estimate_secondary', line 808, column 8 to column 9)",
-  " (in 'estimate_secondary', line 808, column 2 to column 30)",
-  " (in 'estimate_secondary', line 809, column 8 to column 10)",
-  " (in 'estimate_secondary', line 809, column 2 to column 25)",
-  " (in 'estimate_secondary', line 810, column 9 to column 10)",
-  " (in 'estimate_secondary', line 810, column 2 to column 20)",
-  " (in 'estimate_secondary', line 811, column 2 to column 14)",
-  " (in 'estimate_secondary', line 812, column 2 to column 21)",
-  " (in 'estimate_secondary', line 813, column 8 to column 9)",
-  " (in 'estimate_secondary', line 813, column 2 to column 26)",
-  " (in 'estimate_secondary', line 815, column 0 to column 17)",
-  " (in 'estimate_secondary', line 816, column 0 to column 15)",
-  " (in 'estimate_secondary', line 817, column 0 to column 13)",
-  " (in 'estimate_secondary', line 818, column 0 to column 26)",
-  " (in 'estimate_secondary', line 819, column 0 to column 12)",
-  " (in 'estimate_secondary', line 820, column 0 to column 29)",
-  " (in 'estimate_secondary', line 822, column 0 to column 23)",
-  " (in 'estimate_secondary', line 823, column 0 to column 25)",
-  " (in 'estimate_secondary', line 824, column 0 to column 26)",
-  " (in 'estimate_secondary', line 825, column 6 to column 15)",
-  " (in 'estimate_secondary', line 825, column 0 to column 42)",
-  " (in 'estimate_secondary', line 826, column 6 to column 15)",
-  " (in 'estimate_secondary', line 826, column 0 to column 43)",
-  " (in 'estimate_secondary', line 828, column 0 to column 35)",
-  " (in 'estimate_secondary', line 830, column 29 to column 48)",
-  " (in 'estimate_secondary', line 830, column 0 to column 63)",
-  " (in 'estimate_secondary', line 832, column 6 to column 20)",
-  " (in 'estimate_secondary', line 832, column 0 to column 57)",
-  " (in 'estimate_secondary', line 835, column 0 to column 35)",
-  " (in 'estimate_secondary', line 837, column 7 to column 26)",
-  " (in 'estimate_secondary', line 837, column 0 to column 47)",
-  " (in 'estimate_secondary', line 839, column 35 to column 54)",
-  " (in 'estimate_secondary', line 839, column 0 to column 74)",
-  " (in 'estimate_secondary', line 841, column 18 to column 37)",
-  " (in 'estimate_secondary', line 841, column 0 to column 55)",
-  " (in 'estimate_secondary', line 843, column 6 to column 19)",
-  " (in 'estimate_secondary', line 843, column 0 to column 56)",
-  " (in 'estimate_secondary', line 845, column 6 to column 15)",
-  " (in 'estimate_secondary', line 845, column 0 to column 45)",
-  " (in 'estimate_secondary', line 846, column 0 to column 27)",
-  " (in 'estimate_secondary', line 848, column 6 to column 13)",
-  " (in 'estimate_secondary', line 848, column 0 to column 44)",
-  " (in 'estimate_secondary', line 850, column 6 to column 13)",
-  " (in 'estimate_secondary', line 850, column 0 to column 45)",
-  " (in 'estimate_secondary', line 852, column 6 to column 21)",
-  " (in 'estimate_secondary', line 852, column 0 to column 57)",
-  " (in 'estimate_secondary', line 854, column 6 to column 22)",
-  " (in 'estimate_secondary', line 854, column 0 to column 40)",
-  " (in 'estimate_secondary', line 855, column 0 to column 15)",
-  " (in 'estimate_secondary', line 856, column 0 to column 16)",
-  " (in 'estimate_secondary', line 857, column 0 to column 14)",
-  " (in 'estimate_secondary', line 858, column 0 to column 16)",
-  " (in 'estimate_secondary', line 859, column 0 to column 15)",
-  " (in 'estimate_secondary', line 860, column 0 to column 22)",
-  " (in 'estimate_secondary', line 861, column 0 to column 35)",
-  " (in 'estimate_secondary', line 862, column 0 to column 34)",
-  " (in 'estimate_secondary', line 864, column 0 to column 33)",
-  " (in 'estimate_secondary', line 865, column 0 to column 30)",
-  " (in 'estimate_secondary', line 866, column 7 to column 24)",
-  " (in 'estimate_secondary', line 866, column 0 to column 39)",
-  " (in 'estimate_secondary', line 867, column 7 to column 24)",
-  " (in 'estimate_secondary', line 867, column 0 to column 39)",
-  " (in 'estimate_secondary', line 870, column 6 to column 40)",
-  " (in 'estimate_secondary', line 870, column 0 to column 77)",
-  " (in 'estimate_secondary', line 872, column 6 to column 40)",
-  " (in 'estimate_secondary', line 872, column 0 to column 80)",
-  " (in 'estimate_secondary', line 874, column 7 to column 21)",
-  " (in 'estimate_secondary', line 874, column 0 to column 36)",
-  " (in 'estimate_secondary', line 877, column 6 to column 23)",
-  " (in 'estimate_secondary', line 877, column 0 to column 51)",
-  " (in 'estimate_secondary', line 879, column 0 to column 40)",
-  " (in 'estimate_secondary', line 880, column 7 to column 31)",
-  " (in 'estimate_secondary', line 880, column 0 to column 51)",
-  " (in 'estimate_secondary', line 882, column 0 to column 42)",
-  " (in 'estimate_secondary', line 883, column 0 to column 49)",
-  " (in 'estimate_secondary', line 886, column 8 to column 19)",
-  " (in 'estimate_secondary', line 886, column 2 to line 889, column 4)",
-  " (in 'estimate_secondary', line 893, column 37 to column 56)",
-  " (in 'estimate_secondary', line 894, column 10 to column 21)",
-  " (in 'estimate_secondary', line 895, column 53 to column 70)",
-  " (in 'estimate_secondary', line 898, column 18 to column 19)",
-  " (in 'estimate_secondary', line 977, column 8 to column 19)",
-  " (in 'estimate_secondary', line 978, column 9 to column 48)",
-  " (in 'estimate_secondary', line 23, column 2 to column 30)",
-  " (in 'estimate_secondary', line 24, column 2 to column 41)",
-  " (in 'estimate_secondary', line 25, column 2 to column 16)",
-  " (in 'estimate_secondary', line 26, column 2 to column 41)",
-  " (in 'estimate_secondary', line 27, column 2 to column 19)",
-  " (in 'estimate_secondary', line 28, column 2 to column 42)",
-  " (in 'estimate_secondary', line 22, column 62 to line 29, column 1)",
-  " (in 'estimate_secondary', line 42, column 2 to column 30)",
-  " (in 'estimate_secondary', line 43, column 2 to column 41)",
-  " (in 'estimate_secondary', line 44, column 2 to column 19)",
-  " (in 'estimate_secondary', line 45, column 2 to column 41)",
-  " (in 'estimate_secondary', line 45, column 41 to column 42)",
-  " (in 'estimate_secondary', line 46, column 2 to column 30)",
-  " (in 'estimate_secondary', line 47, column 2 to column 42)",
-  " (in 'estimate_secondary', line 41, column 61 to line 48, column 1)",
-  " (in 'estimate_secondary', line 65, column 2 to column 29)",
-  " (in 'estimate_secondary', line 66, column 2 to column 29)",
-  " (in 'estimate_secondary', line 67, column 9 to column 12)",
-  " (in 'estimate_secondary', line 67, column 2 to column 16)",
-  " (in 'estimate_secondary', line 70, column 4 to column 74)",
-  " (in 'estimate_secondary', line 69, column 29 to line 71, column 3)",
-  " (in 'estimate_secondary', line 69, column 2 to line 71, column 3)",
-  " (in 'estimate_secondary', line 74, column 4 to column 59)",
-  " (in 'estimate_secondary', line 73, column 18 to line 75, column 3)",
-  " (in 'estimate_secondary', line 73, column 2 to line 75, column 3)",
-  " (in 'estimate_secondary', line 78, column 4 to column 65)",
-  " (in 'estimate_secondary', line 79, column 4 to column 75)",
-  " (in 'estimate_secondary', line 77, column 20 to line 80, column 3)",
-  " (in 'estimate_secondary', line 77, column 2 to line 80, column 3)",
-  " (in 'estimate_secondary', line 84, column 6 to column 66)",
-  " (in 'estimate_secondary', line 85, column 6 to column 77)",
-  " (in 'estimate_secondary', line 83, column 30 to line 86, column 5)",
-  " (in 'estimate_secondary', line 83, column 4 to line 86, column 5)",
-  " (in 'estimate_secondary', line 82, column 18 to line 87, column 3)",
-  " (in 'estimate_secondary', line 82, column 2 to line 87, column 3)",
-  " (in 'estimate_secondary', line 89, column 2 to column 11)",
-  " (in 'estimate_secondary', line 64, column 58 to line 90, column 1)",
-  " (in 'estimate_secondary', line 110, column 2 to column 35)",
-  " (in 'estimate_secondary', line 111, column 2 to column 43)",
-  " (in 'estimate_secondary', line 114, column 4 to column 44)",
-  " (in 'estimate_secondary', line 113, column 19 to line 115, column 3)",
-  " (in 'estimate_secondary', line 113, column 2 to line 115, column 3)",
-  " (in 'estimate_secondary', line 117, column 9 to column 10)",
-  " (in 'estimate_secondary', line 117, column 2 to column 80)",
-  " (in 'estimate_secondary', line 118, column 2 to column 45)",
-  " (in 'estimate_secondary', line 109, column 44 to line 119, column 1)",
-  " (in 'estimate_secondary', line 148, column 9 to column 10)",
-  " (in 'estimate_secondary', line 148, column 2 to column 17)",
-  " (in 'estimate_secondary', line 149, column 9 to column 10)",
-  " (in 'estimate_secondary', line 149, column 2 to column 23)",
-  " (in 'estimate_secondary', line 159, column 4 to column 54)",
-  " (in 'estimate_secondary', line 158, column 9 to line 160, column 3)",
-  " (in 'estimate_secondary', line 156, column 6 to column 59)",
-  " (in 'estimate_secondary', line 155, column 19 to line 157, column 5)",
-  " (in 'estimate_secondary', line 155, column 4 to line 157, column 5)",
-  " (in 'estimate_secondary', line 154, column 24 to line 158, column 3)",
-  " (in 'estimate_secondary', line 154, column 9 to line 160, column 3)",
-  " (in 'estimate_secondary', line 152, column 6 to column 63)",
-  " (in 'estimate_secondary', line 151, column 19 to line 153, column 5)",
-  " (in 'estimate_secondary', line 151, column 4 to line 153, column 5)",
-  " (in 'estimate_secondary', line 150, column 17 to line 154, column 3)",
-  " (in 'estimate_secondary', line 150, column 2 to line 160, column 3)",
-  " (in 'estimate_secondary', line 171, column 4 to column 16)",
-  " (in 'estimate_secondary', line 170, column 9 to line 172, column 3)",
-  " (in 'estimate_secondary', line 163, column 4 to column 28)",
-  " (in 'estimate_secondary', line 164, column 4 to column 28)",
-  " (in 'estimate_secondary', line 166, column 6 to column 71)",
-  " (in 'estimate_secondary', line 165, column 15 to line 167, column 5)",
-  " (in 'estimate_secondary', line 165, column 4 to line 167, column 5)",
-  " (in 'estimate_secondary', line 169, column 4 to column 53)",
-  " (in 'estimate_secondary', line 162, column 13 to line 170, column 3)",
-  " (in 'estimate_secondary', line 162, column 2 to line 172, column 3)",
-  " (in 'estimate_secondary', line 173, column 2 to column 20)",
-  " (in 'estimate_secondary', line 147, column 55 to line 174, column 1)",
-  " (in 'estimate_secondary', line 203, column 8 to column 19)",
-  " (in 'estimate_secondary', line 203, column 2 to column 29)",
-  " (in 'estimate_secondary', line 205, column 4 to column 15)",
-  " (in 'estimate_secondary', line 210, column 8 to line 211, column 53)",
-  " (in 'estimate_secondary', line 209, column 13 to line 212, column 7)",
-  " (in 'estimate_secondary', line 208, column 8 to column 47)",
-  " (in 'estimate_secondary', line 207, column 28 to line 209, column 7)",
-  " (in 'estimate_secondary', line 207, column 6 to line 212, column 7)",
-  " (in 'estimate_secondary', line 206, column 69 to line 213, column 5)",
-  " (in 'estimate_secondary', line 206, column 4 to line 213, column 5)",
-  " (in 'estimate_secondary', line 204, column 27 to line 214, column 3)",
-  " (in 'estimate_secondary', line 204, column 2 to line 214, column 3)",
-  " (in 'estimate_secondary', line 215, column 2 to column 13)",
-  " (in 'estimate_secondary', line 202, column 2 to line 216, column 1)",
-  " (in 'estimate_secondary', line 247, column 9 to column 12)",
-  " (in 'estimate_secondary', line 247, column 2 to column 39)",
-  " (in 'estimate_secondary', line 248, column 2 to column 22)",
-  " (in 'estimate_secondary', line 249, column 2 to column 14)",
-  " (in 'estimate_secondary', line 270, column 6 to column 57)",
-  " (in 'estimate_secondary', line 271, column 6 to column 63)",
-  " (in 'estimate_secondary', line 272, column 6 to column 42)",
-  " (in 'estimate_secondary', line 276, column 8 to line 278, column 10)",
-  " (in 'estimate_secondary', line 275, column 13 to line 279, column 7)",
-  " (in 'estimate_secondary', line 274, column 8 to column 49)",
-  " (in 'estimate_secondary', line 273, column 28 to line 275, column 7)",
-  " (in 'estimate_secondary', line 273, column 6 to line 279, column 7)",
-  " (in 'estimate_secondary', line 269, column 11 to line 280, column 5)",
-  " (in 'estimate_secondary', line 253, column 6 to column 57)",
-  " (in 'estimate_secondary', line 254, column 6 to column 63)",
-  " (in 'estimate_secondary', line 255, column 13 to column 45)",
-  " (in 'estimate_secondary', line 255, column 6 to line 260, column 8)",
-  " (in 'estimate_secondary', line 261, column 6 to column 59)",
-  " (in 'estimate_secondary', line 265, column 8 to line 267, column 10)",
-  " (in 'estimate_secondary', line 264, column 13 to line 268, column 7)",
-  " (in 'estimate_secondary', line 263, column 8 to column 42)",
-  " (in 'estimate_secondary', line 262, column 28 to line 264, column 7)",
-  " (in 'estimate_secondary', line 262, column 6 to line 268, column 7)",
-  " (in 'estimate_secondary', line 252, column 26 to line 269, column 5)",
-  " (in 'estimate_secondary', line 252, column 4 to line 280, column 5)",
-  " (in 'estimate_secondary', line 281, column 4 to column 26)",
-  " (in 'estimate_secondary', line 251, column 78 to line 282, column 3)",
-  " (in 'estimate_secondary', line 250, column 2 to line 282, column 3)",
-  " (in 'estimate_secondary', line 284, column 4 to line 287, column 6)",
-  " (in 'estimate_secondary', line 283, column 21 to line 288, column 3)",
-  " (in 'estimate_secondary', line 283, column 2 to line 288, column 3)",
-  " (in 'estimate_secondary', line 290, column 4 to column 30)",
-  " (in 'estimate_secondary', line 289, column 18 to line 291, column 3)",
-  " (in 'estimate_secondary', line 289, column 2 to line 291, column 3)",
-  " (in 'estimate_secondary', line 293, column 4 to column 23)",
-  " (in 'estimate_secondary', line 292, column 19 to line 294, column 3)",
-  " (in 'estimate_secondary', line 292, column 2 to line 294, column 3)",
-  " (in 'estimate_secondary', line 295, column 2 to column 13)",
-  " (in 'estimate_secondary', line 245, column 2 to line 296, column 1)",
-  " (in 'estimate_secondary', line 314, column 2 to column 55)",
-  " (in 'estimate_secondary', line 316, column 4 to column 11)",
-  " (in 'estimate_secondary', line 315, column 21 to line 317, column 3)",
-  " (in 'estimate_secondary', line 315, column 2 to line 317, column 3)",
-  " (in 'estimate_secondary', line 319, column 4 to column 39)",
-  " (in 'estimate_secondary', line 320, column 4 to column 45)",
-  " (in 'estimate_secondary', line 329, column 10 to column 77)",
-  " (in 'estimate_secondary', line 328, column 15 to line 330, column 9)",
-  " (in 'estimate_secondary', line 324, column 10 to line 327, column 14)",
-  " (in 'estimate_secondary', line 323, column 27 to line 328, column 9)",
-  " (in 'estimate_secondary', line 323, column 8 to line 330, column 9)",
-  " (in 'estimate_secondary', line 322, column 34 to line 331, column 7)",
-  " (in 'estimate_secondary', line 322, column 6 to line 331, column 7)",
-  " (in 'estimate_secondary', line 321, column 25 to line 332, column 5)",
-  " (in 'estimate_secondary', line 321, column 4 to line 332, column 5)",
-  " (in 'estimate_secondary', line 318, column 24 to line 333, column 3)",
-  " (in 'estimate_secondary', line 318, column 2 to line 333, column 3)",
-  " (in 'estimate_secondary', line 313, column 59 to line 334, column 1)",
-  " (in 'estimate_secondary', line 347, column 2 to column 29)",
-  " (in 'estimate_secondary', line 348, column 9 to column 12)",
-  " (in 'estimate_secondary', line 348, column 2 to column 18)",
-  " (in 'estimate_secondary', line 350, column 4 to column 49)",
-  " (in 'estimate_secondary', line 351, column 4 to column 31)",
-  " (in 'estimate_secondary', line 352, column 4 to column 45)",
-  " (in 'estimate_secondary', line 349, column 19 to line 353, column 3)",
-  " (in 'estimate_secondary', line 349, column 2 to line 353, column 3)",
-  " (in 'estimate_secondary', line 354, column 2 to column 13)",
-  " (in 'estimate_secondary', line 346, column 57 to line 355, column 1)",
-  " (in 'estimate_secondary', line 373, column 2 to column 32)",
-  " (in 'estimate_secondary', line 374, column 9 to column 11)",
-  " (in 'estimate_secondary', line 374, column 2 to column 41)",
-  " (in 'estimate_secondary', line 375, column 2 to column 47)",
-  " (in 'estimate_secondary', line 372, column 41 to line 376, column 1)",
-  " (in 'estimate_secondary', line 391, column 2 to column 32)",
-  " (in 'estimate_secondary', line 392, column 9 to column 10)",
-  " (in 'estimate_secondary', line 392, column 2 to column 27)",
-  " (in 'estimate_secondary', line 393, column 2 to column 47)",
-  " (in 'estimate_secondary', line 394, column 2 to column 25)",
-  " (in 'estimate_secondary', line 390, column 57 to line 395, column 1)",
-  " (in 'estimate_secondary', line 414, column 2 to column 32)",
-  " (in 'estimate_secondary', line 415, column 2 to column 46)",
-  " (in 'estimate_secondary', line 416, column 9 to column 10)",
-  " (in 'estimate_secondary', line 416, column 2 to column 36)",
-  " (in 'estimate_secondary', line 418, column 2 to column 36)",
-  " (in 'estimate_secondary', line 419, column 2 to column 34)",
-  " (in 'estimate_secondary', line 420, column 2 to column 46)",
-  " (in 'estimate_secondary', line 426, column 4 to column 70)",
-  " (in 'estimate_secondary', line 425, column 9 to line 427, column 3)",
-  " (in 'estimate_secondary', line 424, column 4 to column 70)",
-  " (in 'estimate_secondary', line 423, column 19 to line 425, column 3)",
-  " (in 'estimate_secondary', line 423, column 2 to line 427, column 3)",
-  " (in 'estimate_secondary', line 428, column 2 to column 24)",
-  " (in 'estimate_secondary', line 413, column 75 to line 429, column 1)",
-  " (in 'estimate_secondary', line 452, column 2 to column 49)",
-  " (in 'estimate_secondary', line 456, column 6 to column 63)",
-  " (in 'estimate_secondary', line 454, column 30 to line 457, column 5)",
-  " (in 'estimate_secondary', line 454, column 4 to line 457, column 5)",
-  " (in 'estimate_secondary', line 460, column 6 to column 57)",
-  " (in 'estimate_secondary', line 458, column 28 to line 461, column 5)",
-  " (in 'estimate_secondary', line 458, column 4 to line 461, column 5)",
-  " (in 'estimate_secondary', line 453, column 18 to line 462, column 3)",
-  " (in 'estimate_secondary', line 453, column 2 to line 462, column 3)",
-  " (in 'estimate_secondary', line 451, column 73 to line 463, column 1)",
-  " (in 'estimate_secondary', line 483, column 2 to column 35)",
-  " (in 'estimate_secondary', line 484, column 9 to column 10)",
-  " (in 'estimate_secondary', line 484, column 2 to column 46)",
-  " (in 'estimate_secondary', line 498, column 6 to column 59)",
-  " (in 'estimate_secondary', line 497, column 11 to line 499, column 5)",
-  " (in 'estimate_secondary', line 496, column 6 to column 35)",
-  " (in 'estimate_secondary', line 495, column 21 to line 497, column 5)",
-  " (in 'estimate_secondary', line 495, column 4 to line 499, column 5)",
-  " (in 'estimate_secondary', line 494, column 9 to line 500, column 3)",
-  " (in 'estimate_secondary', line 486, column 4 to column 52)",
-  " (in 'estimate_secondary', line 490, column 6 to line 492, column 17)",
-  " (in 'estimate_secondary', line 489, column 11 to line 493, column 5)",
-  " (in 'estimate_secondary', line 488, column 6 to column 47)",
-  " (in 'estimate_secondary', line 487, column 21 to line 489, column 5)",
-  " (in 'estimate_secondary', line 487, column 4 to line 493, column 5)",
-  " (in 'estimate_secondary', line 485, column 18 to line 494, column 3)",
-  " (in 'estimate_secondary', line 485, column 2 to line 500, column 3)",
-  " (in 'estimate_secondary', line 482, column 75 to line 501, column 1)",
-  " (in 'estimate_secondary', line 518, column 2 to column 35)",
-  " (in 'estimate_secondary', line 519, column 9 to column 13)",
-  " (in 'estimate_secondary', line 519, column 2 to column 45)",
-  " (in 'estimate_secondary', line 522, column 6 to column 59)",
-  " (in 'estimate_secondary', line 521, column 23 to line 523, column 5)",
-  " (in 'estimate_secondary', line 521, column 4 to line 523, column 5)",
-  " (in 'estimate_secondary', line 520, column 26 to line 524, column 3)",
-  " (in 'estimate_secondary', line 520, column 2 to line 524, column 3)",
-  " (in 'estimate_secondary', line 525, column 2 to column 29)",
-  " (in 'estimate_secondary', line 517, column 66 to line 526, column 1)",
-  " (in 'estimate_secondary', line 547, column 2 to column 32)",
-  " (in 'estimate_secondary', line 548, column 9 to column 10)",
-  " (in 'estimate_secondary', line 548, column 2 to column 20)",
-  " (in 'estimate_secondary', line 556, column 4 to column 52)",
-  " (in 'estimate_secondary', line 558, column 6 to line 560, column 17)",
-  " (in 'estimate_secondary', line 557, column 19 to line 561, column 5)",
-  " (in 'estimate_secondary', line 557, column 4 to line 561, column 5)",
-  " (in 'estimate_secondary', line 555, column 9 to line 562, column 3)",
-  " (in 'estimate_secondary', line 553, column 6 to column 64)",
-  " (in 'estimate_secondary', line 552, column 19 to line 554, column 5)",
-  " (in 'estimate_secondary', line 552, column 4 to line 554, column 5)",
-  " (in 'estimate_secondary', line 551, column 23 to line 555, column 3)",
-  " (in 'estimate_secondary', line 551, column 2 to line 562, column 3)",
-  " (in 'estimate_secondary', line 563, column 2 to column 18)",
-  " (in 'estimate_secondary', line 546, column 82 to line 564, column 1)",
-  " (in 'estimate_secondary', line 593, column 4 to column 47)",
-  " (in 'estimate_secondary', line 594, column 4 to column 61)",
-  " (in 'estimate_secondary', line 592, column 9 to line 595, column 3)",
-  " (in 'estimate_secondary', line 591, column 4 to column 45)",
-  " (in 'estimate_secondary', line 590, column 24 to line 592, column 3)",
-  " (in 'estimate_secondary', line 590, column 9 to line 595, column 3)",
-  " (in 'estimate_secondary', line 589, column 4 to column 14)",
-  " (in 'estimate_secondary', line 588, column 17 to line 590, column 3)",
-  " (in 'estimate_secondary', line 588, column 2 to line 595, column 3)",
-  " (in 'estimate_secondary', line 587, column 47 to line 596, column 1)",
-  " (in 'estimate_secondary', line 614, column 2 to column 32)",
-  " (in 'estimate_secondary', line 615, column 8 to column 9)",
-  " (in 'estimate_secondary', line 615, column 2 to column 31)",
-  " (in 'estimate_secondary', line 616, column 2 to column 17)",
-  " (in 'estimate_secondary', line 618, column 4 to column 47)",
-  " (in 'estimate_secondary', line 617, column 18 to line 619, column 3)",
-  " (in 'estimate_secondary', line 617, column 2 to line 619, column 3)",
-  " (in 'estimate_secondary', line 622, column 4 to column 66)",
-  " (in 'estimate_secondary', line 621, column 17 to line 623, column 3)",
-  " (in 'estimate_secondary', line 621, column 2 to line 623, column 3)",
-  " (in 'estimate_secondary', line 624, column 2 to column 26)",
-  " (in 'estimate_secondary', line 613, column 86 to line 625, column 1)",
-  " (in 'estimate_secondary', line 662, column 2 to column 39)",
-  " (in 'estimate_secondary', line 663, column 9 to column 10)",
-  " (in 'estimate_secondary', line 663, column 2 to column 51)",
-  " (in 'estimate_secondary', line 672, column 8 to column 42)",
-  " (in 'estimate_secondary', line 671, column 12 to line 673, column 7)",
-  " (in 'estimate_secondary', line 670, column 8 to column 56)",
-  " (in 'estimate_secondary', line 669, column 23 to line 671, column 7)",
-  " (in 'estimate_secondary', line 669, column 6 to line 673, column 7)",
-  " (in 'estimate_secondary', line 668, column 29 to line 674, column 5)",
-  " (in 'estimate_secondary', line 668, column 4 to line 674, column 5)",
-  " (in 'estimate_secondary', line 680, column 8 to column 79)",
-  " (in 'estimate_secondary', line 679, column 12 to line 681, column 7)",
-  " (in 'estimate_secondary', line 678, column 8 to column 48)",
-  " (in 'estimate_secondary', line 677, column 33 to line 679, column 7)",
-  " (in 'estimate_secondary', line 677, column 6 to line 681, column 7)",
-  " (in 'estimate_secondary', line 676, column 18 to line 682, column 5)",
-  " (in 'estimate_secondary', line 676, column 4 to line 682, column 5)",
-  " (in 'estimate_secondary', line 688, column 8 to column 50)",
-  " (in 'estimate_secondary', line 687, column 12 to line 689, column 7)",
-  " (in 'estimate_secondary', line 686, column 8 to column 50)",
-  " (in 'estimate_secondary', line 685, column 36 to line 687, column 7)",
-  " (in 'estimate_secondary', line 685, column 6 to line 689, column 7)",
-  " (in 'estimate_secondary', line 684, column 17 to line 690, column 5)",
-  " (in 'estimate_secondary', line 684, column 4 to line 690, column 5)",
-  " (in 'estimate_secondary', line 691, column 4 to column 55)",
-  " (in 'estimate_secondary', line 666, column 17 to line 692, column 3)",
-  " (in 'estimate_secondary', line 666, column 2 to line 692, column 3)",
-  " (in 'estimate_secondary', line 693, column 2 to column 28)",
-  " (in 'estimate_secondary', line 661, column 2 to line 694, column 1)",
-  " (in 'estimate_secondary', line 728, column 4 to column 46)",
-  " (in 'estimate_secondary', line 727, column 9 to line 729, column 3)",
-  " (in 'estimate_secondary', line 726, column 4 to column 49)",
-  " (in 'estimate_secondary', line 725, column 38 to line 727, column 3)",
-  " (in 'estimate_secondary', line 725, column 9 to line 729, column 3)",
-  " (in 'estimate_secondary', line 724, column 4 to column 13)",
-  " (in 'estimate_secondary', line 723, column 15 to line 725, column 3)",
-  " (in 'estimate_secondary', line 723, column 2 to line 729, column 3)",
-  " (in 'estimate_secondary', line 722, column 51 to line 730, column 1)",
-  " (in 'estimate_secondary', line 751, column 2 to column 31)",
-  " (in 'estimate_secondary', line 757, column 4 to column 48)",
-  " (in 'estimate_secondary', line 756, column 9 to line 758, column 3)",
-  " (in 'estimate_secondary', line 755, column 4 to column 72)",
-  " (in 'estimate_secondary', line 754, column 38 to line 756, column 3)",
-  " (in 'estimate_secondary', line 754, column 9 to line 758, column 3)",
-  " (in 'estimate_secondary', line 753, column 4 to column 37)",
-  " (in 'estimate_secondary', line 752, column 15 to line 754, column 3)",
-  " (in 'estimate_secondary', line 752, column 2 to line 758, column 3)",
-  " (in 'estimate_secondary', line 750, column 53 to line 759, column 1)",
-  " (in 'estimate_secondary', line 778, column 2 to column 20)",
-  " (in 'estimate_secondary', line 779, column 2 to column 40)",
-  " (in 'estimate_secondary', line 799, column 6 to column 34)",
-  " (in 'estimate_secondary', line 798, column 11 to line 800, column 5)",
-  " (in 'estimate_secondary', line 794, column 6 to line 796, column 46)",
-  " (in 'estimate_secondary', line 796, column 28 to column 44)",
-  " (in 'estimate_secondary', line 796, column 10 to column 26)",
-  " (in 'estimate_secondary', line 797, column 6 to column 21)",
-  " (in 'estimate_secondary', line 793, column 36 to line 798, column 5)",
-  " (in 'estimate_secondary', line 793, column 11 to line 800, column 5)",
-  " (in 'estimate_secondary', line 789, column 6 to line 791, column 46)",
-  " (in 'estimate_secondary', line 791, column 28 to column 44)",
-  " (in 'estimate_secondary', line 791, column 10 to column 26)",
-  " (in 'estimate_secondary', line 792, column 6 to column 21)",
-  " (in 'estimate_secondary', line 788, column 36 to line 793, column 5)",
-  " (in 'estimate_secondary', line 788, column 11 to line 800, column 5)",
-  " (in 'estimate_secondary', line 782, column 6 to line 786, column 46)",
-  " (in 'estimate_secondary', line 786, column 28 to column 44)",
-  " (in 'estimate_secondary', line 786, column 10 to column 26)",
-  " (in 'estimate_secondary', line 787, column 6 to column 21)",
-  " (in 'estimate_secondary', line 781, column 29 to line 788, column 5)",
-  " (in 'estimate_secondary', line 781, column 4 to line 800, column 5)",
-  " (in 'estimate_secondary', line 780, column 27 to line 801, column 3)",
-  " (in 'estimate_secondary', line 780, column 2 to line 801, column 3)",
-  " (in 'estimate_secondary', line 777, column 35 to line 802, column 1)"};
+  " (in 'estimate_secondary', line 1605, column 2 to column 71)",
+  " (in 'estimate_secondary', line 1608, column 2 to column 58)",
+  " (in 'estimate_secondary', line 1609, column 2 to column 43)",
+  " (in 'estimate_secondary', line 1610, column 2 to column 79)",
+  " (in 'estimate_secondary', line 1614, column 2 to line 1617, column 4)",
+  " (in 'estimate_secondary', line 1618, column 2 to column 31)",
+  " (in 'estimate_secondary', line 1698, column 2 to column 39)",
+  " (in 'estimate_secondary', line 1699, column 2 to column 58)",
+  " (in 'estimate_secondary', line 1621, column 11 to column 12)",
+  " (in 'estimate_secondary', line 1621, column 4 to column 21)",
+  " (in 'estimate_secondary', line 1622, column 11 to column 12)",
+  " (in 'estimate_secondary', line 1622, column 4 to column 46)",
+  " (in 'estimate_secondary', line 1631, column 6 to column 23)",
+  " (in 'estimate_secondary', line 1630, column 11 to line 1632, column 5)",
+  " (in 'estimate_secondary', line 1625, column 6 to line 1628, column 8)",
+  " (in 'estimate_secondary', line 1629, column 6 to column 53)",
+  " (in 'estimate_secondary', line 1624, column 19 to line 1630, column 5)",
+  " (in 'estimate_secondary', line 1624, column 4 to line 1632, column 5)",
+  " (in 'estimate_secondary', line 1643, column 6 to column 37)",
+  " (in 'estimate_secondary', line 1642, column 11 to line 1644, column 5)",
+  " (in 'estimate_secondary', line 1634, column 13 to column 51)",
+  " (in 'estimate_secondary', line 1634, column 6 to line 1640, column 10)",
+  " (in 'estimate_secondary', line 1641, column 6 to column 79)",
+  " (in 'estimate_secondary', line 1633, column 28 to line 1642, column 5)",
+  " (in 'estimate_secondary', line 1633, column 4 to line 1644, column 5)",
+  " (in 'estimate_secondary', line 1645, column 4 to line 1648, column 6)",
+  " (in 'estimate_secondary', line 1620, column 2 to line 1649, column 3)",
+  " (in 'estimate_secondary', line 1652, column 4 to column 80)",
+  " (in 'estimate_secondary', line 1651, column 23 to line 1653, column 3)",
+  " (in 'estimate_secondary', line 1651, column 2 to line 1653, column 3)",
+  " (in 'estimate_secondary', line 1656, column 11 to column 50)",
+  " (in 'estimate_secondary', line 1656, column 4 to line 1662, column 8)",
+  " (in 'estimate_secondary', line 1663, column 4 to column 58)",
+  " (in 'estimate_secondary', line 1655, column 27 to line 1664, column 3)",
+  " (in 'estimate_secondary', line 1655, column 2 to line 1664, column 3)",
+  " (in 'estimate_secondary', line 1668, column 6 to column 60)",
+  " (in 'estimate_secondary', line 1667, column 4 to line 1669, column 5)",
+  " (in 'estimate_secondary', line 1666, column 22 to line 1670, column 3)",
+  " (in 'estimate_secondary', line 1666, column 2 to line 1670, column 3)",
+  " (in 'estimate_secondary', line 1701, column 4 to line 1704, column 6)",
+  " (in 'estimate_secondary', line 1706, column 4 to line 1708, column 6)",
+  " (in 'estimate_secondary', line 1711, column 6 to line 1714, column 8)",
+  " (in 'estimate_secondary', line 1710, column 27 to line 1715, column 5)",
+  " (in 'estimate_secondary', line 1710, column 4 to line 1715, column 5)",
+  " (in 'estimate_secondary', line 1700, column 2 to line 1716, column 3)",
+  " (in 'estimate_secondary', line 1674, column 2 to line 1677, column 4)",
+  " (in 'estimate_secondary', line 1678, column 2 to column 53)",
+  " (in 'estimate_secondary', line 1681, column 4 to line 1683, column 6)",
+  " (in 'estimate_secondary', line 1680, column 2 to line 1684, column 3)",
+  " (in 'estimate_secondary', line 1687, column 4 to line 1690, column 6)",
+  " (in 'estimate_secondary', line 1691, column 4 to line 1694, column 6)",
+  " (in 'estimate_secondary', line 1686, column 18 to line 1695, column 3)",
+  " (in 'estimate_secondary', line 1686, column 2 to line 1695, column 3)",
+  " (in 'estimate_secondary', line 1507, column 2 to column 8)",
+  " (in 'estimate_secondary', line 1508, column 2 to column 9)",
+  " (in 'estimate_secondary', line 1509, column 8 to column 9)",
+  " (in 'estimate_secondary', line 1509, column 2 to column 30)",
+  " (in 'estimate_secondary', line 1510, column 8 to column 10)",
+  " (in 'estimate_secondary', line 1510, column 2 to column 25)",
+  " (in 'estimate_secondary', line 1511, column 9 to column 10)",
+  " (in 'estimate_secondary', line 1511, column 2 to column 20)",
+  " (in 'estimate_secondary', line 1512, column 2 to column 14)",
+  " (in 'estimate_secondary', line 1513, column 2 to column 21)",
+  " (in 'estimate_secondary', line 1514, column 8 to column 9)",
+  " (in 'estimate_secondary', line 1514, column 2 to column 26)",
+  " (in 'estimate_secondary', line 1516, column 0 to column 17)",
+  " (in 'estimate_secondary', line 1517, column 0 to column 15)",
+  " (in 'estimate_secondary', line 1518, column 0 to column 13)",
+  " (in 'estimate_secondary', line 1519, column 0 to column 26)",
+  " (in 'estimate_secondary', line 1520, column 0 to column 12)",
+  " (in 'estimate_secondary', line 1521, column 0 to column 29)",
+  " (in 'estimate_secondary', line 1523, column 0 to column 23)",
+  " (in 'estimate_secondary', line 1524, column 0 to column 25)",
+  " (in 'estimate_secondary', line 1525, column 0 to column 26)",
+  " (in 'estimate_secondary', line 1526, column 6 to column 15)",
+  " (in 'estimate_secondary', line 1526, column 0 to column 42)",
+  " (in 'estimate_secondary', line 1528, column 6 to column 15)",
+  " (in 'estimate_secondary', line 1528, column 0 to column 43)",
+  " (in 'estimate_secondary', line 1530, column 0 to column 35)",
+  " (in 'estimate_secondary', line 1532, column 29 to column 48)",
+  " (in 'estimate_secondary', line 1532, column 0 to column 63)",
+  " (in 'estimate_secondary', line 1534, column 6 to column 20)",
+  " (in 'estimate_secondary', line 1534, column 0 to column 57)",
+  " (in 'estimate_secondary', line 1537, column 0 to column 30)",
+  " (in 'estimate_secondary', line 1538, column 0 to column 35)",
+  " (in 'estimate_secondary', line 1539, column 6 to column 24)",
+  " (in 'estimate_secondary', line 1539, column 0 to column 50)",
+  " (in 'estimate_secondary', line 1540, column 18 to column 37)",
+  " (in 'estimate_secondary', line 1540, column 0 to column 58)",
+  " (in 'estimate_secondary', line 1542, column 6 to column 25)",
+  " (in 'estimate_secondary', line 1542, column 0 to column 48)",
+  " (in 'estimate_secondary', line 1544, column 6 to column 20)",
+  " (in 'estimate_secondary', line 1544, column 0 to column 45)",
+  " (in 'estimate_secondary', line 1547, column 0 to column 35)",
+  " (in 'estimate_secondary', line 1549, column 7 to column 26)",
+  " (in 'estimate_secondary', line 1549, column 0 to column 47)",
+  " (in 'estimate_secondary', line 1551, column 35 to column 54)",
+  " (in 'estimate_secondary', line 1551, column 0 to column 74)",
+  " (in 'estimate_secondary', line 1553, column 18 to column 37)",
+  " (in 'estimate_secondary', line 1553, column 0 to column 55)",
+  " (in 'estimate_secondary', line 1555, column 6 to column 19)",
+  " (in 'estimate_secondary', line 1555, column 0 to column 56)",
+  " (in 'estimate_secondary', line 1557, column 6 to column 15)",
+  " (in 'estimate_secondary', line 1557, column 0 to column 45)",
+  " (in 'estimate_secondary', line 1558, column 0 to column 27)",
+  " (in 'estimate_secondary', line 1560, column 6 to column 13)",
+  " (in 'estimate_secondary', line 1560, column 0 to column 44)",
+  " (in 'estimate_secondary', line 1562, column 6 to column 13)",
+  " (in 'estimate_secondary', line 1562, column 0 to column 45)",
+  " (in 'estimate_secondary', line 1564, column 6 to column 21)",
+  " (in 'estimate_secondary', line 1564, column 0 to column 57)",
+  " (in 'estimate_secondary', line 1566, column 6 to column 22)",
+  " (in 'estimate_secondary', line 1566, column 0 to column 40)",
+  " (in 'estimate_secondary', line 1567, column 0 to column 15)",
+  " (in 'estimate_secondary', line 1568, column 0 to column 16)",
+  " (in 'estimate_secondary', line 1569, column 0 to column 14)",
+  " (in 'estimate_secondary', line 1570, column 0 to column 16)",
+  " (in 'estimate_secondary', line 1571, column 0 to column 15)",
+  " (in 'estimate_secondary', line 1572, column 0 to column 22)",
+  " (in 'estimate_secondary', line 1573, column 0 to column 35)",
+  " (in 'estimate_secondary', line 1574, column 0 to column 34)",
+  " (in 'estimate_secondary', line 1576, column 0 to column 33)",
+  " (in 'estimate_secondary', line 1577, column 0 to column 30)",
+  " (in 'estimate_secondary', line 1578, column 7 to column 24)",
+  " (in 'estimate_secondary', line 1578, column 0 to column 39)",
+  " (in 'estimate_secondary', line 1579, column 7 to column 24)",
+  " (in 'estimate_secondary', line 1579, column 0 to column 39)",
+  " (in 'estimate_secondary', line 1582, column 6 to column 40)",
+  " (in 'estimate_secondary', line 1582, column 0 to column 77)",
+  " (in 'estimate_secondary', line 1584, column 6 to column 40)",
+  " (in 'estimate_secondary', line 1584, column 0 to column 80)",
+  " (in 'estimate_secondary', line 1586, column 7 to column 21)",
+  " (in 'estimate_secondary', line 1586, column 0 to column 36)",
+  " (in 'estimate_secondary', line 1589, column 6 to column 23)",
+  " (in 'estimate_secondary', line 1589, column 0 to column 51)",
+  " (in 'estimate_secondary', line 1591, column 0 to column 40)",
+  " (in 'estimate_secondary', line 1592, column 7 to column 31)",
+  " (in 'estimate_secondary', line 1592, column 0 to column 51)",
+  " (in 'estimate_secondary', line 1594, column 0 to column 42)",
+  " (in 'estimate_secondary', line 1595, column 0 to column 49)",
+  " (in 'estimate_secondary', line 1598, column 8 to column 19)",
+  " (in 'estimate_secondary', line 1598, column 2 to line 1601, column 4)",
+  " (in 'estimate_secondary', line 1605, column 37 to column 56)",
+  " (in 'estimate_secondary', line 1608, column 20 to column 39)",
+  " (in 'estimate_secondary', line 1609, column 10 to column 21)",
+  " (in 'estimate_secondary', line 1610, column 53 to column 70)",
+  " (in 'estimate_secondary', line 1614, column 9 to column 28)",
+  " (in 'estimate_secondary', line 1618, column 18 to column 19)",
+  " (in 'estimate_secondary', line 1698, column 8 to column 19)",
+  " (in 'estimate_secondary', line 1699, column 9 to column 48)",
+  " (in 'estimate_secondary', line 6, column 4 to column 31)",
+  " (in 'estimate_secondary', line 5, column 28 to line 7, column 3)",
+  " (in 'estimate_secondary', line 5, column 2 to line 7, column 3)",
+  " (in 'estimate_secondary', line 9, column 4 to column 29)",
+  " (in 'estimate_secondary', line 8, column 22 to line 10, column 3)",
+  " (in 'estimate_secondary', line 8, column 2 to line 10, column 3)",
+  " (in 'estimate_secondary', line 11, column 2 to line 12, column 44)",
+  " (in 'estimate_secondary', line 4, column 58 to line 13, column 1)",
+  " (in 'estimate_secondary', line 15, column 39 to column 48)",
+  " (in 'estimate_secondary', line 15, column 2 to column 48)",
+  " (in 'estimate_secondary', line 16, column 39 to column 48)",
+  " (in 'estimate_secondary', line 16, column 2 to column 48)",
+  " (in 'estimate_secondary', line 17, column 39 to column 48)",
+  " (in 'estimate_secondary', line 17, column 2 to column 48)",
+  " (in 'estimate_secondary', line 18, column 2 to column 11)",
+  " (in 'estimate_secondary', line 14, column 54 to line 19, column 1)",
+  " (in 'estimate_secondary', line 21, column 2 to column 25)",
+  " (in 'estimate_secondary', line 22, column 2 to column 24)",
+  " (in 'estimate_secondary', line 23, column 2 to column 33)",
+  " (in 'estimate_secondary', line 25, column 2 to column 38)",
+  " (in 'estimate_secondary', line 29, column 2 to column 49)",
+  " (in 'estimate_secondary', line 30, column 2 to line 31, column 59)",
+  " (in 'estimate_secondary', line 32, column 2 to column 70)",
+  " (in 'estimate_secondary', line 37, column 2 to column 19)",
+  " (in 'estimate_secondary', line 38, column 2 to column 20)",
+  " (in 'estimate_secondary', line 47, column 4 to column 38)",
+  " (in 'estimate_secondary', line 48, column 4 to column 39)",
+  " (in 'estimate_secondary', line 46, column 9 to line 49, column 3)",
+  " (in 'estimate_secondary', line 40, column 4 to column 51)",
+  " (in 'estimate_secondary', line 41, column 4 to line 42, column 61)",
+  " (in 'estimate_secondary', line 43, column 4 to column 72)",
+  " (in 'estimate_secondary', line 44, column 4 to column 39)",
+  " (in 'estimate_secondary', line 45, column 4 to column 41)",
+  " (in 'estimate_secondary', line 39, column 13 to line 46, column 3)",
+  " (in 'estimate_secondary', line 39, column 2 to line 49, column 3)",
+  " (in 'estimate_secondary', line 55, column 2 to column 63)",
+  " (in 'estimate_secondary', line 56, column 2 to column 63)",
+  " (in 'estimate_secondary', line 58, column 2 to column 49)",
+  " (in 'estimate_secondary', line 20, column 101 to line 59, column 1)",
+  " (in 'estimate_secondary', line 61, column 2 to column 22)",
+  " (in 'estimate_secondary', line 62, column 2 to column 25)",
+  " (in 'estimate_secondary', line 63, column 2 to column 38)",
+  " (in 'estimate_secondary', line 64, column 2 to column 33)",
+  " (in 'estimate_secondary', line 66, column 2 to column 40)",
+  " (in 'estimate_secondary', line 68, column 2 to column 49)",
+  " (in 'estimate_secondary', line 69, column 2 to column 57)",
+  " (in 'estimate_secondary', line 72, column 2 to column 19)",
+  " (in 'estimate_secondary', line 73, column 2 to column 20)",
+  " (in 'estimate_secondary', line 80, column 4 to column 38)",
+  " (in 'estimate_secondary', line 81, column 4 to column 39)",
+  " (in 'estimate_secondary', line 79, column 9 to line 82, column 3)",
+  " (in 'estimate_secondary', line 75, column 4 to column 51)",
+  " (in 'estimate_secondary', line 76, column 4 to column 59)",
+  " (in 'estimate_secondary', line 77, column 4 to column 37)",
+  " (in 'estimate_secondary', line 78, column 4 to column 38)",
+  " (in 'estimate_secondary', line 74, column 13 to line 79, column 3)",
+  " (in 'estimate_secondary', line 74, column 2 to line 82, column 3)",
+  " (in 'estimate_secondary', line 88, column 2 to column 61)",
+  " (in 'estimate_secondary', line 89, column 2 to column 60)",
+  " (in 'estimate_secondary', line 91, column 2 to column 49)",
+  " (in 'estimate_secondary', line 60, column 105 to line 92, column 1)",
+  " (in 'estimate_secondary', line 94, column 2 to column 38)",
+  " (in 'estimate_secondary', line 95, column 2 to column 26)",
+  " (in 'estimate_secondary', line 96, column 2 to column 40)",
+  " (in 'estimate_secondary', line 93, column 51 to line 97, column 1)",
+  " (in 'estimate_secondary', line 99, column 2 to column 25)",
+  " (in 'estimate_secondary', line 100, column 2 to column 25)",
+  " (in 'estimate_secondary', line 101, column 2 to column 33)",
+  " (in 'estimate_secondary', line 102, column 2 to column 30)",
+  " (in 'estimate_secondary', line 106, column 2 to column 50)",
+  " (in 'estimate_secondary', line 107, column 2 to column 65)",
+  " (in 'estimate_secondary', line 110, column 2 to column 19)",
+  " (in 'estimate_secondary', line 111, column 2 to column 20)",
+  " (in 'estimate_secondary', line 116, column 4 to column 38)",
+  " (in 'estimate_secondary', line 117, column 4 to column 39)",
+  " (in 'estimate_secondary', line 115, column 9 to line 118, column 3)",
+  " (in 'estimate_secondary', line 113, column 4 to column 58)",
+  " (in 'estimate_secondary', line 114, column 4 to column 62)",
+  " (in 'estimate_secondary', line 112, column 13 to line 115, column 3)",
+  " (in 'estimate_secondary', line 112, column 2 to line 118, column 3)",
+  " (in 'estimate_secondary', line 124, column 2 to column 61)",
+  " (in 'estimate_secondary', line 125, column 2 to column 54)",
+  " (in 'estimate_secondary', line 127, column 2 to column 49)",
+  " (in 'estimate_secondary', line 98, column 103 to line 128, column 1)",
+  " (in 'estimate_secondary', line 133, column 2 to column 33)",
+  " (in 'estimate_secondary', line 140, column 4 to column 72)",
+  " (in 'estimate_secondary', line 139, column 46 to line 141, column 3)",
+  " (in 'estimate_secondary', line 139, column 9 to line 141, column 3)",
+  " (in 'estimate_secondary', line 138, column 4 to column 74)",
+  " (in 'estimate_secondary', line 137, column 46 to line 139, column 3)",
+  " (in 'estimate_secondary', line 137, column 9 to line 141, column 3)",
+  " (in 'estimate_secondary', line 136, column 4 to column 70)",
+  " (in 'estimate_secondary', line 135, column 39 to line 137, column 3)",
+  " (in 'estimate_secondary', line 135, column 2 to line 141, column 3)",
+  " (in 'estimate_secondary', line 142, column 2 to column 29)",
+  " (in 'estimate_secondary', line 132, column 57 to line 143, column 1)",
+  " (in 'estimate_secondary', line 149, column 14 to column 41)",
+  " (in 'estimate_secondary', line 149, column 2 to column 41)",
+  " (in 'estimate_secondary', line 150, column 14 to column 23)",
+  " (in 'estimate_secondary', line 150, column 2 to column 23)",
+  " (in 'estimate_secondary', line 152, column 2 to line 154, column 4)",
+  " (in 'estimate_secondary', line 158, column 4 to line 160, column 6)",
+  " (in 'estimate_secondary', line 161, column 4 to column 31)",
+  " (in 'estimate_secondary', line 162, column 4 to column 31)",
+  " (in 'estimate_secondary', line 164, column 4 to column 82)",
+  " (in 'estimate_secondary', line 165, column 4 to column 84)",
+  " (in 'estimate_secondary', line 157, column 27 to line 166, column 3)",
+  " (in 'estimate_secondary', line 157, column 2 to line 166, column 3)",
+  " (in 'estimate_secondary', line 168, column 2 to column 16)",
+  " (in 'estimate_secondary', line 148, column 72 to line 169, column 1)",
+  " (in 'estimate_secondary', line 175, column 2 to column 110)",
+  " (in 'estimate_secondary', line 174, column 71 to line 176, column 1)",
+  " (in 'estimate_secondary', line 178, column 20 to column 29)",
+  " (in 'estimate_secondary', line 178, column 2 to column 29)",
+  " (in 'estimate_secondary', line 179, column 20 to column 29)",
+  " (in 'estimate_secondary', line 179, column 2 to column 29)",
+  " (in 'estimate_secondary', line 180, column 20 to column 29)",
+  " (in 'estimate_secondary', line 180, column 2 to column 29)",
+  " (in 'estimate_secondary', line 181, column 20 to column 29)",
+  " (in 'estimate_secondary', line 181, column 2 to column 29)",
+  " (in 'estimate_secondary', line 182, column 20 to column 29)",
+  " (in 'estimate_secondary', line 182, column 2 to column 29)",
+  " (in 'estimate_secondary', line 183, column 21 to column 30)",
+  " (in 'estimate_secondary', line 183, column 2 to column 30)",
+  " (in 'estimate_secondary', line 184, column 21 to column 30)",
+  " (in 'estimate_secondary', line 184, column 2 to column 30)",
+  " (in 'estimate_secondary', line 185, column 21 to column 30)",
+  " (in 'estimate_secondary', line 185, column 2 to column 30)",
+  " (in 'estimate_secondary', line 186, column 21 to column 30)",
+  " (in 'estimate_secondary', line 186, column 2 to column 30)",
+  " (in 'estimate_secondary', line 187, column 21 to column 30)",
+  " (in 'estimate_secondary', line 187, column 2 to column 30)",
+  " (in 'estimate_secondary', line 188, column 2 to column 11)",
+  " (in 'estimate_secondary', line 177, column 48 to line 189, column 1)",
+  " (in 'estimate_secondary', line 192, column 4 to column 31)",
+  " (in 'estimate_secondary', line 191, column 56 to line 193, column 3)",
+  " (in 'estimate_secondary', line 191, column 2 to line 193, column 3)",
+  " (in 'estimate_secondary', line 214, column 7 to column 60)",
+  " (in 'estimate_secondary', line 213, column 26 to column 78)",
+  " (in 'estimate_secondary', line 213, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 212, column 26 to column 76)",
+  " (in 'estimate_secondary', line 212, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 211, column 26 to column 89)",
+  " (in 'estimate_secondary', line 211, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 210, column 26 to column 90)",
+  " (in 'estimate_secondary', line 210, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 209, column 26 to column 75)",
+  " (in 'estimate_secondary', line 209, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 208, column 26 to column 87)",
+  " (in 'estimate_secondary', line 208, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 207, column 26 to column 72)",
+  " (in 'estimate_secondary', line 207, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 206, column 26 to column 75)",
+  " (in 'estimate_secondary', line 206, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 205, column 26 to column 77)",
+  " (in 'estimate_secondary', line 205, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 204, column 26 to column 78)",
+  " (in 'estimate_secondary', line 204, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 203, column 26 to column 75)",
+  " (in 'estimate_secondary', line 203, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 202, column 26 to column 68)",
+  " (in 'estimate_secondary', line 202, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 201, column 26 to column 75)",
+  " (in 'estimate_secondary', line 201, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 200, column 25 to column 72)",
+  " (in 'estimate_secondary', line 200, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 199, column 25 to column 68)",
+  " (in 'estimate_secondary', line 199, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 198, column 25 to column 75)",
+  " (in 'estimate_secondary', line 198, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 197, column 25 to column 73)",
+  " (in 'estimate_secondary', line 197, column 7 to line 214, column 60)",
+  " (in 'estimate_secondary', line 196, column 20 to column 72)",
+  " (in 'estimate_secondary', line 196, column 2 to line 214, column 60)",
+  " (in 'estimate_secondary', line 190, column 61 to line 215, column 1)",
+  " (in 'estimate_secondary', line 218, column 23 to column 59)",
+  " (in 'estimate_secondary', line 218, column 2 to column 59)",
+  " (in 'estimate_secondary', line 219, column 23 to column 72)",
+  " (in 'estimate_secondary', line 219, column 2 to column 72)",
+  " (in 'estimate_secondary', line 221, column 2 to column 52)",
+  " (in 'estimate_secondary', line 216, column 85 to line 222, column 1)",
+  " (in 'estimate_secondary', line 225, column 2 to column 18)",
+  " (in 'estimate_secondary', line 226, column 2 to column 23)",
+  " (in 'estimate_secondary', line 227, column 2 to column 26)",
+  " (in 'estimate_secondary', line 228, column 2 to column 24)",
+  " (in 'estimate_secondary', line 229, column 2 to column 31)",
+  " (in 'estimate_secondary', line 230, column 2 to column 34)",
+  " (in 'estimate_secondary', line 233, column 8 to column 23)",
+  " (in 'estimate_secondary', line 233, column 2 to column 37)",
+  " (in 'estimate_secondary', line 235, column 4 to column 38)",
+  " (in 'estimate_secondary', line 234, column 23 to line 236, column 3)",
+  " (in 'estimate_secondary', line 234, column 2 to line 236, column 3)",
+  " (in 'estimate_secondary', line 237, column 8 to column 26)",
+  " (in 'estimate_secondary', line 237, column 2 to column 48)",
+  " (in 'estimate_secondary', line 239, column 4 to column 42)",
+  " (in 'estimate_secondary', line 240, column 4 to column 77)",
+  " (in 'estimate_secondary', line 238, column 26 to line 241, column 3)",
+  " (in 'estimate_secondary', line 238, column 2 to line 241, column 3)",
+  " (in 'estimate_secondary', line 243, column 2 to column 48)",
+  " (in 'estimate_secondary', line 244, column 2 to column 86)",
+  " (in 'estimate_secondary', line 246, column 2 to column 55)",
+  " (in 'estimate_secondary', line 224, column 63 to line 247, column 1)",
+  " (in 'estimate_secondary', line 252, column 4 to column 21)",
+  " (in 'estimate_secondary', line 251, column 9 to line 253, column 3)",
+  " (in 'estimate_secondary', line 250, column 4 to column 46)",
+  " (in 'estimate_secondary', line 249, column 18 to line 251, column 3)",
+  " (in 'estimate_secondary', line 249, column 2 to line 253, column 3)",
+  " (in 'estimate_secondary', line 248, column 76 to line 254, column 1)",
+  " (in 'estimate_secondary', line 260, column 4 to column 36)",
+  " (in 'estimate_secondary', line 259, column 9 to line 261, column 3)",
+  " (in 'estimate_secondary', line 258, column 4 to column 61)",
+  " (in 'estimate_secondary', line 257, column 18 to line 259, column 3)",
+  " (in 'estimate_secondary', line 257, column 2 to line 261, column 3)",
+  " (in 'estimate_secondary', line 256, column 67 to line 262, column 1)",
+  " (in 'estimate_secondary', line 268, column 2 to column 19)",
+  " (in 'estimate_secondary', line 280, column 4 to line 284, column 6)",
+  " (in 'estimate_secondary', line 279, column 9 to line 285, column 3)",
+  " (in 'estimate_secondary', line 278, column 4 to column 36)",
+  " (in 'estimate_secondary', line 277, column 17 to line 279, column 3)",
+  " (in 'estimate_secondary', line 277, column 2 to line 285, column 3)",
+  " (in 'estimate_secondary', line 291, column 4 to line 295, column 6)",
+  " (in 'estimate_secondary', line 290, column 9 to line 296, column 3)",
+  " (in 'estimate_secondary', line 289, column 4 to column 18)",
+  " (in 'estimate_secondary', line 288, column 17 to line 290, column 3)",
+  " (in 'estimate_secondary', line 288, column 2 to line 296, column 3)",
+  " (in 'estimate_secondary', line 298, column 2 to column 16)",
+  " (in 'estimate_secondary', line 267, column 2 to line 299, column 1)",
+  " (in 'estimate_secondary', line 304, column 2 to column 14)",
+  " (in 'estimate_secondary', line 306, column 4 to column 13)",
+  " (in 'estimate_secondary', line 305, column 14 to line 307, column 3)",
+  " (in 'estimate_secondary', line 305, column 2 to line 307, column 3)",
+  " (in 'estimate_secondary', line 310, column 4 to column 13)",
+  " (in 'estimate_secondary', line 309, column 14 to line 311, column 3)",
+  " (in 'estimate_secondary', line 309, column 2 to line 311, column 3)",
+  " (in 'estimate_secondary', line 326, column 4 to column 35)",
+  " (in 'estimate_secondary', line 327, column 4 to column 40)",
+  " (in 'estimate_secondary', line 328, column 4 to column 56)",
+  " (in 'estimate_secondary', line 329, column 10 to column 37)",
+  " (in 'estimate_secondary', line 329, column 4 to column 89)",
+  " (in 'estimate_secondary', line 330, column 4 to column 73)",
+  " (in 'estimate_secondary', line 332, column 4 to column 38)",
+  " (in 'estimate_secondary', line 333, column 4 to column 97)",
+  " (in 'estimate_secondary', line 339, column 6 to column 36)",
+  " (in 'estimate_secondary', line 340, column 6 to line 342, column 8)",
+  " (in 'estimate_secondary', line 343, column 6 to column 33)",
+  " (in 'estimate_secondary', line 344, column 6 to column 33)",
+  " (in 'estimate_secondary', line 346, column 6 to column 84)",
+  " (in 'estimate_secondary', line 347, column 6 to line 349, column 8)",
+  " (in 'estimate_secondary', line 350, column 6 to column 31)",
+  " (in 'estimate_secondary', line 338, column 61 to line 351, column 5)",
+  " (in 'estimate_secondary', line 337, column 4 to line 351, column 5)",
+  " (in 'estimate_secondary', line 319, column 9 to line 352, column 3)",
+  " (in 'estimate_secondary', line 316, column 4 to line 318, column 6)",
+  " (in 'estimate_secondary', line 314, column 49 to line 319, column 3)",
+  " (in 'estimate_secondary', line 314, column 2 to line 352, column 3)",
+  " (in 'estimate_secondary', line 354, column 2 to column 16)",
+  " (in 'estimate_secondary', line 303, column 60 to line 355, column 1)",
+  " (in 'estimate_secondary', line 360, column 2 to column 14)",
+  " (in 'estimate_secondary', line 363, column 4 to column 31)",
+  " (in 'estimate_secondary', line 362, column 14 to line 364, column 3)",
+  " (in 'estimate_secondary', line 362, column 2 to line 364, column 3)",
+  " (in 'estimate_secondary', line 367, column 4 to column 13)",
+  " (in 'estimate_secondary', line 366, column 14 to line 368, column 3)",
+  " (in 'estimate_secondary', line 366, column 2 to line 368, column 3)",
+  " (in 'estimate_secondary', line 381, column 4 to line 385, column 7)",
+  " (in 'estimate_secondary', line 379, column 9 to line 386, column 3)",
+  " (in 'estimate_secondary', line 374, column 4 to line 378, column 6)",
+  " (in 'estimate_secondary', line 373, column 49 to line 379, column 3)",
+  " (in 'estimate_secondary', line 373, column 2 to line 386, column 3)",
+  " (in 'estimate_secondary', line 392, column 4 to line 394, column 6)",
+  " (in 'estimate_secondary', line 395, column 4 to column 31)",
+  " (in 'estimate_secondary', line 396, column 4 to column 31)",
+  " (in 'estimate_secondary', line 398, column 4 to column 82)",
+  " (in 'estimate_secondary', line 399, column 4 to column 84)",
+  " (in 'estimate_secondary', line 391, column 59 to line 400, column 3)",
+  " (in 'estimate_secondary', line 390, column 2 to line 400, column 3)",
+  " (in 'estimate_secondary', line 402, column 2 to column 16)",
+  " (in 'estimate_secondary', line 359, column 61 to line 403, column 1)",
+  " (in 'estimate_secondary', line 409, column 4 to line 410, column 123)",
+  " (in 'estimate_secondary', line 408, column 19 to line 411, column 3)",
+  " (in 'estimate_secondary', line 408, column 2 to line 411, column 3)",
+  " (in 'estimate_secondary', line 413, column 4 to line 414, column 87)",
+  " (in 'estimate_secondary', line 412, column 20 to line 415, column 3)",
+  " (in 'estimate_secondary', line 412, column 2 to line 415, column 3)",
+  " (in 'estimate_secondary', line 417, column 4 to column 31)",
+  " (in 'estimate_secondary', line 416, column 13 to line 418, column 3)",
+  " (in 'estimate_secondary', line 416, column 2 to line 418, column 3)",
+  " (in 'estimate_secondary', line 419, column 2 to line 423, column 4)",
+  " (in 'estimate_secondary', line 424, column 2 to line 428, column 4)",
+  " (in 'estimate_secondary', line 469, column 4 to column 54)",
+  " (in 'estimate_secondary', line 468, column 9 to line 470, column 3)",
+  " (in 'estimate_secondary', line 434, column 4 to column 19)",
+  " (in 'estimate_secondary', line 435, column 4 to column 19)",
+  " (in 'estimate_secondary', line 446, column 6 to line 450, column 8)",
+  " (in 'estimate_secondary', line 444, column 11 to line 451, column 5)",
+  " (in 'estimate_secondary', line 443, column 6 to column 32)",
+  " (in 'estimate_secondary', line 441, column 23 to line 444, column 5)",
+  " (in 'estimate_secondary', line 441, column 11 to line 451, column 5)",
+  " (in 'estimate_secondary', line 440, column 6 to column 38)",
+  " (in 'estimate_secondary', line 438, column 19 to line 441, column 5)",
+  " (in 'estimate_secondary', line 438, column 4 to line 451, column 5)",
+  " (in 'estimate_secondary', line 459, column 6 to line 463, column 8)",
+  " (in 'estimate_secondary', line 458, column 11 to line 464, column 5)",
+  " (in 'estimate_secondary', line 457, column 6 to column 20)",
+  " (in 'estimate_secondary', line 456, column 26 to line 458, column 5)",
+  " (in 'estimate_secondary', line 456, column 11 to line 464, column 5)",
+  " (in 'estimate_secondary', line 455, column 6 to column 32)",
+  " (in 'estimate_secondary', line 454, column 22 to line 456, column 5)",
+  " (in 'estimate_secondary', line 454, column 4 to line 464, column 5)",
+  " (in 'estimate_secondary', line 466, column 4 to column 82)",
+  " (in 'estimate_secondary', line 467, column 4 to column 71)",
+  " (in 'estimate_secondary', line 433, column 59 to line 468, column 3)",
+  " (in 'estimate_secondary', line 432, column 2 to line 470, column 3)",
+  " (in 'estimate_secondary', line 407, column 61 to line 471, column 1)",
+  " (in 'estimate_secondary', line 478, column 2 to column 37)",
+  " (in 'estimate_secondary', line 479, column 9 to column 23)",
+  " (in 'estimate_secondary', line 479, column 2 to column 34)",
+  " (in 'estimate_secondary', line 480, column 9 to column 23)",
+  " (in 'estimate_secondary', line 480, column 2 to column 34)",
+  " (in 'estimate_secondary', line 481, column 2 to column 22)",
+  " (in 'estimate_secondary', line 485, column 4 to column 47)",
+  " (in 'estimate_secondary', line 484, column 26 to line 486, column 3)",
+  " (in 'estimate_secondary', line 484, column 2 to line 486, column 3)",
+  " (in 'estimate_secondary', line 494, column 2 to column 71)",
+  " (in 'estimate_secondary', line 496, column 4 to line 500, column 6)",
+  " (in 'estimate_secondary', line 495, column 38 to line 501, column 3)",
+  " (in 'estimate_secondary', line 495, column 2 to line 501, column 3)",
+  " (in 'estimate_secondary', line 504, column 2 to column 17)",
+  " (in 'estimate_secondary', line 513, column 4 to line 517, column 6)",
+  " (in 'estimate_secondary', line 511, column 9 to line 518, column 3)",
+  " (in 'estimate_secondary', line 510, column 4 to column 36)",
+  " (in 'estimate_secondary', line 508, column 61 to line 511, column 3)",
+  " (in 'estimate_secondary', line 508, column 9 to line 518, column 3)",
+  " (in 'estimate_secondary', line 507, column 4 to column 36)",
+  " (in 'estimate_secondary', line 505, column 17 to line 508, column 3)",
+  " (in 'estimate_secondary', line 505, column 2 to line 518, column 3)",
+  " (in 'estimate_secondary', line 521, column 2 to column 17)",
+  " (in 'estimate_secondary', line 533, column 4 to column 41)",
+  " (in 'estimate_secondary', line 532, column 9 to line 534, column 3)",
+  " (in 'estimate_secondary', line 526, column 6 to line 530, column 8)",
+  " (in 'estimate_secondary', line 525, column 11 to line 531, column 5)",
+  " (in 'estimate_secondary', line 524, column 6 to column 20)",
+  " (in 'estimate_secondary', line 523, column 19 to line 525, column 5)",
+  " (in 'estimate_secondary', line 523, column 4 to line 531, column 5)",
+  " (in 'estimate_secondary', line 522, column 26 to line 532, column 3)",
+  " (in 'estimate_secondary', line 522, column 2 to line 534, column 3)",
+  " (in 'estimate_secondary', line 536, column 2 to column 75)",
+  " (in 'estimate_secondary', line 561, column 6 to column 78)",
+  " (in 'estimate_secondary', line 559, column 11 to line 562, column 5)",
+  " (in 'estimate_secondary', line 553, column 6 to line 557, column 8)",
+  " (in 'estimate_secondary', line 558, column 6 to column 74)",
+  " (in 'estimate_secondary', line 550, column 23 to line 559, column 5)",
+  " (in 'estimate_secondary', line 550, column 11 to line 562, column 5)",
+  " (in 'estimate_secondary', line 549, column 6 to column 49)",
+  " (in 'estimate_secondary', line 546, column 61 to line 550, column 5)",
+  " (in 'estimate_secondary', line 546, column 11 to line 562, column 5)",
+  " (in 'estimate_secondary', line 545, column 6 to column 74)",
+  " (in 'estimate_secondary', line 543, column 26 to line 546, column 5)",
+  " (in 'estimate_secondary', line 543, column 11 to line 562, column 5)",
+  " (in 'estimate_secondary', line 542, column 6 to column 40)",
+  " (in 'estimate_secondary', line 540, column 16 to line 543, column 5)",
+  " (in 'estimate_secondary', line 540, column 4 to line 562, column 5)",
+  " (in 'estimate_secondary', line 539, column 30 to line 563, column 3)",
+  " (in 'estimate_secondary', line 539, column 2 to line 563, column 3)",
+  " (in 'estimate_secondary', line 565, column 2 to column 18)",
+  " (in 'estimate_secondary', line 476, column 2 to line 566, column 1)",
+  " (in 'estimate_secondary', line 573, column 2 to line 577, column 4)",
+  " (in 'estimate_secondary', line 572, column 2 to line 578, column 1)",
+  " (in 'estimate_secondary', line 600, column 2 to column 30)",
+  " (in 'estimate_secondary', line 601, column 2 to column 41)",
+  " (in 'estimate_secondary', line 602, column 2 to column 16)",
+  " (in 'estimate_secondary', line 603, column 2 to column 41)",
+  " (in 'estimate_secondary', line 604, column 2 to column 19)",
+  " (in 'estimate_secondary', line 605, column 2 to column 42)",
+  " (in 'estimate_secondary', line 599, column 62 to line 606, column 1)",
+  " (in 'estimate_secondary', line 619, column 2 to column 30)",
+  " (in 'estimate_secondary', line 620, column 2 to column 41)",
+  " (in 'estimate_secondary', line 621, column 2 to column 19)",
+  " (in 'estimate_secondary', line 622, column 2 to column 41)",
+  " (in 'estimate_secondary', line 623, column 2 to column 30)",
+  " (in 'estimate_secondary', line 624, column 2 to column 42)",
+  " (in 'estimate_secondary', line 618, column 61 to line 625, column 1)",
+  " (in 'estimate_secondary', line 642, column 2 to column 29)",
+  " (in 'estimate_secondary', line 643, column 2 to column 29)",
+  " (in 'estimate_secondary', line 646, column 4 to column 74)",
+  " (in 'estimate_secondary', line 645, column 29 to line 647, column 3)",
+  " (in 'estimate_secondary', line 645, column 2 to line 647, column 3)",
+  " (in 'estimate_secondary', line 650, column 4 to column 59)",
+  " (in 'estimate_secondary', line 649, column 18 to line 651, column 3)",
+  " (in 'estimate_secondary', line 649, column 2 to line 651, column 3)",
+  " (in 'estimate_secondary', line 653, column 9 to column 12)",
+  " (in 'estimate_secondary', line 653, column 2 to column 16)",
+  " (in 'estimate_secondary', line 656, column 4 to column 65)",
+  " (in 'estimate_secondary', line 657, column 4 to column 75)",
+  " (in 'estimate_secondary', line 655, column 20 to line 658, column 3)",
+  " (in 'estimate_secondary', line 655, column 2 to line 658, column 3)",
+  " (in 'estimate_secondary', line 662, column 4 to column 64)",
+  " (in 'estimate_secondary', line 663, column 4 to column 75)",
+  " (in 'estimate_secondary', line 661, column 28 to line 664, column 3)",
+  " (in 'estimate_secondary', line 661, column 2 to line 664, column 3)",
+  " (in 'estimate_secondary', line 666, column 2 to column 11)",
+  " (in 'estimate_secondary', line 641, column 58 to line 667, column 1)",
+  " (in 'estimate_secondary', line 687, column 2 to column 35)",
+  " (in 'estimate_secondary', line 688, column 2 to column 43)",
+  " (in 'estimate_secondary', line 691, column 4 to column 44)",
+  " (in 'estimate_secondary', line 690, column 19 to line 692, column 3)",
+  " (in 'estimate_secondary', line 690, column 2 to line 692, column 3)",
+  " (in 'estimate_secondary', line 694, column 9 to column 10)",
+  " (in 'estimate_secondary', line 694, column 2 to column 80)",
+  " (in 'estimate_secondary', line 695, column 2 to column 45)",
+  " (in 'estimate_secondary', line 686, column 44 to line 696, column 1)",
+  " (in 'estimate_secondary', line 728, column 2 to column 38)",
+  " (in 'estimate_secondary', line 729, column 8 to column 16)",
+  " (in 'estimate_secondary', line 729, column 2 to column 36)",
+  " (in 'estimate_secondary', line 731, column 4 to column 32)",
+  " (in 'estimate_secondary', line 730, column 24 to line 732, column 3)",
+  " (in 'estimate_secondary', line 730, column 2 to line 732, column 3)",
+  " (in 'estimate_secondary', line 733, column 2 to column 31)",
+  " (in 'estimate_secondary', line 734, column 2 to line 737, column 4)",
+  " (in 'estimate_secondary', line 727, column 2 to line 738, column 1)",
+  " (in 'estimate_secondary', line 767, column 8 to column 19)",
+  " (in 'estimate_secondary', line 767, column 2 to column 29)",
+  " (in 'estimate_secondary', line 769, column 4 to column 15)",
+  " (in 'estimate_secondary', line 774, column 8 to line 775, column 53)",
+  " (in 'estimate_secondary', line 773, column 13 to line 776, column 7)",
+  " (in 'estimate_secondary', line 772, column 8 to column 47)",
+  " (in 'estimate_secondary', line 771, column 28 to line 773, column 7)",
+  " (in 'estimate_secondary', line 771, column 6 to line 776, column 7)",
+  " (in 'estimate_secondary', line 770, column 69 to line 777, column 5)",
+  " (in 'estimate_secondary', line 770, column 4 to line 777, column 5)",
+  " (in 'estimate_secondary', line 768, column 27 to line 778, column 3)",
+  " (in 'estimate_secondary', line 768, column 2 to line 778, column 3)",
+  " (in 'estimate_secondary', line 779, column 2 to column 13)",
+  " (in 'estimate_secondary', line 766, column 2 to line 780, column 1)",
+  " (in 'estimate_secondary', line 812, column 9 to column 12)",
+  " (in 'estimate_secondary', line 812, column 2 to column 39)",
+  " (in 'estimate_secondary', line 813, column 2 to column 22)",
+  " (in 'estimate_secondary', line 814, column 2 to column 14)",
+  " (in 'estimate_secondary', line 836, column 6 to column 57)",
+  " (in 'estimate_secondary', line 837, column 6 to column 63)",
+  " (in 'estimate_secondary', line 838, column 6 to column 42)",
+  " (in 'estimate_secondary', line 842, column 8 to line 844, column 10)",
+  " (in 'estimate_secondary', line 841, column 13 to line 845, column 7)",
+  " (in 'estimate_secondary', line 840, column 8 to column 49)",
+  " (in 'estimate_secondary', line 839, column 28 to line 841, column 7)",
+  " (in 'estimate_secondary', line 839, column 6 to line 845, column 7)",
+  " (in 'estimate_secondary', line 835, column 11 to line 846, column 5)",
+  " (in 'estimate_secondary', line 818, column 6 to column 57)",
+  " (in 'estimate_secondary', line 819, column 6 to column 63)",
+  " (in 'estimate_secondary', line 820, column 13 to column 45)",
+  " (in 'estimate_secondary', line 820, column 6 to line 826, column 8)",
+  " (in 'estimate_secondary', line 827, column 6 to column 59)",
+  " (in 'estimate_secondary', line 831, column 8 to line 833, column 10)",
+  " (in 'estimate_secondary', line 830, column 13 to line 834, column 7)",
+  " (in 'estimate_secondary', line 829, column 8 to column 42)",
+  " (in 'estimate_secondary', line 828, column 28 to line 830, column 7)",
+  " (in 'estimate_secondary', line 828, column 6 to line 834, column 7)",
+  " (in 'estimate_secondary', line 817, column 26 to line 835, column 5)",
+  " (in 'estimate_secondary', line 817, column 4 to line 846, column 5)",
+  " (in 'estimate_secondary', line 847, column 4 to column 26)",
+  " (in 'estimate_secondary', line 816, column 78 to line 848, column 3)",
+  " (in 'estimate_secondary', line 815, column 2 to line 848, column 3)",
+  " (in 'estimate_secondary', line 850, column 4 to line 853, column 6)",
+  " (in 'estimate_secondary', line 849, column 21 to line 854, column 3)",
+  " (in 'estimate_secondary', line 849, column 2 to line 854, column 3)",
+  " (in 'estimate_secondary', line 856, column 4 to column 30)",
+  " (in 'estimate_secondary', line 855, column 18 to line 857, column 3)",
+  " (in 'estimate_secondary', line 855, column 2 to line 857, column 3)",
+  " (in 'estimate_secondary', line 859, column 4 to column 23)",
+  " (in 'estimate_secondary', line 858, column 19 to line 860, column 3)",
+  " (in 'estimate_secondary', line 858, column 2 to line 860, column 3)",
+  " (in 'estimate_secondary', line 861, column 2 to column 13)",
+  " (in 'estimate_secondary', line 810, column 2 to line 862, column 1)",
+  " (in 'estimate_secondary', line 881, column 2 to column 55)",
+  " (in 'estimate_secondary', line 883, column 4 to column 11)",
+  " (in 'estimate_secondary', line 882, column 21 to line 884, column 3)",
+  " (in 'estimate_secondary', line 882, column 2 to line 884, column 3)",
+  " (in 'estimate_secondary', line 886, column 4 to column 39)",
+  " (in 'estimate_secondary', line 887, column 4 to column 45)",
+  " (in 'estimate_secondary', line 896, column 10 to column 77)",
+  " (in 'estimate_secondary', line 895, column 15 to line 897, column 9)",
+  " (in 'estimate_secondary', line 891, column 10 to line 894, column 14)",
+  " (in 'estimate_secondary', line 890, column 27 to line 895, column 9)",
+  " (in 'estimate_secondary', line 890, column 8 to line 897, column 9)",
+  " (in 'estimate_secondary', line 889, column 34 to line 898, column 7)",
+  " (in 'estimate_secondary', line 889, column 6 to line 898, column 7)",
+  " (in 'estimate_secondary', line 888, column 25 to line 899, column 5)",
+  " (in 'estimate_secondary', line 888, column 4 to line 899, column 5)",
+  " (in 'estimate_secondary', line 885, column 24 to line 900, column 3)",
+  " (in 'estimate_secondary', line 885, column 2 to line 900, column 3)",
+  " (in 'estimate_secondary', line 880, column 59 to line 901, column 1)",
+  " (in 'estimate_secondary', line 922, column 43 to column 50)",
+  " (in 'estimate_secondary', line 922, column 2 to column 50)",
+  " (in 'estimate_secondary', line 923, column 2 to column 50)",
+  " (in 'estimate_secondary', line 921, column 2 to line 924, column 1)",
+  " (in 'estimate_secondary', line 950, column 9 to column 35)",
+  " (in 'estimate_secondary', line 950, column 2 to column 56)",
+  " (in 'estimate_secondary', line 952, column 4 to column 36)",
+  " (in 'estimate_secondary', line 953, column 4 to column 44)",
+  " (in 'estimate_secondary', line 954, column 4 to column 48)",
+  " (in 'estimate_secondary', line 956, column 6 to column 63)",
+  " (in 'estimate_secondary', line 955, column 21 to line 957, column 5)",
+  " (in 'estimate_secondary', line 955, column 4 to line 957, column 5)",
+  " (in 'estimate_secondary', line 951, column 30 to line 958, column 3)",
+  " (in 'estimate_secondary', line 951, column 2 to line 958, column 3)",
+  " (in 'estimate_secondary', line 959, column 2 to column 13)",
+  " (in 'estimate_secondary', line 949, column 2 to line 960, column 1)",
+  " (in 'estimate_secondary', line 973, column 2 to column 29)",
+  " (in 'estimate_secondary', line 974, column 9 to column 12)",
+  " (in 'estimate_secondary', line 974, column 2 to column 18)",
+  " (in 'estimate_secondary', line 976, column 4 to column 49)",
+  " (in 'estimate_secondary', line 977, column 4 to column 31)",
+  " (in 'estimate_secondary', line 978, column 4 to column 45)",
+  " (in 'estimate_secondary', line 975, column 19 to line 979, column 3)",
+  " (in 'estimate_secondary', line 975, column 2 to line 979, column 3)",
+  " (in 'estimate_secondary', line 980, column 2 to column 13)",
+  " (in 'estimate_secondary', line 972, column 57 to line 981, column 1)",
+  " (in 'estimate_secondary', line 999, column 2 to column 32)",
+  " (in 'estimate_secondary', line 1000, column 9 to column 11)",
+  " (in 'estimate_secondary', line 1000, column 2 to column 41)",
+  " (in 'estimate_secondary', line 1001, column 2 to column 47)",
+  " (in 'estimate_secondary', line 998, column 41 to line 1002, column 1)",
+  " (in 'estimate_secondary', line 1017, column 2 to column 32)",
+  " (in 'estimate_secondary', line 1018, column 9 to column 10)",
+  " (in 'estimate_secondary', line 1018, column 2 to column 27)",
+  " (in 'estimate_secondary', line 1019, column 2 to column 47)",
+  " (in 'estimate_secondary', line 1020, column 2 to column 25)",
+  " (in 'estimate_secondary', line 1016, column 57 to line 1021, column 1)",
+  " (in 'estimate_secondary', line 1040, column 2 to column 32)",
+  " (in 'estimate_secondary', line 1041, column 2 to column 46)",
+  " (in 'estimate_secondary', line 1042, column 9 to column 10)",
+  " (in 'estimate_secondary', line 1042, column 2 to column 36)",
+  " (in 'estimate_secondary', line 1044, column 2 to column 36)",
+  " (in 'estimate_secondary', line 1045, column 2 to column 34)",
+  " (in 'estimate_secondary', line 1046, column 2 to column 46)",
+  " (in 'estimate_secondary', line 1052, column 4 to column 70)",
+  " (in 'estimate_secondary', line 1051, column 9 to line 1053, column 3)",
+  " (in 'estimate_secondary', line 1050, column 4 to column 70)",
+  " (in 'estimate_secondary', line 1049, column 19 to line 1051, column 3)",
+  " (in 'estimate_secondary', line 1049, column 2 to line 1053, column 3)",
+  " (in 'estimate_secondary', line 1054, column 2 to column 24)",
+  " (in 'estimate_secondary', line 1039, column 75 to line 1055, column 1)",
+  " (in 'estimate_secondary', line 1078, column 2 to column 49)",
+  " (in 'estimate_secondary', line 1082, column 6 to column 63)",
+  " (in 'estimate_secondary', line 1080, column 30 to line 1083, column 5)",
+  " (in 'estimate_secondary', line 1080, column 4 to line 1083, column 5)",
+  " (in 'estimate_secondary', line 1086, column 6 to column 57)",
+  " (in 'estimate_secondary', line 1084, column 28 to line 1087, column 5)",
+  " (in 'estimate_secondary', line 1084, column 4 to line 1087, column 5)",
+  " (in 'estimate_secondary', line 1079, column 18 to line 1088, column 3)",
+  " (in 'estimate_secondary', line 1079, column 2 to line 1088, column 3)",
+  " (in 'estimate_secondary', line 1077, column 73 to line 1089, column 1)",
+  " (in 'estimate_secondary', line 1107, column 2 to column 65)",
+  " (in 'estimate_secondary', line 1106, column 66 to line 1108, column 1)",
+  " (in 'estimate_secondary', line 1128, column 2 to column 35)",
+  " (in 'estimate_secondary', line 1129, column 9 to column 10)",
+  " (in 'estimate_secondary', line 1129, column 2 to column 46)",
+  " (in 'estimate_secondary', line 1143, column 6 to column 59)",
+  " (in 'estimate_secondary', line 1142, column 11 to line 1144, column 5)",
+  " (in 'estimate_secondary', line 1141, column 6 to column 35)",
+  " (in 'estimate_secondary', line 1140, column 21 to line 1142, column 5)",
+  " (in 'estimate_secondary', line 1140, column 4 to line 1144, column 5)",
+  " (in 'estimate_secondary', line 1139, column 9 to line 1145, column 3)",
+  " (in 'estimate_secondary', line 1131, column 4 to column 67)",
+  " (in 'estimate_secondary', line 1135, column 6 to line 1137, column 17)",
+  " (in 'estimate_secondary', line 1134, column 11 to line 1138, column 5)",
+  " (in 'estimate_secondary', line 1133, column 6 to column 47)",
+  " (in 'estimate_secondary', line 1132, column 21 to line 1134, column 5)",
+  " (in 'estimate_secondary', line 1132, column 4 to line 1138, column 5)",
+  " (in 'estimate_secondary', line 1130, column 18 to line 1139, column 3)",
+  " (in 'estimate_secondary', line 1130, column 2 to line 1145, column 3)",
+  " (in 'estimate_secondary', line 1127, column 75 to line 1146, column 1)",
+  " (in 'estimate_secondary', line 1163, column 2 to column 35)",
+  " (in 'estimate_secondary', line 1164, column 9 to column 13)",
+  " (in 'estimate_secondary', line 1164, column 2 to column 45)",
+  " (in 'estimate_secondary', line 1167, column 6 to column 59)",
+  " (in 'estimate_secondary', line 1166, column 23 to line 1168, column 5)",
+  " (in 'estimate_secondary', line 1166, column 4 to line 1168, column 5)",
+  " (in 'estimate_secondary', line 1165, column 26 to line 1169, column 3)",
+  " (in 'estimate_secondary', line 1165, column 2 to line 1169, column 3)",
+  " (in 'estimate_secondary', line 1170, column 2 to column 29)",
+  " (in 'estimate_secondary', line 1162, column 66 to line 1171, column 1)",
+  " (in 'estimate_secondary', line 1192, column 2 to column 32)",
+  " (in 'estimate_secondary', line 1193, column 9 to column 10)",
+  " (in 'estimate_secondary', line 1193, column 2 to column 20)",
+  " (in 'estimate_secondary', line 1201, column 4 to column 67)",
+  " (in 'estimate_secondary', line 1203, column 6 to line 1205, column 17)",
+  " (in 'estimate_secondary', line 1202, column 19 to line 1206, column 5)",
+  " (in 'estimate_secondary', line 1202, column 4 to line 1206, column 5)",
+  " (in 'estimate_secondary', line 1200, column 9 to line 1207, column 3)",
+  " (in 'estimate_secondary', line 1198, column 6 to column 64)",
+  " (in 'estimate_secondary', line 1197, column 19 to line 1199, column 5)",
+  " (in 'estimate_secondary', line 1197, column 4 to line 1199, column 5)",
+  " (in 'estimate_secondary', line 1196, column 23 to line 1200, column 3)",
+  " (in 'estimate_secondary', line 1196, column 2 to line 1207, column 3)",
+  " (in 'estimate_secondary', line 1208, column 2 to column 18)",
+  " (in 'estimate_secondary', line 1191, column 82 to line 1209, column 1)",
+  " (in 'estimate_secondary', line 1238, column 4 to column 47)",
+  " (in 'estimate_secondary', line 1239, column 4 to column 61)",
+  " (in 'estimate_secondary', line 1237, column 9 to line 1240, column 3)",
+  " (in 'estimate_secondary', line 1236, column 4 to column 45)",
+  " (in 'estimate_secondary', line 1235, column 24 to line 1237, column 3)",
+  " (in 'estimate_secondary', line 1235, column 9 to line 1240, column 3)",
+  " (in 'estimate_secondary', line 1234, column 4 to column 14)",
+  " (in 'estimate_secondary', line 1233, column 17 to line 1235, column 3)",
+  " (in 'estimate_secondary', line 1233, column 2 to line 1240, column 3)",
+  " (in 'estimate_secondary', line 1232, column 47 to line 1241, column 1)",
+  " (in 'estimate_secondary', line 1259, column 2 to column 32)",
+  " (in 'estimate_secondary', line 1260, column 8 to column 9)",
+  " (in 'estimate_secondary', line 1260, column 2 to column 31)",
+  " (in 'estimate_secondary', line 1261, column 2 to column 65)",
+  " (in 'estimate_secondary', line 1264, column 4 to column 66)",
+  " (in 'estimate_secondary', line 1263, column 17 to line 1265, column 3)",
+  " (in 'estimate_secondary', line 1263, column 2 to line 1265, column 3)",
+  " (in 'estimate_secondary', line 1266, column 2 to column 26)",
+  " (in 'estimate_secondary', line 1258, column 86 to line 1267, column 1)",
+  " (in 'estimate_secondary', line 1304, column 2 to column 39)",
+  " (in 'estimate_secondary', line 1305, column 9 to column 10)",
+  " (in 'estimate_secondary', line 1305, column 2 to column 51)",
+  " (in 'estimate_secondary', line 1314, column 8 to column 42)",
+  " (in 'estimate_secondary', line 1313, column 12 to line 1315, column 7)",
+  " (in 'estimate_secondary', line 1312, column 8 to column 56)",
+  " (in 'estimate_secondary', line 1311, column 23 to line 1313, column 7)",
+  " (in 'estimate_secondary', line 1311, column 6 to line 1315, column 7)",
+  " (in 'estimate_secondary', line 1310, column 29 to line 1316, column 5)",
+  " (in 'estimate_secondary', line 1310, column 4 to line 1316, column 5)",
+  " (in 'estimate_secondary', line 1322, column 8 to column 79)",
+  " (in 'estimate_secondary', line 1321, column 12 to line 1323, column 7)",
+  " (in 'estimate_secondary', line 1320, column 8 to column 48)",
+  " (in 'estimate_secondary', line 1319, column 33 to line 1321, column 7)",
+  " (in 'estimate_secondary', line 1319, column 6 to line 1323, column 7)",
+  " (in 'estimate_secondary', line 1318, column 18 to line 1324, column 5)",
+  " (in 'estimate_secondary', line 1318, column 4 to line 1324, column 5)",
+  " (in 'estimate_secondary', line 1330, column 8 to column 50)",
+  " (in 'estimate_secondary', line 1329, column 12 to line 1331, column 7)",
+  " (in 'estimate_secondary', line 1328, column 8 to column 50)",
+  " (in 'estimate_secondary', line 1327, column 36 to line 1329, column 7)",
+  " (in 'estimate_secondary', line 1327, column 6 to line 1331, column 7)",
+  " (in 'estimate_secondary', line 1326, column 17 to line 1332, column 5)",
+  " (in 'estimate_secondary', line 1326, column 4 to line 1332, column 5)",
+  " (in 'estimate_secondary', line 1333, column 4 to column 55)",
+  " (in 'estimate_secondary', line 1308, column 17 to line 1334, column 3)",
+  " (in 'estimate_secondary', line 1308, column 2 to line 1334, column 3)",
+  " (in 'estimate_secondary', line 1335, column 2 to column 28)",
+  " (in 'estimate_secondary', line 1303, column 2 to line 1336, column 1)",
+  " (in 'estimate_secondary', line 1370, column 4 to column 46)",
+  " (in 'estimate_secondary', line 1369, column 9 to line 1371, column 3)",
+  " (in 'estimate_secondary', line 1368, column 4 to column 49)",
+  " (in 'estimate_secondary', line 1367, column 38 to line 1369, column 3)",
+  " (in 'estimate_secondary', line 1367, column 9 to line 1371, column 3)",
+  " (in 'estimate_secondary', line 1366, column 4 to column 13)",
+  " (in 'estimate_secondary', line 1365, column 15 to line 1367, column 3)",
+  " (in 'estimate_secondary', line 1365, column 2 to line 1371, column 3)",
+  " (in 'estimate_secondary', line 1364, column 51 to line 1372, column 1)",
+  " (in 'estimate_secondary', line 1393, column 2 to column 31)",
+  " (in 'estimate_secondary', line 1399, column 4 to column 48)",
+  " (in 'estimate_secondary', line 1398, column 9 to line 1400, column 3)",
+  " (in 'estimate_secondary', line 1397, column 4 to column 72)",
+  " (in 'estimate_secondary', line 1396, column 38 to line 1398, column 3)",
+  " (in 'estimate_secondary', line 1396, column 9 to line 1400, column 3)",
+  " (in 'estimate_secondary', line 1395, column 4 to column 37)",
+  " (in 'estimate_secondary', line 1394, column 15 to line 1396, column 3)",
+  " (in 'estimate_secondary', line 1394, column 2 to line 1400, column 3)",
+  " (in 'estimate_secondary', line 1392, column 53 to line 1401, column 1)",
+  " (in 'estimate_secondary', line 1429, column 4 to column 32)",
+  " (in 'estimate_secondary', line 1428, column 9 to line 1430, column 3)",
+  " (in 'estimate_secondary', line 1427, column 4 to column 37)",
+  " (in 'estimate_secondary', line 1427, column 33 to column 35)",
+  " (in 'estimate_secondary', line 1427, column 29 to column 31)",
+  " (in 'estimate_secondary', line 1426, column 24 to line 1428, column 3)",
+  " (in 'estimate_secondary', line 1426, column 9 to line 1430, column 3)",
+  " (in 'estimate_secondary', line 1425, column 4 to column 36)",
+  " (in 'estimate_secondary', line 1425, column 32 to column 34)",
+  " (in 'estimate_secondary', line 1425, column 28 to column 30)",
+  " (in 'estimate_secondary', line 1424, column 24 to line 1426, column 3)",
+  " (in 'estimate_secondary', line 1424, column 9 to line 1430, column 3)",
+  " (in 'estimate_secondary', line 1423, column 4 to column 40)",
+  " (in 'estimate_secondary', line 1423, column 36 to column 38)",
+  " (in 'estimate_secondary', line 1423, column 32 to column 34)",
+  " (in 'estimate_secondary', line 1422, column 17 to line 1424, column 3)",
+  " (in 'estimate_secondary', line 1422, column 2 to line 1430, column 3)",
+  " (in 'estimate_secondary', line 1421, column 38 to line 1431, column 1)",
+  " (in 'estimate_secondary', line 1449, column 2 to column 20)",
+  " (in 'estimate_secondary', line 1450, column 2 to column 40)",
+  " (in 'estimate_secondary', line 1452, column 4 to line 1456, column 6)",
+  " (in 'estimate_secondary', line 1457, column 4 to column 19)",
+  " (in 'estimate_secondary', line 1451, column 27 to line 1458, column 3)",
+  " (in 'estimate_secondary', line 1451, column 2 to line 1458, column 3)",
+  " (in 'estimate_secondary', line 1448, column 35 to line 1459, column 1)",
+  " (in 'estimate_secondary', line 1486, column 2 to column 20)",
+  " (in 'estimate_secondary', line 1488, column 4 to column 20)",
+  " (in 'estimate_secondary', line 1492, column 6 to column 68)",
+  " (in 'estimate_secondary', line 1491, column 11 to line 1493, column 5)",
+  " (in 'estimate_secondary', line 1490, column 6 to column 24)",
+  " (in 'estimate_secondary', line 1489, column 42 to line 1491, column 5)",
+  " (in 'estimate_secondary', line 1489, column 4 to line 1493, column 5)",
+  " (in 'estimate_secondary', line 1494, column 4 to line 1498, column 6)",
+  " (in 'estimate_secondary', line 1499, column 4 to column 30)",
+  " (in 'estimate_secondary', line 1500, column 4 to column 19)",
+  " (in 'estimate_secondary', line 1487, column 44 to line 1501, column 3)",
+  " (in 'estimate_secondary', line 1487, column 2 to line 1501, column 3)",
+  " (in 'estimate_secondary', line 1485, column 47 to line 1502, column 1)"};
+template <bool propto__, typename T0__, typename T1__, typename T2__,
+          typename T3__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>>* = nullptr>
+stan::promote_args_t<T0__, T1__, T2__, T3__>
+expgrowth_lpdf(const T0__& x, const T1__& xmin, const T2__& xmax, const T3__&
+               r, std::ostream* pstream__);
+int
+check_for_analytical(const int& dist_id, const int& primary_id, std::ostream*
+                     pstream__);
+template <typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>* = nullptr>
+stan::promote_args_t<T1__, T2__>
+primarycensored_gamma_uniform_lcdf(const double& d, const T1__& q,
+                                   const std::vector<T2__>& params,
+                                   const double& pwindow, std::ostream*
+                                   pstream__);
+template <typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>* = nullptr>
+stan::promote_args_t<T1__, T2__>
+primarycensored_lognormal_uniform_lcdf(const double& d, const T1__& q,
+                                       const std::vector<T2__>& params,
+                                       const double& pwindow, std::ostream*
+                                       pstream__);
+template <typename T0__, typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>* = nullptr>
+stan::promote_args_t<T0__, T1__, T2__>
+log_weibull_g(const T0__& t, const T1__& shape, const T2__& scale,
+              std::ostream* pstream__);
+template <typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>* = nullptr>
+stan::promote_args_t<T1__, T2__>
+primarycensored_weibull_uniform_lcdf(const double& d, const T1__& q,
+                                     const std::vector<T2__>& params,
+                                     const double& pwindow, std::ostream*
+                                     pstream__);
+template <typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>>* = nullptr>
+stan::promote_args_t<T2__>
+primarycensored_analytical_lcdf_raw(const double& d, const int& dist_id,
+                                    const std::vector<T2__>& params,
+                                    const double& pwindow, const int&
+                                    primary_id, std::ostream* pstream__);
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>* = nullptr>
+stan::promote_args_t<T2__, T7__>
+primarycensored_analytical_lcdf(const double& d, const int& dist_id,
+                                const std::vector<T2__>& params,
+                                const double& pwindow, const double& L,
+                                const double& D, const int& primary_id,
+                                const std::vector<T7__>& primary_params,
+                                std::ostream* pstream__);
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>* = nullptr>
+stan::promote_args_t<T2__, T7__>
+primarycensored_analytical_cdf(const double& d, const int& dist_id,
+                               const std::vector<T2__>& params, const double&
+                               pwindow, const double& L, const double& D,
+                               const int& primary_id,
+                               const std::vector<T7__>& primary_params,
+                               std::ostream* pstream__);
+int dist_has_positive_support(const int& dist_id, std::ostream* pstream__);
+template <typename T0__, typename T1__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>>* = nullptr>
+stan::promote_args_t<T0__, T1__>
+dist_lcdf(const T0__& delay, const std::vector<T1__>& params, const int&
+          dist_id, std::ostream* pstream__);
+template <bool propto__, typename T0__, typename T2__, typename T3__,
+          typename T4__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>,
+                              stan::is_stan_scalar<T4__>>* = nullptr>
+stan::promote_args_t<T0__, T2__, T3__, T4__>
+primary_lpdf(const T0__& x, const int& primary_id, const std::vector<T2__>&
+             params, const T3__& xmin, const T4__& xmax, std::ostream*
+             pstream__);
+template <typename T0__, typename T1__, typename T2__, typename T3__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_col_vector<T1__>,
+                              stan::is_vt_not_complex<T1__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<T0__, stan::base_type_t<T1__>, T2__, T3__>,-1,1>
+primarycensored_ode(const T0__& t, const T1__& y_arg__,
+                    const std::vector<T2__>& theta, const std::vector<T3__>&
+                    x_r, const std::vector<int>& x_i, std::ostream* pstream__);
+template <typename T0__, typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>* = nullptr>
+stan::promote_args_t<T0__, T1__, T2__>
+primarycensored_log_normalizer(const T0__& log_cdf_D, const T1__& log_cdf_L,
+                               const T2__& L, std::ostream* pstream__);
+template <typename T0__, typename T1__, typename T2__, typename T3__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>>* = nullptr>
+stan::promote_args_t<T0__, T1__, T2__, T3__>
+primarycensored_apply_truncation(const T0__& log_cdf, const T1__& log_cdf_L,
+                                 const T2__& log_normalizer, const T3__& L,
+                                 std::ostream* pstream__);
+template <typename T3__, typename T6__,
+          stan::require_all_t<stan::is_stan_scalar<T3__>,
+                              stan::is_stan_scalar<T6__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<T3__, T6__>,-1,1>
+primarycensored_truncation_bounds(const double& L, const double& D,
+                                  const int& dist_id,
+                                  const std::vector<T3__>& params,
+                                  const double& pwindow, const int&
+                                  primary_id, const std::vector<T6__>&
+                                  primary_params, std::ostream* pstream__);
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>* = nullptr>
+stan::promote_args_t<T2__, T7__>
+primarycensored_cdf(const double& d, const int& dist_id,
+                    const std::vector<T2__>& params, const double& pwindow,
+                    const double& L, const double& D, const int& primary_id,
+                    const std::vector<T7__>& primary_params, std::ostream*
+                    pstream__);
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>* = nullptr>
+stan::promote_args_t<T2__, T7__>
+primarycensored_lcdf(const double& d, const int& dist_id,
+                     const std::vector<T2__>& params, const double& pwindow,
+                     const double& L, const double& D, const int& primary_id,
+                     const std::vector<T7__>& primary_params, std::ostream*
+                     pstream__);
+template <bool propto__, typename T2__, typename T8__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T8__>>* = nullptr>
+stan::promote_args_t<T2__, T8__>
+primarycensored_lpmf(const int& d, const int& dist_id,
+                     const std::vector<T2__>& params, const double& pwindow,
+                     const double& d_upper, const double& L, const double& D,
+                     const int& primary_id, const std::vector<T8__>&
+                     primary_params, std::ostream* pstream__);
+template <typename T4__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T7__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<T4__, T7__>,-1,1>
+primarycensored_sone_lpmf_vectorized(const int& max_delay, const double& L,
+                                     const double& D, const int& dist_id,
+                                     const std::vector<T4__>& params,
+                                     const double& pwindow, const int&
+                                     primary_id, const std::vector<T7__>&
+                                     primary_params, std::ostream* pstream__);
+template <typename T4__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T7__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<T4__, T7__>,-1,1>
+primarycensored_sone_pmf_vectorized(const int& max_delay, const double& L,
+                                    const double& D, const int& dist_id,
+                                    const std::vector<T4__>& params,
+                                    const double& pwindow, const int&
+                                    primary_id, const std::vector<T7__>&
+                                    primary_params, std::ostream* pstream__);
 std::vector<int>
 calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
                        std::ostream* pstream__);
@@ -522,7 +1081,7 @@ template <typename T0__,
                               stan::is_vt_not_complex<T0__>>* = nullptr>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>>,-1,1>
 discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
-                std::ostream* pstream__);
+                const int& L, std::ostream* pstream__);
 std::vector<int>
 get_delay_type_max(const int& delay_types, const std::vector<int>&
                    delay_types_p, const std::vector<int>& delay_types_id,
@@ -561,6 +1120,27 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
           const std::vector<int>& delay_params_groups,
           const std::vector<int>& delay_dist, const std::vector<int>& weight,
           T_lp__& lp__, T_lp_accum__& lp_accum__, std::ostream* pstream__);
+template <bool propto__, typename T0__, typename T1__, typename T_lp__,
+          typename T_lp_accum__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T1__>,
+                              stan::is_vt_not_complex<T1__>>* = nullptr>
+void
+delays_np_lp(const T0__& delay_np_est_raw_arg__, const T1__&
+             delay_np_est_alpha_arg__, T_lp__& lp__, T_lp_accum__&
+             lp_accum__, std::ostream* pstream__);
+template <typename T0__, typename T4__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T4__>,
+                              stan::is_vt_not_complex<T4__>>* = nullptr>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
+                stan::base_type_t<T4__>>,-1,1>
+combine_np_pmf(const T0__& delay_np_pmf_arg__, const int& delay_n_np_est,
+               const std::vector<int>& delay_np_est_groups,
+               const std::vector<int>& delay_np_est_pos, const T4__&
+               delay_np_est_raw_arg__, std::ostream* pstream__);
 template <typename T0__, typename T1__, typename T2__, typename RNG,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -615,6 +1195,11 @@ truncation_lp(const std::vector<T0__>& truncation_mean,
               const std::vector<T4__>& trunc_sd_mean,
               const std::vector<T5__>& trunc_sd_sd, T_lp__& lp__,
               T_lp_accum__& lp_accum__, std::ostream* pstream__);
+template <typename T0__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>>* = nullptr>
+stan::promote_args_t<T0__>
+reporting_phi(const T0__& reporting_overdispersion, const int& model_type,
+              std::ostream* pstream__);
 template <bool propto__, typename T2__, typename T3__, typename T5__,
           typename T_lp__, typename T_lp_accum__,
           stan::require_all_t<stan::is_col_vector<T2__>,
@@ -689,6 +1274,18 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
           params_value_arg__, const T4__& params_arg__, std::ostream*
           pstream__);
 template <bool propto__, typename T0__, typename T2__, typename T3__,
+          typename T4__, typename T5__, typename T_lp__,
+          typename T_lp_accum__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>,
+                              stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T5__>>* = nullptr>
+void
+apply_prior_lp(const T0__& value, const int& dist, const T2__& p1,
+               const T3__& p2, const T4__& lb, const T5__& ub, T_lp__& lp__,
+               T_lp_accum__& lp_accum__, std::ostream* pstream__);
+template <bool propto__, typename T0__, typename T2__, typename T3__,
           typename T4__, typename T_lp__, typename T_lp_accum__,
           stan::require_all_t<stan::is_col_vector<T0__>,
                               stan::is_vt_not_complex<T0__>,
@@ -703,6 +1300,1550 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
           const T2__& prior_dist_params_arg__, const T3__&
           params_lower_arg__, const T4__& params_upper_arg__, T_lp__& lp__,
           T_lp_accum__& lp_accum__, std::ostream* pstream__);
+template <bool propto__, typename T2__, typename T3__, typename T4__,
+          typename T6__, typename T_lp__, typename T_lp_accum__,
+          stan::require_all_t<stan::is_col_vector<T2__>,
+                              stan::is_vt_not_complex<T2__>,
+                              stan::is_col_vector<T3__>,
+                              stan::is_vt_not_complex<T3__>,
+                              stan::is_col_vector<T4__>,
+                              stan::is_vt_not_complex<T4__>,
+                              stan::is_col_vector<T6__>,
+                              stan::is_vt_not_complex<T6__>>* = nullptr>
+void
+init_priors_lp(const std::vector<int>& init_param_ids,
+               const std::vector<int>& init_dists, const T2__&
+               init_dist_params_arg__, const T3__& init_lower_arg__,
+               const T4__& init_upper_arg__, const int& param_id_R0,
+               const T6__& R_arg__, T_lp__& lp__, T_lp_accum__& lp_accum__,
+               std::ostream* pstream__);
+struct primarycensored_ode_variadic2_functor__ {
+  template <typename T0__, typename T1__, typename T2__, typename T3__,
+            stan::require_all_t<stan::is_stan_scalar<T0__>,
+                                stan::is_col_vector<T1__>,
+                                stan::is_vt_not_complex<T1__>,
+                                stan::is_stan_scalar<T2__>,
+                                stan::is_stan_scalar<T3__>>* = nullptr>
+  Eigen::Matrix<stan::promote_args_t<T0__, stan::base_type_t<T1__>, T2__,
+                  T3__>,-1,1>
+  operator()(const T0__& t, const T1__& y, std::ostream* pstream__,
+             const std::vector<T2__>& theta, const std::vector<T3__>& x_r,
+             const std::vector<int>& x_i) const {
+    return primarycensored_ode(t, y, theta, x_r, x_i, pstream__);
+  }
+};
+template <bool propto__, typename T0__, typename T1__, typename T2__,
+          typename T3__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>>*>
+stan::promote_args_t<T0__, T1__, T2__, T3__>
+expgrowth_lpdf(const T0__& x, const T1__& xmin, const T2__& xmax, const T3__&
+               r, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__, T3__>;
+  int current_statement__ = 0;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 153;
+    if ((stan::math::primitive_value(stan::math::logical_lt(x, xmin)) ||
+        stan::math::primitive_value(stan::math::logical_gt(x, xmax)))) {
+      current_statement__ = 151;
+      return stan::math::negative_infinity();
+    }
+    current_statement__ = 156;
+    if (stan::math::logical_lt(stan::math::abs(r), 1e-10)) {
+      current_statement__ = 154;
+      return -stan::math::log((xmax - xmin));
+    }
+    current_statement__ = 157;
+    return ((stan::math::log(stan::math::abs(r)) + (r * x)) -
+           stan::math::log(
+             stan::math::abs((stan::math::exp((r * xmax)) -
+               stan::math::exp((r * xmin))))));
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+int
+check_for_analytical(const int& dist_id, const int& primary_id, std::ostream*
+                     pstream__) {
+  using local_scalar_t__ = double;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 160;
+    if ((stan::math::primitive_value(stan::math::logical_eq(dist_id, 2)) &&
+        stan::math::primitive_value(stan::math::logical_eq(primary_id, 1)))) {
+      current_statement__ = 159;
+      return 1;
+    }
+    current_statement__ = 162;
+    if ((stan::math::primitive_value(stan::math::logical_eq(dist_id, 1)) &&
+        stan::math::primitive_value(stan::math::logical_eq(primary_id, 1)))) {
+      current_statement__ = 161;
+      return 1;
+    }
+    current_statement__ = 164;
+    if ((stan::math::primitive_value(stan::math::logical_eq(dist_id, 3)) &&
+        stan::math::primitive_value(stan::math::logical_eq(primary_id, 1)))) {
+      current_statement__ = 163;
+      return 1;
+    }
+    current_statement__ = 165;
+    return 0;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>*>
+stan::promote_args_t<T1__, T2__>
+primarycensored_gamma_uniform_lcdf(const double& d, const T1__& q,
+                                   const std::vector<T2__>& params,
+                                   const double& pwindow, std::ostream*
+                                   pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T1__, T2__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ shape = DUMMY_VAR__;
+    current_statement__ = 167;
+    shape = stan::model::rvalue(params, "params", stan::model::index_uni(1));
+    local_scalar_t__ rate = DUMMY_VAR__;
+    current_statement__ = 168;
+    rate = stan::model::rvalue(params, "params", stan::model::index_uni(2));
+    local_scalar_t__ log_window = DUMMY_VAR__;
+    current_statement__ = 169;
+    log_window = stan::math::log(pwindow);
+    local_scalar_t__ log_E = DUMMY_VAR__;
+    current_statement__ = 170;
+    log_E = (stan::math::log(shape) - stan::math::log(rate));
+    local_scalar_t__ log_F_T_d_k = DUMMY_VAR__;
+    current_statement__ = 171;
+    log_F_T_d_k = stan::math::gamma_lcdf(d, shape, rate);
+    local_scalar_t__ gamma_kp1_pdf_log_d = DUMMY_VAR__;
+    current_statement__ = 172;
+    gamma_kp1_pdf_log_d = (((shape * stan::math::log((rate * d))) - (rate *
+      d)) - stan::math::lgamma((shape + 1)));
+    local_scalar_t__ log_F_T_d_kp1 = DUMMY_VAR__;
+    current_statement__ = 173;
+    log_F_T_d_kp1 = stan::math::log_diff_exp(log_F_T_d_k, gamma_kp1_pdf_log_d);
+    local_scalar_t__ log_q_F_T_q = DUMMY_VAR__;
+    local_scalar_t__ log_E_tF_T_q = DUMMY_VAR__;
+    current_statement__ = 185;
+    if (stan::math::logical_gt(q, 0)) {
+      local_scalar_t__ log_F_T_q_k = DUMMY_VAR__;
+      current_statement__ = 179;
+      log_F_T_q_k = stan::math::gamma_lcdf(q, shape, rate);
+      local_scalar_t__ gamma_kp1_pdf_log_q = DUMMY_VAR__;
+      current_statement__ = 180;
+      gamma_kp1_pdf_log_q = (((shape * stan::math::log((rate * q))) - (rate *
+        q)) - stan::math::lgamma((shape + 1)));
+      local_scalar_t__ log_F_T_q_kp1 = DUMMY_VAR__;
+      current_statement__ = 181;
+      log_F_T_q_kp1 = stan::math::log_diff_exp(log_F_T_q_k,
+                        gamma_kp1_pdf_log_q);
+      current_statement__ = 182;
+      log_q_F_T_q = (stan::math::log(q) + log_F_T_q_k);
+      current_statement__ = 183;
+      log_E_tF_T_q = (log_E + log_F_T_q_kp1);
+    } else {
+      current_statement__ = 176;
+      log_q_F_T_q = stan::math::negative_infinity();
+      current_statement__ = 177;
+      log_E_tF_T_q = stan::math::negative_infinity();
+    }
+    local_scalar_t__ log_A = DUMMY_VAR__;
+    current_statement__ = 186;
+    log_A = stan::math::log_sum_exp((stan::math::log(d) + log_F_T_d_k),
+              log_E_tF_T_q);
+    local_scalar_t__ log_B = DUMMY_VAR__;
+    current_statement__ = 187;
+    log_B = stan::math::log_sum_exp(log_q_F_T_q, (log_E + log_F_T_d_kp1));
+    current_statement__ = 188;
+    return (stan::math::log_diff_exp(log_A, log_B) - log_window);
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>*>
+stan::promote_args_t<T1__, T2__>
+primarycensored_lognormal_uniform_lcdf(const double& d, const T1__& q,
+                                       const std::vector<T2__>& params,
+                                       const double& pwindow, std::ostream*
+                                       pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T1__, T2__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ mu = DUMMY_VAR__;
+    current_statement__ = 190;
+    mu = stan::model::rvalue(params, "params", stan::model::index_uni(1));
+    local_scalar_t__ sigma = DUMMY_VAR__;
+    current_statement__ = 191;
+    sigma = stan::model::rvalue(params, "params", stan::model::index_uni(2));
+    local_scalar_t__ mu_sigma2 = DUMMY_VAR__;
+    current_statement__ = 192;
+    mu_sigma2 = (mu + stan::math::square(sigma));
+    local_scalar_t__ log_window = DUMMY_VAR__;
+    current_statement__ = 193;
+    log_window = stan::math::log(pwindow);
+    local_scalar_t__ log_E = DUMMY_VAR__;
+    current_statement__ = 194;
+    log_E = (mu + (0.5 * stan::math::square(sigma)));
+    local_scalar_t__ log_F_T_d = DUMMY_VAR__;
+    current_statement__ = 195;
+    log_F_T_d = stan::math::lognormal_lcdf(d, mu, sigma);
+    local_scalar_t__ log_tF_T_d = DUMMY_VAR__;
+    current_statement__ = 196;
+    log_tF_T_d = stan::math::lognormal_lcdf(d, mu_sigma2, sigma);
+    local_scalar_t__ log_q_F_T_q = DUMMY_VAR__;
+    local_scalar_t__ log_E_tF_T_q = DUMMY_VAR__;
+    current_statement__ = 207;
+    if (stan::math::logical_gt(q, 0)) {
+      local_scalar_t__ log_F_T_q = DUMMY_VAR__;
+      current_statement__ = 202;
+      log_F_T_q = stan::math::lognormal_lcdf(q, mu, sigma);
+      local_scalar_t__ log_tF_T_q = DUMMY_VAR__;
+      current_statement__ = 203;
+      log_tF_T_q = stan::math::lognormal_lcdf(q, mu_sigma2, sigma);
+      current_statement__ = 204;
+      log_q_F_T_q = (stan::math::log(q) + log_F_T_q);
+      current_statement__ = 205;
+      log_E_tF_T_q = (log_E + log_tF_T_q);
+    } else {
+      current_statement__ = 199;
+      log_q_F_T_q = stan::math::negative_infinity();
+      current_statement__ = 200;
+      log_E_tF_T_q = stan::math::negative_infinity();
+    }
+    local_scalar_t__ log_A = DUMMY_VAR__;
+    current_statement__ = 208;
+    log_A = stan::math::log_sum_exp((stan::math::log(d) + log_F_T_d),
+              log_E_tF_T_q);
+    local_scalar_t__ log_B = DUMMY_VAR__;
+    current_statement__ = 209;
+    log_B = stan::math::log_sum_exp(log_q_F_T_q, (log_E + log_tF_T_d));
+    current_statement__ = 210;
+    return (stan::math::log_diff_exp(log_A, log_B) - log_window);
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>*>
+stan::promote_args_t<T0__, T1__, T2__>
+log_weibull_g(const T0__& t, const T1__& shape, const T2__& scale,
+              std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ x = DUMMY_VAR__;
+    current_statement__ = 212;
+    x = stan::math::pow((t * stan::math::inv(scale)), shape);
+    local_scalar_t__ a = DUMMY_VAR__;
+    current_statement__ = 213;
+    a = (1 + stan::math::inv(shape));
+    current_statement__ = 214;
+    return (stan::math::log(stan::math::gamma_p(a, x)) +
+           stan::math::lgamma(a));
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>*>
+stan::promote_args_t<T1__, T2__>
+primarycensored_weibull_uniform_lcdf(const double& d, const T1__& q,
+                                     const std::vector<T2__>& params,
+                                     const double& pwindow, std::ostream*
+                                     pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T1__, T2__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ shape = DUMMY_VAR__;
+    current_statement__ = 216;
+    shape = stan::model::rvalue(params, "params", stan::model::index_uni(1));
+    local_scalar_t__ scale = DUMMY_VAR__;
+    current_statement__ = 217;
+    scale = stan::model::rvalue(params, "params", stan::model::index_uni(2));
+    local_scalar_t__ log_window = DUMMY_VAR__;
+    current_statement__ = 218;
+    log_window = stan::math::log(pwindow);
+    local_scalar_t__ log_scale = DUMMY_VAR__;
+    current_statement__ = 219;
+    log_scale = stan::math::log(scale);
+    local_scalar_t__ log_F_T_d = DUMMY_VAR__;
+    current_statement__ = 220;
+    log_F_T_d = stan::math::weibull_lcdf(d, shape, scale);
+    local_scalar_t__ log_E_tF_T_d = DUMMY_VAR__;
+    current_statement__ = 221;
+    log_E_tF_T_d = (log_scale + log_weibull_g(d, shape, scale, pstream__));
+    local_scalar_t__ log_q_F_T_q = DUMMY_VAR__;
+    local_scalar_t__ log_E_tF_T_q = DUMMY_VAR__;
+    current_statement__ = 230;
+    if (stan::math::logical_gt(q, 0)) {
+      current_statement__ = 227;
+      log_q_F_T_q = (stan::math::log(q) +
+        stan::math::weibull_lcdf(q, shape, scale));
+      current_statement__ = 228;
+      log_E_tF_T_q = (log_scale + log_weibull_g(q, shape, scale, pstream__));
+    } else {
+      current_statement__ = 224;
+      log_q_F_T_q = stan::math::negative_infinity();
+      current_statement__ = 225;
+      log_E_tF_T_q = stan::math::negative_infinity();
+    }
+    local_scalar_t__ log_A = DUMMY_VAR__;
+    current_statement__ = 231;
+    log_A = stan::math::log_sum_exp((stan::math::log(d) + log_F_T_d),
+              log_E_tF_T_q);
+    local_scalar_t__ log_B = DUMMY_VAR__;
+    current_statement__ = 232;
+    log_B = stan::math::log_sum_exp(log_q_F_T_q, log_E_tF_T_d);
+    current_statement__ = 233;
+    return (stan::math::log_diff_exp(log_A, log_B) - log_window);
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T2__, stan::require_all_t<stan::is_stan_scalar<T2__>>*>
+stan::promote_args_t<T2__>
+primarycensored_analytical_lcdf_raw(const double& d, const int& dist_id,
+                                    const std::vector<T2__>& params,
+                                    const double& pwindow, const int&
+                                    primary_id, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T2__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ q = DUMMY_VAR__;
+    current_statement__ = 235;
+    q = stan::math::max(std::vector<double>{(d - pwindow), 0});
+    current_statement__ = 244;
+    if ((stan::math::primitive_value(stan::math::logical_eq(dist_id, 2)) &&
+        stan::math::primitive_value(stan::math::logical_eq(primary_id, 1)))) {
+      current_statement__ = 242;
+      return primarycensored_gamma_uniform_lcdf(d, q, params, pwindow,
+               pstream__);
+    } else {
+      current_statement__ = 241;
+      if ((stan::math::primitive_value(stan::math::logical_eq(dist_id, 1)) &&
+          stan::math::primitive_value(stan::math::logical_eq(primary_id, 1)))) {
+        current_statement__ = 239;
+        return primarycensored_lognormal_uniform_lcdf(d, q, params, pwindow,
+                 pstream__);
+      } else {
+        current_statement__ = 238;
+        if ((stan::math::primitive_value(stan::math::logical_eq(dist_id, 3))
+            &&
+            stan::math::primitive_value(stan::math::logical_eq(primary_id, 1)))) {
+          current_statement__ = 236;
+          return primarycensored_weibull_uniform_lcdf(d, q, params, pwindow,
+                   pstream__);
+        }
+      }
+    }
+    current_statement__ = 245;
+    return stan::math::negative_infinity();
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>*>
+stan::promote_args_t<T2__, T7__>
+primarycensored_analytical_lcdf(const double& d, const int& dist_id,
+                                const std::vector<T2__>& params,
+                                const double& pwindow, const double& L,
+                                const double& D, const int& primary_id,
+                                const std::vector<T7__>& primary_params,
+                                std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T2__, T7__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 248;
+    if (stan::math::logical_lte(d, L)) {
+      current_statement__ = 247;
+      return stan::math::negative_infinity();
+    }
+    current_statement__ = 250;
+    if (stan::math::logical_gte(d, D)) {
+      current_statement__ = 249;
+      return 0;
+    }
+    local_scalar_t__ result = DUMMY_VAR__;
+    current_statement__ = 251;
+    result = primarycensored_analytical_lcdf_raw(d, dist_id, params, pwindow,
+               primary_id, pstream__);
+    current_statement__ = 258;
+    if ((stan::math::primitive_value(
+           stan::math::logical_negation(stan::math::is_inf(D)))
+        || stan::math::primitive_value(stan::math::logical_gt(L, 0)))) {
+      Eigen::Matrix<local_scalar_t__,-1,1> bounds =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(2, DUMMY_VAR__);
+      current_statement__ = 252;
+      stan::model::assign(bounds,
+        primarycensored_truncation_bounds(L, D, dist_id, params, pwindow,
+          primary_id, primary_params, pstream__), "assigning variable bounds");
+      local_scalar_t__ log_cdf_L = DUMMY_VAR__;
+      current_statement__ = 253;
+      log_cdf_L = stan::model::rvalue(bounds, "bounds",
+                    stan::model::index_uni(1));
+      local_scalar_t__ log_cdf_D = DUMMY_VAR__;
+      current_statement__ = 254;
+      log_cdf_D = stan::model::rvalue(bounds, "bounds",
+                    stan::model::index_uni(2));
+      local_scalar_t__ log_normalizer = DUMMY_VAR__;
+      current_statement__ = 255;
+      log_normalizer = primarycensored_log_normalizer(log_cdf_D, log_cdf_L,
+                         L, pstream__);
+      current_statement__ = 256;
+      result = primarycensored_apply_truncation(result, log_cdf_L,
+                 log_normalizer, L, pstream__);
+    }
+    current_statement__ = 259;
+    return result;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>*>
+stan::promote_args_t<T2__, T7__>
+primarycensored_analytical_cdf(const double& d, const int& dist_id,
+                               const std::vector<T2__>& params, const double&
+                               pwindow, const double& L, const double& D,
+                               const int& primary_id,
+                               const std::vector<T7__>& primary_params,
+                               std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T2__, T7__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 261;
+    return stan::math::exp(
+             primarycensored_analytical_lcdf(d, dist_id, params, pwindow, L,
+               D, primary_id, primary_params, pstream__));
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+int dist_has_positive_support(const int& dist_id, std::ostream* pstream__) {
+  using local_scalar_t__ = double;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 264;
+    if (stan::math::logical_eq(dist_id, 1)) {
+      current_statement__ = 263;
+      return 1;
+    }
+    current_statement__ = 266;
+    if (stan::math::logical_eq(dist_id, 2)) {
+      current_statement__ = 265;
+      return 1;
+    }
+    current_statement__ = 268;
+    if (stan::math::logical_eq(dist_id, 3)) {
+      current_statement__ = 267;
+      return 1;
+    }
+    current_statement__ = 270;
+    if (stan::math::logical_eq(dist_id, 4)) {
+      current_statement__ = 269;
+      return 1;
+    }
+    current_statement__ = 272;
+    if (stan::math::logical_eq(dist_id, 9)) {
+      current_statement__ = 271;
+      return 1;
+    }
+    current_statement__ = 274;
+    if (stan::math::logical_eq(dist_id, 13)) {
+      current_statement__ = 273;
+      return 1;
+    }
+    current_statement__ = 276;
+    if (stan::math::logical_eq(dist_id, 16)) {
+      current_statement__ = 275;
+      return 1;
+    }
+    current_statement__ = 278;
+    if (stan::math::logical_eq(dist_id, 19)) {
+      current_statement__ = 277;
+      return 1;
+    }
+    current_statement__ = 280;
+    if (stan::math::logical_eq(dist_id, 21)) {
+      current_statement__ = 279;
+      return 1;
+    }
+    current_statement__ = 282;
+    if (stan::math::logical_eq(dist_id, 22)) {
+      current_statement__ = 281;
+      return 1;
+    }
+    current_statement__ = 283;
+    return 0;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T1__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>>*>
+stan::promote_args_t<T0__, T1__>
+dist_lcdf(const T0__& delay, const std::vector<T1__>& params, const int&
+          dist_id, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T1__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 287;
+    if ((stan::math::primitive_value(
+           dist_has_positive_support(dist_id, pstream__))
+        && stan::math::primitive_value(stan::math::logical_lte(delay, 0)))) {
+      current_statement__ = 285;
+      return stan::math::negative_infinity();
+    }
+    current_statement__ = 324;
+    if (stan::math::logical_eq(dist_id, 1)) {
+      current_statement__ = 323;
+      return stan::math::lognormal_lcdf(delay,
+               stan::model::rvalue(params, "params",
+                 stan::model::index_uni(1)),
+               stan::model::rvalue(params, "params",
+                 stan::model::index_uni(2)));
+    } else {
+      current_statement__ = 322;
+      if (stan::math::logical_eq(dist_id, 2)) {
+        current_statement__ = 321;
+        return stan::math::gamma_lcdf(delay,
+                 stan::model::rvalue(params, "params",
+                   stan::model::index_uni(1)),
+                 stan::model::rvalue(params, "params",
+                   stan::model::index_uni(2)));
+      } else {
+        current_statement__ = 320;
+        if (stan::math::logical_eq(dist_id, 3)) {
+          current_statement__ = 319;
+          return stan::math::weibull_lcdf(delay,
+                   stan::model::rvalue(params, "params",
+                     stan::model::index_uni(1)),
+                   stan::model::rvalue(params, "params",
+                     stan::model::index_uni(2)));
+        } else {
+          current_statement__ = 318;
+          if (stan::math::logical_eq(dist_id, 4)) {
+            current_statement__ = 317;
+            return stan::math::exponential_lcdf(delay,
+                     stan::model::rvalue(params, "params",
+                       stan::model::index_uni(1)));
+          } else {
+            current_statement__ = 316;
+            if (stan::math::logical_eq(dist_id, 9)) {
+              current_statement__ = 315;
+              return stan::math::beta_lcdf(delay,
+                       stan::model::rvalue(params, "params",
+                         stan::model::index_uni(1)),
+                       stan::model::rvalue(params, "params",
+                         stan::model::index_uni(2)));
+            } else {
+              current_statement__ = 314;
+              if (stan::math::logical_eq(dist_id, 12)) {
+                current_statement__ = 313;
+                return stan::math::cauchy_lcdf(delay,
+                         stan::model::rvalue(params, "params",
+                           stan::model::index_uni(1)),
+                         stan::model::rvalue(params, "params",
+                           stan::model::index_uni(2)));
+              } else {
+                current_statement__ = 312;
+                if (stan::math::logical_eq(dist_id, 13)) {
+                  current_statement__ = 311;
+                  return stan::math::chi_square_lcdf(delay,
+                           stan::model::rvalue(params, "params",
+                             stan::model::index_uni(1)));
+                } else {
+                  current_statement__ = 310;
+                  if (stan::math::logical_eq(dist_id, 15)) {
+                    current_statement__ = 309;
+                    return stan::math::gumbel_lcdf(delay,
+                             stan::model::rvalue(params, "params",
+                               stan::model::index_uni(1)),
+                             stan::model::rvalue(params, "params",
+                               stan::model::index_uni(2)));
+                  } else {
+                    current_statement__ = 308;
+                    if (stan::math::logical_eq(dist_id, 16)) {
+                      current_statement__ = 307;
+                      return stan::math::inv_gamma_lcdf(delay,
+                               stan::model::rvalue(params, "params",
+                                 stan::model::index_uni(1)),
+                               stan::model::rvalue(params, "params",
+                                 stan::model::index_uni(2)));
+                    } else {
+                      current_statement__ = 306;
+                      if (stan::math::logical_eq(dist_id, 17)) {
+                        current_statement__ = 305;
+                        return stan::math::logistic_lcdf(delay,
+                                 stan::model::rvalue(params, "params",
+                                   stan::model::index_uni(1)),
+                                 stan::model::rvalue(params, "params",
+                                   stan::model::index_uni(2)));
+                      } else {
+                        current_statement__ = 304;
+                        if (stan::math::logical_eq(dist_id, 18)) {
+                          current_statement__ = 303;
+                          return stan::math::normal_lcdf(delay,
+                                   stan::model::rvalue(params, "params",
+                                     stan::model::index_uni(1)),
+                                   stan::model::rvalue(params, "params",
+                                     stan::model::index_uni(2)));
+                        } else {
+                          current_statement__ = 302;
+                          if (stan::math::logical_eq(dist_id, 19)) {
+                            current_statement__ = 301;
+                            return stan::math::inv_chi_square_lcdf(delay,
+                                     stan::model::rvalue(params, "params",
+                                       stan::model::index_uni(1)));
+                          } else {
+                            current_statement__ = 300;
+                            if (stan::math::logical_eq(dist_id, 20)) {
+                              current_statement__ = 299;
+                              return stan::math::double_exponential_lcdf(
+                                       delay,
+                                       stan::model::rvalue(params, "params",
+                                         stan::model::index_uni(1)),
+                                       stan::model::rvalue(params, "params",
+                                         stan::model::index_uni(2)));
+                            } else {
+                              current_statement__ = 298;
+                              if (stan::math::logical_eq(dist_id, 21)) {
+                                current_statement__ = 297;
+                                return stan::math::pareto_lcdf(delay,
+                                         stan::model::rvalue(params,
+                                           "params",
+                                           stan::model::index_uni(1)),
+                                         stan::model::rvalue(params,
+                                           "params",
+                                           stan::model::index_uni(2)));
+                              } else {
+                                current_statement__ = 296;
+                                if (stan::math::logical_eq(dist_id, 22)) {
+                                  current_statement__ = 295;
+                                  return stan::math::scaled_inv_chi_square_lcdf(
+                                           delay,
+                                           stan::model::rvalue(params,
+                                             "params",
+                                             stan::model::index_uni(1)),
+                                           stan::model::rvalue(params,
+                                             "params",
+                                             stan::model::index_uni(2)));
+                                } else {
+                                  current_statement__ = 294;
+                                  if (stan::math::logical_eq(dist_id, 23)) {
+                                    current_statement__ = 293;
+                                    return stan::math::student_t_lcdf(delay,
+                                             stan::model::rvalue(params,
+                                               "params",
+                                               stan::model::index_uni(1)),
+                                             stan::model::rvalue(params,
+                                               "params",
+                                               stan::model::index_uni(2)),
+                                             stan::model::rvalue(params,
+                                               "params",
+                                               stan::model::index_uni(3)));
+                                  } else {
+                                    current_statement__ = 292;
+                                    if (stan::math::logical_eq(dist_id, 24)) {
+                                      current_statement__ = 291;
+                                      return stan::math::uniform_lcdf(delay,
+                                               stan::model::rvalue(params,
+                                                 "params",
+                                                 stan::model::index_uni(1)),
+                                               stan::model::rvalue(params,
+                                                 "params",
+                                                 stan::model::index_uni(2)));
+                                    } else {
+                                      current_statement__ = 290;
+                                      if (stan::math::logical_eq(dist_id, 25)) {
+                                        current_statement__ = 289;
+                                        return stan::math::von_mises_lcdf(
+                                                 delay,
+                                                 stan::model::rvalue(params,
+                                                   "params",
+                                                   stan::model::index_uni(1)),
+                                                 stan::model::rvalue(params,
+                                                   "params",
+                                                   stan::model::index_uni(2)));
+                                      } else {
+                                        current_statement__ = 288;
+                                        std::stringstream errmsg_stream__;
+                                        stan::math::stan_print(
+                                          &errmsg_stream__,
+                                          "Invalid distribution identifier: ");
+                                        stan::math::stan_print(
+                                          &errmsg_stream__, dist_id);
+                                        throw std::domain_error(
+                                                errmsg_stream__.str());
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <bool propto__, typename T0__, typename T2__, typename T3__,
+          typename T4__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>,
+                              stan::is_stan_scalar<T4__>>*>
+stan::promote_args_t<T0__, T2__, T3__, T4__>
+primary_lpdf(const T0__& x, const int& primary_id, const std::vector<T2__>&
+             params, const T3__& xmin, const T4__& xmax, std::ostream*
+             pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T2__, T3__, T4__>;
+  int current_statement__ = 0;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 327;
+    if (stan::math::logical_eq(primary_id, 1)) {
+      current_statement__ = 326;
+      return stan::math::uniform_lpdf<false>(x, xmin, xmax);
+    }
+    current_statement__ = 329;
+    if (stan::math::logical_eq(primary_id, 2)) {
+      current_statement__ = 328;
+      return expgrowth_lpdf<false>(x, xmin, xmax,
+               stan::model::rvalue(params, "params",
+                 stan::model::index_uni(1)), pstream__);
+    }
+    current_statement__ = 330;
+    std::stringstream errmsg_stream__;
+    stan::math::stan_print(&errmsg_stream__,
+      "Invalid primary distribution identifier");
+    throw std::domain_error(errmsg_stream__.str());
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_col_vector<T1__>,
+                              stan::is_vt_not_complex<T1__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>>*>
+Eigen::Matrix<stan::promote_args_t<T0__, stan::base_type_t<T1__>, T2__, T3__>,-1,1>
+primarycensored_ode(const T0__& t, const T1__& y_arg__,
+                    const std::vector<T2__>& theta, const std::vector<T3__>&
+                    x_r, const std::vector<int>& x_i, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__,
+                             stan::base_type_t<T1__>, T2__, T3__>;
+  int current_statement__ = 0;
+  const auto& y = stan::math::to_ref(y_arg__);
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ d = DUMMY_VAR__;
+    current_statement__ = 332;
+    d = stan::model::rvalue(x_r, "x_r", stan::model::index_uni(1));
+    int dist_id = std::numeric_limits<int>::min();
+    current_statement__ = 333;
+    dist_id = stan::model::rvalue(x_i, "x_i", stan::model::index_uni(1));
+    int primary_id = std::numeric_limits<int>::min();
+    current_statement__ = 334;
+    primary_id = stan::model::rvalue(x_i, "x_i", stan::model::index_uni(2));
+    local_scalar_t__ pwindow = DUMMY_VAR__;
+    current_statement__ = 335;
+    pwindow = stan::model::rvalue(x_r, "x_r", stan::model::index_uni(2));
+    int dist_params_len = std::numeric_limits<int>::min();
+    current_statement__ = 336;
+    dist_params_len = stan::model::rvalue(x_i, "x_i",
+                        stan::model::index_uni(3));
+    int primary_params_len = std::numeric_limits<int>::min();
+    current_statement__ = 337;
+    primary_params_len = stan::model::rvalue(x_i, "x_i",
+                           stan::model::index_uni(4));
+    current_statement__ = 338;
+    stan::math::validate_non_negative_index("params", "dist_params_len",
+      dist_params_len);
+    std::vector<local_scalar_t__> params =
+      std::vector<local_scalar_t__>(dist_params_len, DUMMY_VAR__);
+    current_statement__ = 342;
+    if (dist_params_len) {
+      current_statement__ = 340;
+      stan::model::assign(params,
+        stan::model::rvalue(theta, "theta",
+          stan::model::index_min_max(1, dist_params_len)),
+        "assigning variable params");
+    }
+    current_statement__ = 343;
+    stan::math::validate_non_negative_index("primary_params",
+      "primary_params_len", primary_params_len);
+    std::vector<local_scalar_t__> primary_params =
+      std::vector<local_scalar_t__>(primary_params_len, DUMMY_VAR__);
+    current_statement__ = 348;
+    if (primary_params_len) {
+      int primary_loc = std::numeric_limits<int>::min();
+      current_statement__ = 345;
+      primary_loc = stan::math::num_elements(theta);
+      current_statement__ = 346;
+      stan::model::assign(primary_params,
+        stan::model::rvalue(theta, "theta",
+          stan::model::index_min_max(((primary_loc - primary_params_len) +
+            1), primary_loc)), "assigning variable primary_params");
+    }
+    local_scalar_t__ log_cdf = DUMMY_VAR__;
+    current_statement__ = 349;
+    log_cdf = dist_lcdf(t, params, dist_id, pstream__);
+    local_scalar_t__ log_primary_pdf = DUMMY_VAR__;
+    current_statement__ = 350;
+    log_primary_pdf = primary_lpdf<false>((d - t), primary_id,
+                        primary_params, static_cast<double>(0), pwindow,
+                        pstream__);
+    current_statement__ = 351;
+    return stan::math::rep_vector(
+             stan::math::exp((log_cdf + log_primary_pdf)), 1);
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T1__, typename T2__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>>*>
+stan::promote_args_t<T0__, T1__, T2__>
+primarycensored_log_normalizer(const T0__& log_cdf_D, const T1__& log_cdf_L,
+                               const T2__& L, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 357;
+    if (stan::math::logical_negation(stan::math::is_inf(L))) {
+      current_statement__ = 355;
+      return stan::math::log_diff_exp(log_cdf_D, log_cdf_L);
+    } else {
+      current_statement__ = 353;
+      return log_cdf_D;
+    }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T1__, typename T2__, typename T3__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T1__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>>*>
+stan::promote_args_t<T0__, T1__, T2__, T3__>
+primarycensored_apply_truncation(const T0__& log_cdf, const T1__& log_cdf_L,
+                                 const T2__& log_normalizer, const T3__& L,
+                                 std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T1__, T2__, T3__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 363;
+    if (stan::math::logical_negation(stan::math::is_inf(L))) {
+      current_statement__ = 361;
+      return (stan::math::log_diff_exp(log_cdf, log_cdf_L) - log_normalizer);
+    } else {
+      current_statement__ = 359;
+      return (log_cdf - log_normalizer);
+    }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T3__, typename T6__,
+          stan::require_all_t<stan::is_stan_scalar<T3__>,
+                              stan::is_stan_scalar<T6__>>*>
+Eigen::Matrix<stan::promote_args_t<T3__, T6__>,-1,1>
+primarycensored_truncation_bounds(const double& L, const double& D,
+                                  const int& dist_id,
+                                  const std::vector<T3__>& params,
+                                  const double& pwindow, const int&
+                                  primary_id, const std::vector<T6__>&
+                                  primary_params, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T3__, T6__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    Eigen::Matrix<local_scalar_t__,-1,1> result =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(2, DUMMY_VAR__);
+    current_statement__ = 370;
+    if (stan::math::is_inf(L)) {
+      current_statement__ = 368;
+      stan::model::assign(result, stan::math::negative_infinity(),
+        "assigning variable result", stan::model::index_uni(1));
+    } else {
+      current_statement__ = 366;
+      stan::model::assign(result,
+        primarycensored_lcdf(L, dist_id, params, pwindow,
+          (dist_has_positive_support(dist_id, pstream__) ? 0.0 : stan::math::negative_infinity(
+                                                                   )),
+          stan::math::positive_infinity(), primary_id, primary_params,
+          pstream__), "assigning variable result", stan::model::index_uni(1));
+    }
+    current_statement__ = 375;
+    if (stan::math::is_inf(D)) {
+      current_statement__ = 373;
+      stan::model::assign(result, 0, "assigning variable result",
+        stan::model::index_uni(2));
+    } else {
+      current_statement__ = 371;
+      stan::model::assign(result,
+        primarycensored_lcdf(D, dist_id, params, pwindow,
+          (dist_has_positive_support(dist_id, pstream__) ? 0.0 : stan::math::negative_infinity(
+                                                                   )),
+          stan::math::positive_infinity(), primary_id, primary_params,
+          pstream__), "assigning variable result", stan::model::index_uni(2));
+    }
+    current_statement__ = 376;
+    return result;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>*>
+stan::promote_args_t<T2__, T7__>
+primarycensored_cdf(const double& d, const int& dist_id,
+                    const std::vector<T2__>& params, const double& pwindow,
+                    const double& L, const double& D, const int& primary_id,
+                    const std::vector<T7__>& primary_params, std::ostream*
+                    pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T2__, T7__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ result = DUMMY_VAR__;
+    current_statement__ = 381;
+    if (stan::math::logical_lte(d, L)) {
+      current_statement__ = 379;
+      return 0;
+    }
+    current_statement__ = 384;
+    if (stan::math::logical_gte(d, D)) {
+      current_statement__ = 382;
+      return 1;
+    }
+    current_statement__ = 405;
+    if (check_for_analytical(dist_id, primary_id, pstream__)) {
+      current_statement__ = 403;
+      result = primarycensored_analytical_cdf(d, dist_id, params, pwindow, L,
+                 D, primary_id, primary_params, pstream__);
+    } else {
+      local_scalar_t__ lower_bound = DUMMY_VAR__;
+      current_statement__ = 385;
+      lower_bound = (d - pwindow);
+      int n_params = std::numeric_limits<int>::min();
+      current_statement__ = 386;
+      n_params = stan::math::num_elements(params);
+      int n_primary_params = std::numeric_limits<int>::min();
+      current_statement__ = 387;
+      n_primary_params = stan::math::num_elements(primary_params);
+      current_statement__ = 388;
+      stan::math::validate_non_negative_index("theta",
+        "n_params + n_primary_params", (n_params + n_primary_params));
+      std::vector<local_scalar_t__> theta =
+        std::vector<local_scalar_t__>((n_params + n_primary_params),
+          DUMMY_VAR__);
+      current_statement__ = 389;
+      stan::model::assign(theta,
+        stan::math::append_array(params, primary_params),
+        "assigning variable theta");
+      std::vector<int> ids =
+        std::vector<int>(4, std::numeric_limits<int>::min());
+      current_statement__ = 390;
+      stan::model::assign(ids,
+        std::vector<int>{dist_id, primary_id, n_params, n_primary_params},
+        "assigning variable ids");
+      Eigen::Matrix<local_scalar_t__,-1,1> y0 =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(1, DUMMY_VAR__);
+      current_statement__ = 391;
+      stan::model::assign(y0, stan::math::rep_vector(0.0, 1),
+        "assigning variable y0");
+      current_statement__ = 392;
+      result = stan::model::rvalue(
+                 stan::math::ode_rk45(
+                   primarycensored_ode_variadic2_functor__(), y0,
+                   lower_bound, std::vector<double>{d}, pstream__, theta,
+                   std::vector<double>{d, pwindow}, ids),
+                 "ode_rk45(primarycensored_ode, y0, lower_bound, FnMakeArray__(d), theta,\nFnMakeArray__(d, pwindow),\nids)",
+                 stan::model::index_uni(1), stan::model::index_uni(1));
+      current_statement__ = 401;
+      if ((stan::math::primitive_value(
+             (stan::math::primitive_value(
+                stan::math::logical_negation(stan::math::is_inf(D))) ||
+             stan::math::primitive_value(stan::math::logical_gt(L, 0))))
+          ||
+          stan::math::primitive_value(
+            (stan::math::primitive_value(
+               stan::math::logical_negation(stan::math::is_inf(L))) &&
+            stan::math::primitive_value(
+              stan::math::logical_negation(
+                dist_has_positive_support(dist_id, pstream__))))))) {
+        local_scalar_t__ log_result = DUMMY_VAR__;
+        current_statement__ = 393;
+        log_result = stan::math::log(result);
+        Eigen::Matrix<local_scalar_t__,-1,1> bounds =
+          Eigen::Matrix<local_scalar_t__,-1,1>::Constant(2, DUMMY_VAR__);
+        current_statement__ = 394;
+        stan::model::assign(bounds,
+          primarycensored_truncation_bounds(L, D, dist_id, params, pwindow,
+            primary_id, primary_params, pstream__),
+          "assigning variable bounds");
+        local_scalar_t__ log_cdf_L = DUMMY_VAR__;
+        current_statement__ = 395;
+        log_cdf_L = stan::model::rvalue(bounds, "bounds",
+                      stan::model::index_uni(1));
+        local_scalar_t__ log_cdf_D = DUMMY_VAR__;
+        current_statement__ = 396;
+        log_cdf_D = stan::model::rvalue(bounds, "bounds",
+                      stan::model::index_uni(2));
+        local_scalar_t__ log_normalizer = DUMMY_VAR__;
+        current_statement__ = 397;
+        log_normalizer = primarycensored_log_normalizer(log_cdf_D, log_cdf_L,
+                           L, pstream__);
+        current_statement__ = 398;
+        log_result = primarycensored_apply_truncation(log_result, log_cdf_L,
+                       log_normalizer, L, pstream__);
+        current_statement__ = 399;
+        result = stan::math::exp(log_result);
+      }
+    }
+    current_statement__ = 406;
+    return result;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T2__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T7__>>*>
+stan::promote_args_t<T2__, T7__>
+primarycensored_lcdf(const double& d, const int& dist_id,
+                     const std::vector<T2__>& params, const double& pwindow,
+                     const double& L, const double& D, const int& primary_id,
+                     const std::vector<T7__>& primary_params, std::ostream*
+                     pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T2__, T7__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    local_scalar_t__ result = DUMMY_VAR__;
+    current_statement__ = 411;
+    if (stan::math::logical_lte(d, L)) {
+      current_statement__ = 409;
+      return stan::math::negative_infinity();
+    }
+    current_statement__ = 414;
+    if (stan::math::logical_gte(d, D)) {
+      current_statement__ = 412;
+      return 0;
+    }
+    current_statement__ = 419;
+    if (check_for_analytical(dist_id, primary_id, pstream__)) {
+      current_statement__ = 417;
+      result = primarycensored_analytical_lcdf(d, dist_id, params, pwindow,
+                 (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                 stan::math::negative_infinity()),
+                 stan::math::positive_infinity(), primary_id, primary_params,
+                 pstream__);
+    } else {
+      current_statement__ = 415;
+      result = stan::math::log(
+                 primarycensored_cdf(d, dist_id, params, pwindow,
+                   (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                   stan::math::negative_infinity()),
+                   stan::math::positive_infinity(), primary_id,
+                   primary_params, pstream__));
+    }
+    current_statement__ = 426;
+    if ((stan::math::primitive_value(
+           (stan::math::primitive_value(
+              stan::math::logical_negation(stan::math::is_inf(D))) ||
+           stan::math::primitive_value(stan::math::logical_gt(L, 0))))
+        ||
+        stan::math::primitive_value(
+          (stan::math::primitive_value(
+             stan::math::logical_negation(stan::math::is_inf(L))) &&
+          stan::math::primitive_value(
+            stan::math::logical_negation(
+              dist_has_positive_support(dist_id, pstream__))))))) {
+      Eigen::Matrix<local_scalar_t__,-1,1> bounds =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(2, DUMMY_VAR__);
+      current_statement__ = 420;
+      stan::model::assign(bounds,
+        primarycensored_truncation_bounds(L, D, dist_id, params, pwindow,
+          primary_id, primary_params, pstream__), "assigning variable bounds");
+      local_scalar_t__ log_cdf_L = DUMMY_VAR__;
+      current_statement__ = 421;
+      log_cdf_L = stan::model::rvalue(bounds, "bounds",
+                    stan::model::index_uni(1));
+      local_scalar_t__ log_cdf_D = DUMMY_VAR__;
+      current_statement__ = 422;
+      log_cdf_D = stan::model::rvalue(bounds, "bounds",
+                    stan::model::index_uni(2));
+      local_scalar_t__ log_normalizer = DUMMY_VAR__;
+      current_statement__ = 423;
+      log_normalizer = primarycensored_log_normalizer(log_cdf_D, log_cdf_L,
+                         L, pstream__);
+      current_statement__ = 424;
+      result = primarycensored_apply_truncation(result, log_cdf_L,
+                 log_normalizer, L, pstream__);
+    }
+    current_statement__ = 427;
+    return result;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <bool propto__, typename T2__, typename T8__,
+          stan::require_all_t<stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T8__>>*>
+stan::promote_args_t<T2__, T8__>
+primarycensored_lpmf(const int& d, const int& dist_id,
+                     const std::vector<T2__>& params, const double& pwindow,
+                     const double& d_upper, const double& L, const double& D,
+                     const int& primary_id, const std::vector<T8__>&
+                     primary_params, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T2__, T8__>;
+  int current_statement__ = 0;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 431;
+    if (stan::math::logical_gt(d_upper, D)) {
+      current_statement__ = 429;
+      std::stringstream errmsg_stream__;
+      stan::math::stan_print(&errmsg_stream__,
+        "Upper truncation point is greater than D. It is ");
+      stan::math::stan_print(&errmsg_stream__, d_upper);
+      stan::math::stan_print(&errmsg_stream__, " and D is ");
+      stan::math::stan_print(&errmsg_stream__, D);
+      stan::math::stan_print(&errmsg_stream__,
+        ". Resolve this by increasing D to be greater or equal to d + swindow or decreasing swindow.");
+      throw std::domain_error(errmsg_stream__.str());
+    }
+    current_statement__ = 434;
+    if (stan::math::logical_lte(d_upper, d)) {
+      current_statement__ = 432;
+      std::stringstream errmsg_stream__;
+      stan::math::stan_print(&errmsg_stream__,
+        "Upper truncation point is less than or equal to d. It is ");
+      stan::math::stan_print(&errmsg_stream__, d_upper);
+      stan::math::stan_print(&errmsg_stream__, " and d is ");
+      stan::math::stan_print(&errmsg_stream__, d);
+      stan::math::stan_print(&errmsg_stream__,
+        ". Resolve this by increasing d to be less than d_upper.");
+      throw std::domain_error(errmsg_stream__.str());
+    }
+    current_statement__ = 437;
+    if (stan::math::logical_lt(d, L)) {
+      current_statement__ = 435;
+      return stan::math::negative_infinity();
+    }
+    local_scalar_t__ log_cdf_upper = DUMMY_VAR__;
+    current_statement__ = 438;
+    log_cdf_upper = primarycensored_lcdf(d_upper, dist_id, params, pwindow,
+                      (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                      stan::math::negative_infinity()),
+                      stan::math::positive_infinity(), primary_id,
+                      primary_params, pstream__);
+    local_scalar_t__ log_cdf_lower = DUMMY_VAR__;
+    current_statement__ = 439;
+    log_cdf_lower = primarycensored_lcdf(static_cast<double>(d), dist_id,
+                      params, pwindow,
+                      (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                      stan::math::negative_infinity()),
+                      stan::math::positive_infinity(), primary_id,
+                      primary_params, pstream__);
+    current_statement__ = 463;
+    if ((stan::math::primitive_value(
+           (stan::math::primitive_value(
+              stan::math::logical_negation(stan::math::is_inf(D))) ||
+           stan::math::primitive_value(stan::math::logical_gt(L, 0))))
+        ||
+        stan::math::primitive_value(
+          (stan::math::primitive_value(
+             stan::math::logical_negation(stan::math::is_inf(L))) &&
+          stan::math::primitive_value(
+            stan::math::logical_negation(
+              dist_has_positive_support(dist_id, pstream__))))))) {
+      local_scalar_t__ log_cdf_D = DUMMY_VAR__;
+      local_scalar_t__ log_cdf_L = DUMMY_VAR__;
+      current_statement__ = 451;
+      if (stan::math::is_inf(L)) {
+        current_statement__ = 449;
+        log_cdf_L = stan::math::negative_infinity();
+      } else {
+        current_statement__ = 448;
+        if (stan::math::logical_eq(d, L)) {
+          current_statement__ = 446;
+          log_cdf_L = log_cdf_lower;
+        } else {
+          current_statement__ = 444;
+          log_cdf_L = primarycensored_lcdf(L, dist_id, params, pwindow,
+                        (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                        stan::math::negative_infinity()),
+                        stan::math::positive_infinity(), primary_id,
+                        primary_params, pstream__);
+        }
+      }
+      current_statement__ = 459;
+      if (stan::math::logical_eq(d_upper, D)) {
+        current_statement__ = 457;
+        log_cdf_D = log_cdf_upper;
+      } else {
+        current_statement__ = 456;
+        if (stan::math::is_inf(D)) {
+          current_statement__ = 454;
+          log_cdf_D = 0;
+        } else {
+          current_statement__ = 452;
+          log_cdf_D = primarycensored_lcdf(D, dist_id, params, pwindow,
+                        (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                        stan::math::negative_infinity()),
+                        stan::math::positive_infinity(), primary_id,
+                        primary_params, pstream__);
+        }
+      }
+      local_scalar_t__ log_normalizer = DUMMY_VAR__;
+      current_statement__ = 460;
+      log_normalizer = primarycensored_log_normalizer(log_cdf_D, log_cdf_L,
+                         L, pstream__);
+      current_statement__ = 461;
+      return (stan::math::log_diff_exp(log_cdf_upper, log_cdf_lower) -
+             log_normalizer);
+    } else {
+      current_statement__ = 440;
+      return stan::math::log_diff_exp(log_cdf_upper, log_cdf_lower);
+    }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T4__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T7__>>*>
+Eigen::Matrix<stan::promote_args_t<T4__, T7__>,-1,1>
+primarycensored_sone_lpmf_vectorized(const int& max_delay, const double& L,
+                                     const double& D, const int& dist_id,
+                                     const std::vector<T4__>& params,
+                                     const double& pwindow, const int&
+                                     primary_id, const std::vector<T7__>&
+                                     primary_params, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T4__, T7__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    int upper_interval = std::numeric_limits<int>::min();
+    current_statement__ = 465;
+    upper_interval = (max_delay + 1);
+    current_statement__ = 466;
+    stan::math::validate_non_negative_index("log_pmfs", "upper_interval",
+      upper_interval);
+    Eigen::Matrix<local_scalar_t__,-1,1> log_pmfs =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(upper_interval,
+        DUMMY_VAR__);
+    current_statement__ = 468;
+    stan::math::validate_non_negative_index("log_cdfs", "upper_interval",
+      upper_interval);
+    Eigen::Matrix<local_scalar_t__,-1,1> log_cdfs =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(upper_interval,
+        DUMMY_VAR__);
+    local_scalar_t__ log_normalizer = DUMMY_VAR__;
+    current_statement__ = 473;
+    if (stan::math::logical_lt(D, upper_interval)) {
+      current_statement__ = 471;
+      std::stringstream errmsg_stream__;
+      stan::math::stan_print(&errmsg_stream__,
+        "D must be at least max_delay + 1");
+      throw std::domain_error(errmsg_stream__.str());
+    }
+    int start_idx = std::numeric_limits<int>::min();
+    current_statement__ = 474;
+    start_idx = ((stan::math::primitive_value(
+                    stan::math::logical_negation(stan::math::is_inf(L)))
+      &&
+      stan::math::primitive_value(stan::math::logical_gt(L, 0))) ? stan::math::max(
+                                                                    1,
+                                                                    stan::math::to_int(
+                                                                    stan::math::floor(
+                                                                    L))) : 1);
+    current_statement__ = 477;
+    for (int d = start_idx; d <= upper_interval; ++d) {
+      current_statement__ = 475;
+      stan::model::assign(log_cdfs,
+        primarycensored_lcdf(static_cast<double>(d), dist_id, params,
+          pwindow,
+          (dist_has_positive_support(dist_id, pstream__) ? 0.0 : stan::math::negative_infinity(
+                                                                   )),
+          stan::math::positive_infinity(), primary_id, primary_params,
+          pstream__), "assigning variable log_cdfs",
+        stan::model::index_uni(d));
+    }
+    local_scalar_t__ log_cdf_L = DUMMY_VAR__;
+    current_statement__ = 486;
+    if (stan::math::is_inf(L)) {
+      current_statement__ = 484;
+      log_cdf_L = stan::math::negative_infinity();
+    } else {
+      current_statement__ = 483;
+      if ((stan::math::primitive_value(
+             (stan::math::primitive_value(stan::math::logical_gte(L, 1)) &&
+             stan::math::primitive_value(
+               stan::math::logical_lte(L, upper_interval))))
+          &&
+          stan::math::primitive_value(
+            stan::math::logical_eq(stan::math::floor(L), L)))) {
+        current_statement__ = 481;
+        log_cdf_L = stan::model::rvalue(log_cdfs, "log_cdfs",
+                      stan::model::index_uni(stan::math::to_int(L)));
+      } else {
+        current_statement__ = 479;
+        log_cdf_L = primarycensored_lcdf(L, dist_id, params, pwindow,
+                      (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                      stan::math::negative_infinity()),
+                      stan::math::positive_infinity(), primary_id,
+                      primary_params, pstream__);
+      }
+    }
+    local_scalar_t__ log_cdf_D = DUMMY_VAR__;
+    current_statement__ = 496;
+    if (stan::math::logical_gt(D, upper_interval)) {
+      current_statement__ = 494;
+      if (stan::math::is_inf(D)) {
+        current_statement__ = 492;
+        log_cdf_D = 0;
+      } else {
+        current_statement__ = 490;
+        log_cdf_D = primarycensored_lcdf(D, dist_id, params, pwindow,
+                      (dist_has_positive_support(dist_id, pstream__) ? 0.0 : 
+                      stan::math::negative_infinity()),
+                      stan::math::positive_infinity(), primary_id,
+                      primary_params, pstream__);
+      }
+    } else {
+      current_statement__ = 488;
+      log_cdf_D = stan::model::rvalue(log_cdfs, "log_cdfs",
+                    stan::model::index_uni(upper_interval));
+    }
+    current_statement__ = 497;
+    log_normalizer = primarycensored_log_normalizer(log_cdf_D, log_cdf_L, L,
+                       pstream__);
+    current_statement__ = 514;
+    for (int d = 1; d <= upper_interval; ++d) {
+      current_statement__ = 512;
+      if (stan::math::logical_lte(d, L)) {
+        current_statement__ = 510;
+        stan::model::assign(log_pmfs, stan::math::negative_infinity(),
+          "assigning variable log_pmfs", stan::model::index_uni(d));
+      } else {
+        current_statement__ = 509;
+        if (stan::math::logical_lt((d - 1), L)) {
+          current_statement__ = 507;
+          stan::model::assign(log_pmfs,
+            (stan::math::log_diff_exp(
+               stan::model::rvalue(log_cdfs, "log_cdfs",
+                 stan::model::index_uni(d)), log_cdf_L) - log_normalizer),
+            "assigning variable log_pmfs", stan::model::index_uni(d));
+        } else {
+          current_statement__ = 506;
+          if ((stan::math::primitive_value(stan::math::logical_eq(d, 1)) &&
+              stan::math::primitive_value(
+                dist_has_positive_support(dist_id, pstream__)))) {
+            current_statement__ = 504;
+            stan::model::assign(log_pmfs,
+              (stan::model::rvalue(log_cdfs, "log_cdfs",
+                 stan::model::index_uni(d)) - log_normalizer),
+              "assigning variable log_pmfs", stan::model::index_uni(d));
+          } else {
+            current_statement__ = 503;
+            if (stan::math::logical_eq(d, 1)) {
+              local_scalar_t__ log_cdf_0 = DUMMY_VAR__;
+              current_statement__ = 500;
+              log_cdf_0 = primarycensored_lcdf(0.0, dist_id, params, pwindow,
+                            stan::math::negative_infinity(),
+                            stan::math::positive_infinity(), primary_id,
+                            primary_params, pstream__);
+              current_statement__ = 501;
+              stan::model::assign(log_pmfs,
+                (stan::math::log_diff_exp(
+                   stan::model::rvalue(log_cdfs, "log_cdfs",
+                     stan::model::index_uni(d)), log_cdf_0) -
+                log_normalizer), "assigning variable log_pmfs",
+                stan::model::index_uni(d));
+            } else {
+              current_statement__ = 498;
+              stan::model::assign(log_pmfs,
+                (stan::math::log_diff_exp(
+                   stan::model::rvalue(log_cdfs, "log_cdfs",
+                     stan::model::index_uni(d)),
+                   stan::model::rvalue(log_cdfs, "log_cdfs",
+                     stan::model::index_uni((d - 1)))) - log_normalizer),
+                "assigning variable log_pmfs", stan::model::index_uni(d));
+            }
+          }
+        }
+      }
+    }
+    current_statement__ = 515;
+    return log_pmfs;
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T4__, typename T7__,
+          stan::require_all_t<stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T7__>>*>
+Eigen::Matrix<stan::promote_args_t<T4__, T7__>,-1,1>
+primarycensored_sone_pmf_vectorized(const int& max_delay, const double& L,
+                                    const double& D, const int& dist_id,
+                                    const std::vector<T4__>& params,
+                                    const double& pwindow, const int&
+                                    primary_id, const std::vector<T7__>&
+                                    primary_params, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T4__, T7__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 517;
+    return stan::math::exp(
+             primarycensored_sone_lpmf_vectorized(max_delay, L, D, dist_id,
+               params, pwindow, primary_id, primary_params, pstream__));
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
 std::vector<int>
 calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
                        std::ostream* pstream__) {
@@ -716,21 +2857,21 @@ calc_conv_indices_xlen(const int& s, const int& xlen, const int& ylen,
   (void) DUMMY_VAR__;
   try {
     int s_minus_ylen = std::numeric_limits<int>::min();
-    current_statement__ = 136;
+    current_statement__ = 519;
     s_minus_ylen = (s - ylen);
     int start_x = std::numeric_limits<int>::min();
-    current_statement__ = 137;
+    current_statement__ = 520;
     start_x = stan::math::max(1, (s_minus_ylen + 1));
     int end_x = std::numeric_limits<int>::min();
-    current_statement__ = 138;
+    current_statement__ = 521;
     end_x = s;
     int start_y = std::numeric_limits<int>::min();
-    current_statement__ = 139;
+    current_statement__ = 522;
     start_y = stan::math::max(1, (1 - s_minus_ylen));
     int end_y = std::numeric_limits<int>::min();
-    current_statement__ = 140;
+    current_statement__ = 523;
     end_y = ylen;
-    current_statement__ = 141;
+    current_statement__ = 524;
     return std::vector<int>{start_x, end_x, start_y, end_y};
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -749,22 +2890,21 @@ calc_conv_indices_len(const int& s, const int& xlen, const int& ylen,
   (void) DUMMY_VAR__;
   try {
     int s_minus_ylen = std::numeric_limits<int>::min();
-    current_statement__ = 143;
+    current_statement__ = 526;
     s_minus_ylen = (s - ylen);
     int start_x = std::numeric_limits<int>::min();
-    current_statement__ = 144;
+    current_statement__ = 527;
     start_x = stan::math::max(1, (s_minus_ylen + 1));
     int end_x = std::numeric_limits<int>::min();
-    current_statement__ = 145;
+    current_statement__ = 528;
     end_x = xlen;
     int start_y = std::numeric_limits<int>::min();
-    current_statement__ = 146;
+    current_statement__ = 529;
     start_y = stan::math::max(1, (1 - s_minus_ylen));
-    ;
     int end_y = std::numeric_limits<int>::min();
-    current_statement__ = 148;
+    current_statement__ = 530;
     end_y = ((ylen + xlen) - s);
-    current_statement__ = 149;
+    current_statement__ = 531;
     return std::vector<int>{start_x, end_x, start_y, end_y};
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -792,40 +2932,40 @@ convolve_with_rev_pmf(const T0__& x_arg__, const T1__& y_arg__, const int&
   (void) DUMMY_VAR__;
   try {
     int xlen = std::numeric_limits<int>::min();
-    current_statement__ = 151;
+    current_statement__ = 533;
     xlen = stan::math::num_elements(x);
     int ylen = std::numeric_limits<int>::min();
-    current_statement__ = 152;
+    current_statement__ = 534;
     ylen = stan::math::num_elements(y);
-    current_statement__ = 153;
-    stan::math::validate_non_negative_index("z", "len", len);
-    Eigen::Matrix<local_scalar_t__,-1,1> z =
-      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 157;
+    current_statement__ = 537;
     if (stan::math::logical_lt(((xlen + ylen) - 1), len)) {
-      current_statement__ = 155;
+      current_statement__ = 535;
       std::stringstream errmsg_stream__;
       stan::math::stan_print(&errmsg_stream__,
         "convolve_with_rev_pmf: len is longer than x and y convolved");
       throw std::domain_error(errmsg_stream__.str());
     }
-    current_statement__ = 160;
+    current_statement__ = 540;
     if (stan::math::logical_gt(xlen, len)) {
-      current_statement__ = 158;
+      current_statement__ = 538;
       std::stringstream errmsg_stream__;
       stan::math::stan_print(&errmsg_stream__,
         "convolve_with_rev_pmf: len is shorter than x");
       throw std::domain_error(errmsg_stream__.str());
     }
-    current_statement__ = 164;
+    current_statement__ = 541;
+    stan::math::validate_non_negative_index("z", "len", len);
+    Eigen::Matrix<local_scalar_t__,-1,1> z =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
+    current_statement__ = 546;
     for (int s = 1; s <= xlen; ++s) {
       std::vector<int> indices =
         std::vector<int>(4, std::numeric_limits<int>::min());
-      current_statement__ = 161;
+      current_statement__ = 543;
       stan::model::assign(indices,
         calc_conv_indices_xlen(s, xlen, ylen, pstream__),
         "assigning variable indices");
-      current_statement__ = 162;
+      current_statement__ = 544;
       stan::model::assign(z,
         stan::math::dot_product(
           stan::model::rvalue(x, "x",
@@ -842,35 +2982,32 @@ convolve_with_rev_pmf(const T0__& x_arg__, const T1__& y_arg__, const int&
                 stan::model::index_uni(4))))), "assigning variable z",
         stan::model::index_uni(s));
     }
-    current_statement__ = 170;
-    if (stan::math::logical_gt(len, xlen)) {
-      current_statement__ = 168;
-      for (int s = (xlen + 1); s <= len; ++s) {
-        std::vector<int> indices =
-          std::vector<int>(4, std::numeric_limits<int>::min());
-        current_statement__ = 165;
-        stan::model::assign(indices,
-          calc_conv_indices_len(s, xlen, ylen, pstream__),
-          "assigning variable indices");
-        current_statement__ = 166;
-        stan::model::assign(z,
-          stan::math::dot_product(
-            stan::model::rvalue(x, "x",
-              stan::model::index_min_max(
-                stan::model::rvalue(indices, "indices",
-                  stan::model::index_uni(1)),
-                stan::model::rvalue(indices, "indices",
-                  stan::model::index_uni(2)))),
-            stan::model::rvalue(y, "y",
-              stan::model::index_min_max(
-                stan::model::rvalue(indices, "indices",
-                  stan::model::index_uni(3)),
-                stan::model::rvalue(indices, "indices",
-                  stan::model::index_uni(4))))), "assigning variable z",
-          stan::model::index_uni(s));
-      }
+    current_statement__ = 550;
+    for (int s = (xlen + 1); s <= len; ++s) {
+      std::vector<int> indices =
+        std::vector<int>(4, std::numeric_limits<int>::min());
+      current_statement__ = 547;
+      stan::model::assign(indices,
+        calc_conv_indices_len(s, xlen, ylen, pstream__),
+        "assigning variable indices");
+      current_statement__ = 548;
+      stan::model::assign(z,
+        stan::math::dot_product(
+          stan::model::rvalue(x, "x",
+            stan::model::index_min_max(
+              stan::model::rvalue(indices, "indices",
+                stan::model::index_uni(1)),
+              stan::model::rvalue(indices, "indices",
+                stan::model::index_uni(2)))),
+          stan::model::rvalue(y, "y",
+            stan::model::index_min_max(
+              stan::model::rvalue(indices, "indices",
+                stan::model::index_uni(3)),
+              stan::model::rvalue(indices, "indices",
+                stan::model::index_uni(4))))), "assigning variable z",
+        stan::model::index_uni(s));
     }
-    current_statement__ = 171;
+    current_statement__ = 551;
     return z;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -899,26 +3036,26 @@ convolve_to_report(const T0__& infections_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 173;
+    current_statement__ = 553;
     t = stan::math::num_elements(infections);
     int delays = std::numeric_limits<int>::min();
-    current_statement__ = 174;
+    current_statement__ = 554;
     delays = stan::math::num_elements(delay_rev_pmf);
-    current_statement__ = 177;
+    current_statement__ = 557;
     if (stan::math::logical_eq(delays, 0)) {
-      current_statement__ = 175;
+      current_statement__ = 555;
       return stan::model::rvalue(infections, "infections",
                stan::model::index_min_max((seeding_time + 1), t));
     }
-    current_statement__ = 178;
+    current_statement__ = 558;
     stan::math::validate_non_negative_index("unobs_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> unobs_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 179;
+    current_statement__ = 559;
     stan::model::assign(unobs_reports,
       convolve_with_rev_pmf(infections, delay_rev_pmf, t, pstream__),
       "assigning variable unobs_reports");
-    current_statement__ = 180;
+    current_statement__ = 560;
     return stan::model::rvalue(unobs_reports, "unobs_reports",
              stan::model::index_min_max((seeding_time + 1), t));
   } catch (const std::exception& e) {
@@ -930,7 +3067,7 @@ template <typename T0__,
                               stan::is_vt_not_complex<T0__>>*>
 Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>>,-1,1>
 discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
-                std::ostream* pstream__) {
+                const int& L, std::ostream* pstream__) {
   using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>>;
   int current_statement__ = 0;
   const auto& params = stan::math::to_ref(params_arg__);
@@ -941,82 +3078,26 @@ discretised_pmf(const T0__& params_arg__, const int& n, const int& dist,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 182;
-    stan::math::validate_non_negative_index("lpmf", "n", n);
-    Eigen::Matrix<local_scalar_t__,-1,1> lpmf =
-      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 184;
-    stan::math::validate_non_negative_index("upper_lcdf", "n", n);
-    Eigen::Matrix<local_scalar_t__,-1,1> upper_lcdf =
-      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 197;
-    if (stan::math::logical_eq(dist, 0)) {
-      current_statement__ = 195;
-      for (int i = 1; i <= n; ++i) {
-        current_statement__ = 193;
-        stan::model::assign(upper_lcdf,
-          stan::math::lognormal_lcdf(i,
-            stan::model::rvalue(params, "params", stan::model::index_uni(1)),
-            stan::model::rvalue(params, "params", stan::model::index_uni(2))),
-          "assigning variable upper_lcdf", stan::model::index_uni(i));
-      }
-    } else {
-      current_statement__ = 192;
-      if (stan::math::logical_eq(dist, 1)) {
-        current_statement__ = 190;
-        for (int i = 1; i <= n; ++i) {
-          current_statement__ = 188;
-          stan::model::assign(upper_lcdf,
-            stan::math::gamma_lcdf(i,
-              stan::model::rvalue(params, "params", stan::model::index_uni(1)),
-              stan::model::rvalue(params, "params", stan::model::index_uni(2))),
-            "assigning variable upper_lcdf", stan::model::index_uni(i));
-        }
-      } else {
-        current_statement__ = 186;
-        std::stringstream errmsg_stream__;
-        stan::math::stan_print(&errmsg_stream__,
-          "Unknown distribution function provided.");
-        throw std::domain_error(errmsg_stream__.str());
-      }
+    int n_params = std::numeric_limits<int>::min();
+    current_statement__ = 562;
+    n_params = stan::math::num_elements(params);
+    current_statement__ = 563;
+    stan::math::validate_non_negative_index("params_array", "n_params",
+      n_params);
+    std::vector<local_scalar_t__> params_array =
+      std::vector<local_scalar_t__>(n_params, DUMMY_VAR__);
+    current_statement__ = 567;
+    for (int i = 1; i <= n_params; ++i) {
+      current_statement__ = 565;
+      stan::model::assign(params_array,
+        stan::model::rvalue(params, "params", stan::model::index_uni(i)),
+        "assigning variable params_array", stan::model::index_uni(i));
     }
-    current_statement__ = 207;
-    if (stan::math::logical_gt(n, 1)) {
-      current_statement__ = 200;
-      stan::model::assign(lpmf,
-        stan::model::rvalue(upper_lcdf, "upper_lcdf",
-          stan::model::index_uni(1)), "assigning variable lpmf",
-        stan::model::index_uni(1));
-      current_statement__ = 201;
-      stan::model::assign(lpmf,
-        stan::model::rvalue(upper_lcdf, "upper_lcdf",
-          stan::model::index_uni(2)), "assigning variable lpmf",
-        stan::model::index_uni(2));
-      current_statement__ = 204;
-      if (stan::math::logical_gt(n, 2)) {
-        current_statement__ = 202;
-        stan::model::assign(lpmf,
-          stan::math::log_diff_exp(
-            stan::model::rvalue(upper_lcdf, "upper_lcdf",
-              stan::model::index_min_max(3, n)),
-            stan::model::rvalue(upper_lcdf, "upper_lcdf",
-              stan::model::index_min_max(1, (n - 2)))),
-          "assigning variable lpmf", stan::model::index_min_max(3, n));
-      }
-      current_statement__ = 205;
-      stan::model::assign(lpmf,
-        stan::math::subtract(stan::model::deep_copy(lpmf),
-          stan::math::log_sum_exp(
-            stan::model::rvalue(upper_lcdf, "upper_lcdf",
-              stan::model::index_min_max((n - 1), n)))),
-        "assigning variable lpmf");
-    } else {
-      current_statement__ = 198;
-      stan::model::assign(lpmf, 0, "assigning variable lpmf",
-        stan::model::index_uni(1));
-    }
-    current_statement__ = 208;
-    return stan::math::exp(lpmf);
+    std::vector<local_scalar_t__> primary_params =
+      std::vector<local_scalar_t__>(0, DUMMY_VAR__);
+    current_statement__ = 569;
+    return primarycensored_sone_pmf_vectorized((n - 1), (L * 1.0), (n * 1.0),
+             dist, params_array, 1.0, 1, primary_params, pstream__);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -1036,25 +3117,25 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 210;
+    current_statement__ = 571;
     stan::math::validate_non_negative_index("ret", "delay_types", delay_types);
     std::vector<int> ret =
       std::vector<int>(delay_types, std::numeric_limits<int>::min());
-    current_statement__ = 221;
+    current_statement__ = 582;
     for (int i = 1; i <= delay_types; ++i) {
-      current_statement__ = 212;
+      current_statement__ = 573;
       stan::model::assign(ret, 0, "assigning variable ret",
         stan::model::index_uni(i));
-      current_statement__ = 219;
+      current_statement__ = 580;
       for (int j =
              stan::model::rvalue(delay_types_groups, "delay_types_groups",
                stan::model::index_uni(i)); j <=
            (stan::model::rvalue(delay_types_groups, "delay_types_groups",
               stan::model::index_uni((i + 1))) - 1); ++j) {
-        current_statement__ = 217;
+        current_statement__ = 578;
         if (stan::model::rvalue(delay_types_p, "delay_types_p",
               stan::model::index_uni(j))) {
-          current_statement__ = 215;
+          current_statement__ = 576;
           stan::model::assign(ret,
             (stan::model::rvalue(ret, "ret", stan::model::index_uni(i)) +
             stan::model::rvalue(delay_max, "delay_max",
@@ -1063,7 +3144,7 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
                   stan::model::index_uni(j))))), "assigning variable ret",
             stan::model::index_uni(i));
         } else {
-          current_statement__ = 213;
+          current_statement__ = 574;
           stan::model::assign(ret,
             (stan::model::rvalue(ret, "ret", stan::model::index_uni(i)) +
             ((stan::model::rvalue(delay_np_pmf_groups, "delay_np_pmf_groups",
@@ -1078,7 +3159,7 @@ get_delay_type_max(const int& delay_types, const std::vector<int>&
         }
       }
     }
-    current_statement__ = 222;
+    current_statement__ = 583;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1114,42 +3195,42 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 224;
+    current_statement__ = 585;
     stan::math::validate_non_negative_index("pmf", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> pmf =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 225;
+    current_statement__ = 586;
     stan::model::assign(pmf, stan::math::rep_vector(0, len),
       "assigning variable pmf");
     int current_len = std::numeric_limits<int>::min();
-    current_statement__ = 226;
+    current_statement__ = 587;
     current_len = 1;
     int new_len = std::numeric_limits<int>::min();
-    current_statement__ = 251;
+    current_statement__ = 612;
     for (int i =
            stan::model::rvalue(delay_types_groups, "delay_types_groups",
              stan::model::index_uni(delay_id)); i <=
          (stan::model::rvalue(delay_types_groups, "delay_types_groups",
             stan::model::index_uni((delay_id + 1))) - 1); ++i) {
-      current_statement__ = 248;
+      current_statement__ = 609;
       if (stan::model::rvalue(delay_types_p, "delay_types_p",
             stan::model::index_uni(i))) {
         int start = std::numeric_limits<int>::min();
-        current_statement__ = 237;
+        current_statement__ = 598;
         start = stan::model::rvalue(delay_params_groups,
                   "delay_params_groups",
                   stan::model::index_uni(
                     stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i))));
         int end = std::numeric_limits<int>::min();
-        current_statement__ = 238;
+        current_statement__ = 599;
         end = (stan::model::rvalue(delay_params_groups,
                  "delay_params_groups",
                  stan::model::index_uni(
                    (stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i)) + 1)))
           - 1);
-        current_statement__ = 239;
+        current_statement__ = 600;
         stan::math::validate_non_negative_index("new_variable_pmf",
           "delay_max[delay_types_id[i]] + 1",
           (stan::model::rvalue(delay_max, "delay_max",
@@ -1167,7 +3248,7 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                                                                 stan::model::index_uni(
                                                                   i)))) + 1),
             DUMMY_VAR__);
-        current_statement__ = 240;
+        current_statement__ = 601;
         stan::model::assign(new_variable_pmf,
           discretised_pmf(
             stan::model::rvalue(delay_params, "delay_params",
@@ -1179,21 +3260,21 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
             stan::model::rvalue(delay_dist, "delay_dist",
               stan::model::index_uni(
                 stan::model::rvalue(delay_types_id, "delay_types_id",
-                  stan::model::index_uni(i)))), pstream__),
+                  stan::model::index_uni(i)))), 0, pstream__),
           "assigning variable new_variable_pmf");
-        current_statement__ = 241;
+        current_statement__ = 602;
         new_len = (current_len +
           stan::model::rvalue(delay_max, "delay_max",
             stan::model::index_uni(
               stan::model::rvalue(delay_types_id, "delay_types_id",
                 stan::model::index_uni(i)))));
-        current_statement__ = 246;
+        current_statement__ = 607;
         if (stan::math::logical_eq(current_len, 1)) {
-          current_statement__ = 244;
+          current_statement__ = 605;
           stan::model::assign(pmf, new_variable_pmf,
             "assigning variable pmf", stan::model::index_min_max(1, new_len));
         } else {
-          current_statement__ = 242;
+          current_statement__ = 603;
           stan::model::assign(pmf,
             convolve_with_rev_pmf(
               stan::model::deep_copy(
@@ -1204,31 +3285,31 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
         }
       } else {
         int start = std::numeric_limits<int>::min();
-        current_statement__ = 228;
+        current_statement__ = 589;
         start = stan::model::rvalue(delay_np_pmf_groups,
                   "delay_np_pmf_groups",
                   stan::model::index_uni(
                     stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i))));
         int end = std::numeric_limits<int>::min();
-        current_statement__ = 229;
+        current_statement__ = 590;
         end = (stan::model::rvalue(delay_np_pmf_groups,
                  "delay_np_pmf_groups",
                  stan::model::index_uni(
                    (stan::model::rvalue(delay_types_id, "delay_types_id",
                       stan::model::index_uni(i)) + 1)))
           - 1);
-        current_statement__ = 230;
+        current_statement__ = 591;
         new_len = ((current_len + end) - start);
-        current_statement__ = 235;
+        current_statement__ = 596;
         if (stan::math::logical_eq(current_len, 1)) {
-          current_statement__ = 233;
+          current_statement__ = 594;
           stan::model::assign(pmf,
             stan::model::rvalue(delay_np_pmf, "delay_np_pmf",
               stan::model::index_min_max(start, end)),
             "assigning variable pmf", stan::model::index_min_max(1, new_len));
         } else {
-          current_statement__ = 231;
+          current_statement__ = 592;
           stan::model::assign(pmf,
             convolve_with_rev_pmf(
               stan::model::deep_copy(
@@ -1241,12 +3322,12 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
             stan::model::index_min_max(1, new_len));
         }
       }
-      current_statement__ = 249;
+      current_statement__ = 610;
       current_len = new_len;
     }
-    current_statement__ = 254;
+    current_statement__ = 615;
     if (left_truncate) {
-      current_statement__ = 252;
+      current_statement__ = 613;
       stan::model::assign(pmf,
         stan::math::append_row(stan::math::rep_vector(0, left_truncate),
           stan::math::divide(
@@ -1258,21 +3339,21 @@ get_delay_rev_pmf(const int& delay_id, const int& len,
                 stan::model::index_min_max((left_truncate + 1), len))))),
         "assigning variable pmf");
     }
-    current_statement__ = 257;
+    current_statement__ = 618;
     if (cumulative) {
-      current_statement__ = 255;
+      current_statement__ = 616;
       stan::model::assign(pmf,
         stan::math::cumulative_sum(stan::model::deep_copy(pmf)),
         "assigning variable pmf");
     }
-    current_statement__ = 260;
+    current_statement__ = 621;
     if (reverse_pmf) {
-      current_statement__ = 258;
+      current_statement__ = 619;
       stan::model::assign(pmf,
         stan::math::reverse(stan::model::deep_copy(pmf)),
         "assigning variable pmf");
     }
-    current_statement__ = 261;
+    current_statement__ = 622;
     return pmf;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1304,35 +3385,35 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int n_delays = std::numeric_limits<int>::min();
-    current_statement__ = 263;
+    current_statement__ = 624;
     n_delays = (stan::math::num_elements(delay_params_groups) - 1);
-    current_statement__ = 266;
+    current_statement__ = 627;
     if (stan::math::logical_eq(n_delays, 0)) {
-      current_statement__ = 264;
+      current_statement__ = 625;
       return ;
     }
-    current_statement__ = 279;
+    current_statement__ = 640;
     for (int d = 1; d <= n_delays; ++d) {
       int start = std::numeric_limits<int>::min();
-      current_statement__ = 267;
+      current_statement__ = 628;
       start = stan::model::rvalue(delay_params_groups, "delay_params_groups",
                 stan::model::index_uni(d));
       int end = std::numeric_limits<int>::min();
-      current_statement__ = 268;
+      current_statement__ = 629;
       end = (stan::model::rvalue(delay_params_groups, "delay_params_groups",
                stan::model::index_uni((d + 1)))
         - 1);
-      current_statement__ = 277;
+      current_statement__ = 638;
       for (int s = start; s <= end; ++s) {
-        current_statement__ = 275;
+        current_statement__ = 636;
         if (stan::math::logical_gt(
               stan::model::rvalue(delay_params_sd, "delay_params_sd",
                 stan::model::index_uni(s)), 0)) {
-          current_statement__ = 273;
+          current_statement__ = 634;
           if (stan::math::logical_gt(
                 stan::model::rvalue(weight, "weight",
                   stan::model::index_uni(d)), 1)) {
-            current_statement__ = 271;
+            current_statement__ = 632;
             lp_accum__.add((stan::model::rvalue(weight, "weight",
                               stan::model::index_uni(d)) *
               stan::math::normal_lpdf<false>(
@@ -1343,7 +3424,7 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
                 stan::model::rvalue(delay_params_sd, "delay_params_sd",
                   stan::model::index_uni(s)))));
           } else {
-            current_statement__ = 269;
+            current_statement__ = 630;
             lp_accum__.add(stan::math::normal_lpdf<propto__>(
                              stan::model::rvalue(delay_params,
                                "delay_params", stan::model::index_uni(s)),
@@ -1355,6 +3436,103 @@ delays_lp(const T0__& delay_params_arg__, const T1__&
         }
       }
     }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <bool propto__, typename T0__, typename T1__, typename T_lp__,
+          typename T_lp_accum__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T1__>,
+                              stan::is_vt_not_complex<T1__>>*>
+void
+delays_np_lp(const T0__& delay_np_est_raw_arg__, const T1__&
+             delay_np_est_alpha_arg__, T_lp__& lp__, T_lp_accum__&
+             lp_accum__, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
+                             stan::base_type_t<T1__>>;
+  int current_statement__ = 0;
+  const auto& delay_np_est_raw = stan::math::to_ref(delay_np_est_raw_arg__);
+  const auto& delay_np_est_alpha =
+    stan::math::to_ref(delay_np_est_alpha_arg__);
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 643;
+    if (stan::math::logical_eq(stan::math::num_elements(delay_np_est_raw), 0)) {
+      current_statement__ = 642;
+      return ;
+    }
+    current_statement__ = 644;
+    lp_accum__.add(stan::math::gamma_lpdf<propto__>(delay_np_est_raw,
+                     delay_np_est_alpha, 1));
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, typename T4__,
+          stan::require_all_t<stan::is_col_vector<T0__>,
+                              stan::is_vt_not_complex<T0__>,
+                              stan::is_col_vector<T4__>,
+                              stan::is_vt_not_complex<T4__>>*>
+Eigen::Matrix<stan::promote_args_t<stan::base_type_t<T0__>,
+                stan::base_type_t<T4__>>,-1,1>
+combine_np_pmf(const T0__& delay_np_pmf_arg__, const int& delay_n_np_est,
+               const std::vector<int>& delay_np_est_groups,
+               const std::vector<int>& delay_np_est_pos, const T4__&
+               delay_np_est_raw_arg__, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T0__>,
+                             stan::base_type_t<T4__>>;
+  int current_statement__ = 0;
+  const auto& delay_np_pmf = stan::math::to_ref(delay_np_pmf_arg__);
+  const auto& delay_np_est_raw = stan::math::to_ref(delay_np_est_raw_arg__);
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 646;
+    stan::math::validate_non_negative_index("ret",
+      "num_elements(delay_np_pmf)", stan::math::num_elements(delay_np_pmf));
+    Eigen::Matrix<local_scalar_t__,-1,1> ret =
+      Eigen::Matrix<local_scalar_t__,-1,1>::Constant(stan::math::num_elements(
+                                                       delay_np_pmf),
+        DUMMY_VAR__);
+    current_statement__ = 647;
+    stan::model::assign(ret, delay_np_pmf, "assigning variable ret");
+    current_statement__ = 655;
+    for (int i = 1; i <= delay_n_np_est; ++i) {
+      int es = std::numeric_limits<int>::min();
+      current_statement__ = 648;
+      es = stan::model::rvalue(delay_np_est_groups, "delay_np_est_groups",
+             stan::model::index_uni(i));
+      int ee = std::numeric_limits<int>::min();
+      current_statement__ = 649;
+      ee = (stan::model::rvalue(delay_np_est_groups, "delay_np_est_groups",
+              stan::model::index_uni((i + 1)))
+        - 1);
+      local_scalar_t__ seg_sum = DUMMY_VAR__;
+      current_statement__ = 650;
+      seg_sum = stan::math::sum(
+                  stan::model::rvalue(delay_np_est_raw, "delay_np_est_raw",
+                    stan::model::index_min_max(es, ee)));
+      current_statement__ = 653;
+      for (int j = es; j <= ee; ++j) {
+        current_statement__ = 651;
+        stan::model::assign(ret,
+          (stan::model::rvalue(delay_np_est_raw, "delay_np_est_raw",
+             stan::model::index_uni(j)) / seg_sum), "assigning variable ret",
+          stan::model::index_uni(
+            stan::model::rvalue(delay_np_est_pos, "delay_np_est_pos",
+              stan::model::index_uni(j))));
+      }
+    }
+    current_statement__ = 656;
+    return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -1385,31 +3563,31 @@ normal_lb_rng(const T0__& mu_arg__, const T1__& sigma_arg__, const T2__&
   (void) DUMMY_VAR__;
   try {
     int len = std::numeric_limits<int>::min();
-    current_statement__ = 281;
+    current_statement__ = 658;
     len = stan::math::num_elements(mu);
-    current_statement__ = 282;
+    current_statement__ = 659;
     stan::math::validate_non_negative_index("ret", "len", len);
     Eigen::Matrix<local_scalar_t__,-1,1> ret =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(len, DUMMY_VAR__);
-    current_statement__ = 288;
+    current_statement__ = 665;
     for (int i = 1; i <= len; ++i) {
       local_scalar_t__ p = DUMMY_VAR__;
-      current_statement__ = 284;
+      current_statement__ = 661;
       p = stan::math::normal_cdf(
             stan::model::rvalue(lb, "lb", stan::model::index_uni(i)),
             stan::model::rvalue(mu, "mu", stan::model::index_uni(i)),
             stan::model::rvalue(sigma, "sigma", stan::model::index_uni(i)));
       local_scalar_t__ u = DUMMY_VAR__;
-      current_statement__ = 285;
+      current_statement__ = 662;
       u = stan::math::uniform_rng(p, 1, base_rng__);
-      current_statement__ = 286;
+      current_statement__ = 663;
       stan::model::assign(ret,
         ((stan::model::rvalue(sigma, "sigma", stan::model::index_uni(i)) *
         stan::math::inv_Phi(u)) +
         stan::model::rvalue(mu, "mu", stan::model::index_uni(i))),
         "assigning variable ret", stan::model::index_uni(i));
     }
-    current_statement__ = 289;
+    current_statement__ = 666;
     return ret;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1438,16 +3616,16 @@ day_of_week_effect(const T0__& reports_arg__, const std::vector<int>&
   (void) DUMMY_VAR__;
   try {
     int wl = std::numeric_limits<int>::min();
-    current_statement__ = 291;
+    current_statement__ = 668;
     wl = stan::math::num_elements(effect);
-    current_statement__ = 292;
+    current_statement__ = 669;
     stan::math::validate_non_negative_index("scaled_effect", "wl", wl);
     Eigen::Matrix<local_scalar_t__,-1,1> scaled_effect =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(wl, DUMMY_VAR__);
-    current_statement__ = 293;
+    current_statement__ = 670;
     stan::model::assign(scaled_effect, stan::math::multiply(wl, effect),
       "assigning variable scaled_effect");
-    current_statement__ = 294;
+    current_statement__ = 671;
     return stan::math::elt_multiply(reports,
              stan::model::rvalue(scaled_effect, "scaled_effect",
                stan::model::index_multi(day_of_week)));
@@ -1474,17 +3652,17 @@ scale_obs(const T0__& reports_arg__, const T1__& fraction_observed,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 296;
+    current_statement__ = 673;
     t = stan::math::num_elements(reports);
-    current_statement__ = 297;
+    current_statement__ = 674;
     stan::math::validate_non_negative_index("scaled_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> scaled_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 299;
+    current_statement__ = 676;
     stan::model::assign(scaled_reports,
       stan::math::multiply(reports, fraction_observed),
       "assigning variable scaled_reports");
-    current_statement__ = 300;
+    current_statement__ = 677;
     return scaled_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1512,30 +3690,30 @@ truncate_obs(const T0__& reports_arg__, const T1__& trunc_rev_cmf_arg__,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 302;
+    current_statement__ = 679;
     t = stan::math::num_elements(reports);
     int trunc_max = std::numeric_limits<int>::min();
-    current_statement__ = 303;
+    current_statement__ = 680;
     trunc_max = stan::math::num_elements(trunc_rev_cmf);
-    current_statement__ = 304;
+    current_statement__ = 681;
     stan::math::validate_non_negative_index("trunc_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> trunc_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 305;
+    current_statement__ = 682;
     stan::model::assign(trunc_reports, reports,
       "assigning variable trunc_reports");
     int joint_max = std::numeric_limits<int>::min();
-    current_statement__ = 306;
+    current_statement__ = 683;
     joint_max = stan::math::min(t, trunc_max);
     int first_t = std::numeric_limits<int>::min();
-    current_statement__ = 307;
+    current_statement__ = 684;
     first_t = ((t - joint_max) + 1);
     int first_trunc = std::numeric_limits<int>::min();
-    current_statement__ = 308;
+    current_statement__ = 685;
     first_trunc = ((trunc_max - joint_max) + 1);
-    current_statement__ = 313;
+    current_statement__ = 690;
     if (reconstruct) {
-      current_statement__ = 311;
+      current_statement__ = 688;
       stan::model::assign(trunc_reports,
         stan::math::elt_divide(
           stan::model::deep_copy(
@@ -1546,7 +3724,7 @@ truncate_obs(const T0__& reports_arg__, const T1__& trunc_rev_cmf_arg__,
         "assigning variable trunc_reports",
         stan::model::index_min_max(first_t, t));
     } else {
-      current_statement__ = 309;
+      current_statement__ = 686;
       stan::model::assign(trunc_reports,
         stan::math::elt_multiply(
           stan::model::deep_copy(
@@ -1557,7 +3735,7 @@ truncate_obs(const T0__& reports_arg__, const T1__& trunc_rev_cmf_arg__,
         "assigning variable trunc_reports",
         stan::model::index_min_max(first_t, t));
     }
-    current_statement__ = 314;
+    current_statement__ = 691;
     return trunc_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1588,27 +3766,46 @@ truncation_lp(const std::vector<T0__>& truncation_mean,
   (void) DUMMY_VAR__;
   try {
     int truncation = std::numeric_limits<int>::min();
-    current_statement__ = 316;
+    current_statement__ = 693;
     truncation = stan::math::num_elements(truncation_mean);
-    current_statement__ = 324;
+    current_statement__ = 701;
     if (truncation) {
-      current_statement__ = 319;
+      current_statement__ = 696;
       if (stan::math::logical_gt(
             stan::model::rvalue(trunc_mean_sd, "trunc_mean_sd",
               stan::model::index_uni(1)), 0)) {
-        current_statement__ = 317;
+        current_statement__ = 694;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(truncation_mean,
                          trunc_mean_mean, trunc_mean_sd));
       }
-      current_statement__ = 322;
+      current_statement__ = 699;
       if (stan::math::logical_gt(
             stan::model::rvalue(trunc_sd_sd, "trunc_sd_sd",
               stan::model::index_uni(1)), 0)) {
-        current_statement__ = 320;
+        current_statement__ = 697;
         lp_accum__.add(stan::math::normal_lpdf<propto__>(truncation_sd,
                          trunc_sd_mean, trunc_sd_sd));
       }
     }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <typename T0__, stan::require_all_t<stan::is_stan_scalar<T0__>>*>
+stan::promote_args_t<T0__>
+reporting_phi(const T0__& reporting_overdispersion, const int& model_type,
+              std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__>;
+  int current_statement__ = 0;
+  static constexpr bool propto__ = true;
+  // suppress unused var warning
+  (void) propto__;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 703;
+    return (model_type ? stan::math::inv_square(reporting_overdispersion) : 1e5);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -1633,39 +3830,39 @@ report_lp(const std::vector<int>& cases, const std::vector<int>& case_times,
   (void) DUMMY_VAR__;
   try {
     int n = std::numeric_limits<int>::min();
-    current_statement__ = 326;
+    current_statement__ = 705;
     n = stan::math::num_elements(case_times);
-    current_statement__ = 327;
+    current_statement__ = 706;
     stan::math::validate_non_negative_index("obs_reports", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> obs_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 328;
+    current_statement__ = 707;
     stan::model::assign(obs_reports,
       stan::model::rvalue(reports, "reports",
         stan::model::index_multi(case_times)),
       "assigning variable obs_reports");
-    current_statement__ = 342;
+    current_statement__ = 721;
     if (model_type) {
       local_scalar_t__ phi = DUMMY_VAR__;
-      current_statement__ = 335;
-      phi = stan::math::inv_square(reporting_overdispersion);
-      current_statement__ = 340;
+      current_statement__ = 714;
+      phi = reporting_phi(reporting_overdispersion, model_type, pstream__);
+      current_statement__ = 719;
       if (stan::math::logical_eq(weight, 1)) {
-        current_statement__ = 338;
+        current_statement__ = 717;
         lp_accum__.add(stan::math::neg_binomial_2_lpmf<propto__>(cases,
                          obs_reports, phi));
       } else {
-        current_statement__ = 336;
+        current_statement__ = 715;
         lp_accum__.add((stan::math::neg_binomial_2_lpmf<false>(cases,
                           obs_reports, phi) * weight));
       }
     } else {
-      current_statement__ = 333;
+      current_statement__ = 712;
       if (stan::math::logical_eq(weight, 1)) {
-        current_statement__ = 331;
+        current_statement__ = 710;
         lp_accum__.add(stan::math::poisson_lpmf<propto__>(cases, obs_reports));
       } else {
-        current_statement__ = 329;
+        current_statement__ = 708;
         lp_accum__.add((stan::math::poisson_lpmf<false>(cases, obs_reports) *
           weight));
       }
@@ -1691,22 +3888,22 @@ accumulate_reports(const T0__& reports_arg__, const std::vector<int>&
   (void) DUMMY_VAR__;
   try {
     int ot_h = std::numeric_limits<int>::min();
-    current_statement__ = 344;
+    current_statement__ = 723;
     ot_h = stan::math::num_elements(reports);
-    current_statement__ = 345;
+    current_statement__ = 724;
     stan::math::validate_non_negative_index("accumulated_reports", "ot_h",
       ot_h);
     Eigen::Matrix<local_scalar_t__,-1,1> accumulated_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(ot_h, DUMMY_VAR__);
-    current_statement__ = 346;
+    current_statement__ = 725;
     stan::model::assign(accumulated_reports, reports,
       "assigning variable accumulated_reports");
-    current_statement__ = 351;
+    current_statement__ = 730;
     for (int i = 1; i <= (ot_h - 1); ++i) {
-      current_statement__ = 349;
+      current_statement__ = 728;
       if (stan::model::rvalue(accumulate, "accumulate",
             stan::model::index_uni(i))) {
-        current_statement__ = 347;
+        current_statement__ = 726;
         stan::model::assign(accumulated_reports,
           (stan::model::rvalue(accumulated_reports, "accumulated_reports",
              stan::model::index_uni((i + 1))) +
@@ -1716,7 +3913,7 @@ accumulate_reports(const T0__& reports_arg__, const std::vector<int>&
           stan::model::index_uni((i + 1)));
       }
     }
-    current_statement__ = 352;
+    current_statement__ = 731;
     return accumulated_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1743,17 +3940,17 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 354;
+    current_statement__ = 733;
     t = stan::math::num_elements(reports);
-    current_statement__ = 355;
+    current_statement__ = 734;
     stan::math::validate_non_negative_index("log_lik", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> log_lik =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 366;
+    current_statement__ = 745;
     if (stan::math::logical_eq(model_type, 0)) {
-      current_statement__ = 364;
+      current_statement__ = 743;
       for (int i = 1; i <= t; ++i) {
-        current_statement__ = 362;
+        current_statement__ = 741;
         stan::model::assign(log_lik,
           (stan::math::poisson_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
@@ -1763,11 +3960,11 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
       }
     } else {
       local_scalar_t__ phi = DUMMY_VAR__;
-      current_statement__ = 357;
-      phi = stan::math::inv_square(reporting_overdispersion);
-      current_statement__ = 360;
+      current_statement__ = 736;
+      phi = reporting_phi(reporting_overdispersion, model_type, pstream__);
+      current_statement__ = 739;
       for (int i = 1; i <= t; ++i) {
-        current_statement__ = 358;
+        current_statement__ = 737;
         stan::model::assign(log_lik,
           (stan::math::neg_binomial_2_lpmf<false>(
              stan::model::rvalue(cases, "cases", stan::model::index_uni(i)),
@@ -1776,7 +3973,7 @@ report_log_lik(const std::vector<int>& cases, const T1__& reports_arg__,
           "assigning variable log_lik", stan::model::index_uni(i));
       }
     }
-    current_statement__ = 367;
+    current_statement__ = 746;
     return log_lik;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1797,21 +3994,21 @@ neg_binomial_2_safe_rng(const T0__& mu, const T1__& phi, RNG& base_rng__,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 377;
+    current_statement__ = 756;
     if (stan::math::logical_lt(mu, 1e-8)) {
-      current_statement__ = 375;
+      current_statement__ = 754;
       return 0;
     } else {
-      current_statement__ = 374;
+      current_statement__ = 753;
       if (stan::math::logical_gt(phi, 1e4)) {
-        current_statement__ = 372;
+        current_statement__ = 751;
         return stan::math::poisson_rng(
                  (stan::math::logical_gt(mu, 1e8) ? 1e8 : mu), base_rng__);
       } else {
         local_scalar_t__ gamma_rate = DUMMY_VAR__;
-        current_statement__ = 369;
+        current_statement__ = 748;
         gamma_rate = stan::math::gamma_rng(phi, (phi / mu), base_rng__);
-        current_statement__ = 370;
+        current_statement__ = 749;
         return stan::math::poisson_rng(
                  (stan::math::logical_gt(gamma_rate, 1e8) ? 1e8 : gamma_rate),
                  base_rng__);
@@ -1840,30 +4037,25 @@ report_rng(const T0__& reports_arg__, const T1__& reporting_overdispersion,
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 379;
+    current_statement__ = 758;
     t = stan::math::num_elements(reports);
-    current_statement__ = 380;
+    current_statement__ = 759;
     stan::math::validate_non_negative_index("sampled_reports", "t", t);
     std::vector<int> sampled_reports =
       std::vector<int>(t, std::numeric_limits<int>::min());
     local_scalar_t__ phi = DUMMY_VAR__;
-    current_statement__ = 382;
-    phi = 1e5;
-    current_statement__ = 385;
-    if (model_type) {
-      current_statement__ = 383;
-      phi = stan::math::inv_square(reporting_overdispersion);
-    }
-    current_statement__ = 388;
+    current_statement__ = 761;
+    phi = reporting_phi(reporting_overdispersion, model_type, pstream__);
+    current_statement__ = 764;
     for (int s = 1; s <= t; ++s) {
-      current_statement__ = 386;
+      current_statement__ = 762;
       stan::model::assign(sampled_reports,
         neg_binomial_2_safe_rng(
           stan::model::rvalue(reports, "reports", stan::model::index_uni(s)),
           phi, base_rng__, pstream__), "assigning variable sampled_reports",
         stan::model::index_uni(s));
     }
-    current_statement__ = 389;
+    current_statement__ = 765;
     return sampled_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1895,39 +4087,39 @@ calculate_secondary(const T0__& scaled_reports_arg__, const T1__&
   (void) DUMMY_VAR__;
   try {
     int t = std::numeric_limits<int>::min();
-    current_statement__ = 391;
+    current_statement__ = 767;
     t = stan::math::num_elements(scaled_reports);
-    current_statement__ = 392;
+    current_statement__ = 768;
     stan::math::validate_non_negative_index("secondary_reports", "t", t);
     Eigen::Matrix<local_scalar_t__,-1,1> secondary_reports =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-    current_statement__ = 393;
+    current_statement__ = 769;
     stan::model::assign(secondary_reports, stan::math::rep_vector(0.0, t),
       "assigning variable secondary_reports");
-    current_statement__ = 417;
+    current_statement__ = 793;
     for (int i = 1; i <= t; ++i) {
-      current_statement__ = 400;
+      current_statement__ = 776;
       if ((stan::math::primitive_value(cumulative) &&
           stan::math::primitive_value(stan::math::logical_gt(i, 1)))) {
-        current_statement__ = 398;
+        current_statement__ = 774;
         if (stan::math::logical_gt(i, predict)) {
-          current_statement__ = 396;
+          current_statement__ = 772;
           stan::model::assign(secondary_reports,
             stan::model::rvalue(secondary_reports, "secondary_reports",
               stan::model::index_uni((i - 1))),
             "assigning variable secondary_reports", stan::model::index_uni(i));
         } else {
-          current_statement__ = 394;
+          current_statement__ = 770;
           stan::model::assign(secondary_reports,
             stan::model::rvalue(obs, "obs", stan::model::index_uni((i - 1))),
             "assigning variable secondary_reports", stan::model::index_uni(i));
         }
       }
-      current_statement__ = 407;
+      current_statement__ = 783;
       if (historic) {
-        current_statement__ = 405;
+        current_statement__ = 781;
         if (primary_hist_additive) {
-          current_statement__ = 403;
+          current_statement__ = 779;
           stan::model::assign(secondary_reports,
             (stan::model::rvalue(secondary_reports, "secondary_reports",
                stan::model::index_uni(i)) +
@@ -1935,7 +4127,7 @@ calculate_secondary(const T0__& scaled_reports_arg__, const T1__&
               stan::model::index_uni(i))),
             "assigning variable secondary_reports", stan::model::index_uni(i));
         } else {
-          current_statement__ = 401;
+          current_statement__ = 777;
           stan::model::assign(secondary_reports,
             stan::math::fmax(0,
               (stan::model::rvalue(secondary_reports, "secondary_reports",
@@ -1945,11 +4137,11 @@ calculate_secondary(const T0__& scaled_reports_arg__, const T1__&
             "assigning variable secondary_reports", stan::model::index_uni(i));
         }
       }
-      current_statement__ = 414;
+      current_statement__ = 790;
       if (current) {
-        current_statement__ = 412;
+        current_statement__ = 788;
         if (primary_current_additive) {
-          current_statement__ = 410;
+          current_statement__ = 786;
           stan::model::assign(secondary_reports,
             (stan::model::rvalue(secondary_reports, "secondary_reports",
                stan::model::index_uni(i)) +
@@ -1957,7 +4149,7 @@ calculate_secondary(const T0__& scaled_reports_arg__, const T1__&
               stan::model::index_uni(i))),
             "assigning variable secondary_reports", stan::model::index_uni(i));
         } else {
-          current_statement__ = 408;
+          current_statement__ = 784;
           stan::model::assign(secondary_reports,
             (stan::model::rvalue(secondary_reports, "secondary_reports",
                stan::model::index_uni(i)) -
@@ -1966,13 +4158,13 @@ calculate_secondary(const T0__& scaled_reports_arg__, const T1__&
             "assigning variable secondary_reports", stan::model::index_uni(i));
         }
       }
-      current_statement__ = 415;
+      current_statement__ = 791;
       stan::model::assign(secondary_reports, (1e-6 +
         stan::model::rvalue(secondary_reports, "secondary_reports",
           stan::model::index_uni(i))),
         "assigning variable secondary_reports", stan::model::index_uni(i));
     }
-    current_statement__ = 418;
+    current_statement__ = 794;
     return secondary_reports;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2000,21 +4192,21 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 427;
+    current_statement__ = 803;
     if (stan::math::logical_eq(id, 0)) {
-      current_statement__ = 425;
+      current_statement__ = 801;
       return 0;
     } else {
-      current_statement__ = 424;
+      current_statement__ = 800;
       if (stan::model::rvalue(params_fixed_lookup, "params_fixed_lookup",
             stan::model::index_uni(id))) {
-        current_statement__ = 422;
+        current_statement__ = 798;
         return stan::model::rvalue(params_value, "params_value",
                  stan::model::index_uni(
                    stan::model::rvalue(params_fixed_lookup,
                      "params_fixed_lookup", stan::model::index_uni(id))));
       } else {
-        current_statement__ = 420;
+        current_statement__ = 796;
         return stan::model::rvalue(params, "params",
                  stan::model::index_uni(
                    stan::model::rvalue(params_variable_lookup,
@@ -2049,17 +4241,17 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
   (void) DUMMY_VAR__;
   try {
     int n_samples = std::numeric_limits<int>::min();
-    current_statement__ = 429;
+    current_statement__ = 805;
     n_samples = stan::math::rows(params);
-    current_statement__ = 437;
+    current_statement__ = 813;
     if (stan::math::logical_eq(id, 0)) {
-      current_statement__ = 435;
+      current_statement__ = 811;
       return stan::math::rep_vector(0, n_samples);
     } else {
-      current_statement__ = 434;
+      current_statement__ = 810;
       if (stan::model::rvalue(params_fixed_lookup, "params_fixed_lookup",
             stan::model::index_uni(id))) {
-        current_statement__ = 432;
+        current_statement__ = 808;
         return stan::math::rep_vector(
                  stan::model::rvalue(params_value, "params_value",
                    stan::model::index_uni(
@@ -2067,12 +4259,104 @@ get_param(const int& id, const std::vector<int>& params_fixed_lookup,
                        "params_fixed_lookup", stan::model::index_uni(id)))),
                  n_samples);
       } else {
-        current_statement__ = 430;
+        current_statement__ = 806;
         return stan::model::rvalue(params, "params",
                  stan::model::index_omni(),
                  stan::model::index_uni(
                    stan::model::rvalue(params_variable_lookup,
                      "params_variable_lookup", stan::model::index_uni(id))));
+      }
+    }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <bool propto__, typename T0__, typename T2__, typename T3__,
+          typename T4__, typename T5__, typename T_lp__,
+          typename T_lp_accum__,
+          stan::require_all_t<stan::is_stan_scalar<T0__>,
+                              stan::is_stan_scalar<T2__>,
+                              stan::is_stan_scalar<T3__>,
+                              stan::is_stan_scalar<T4__>,
+                              stan::is_stan_scalar<T5__>>*>
+void
+apply_prior_lp(const T0__& value, const int& dist, const T2__& p1,
+               const T3__& p2, const T4__& lb, const T5__& ub, T_lp__& lp__,
+               T_lp_accum__& lp_accum__, std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<T0__, T2__, T3__, T4__, T5__>;
+  int current_statement__ = 0;
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    current_statement__ = 831;
+    if (stan::math::logical_eq(dist, 0)) {
+      current_statement__ = 827;
+      lp_accum__.add(stan::math::lognormal_lpdf<propto__>(value, p1, p2));
+      current_statement__ = 829;
+      if (stan::math::logical_lt(value, lb)) {
+        current_statement__ = 829;
+        lp_accum__.add(stan::math::negative_infinity());
+      } else {
+        current_statement__ = 828;
+        if (stan::math::logical_gt(value, ub)) {
+          current_statement__ = 828;
+          lp_accum__.add(stan::math::negative_infinity());
+        } else {
+          current_statement__ = 828;
+          lp_accum__.add(-stan::math::log_diff_exp(
+                            stan::math::lognormal_lcdf(ub, p1, p2),
+                            stan::math::lognormal_lcdf(lb, p1, p2)));
+        }
+      }
+    } else {
+      current_statement__ = 826;
+      if (stan::math::logical_eq(dist, 1)) {
+        current_statement__ = 822;
+        lp_accum__.add(stan::math::gamma_lpdf<propto__>(value, p1, p2));
+        current_statement__ = 824;
+        if (stan::math::logical_lt(value, lb)) {
+          current_statement__ = 824;
+          lp_accum__.add(stan::math::negative_infinity());
+        } else {
+          current_statement__ = 823;
+          if (stan::math::logical_gt(value, ub)) {
+            current_statement__ = 823;
+            lp_accum__.add(stan::math::negative_infinity());
+          } else {
+            current_statement__ = 823;
+            lp_accum__.add(-stan::math::log_diff_exp(
+                              stan::math::gamma_lcdf(ub, p1, p2),
+                              stan::math::gamma_lcdf(lb, p1, p2)));
+          }
+        }
+      } else {
+        current_statement__ = 821;
+        if (stan::math::logical_eq(dist, 2)) {
+          current_statement__ = 817;
+          lp_accum__.add(stan::math::normal_lpdf<propto__>(value, p1, p2));
+          current_statement__ = 819;
+          if (stan::math::logical_lt(value, lb)) {
+            current_statement__ = 819;
+            lp_accum__.add(stan::math::negative_infinity());
+          } else {
+            current_statement__ = 818;
+            if (stan::math::logical_gt(value, ub)) {
+              current_statement__ = 818;
+              lp_accum__.add(stan::math::negative_infinity());
+            } else {
+              current_statement__ = 818;
+              lp_accum__.add(-stan::math::log_diff_exp(
+                                stan::math::normal_lcdf(ub, p1, p2),
+                                stan::math::normal_lcdf(lb, p1, p2)));
+            }
+          }
+        } else {
+          current_statement__ = 815;
+          std::stringstream errmsg_stream__;
+          stan::math::stan_print(&errmsg_stream__, "dist must be <= 2");
+          throw std::domain_error(errmsg_stream__.str());
+        }
       }
     }
   } catch (const std::exception& e) {
@@ -2108,195 +4392,101 @@ params_lp(const T0__& params_arg__, const std::vector<int>& prior_dist,
   (void) DUMMY_VAR__;
   try {
     int params_id = std::numeric_limits<int>::min();
-    current_statement__ = 439;
+    current_statement__ = 833;
     params_id = 1;
     int num_params = std::numeric_limits<int>::min();
-    current_statement__ = 440;
+    current_statement__ = 834;
     num_params = stan::math::num_elements(params);
-    current_statement__ = 462;
+    current_statement__ = 838;
     for (int id = 1; id <= num_params; ++id) {
-      current_statement__ = 460;
+      current_statement__ = 835;
+      apply_prior_lp<propto__>(
+        stan::model::rvalue(params, "params", stan::model::index_uni(id)),
+        stan::model::rvalue(prior_dist, "prior_dist",
+          stan::model::index_uni(id)),
+        stan::model::rvalue(prior_dist_params, "prior_dist_params",
+          stan::model::index_uni(params_id)),
+        stan::model::rvalue(prior_dist_params, "prior_dist_params",
+          stan::model::index_uni((params_id + 1))),
+        stan::model::rvalue(params_lower, "params_lower",
+          stan::model::index_uni(id)),
+        stan::model::rvalue(params_upper, "params_upper",
+          stan::model::index_uni(id)), lp__, lp_accum__, pstream__);
+      current_statement__ = 836;
+      params_id = (params_id + 2);
+    }
+  } catch (const std::exception& e) {
+    stan::lang::rethrow_located(e, locations_array__[current_statement__]);
+  }
+}
+template <bool propto__, typename T2__, typename T3__, typename T4__,
+          typename T6__, typename T_lp__, typename T_lp_accum__,
+          stan::require_all_t<stan::is_col_vector<T2__>,
+                              stan::is_vt_not_complex<T2__>,
+                              stan::is_col_vector<T3__>,
+                              stan::is_vt_not_complex<T3__>,
+                              stan::is_col_vector<T4__>,
+                              stan::is_vt_not_complex<T4__>,
+                              stan::is_col_vector<T6__>,
+                              stan::is_vt_not_complex<T6__>>*>
+void
+init_priors_lp(const std::vector<int>& init_param_ids,
+               const std::vector<int>& init_dists, const T2__&
+               init_dist_params_arg__, const T3__& init_lower_arg__,
+               const T4__& init_upper_arg__, const int& param_id_R0,
+               const T6__& R_arg__, T_lp__& lp__, T_lp_accum__& lp_accum__,
+               std::ostream* pstream__) {
+  using local_scalar_t__ = stan::promote_args_t<stan::base_type_t<T2__>,
+                             stan::base_type_t<T3__>,
+                             stan::base_type_t<T4__>,
+                             stan::base_type_t<T6__>>;
+  int current_statement__ = 0;
+  const auto& init_dist_params = stan::math::to_ref(init_dist_params_arg__);
+  const auto& init_lower = stan::math::to_ref(init_lower_arg__);
+  const auto& init_upper = stan::math::to_ref(init_upper_arg__);
+  const auto& R = stan::math::to_ref(R_arg__);
+  local_scalar_t__ DUMMY_VAR__(std::numeric_limits<double>::quiet_NaN());
+  // suppress unused var warning
+  (void) DUMMY_VAR__;
+  try {
+    int params_id = std::numeric_limits<int>::min();
+    current_statement__ = 840;
+    params_id = 1;
+    current_statement__ = 851;
+    for (int i = 1; i <= stan::math::num_elements(init_param_ids); ++i) {
+      local_scalar_t__ init_value = DUMMY_VAR__;
+      current_statement__ = 846;
       if (stan::math::logical_eq(
-            stan::model::rvalue(prior_dist, "prior_dist",
-              stan::model::index_uni(id)), 0)) {
-        current_statement__ = 455;
-        lp_accum__.add(stan::math::lognormal_lpdf<propto__>(
-                         stan::model::rvalue(params, "params",
-                           stan::model::index_uni(id)),
-                         stan::model::rvalue(prior_dist_params,
-                           "prior_dist_params",
-                           stan::model::index_uni(params_id)),
-                         stan::model::rvalue(prior_dist_params,
-                           "prior_dist_params",
-                           stan::model::index_uni((params_id + 1)))));
-        current_statement__ = 457;
-        if (stan::math::logical_lt(
-              stan::model::rvalue(params, "params",
-                stan::model::index_uni(id)),
-              stan::model::rvalue(params_lower, "params_lower",
-                stan::model::index_uni(id)))) {
-          current_statement__ = 457;
-          lp_accum__.add(stan::math::negative_infinity());
-        } else {
-          current_statement__ = 456;
-          if (stan::math::logical_gt(
-                stan::model::rvalue(params, "params",
-                  stan::model::index_uni(id)),
-                stan::model::rvalue(params_upper, "params_upper",
-                  stan::model::index_uni(id)))) {
-            current_statement__ = 456;
-            lp_accum__.add(stan::math::negative_infinity());
-          } else {
-            current_statement__ = 456;
-            lp_accum__.add(-stan::math::log_diff_exp(
-                              stan::math::lognormal_lcdf(
-                                stan::model::rvalue(params_upper,
-                                  "params_upper", stan::model::index_uni(id)),
-                                stan::model::rvalue(prior_dist_params,
-                                  "prior_dist_params",
-                                  stan::model::index_uni(params_id)),
-                                stan::model::rvalue(prior_dist_params,
-                                  "prior_dist_params",
-                                  stan::model::index_uni((params_id + 1)))),
-                              stan::math::lognormal_lcdf(
-                                stan::model::rvalue(params_lower,
-                                  "params_lower", stan::model::index_uni(id)),
-                                stan::model::rvalue(prior_dist_params,
-                                  "prior_dist_params",
-                                  stan::model::index_uni(params_id)),
-                                stan::model::rvalue(prior_dist_params,
-                                  "prior_dist_params",
-                                  stan::model::index_uni((params_id + 1))))));
-          }
-        }
-        current_statement__ = 458;
-        params_id = (params_id + 2);
+            stan::model::rvalue(init_param_ids, "init_param_ids",
+              stan::model::index_uni(i)), param_id_R0)) {
+        current_statement__ = 844;
+        init_value = stan::model::rvalue(R, "R", stan::model::index_uni(1));
       } else {
-        current_statement__ = 454;
-        if (stan::math::logical_eq(
-              stan::model::rvalue(prior_dist, "prior_dist",
-                stan::model::index_uni(id)), 1)) {
-          current_statement__ = 449;
-          lp_accum__.add(stan::math::gamma_lpdf<propto__>(
-                           stan::model::rvalue(params, "params",
-                             stan::model::index_uni(id)),
-                           stan::model::rvalue(prior_dist_params,
-                             "prior_dist_params",
-                             stan::model::index_uni(params_id)),
-                           stan::model::rvalue(prior_dist_params,
-                             "prior_dist_params",
-                             stan::model::index_uni((params_id + 1)))));
-          current_statement__ = 451;
-          if (stan::math::logical_lt(
-                stan::model::rvalue(params, "params",
-                  stan::model::index_uni(id)),
-                stan::model::rvalue(params_lower, "params_lower",
-                  stan::model::index_uni(id)))) {
-            current_statement__ = 451;
-            lp_accum__.add(stan::math::negative_infinity());
-          } else {
-            current_statement__ = 450;
-            if (stan::math::logical_gt(
-                  stan::model::rvalue(params, "params",
-                    stan::model::index_uni(id)),
-                  stan::model::rvalue(params_upper, "params_upper",
-                    stan::model::index_uni(id)))) {
-              current_statement__ = 450;
-              lp_accum__.add(stan::math::negative_infinity());
-            } else {
-              current_statement__ = 450;
-              lp_accum__.add(-stan::math::log_diff_exp(
-                                stan::math::gamma_lcdf(
-                                  stan::model::rvalue(params_upper,
-                                    "params_upper",
-                                    stan::model::index_uni(id)),
-                                  stan::model::rvalue(prior_dist_params,
-                                    "prior_dist_params",
-                                    stan::model::index_uni(params_id)),
-                                  stan::model::rvalue(prior_dist_params,
-                                    "prior_dist_params",
-                                    stan::model::index_uni((params_id + 1)))),
-                                stan::math::gamma_lcdf(
-                                  stan::model::rvalue(params_lower,
-                                    "params_lower",
-                                    stan::model::index_uni(id)),
-                                  stan::model::rvalue(prior_dist_params,
-                                    "prior_dist_params",
-                                    stan::model::index_uni(params_id)),
-                                  stan::model::rvalue(prior_dist_params,
-                                    "prior_dist_params",
-                                    stan::model::index_uni((params_id + 1))))));
-            }
-          }
-          current_statement__ = 452;
-          params_id = (params_id + 2);
-        } else {
-          current_statement__ = 448;
-          if (stan::math::logical_eq(
-                stan::model::rvalue(prior_dist, "prior_dist",
-                  stan::model::index_uni(id)), 2)) {
-            current_statement__ = 443;
-            lp_accum__.add(stan::math::normal_lpdf<propto__>(
-                             stan::model::rvalue(params, "params",
-                               stan::model::index_uni(id)),
-                             stan::model::rvalue(prior_dist_params,
-                               "prior_dist_params",
-                               stan::model::index_uni(params_id)),
-                             stan::model::rvalue(prior_dist_params,
-                               "prior_dist_params",
-                               stan::model::index_uni((params_id + 1)))));
-            current_statement__ = 445;
-            if (stan::math::logical_lt(
-                  stan::model::rvalue(params, "params",
-                    stan::model::index_uni(id)),
-                  stan::model::rvalue(params_lower, "params_lower",
-                    stan::model::index_uni(id)))) {
-              current_statement__ = 445;
-              lp_accum__.add(stan::math::negative_infinity());
-            } else {
-              current_statement__ = 444;
-              if (stan::math::logical_gt(
-                    stan::model::rvalue(params, "params",
-                      stan::model::index_uni(id)),
-                    stan::model::rvalue(params_upper, "params_upper",
-                      stan::model::index_uni(id)))) {
-                current_statement__ = 444;
-                lp_accum__.add(stan::math::negative_infinity());
-              } else {
-                current_statement__ = 444;
-                lp_accum__.add(-stan::math::log_diff_exp(
-                                  stan::math::normal_lcdf(
-                                    stan::model::rvalue(params_upper,
-                                      "params_upper",
-                                      stan::model::index_uni(id)),
-                                    stan::model::rvalue(prior_dist_params,
-                                      "prior_dist_params",
-                                      stan::model::index_uni(params_id)),
-                                    stan::model::rvalue(prior_dist_params,
-                                      "prior_dist_params",
-                                      stan::model::index_uni((params_id + 1)))),
-                                  stan::math::normal_lcdf(
-                                    stan::model::rvalue(params_lower,
-                                      "params_lower",
-                                      stan::model::index_uni(id)),
-                                    stan::model::rvalue(prior_dist_params,
-                                      "prior_dist_params",
-                                      stan::model::index_uni(params_id)),
-                                    stan::model::rvalue(prior_dist_params,
-                                      "prior_dist_params",
-                                      stan::model::index_uni((params_id + 1))))));
-              }
-            }
-            current_statement__ = 446;
-            params_id = (params_id + 2);
-          } else {
-            current_statement__ = 441;
-            std::stringstream errmsg_stream__;
-            stan::math::stan_print(&errmsg_stream__, "dist must be <= 2");
-            throw std::domain_error(errmsg_stream__.str());
-          }
-        }
+        current_statement__ = 842;
+        std::stringstream errmsg_stream__;
+        stan::math::stan_print(&errmsg_stream__,
+          "no init param registered for id ");
+        stan::math::stan_print(&errmsg_stream__,
+          stan::model::rvalue(init_param_ids, "init_param_ids",
+            stan::model::index_uni(i)));
+        throw std::domain_error(errmsg_stream__.str());
       }
+      current_statement__ = 847;
+      apply_prior_lp<propto__>(init_value,
+        stan::model::rvalue(init_dists, "init_dists",
+          stan::model::index_uni(i)),
+        stan::model::rvalue(init_dist_params, "init_dist_params",
+          stan::model::index_uni(params_id)),
+        stan::model::rvalue(init_dist_params, "init_dist_params",
+          stan::model::index_uni((params_id + 1))),
+        stan::model::rvalue(init_lower, "init_lower",
+          stan::model::index_uni(i)),
+        stan::model::rvalue(init_upper, "init_upper",
+          stan::model::index_uni(i)), lp__, lp_accum__, pstream__);
+      current_statement__ = 848;
+      lp_accum__.add(stan::math::log(init_value));
+      current_statement__ = 849;
+      params_id = (params_id + 2);
     }
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -2327,6 +4517,12 @@ private:
   int delay_np_pmf_length;
   Eigen::Matrix<double,-1,1> delay_np_pmf_data__;
   std::vector<int> delay_np_pmf_groups;
+  int delay_n_np_est;
+  int delay_np_est_length;
+  std::vector<int> delay_np_est_groups;
+  Eigen::Matrix<double,-1,1> delay_np_est_alpha_data__;
+  std::vector<int> delay_np_est_pos;
+  std::vector<int> delay_np_est_which;
   int delay_params_length;
   Eigen::Matrix<double,-1,1> delay_params_lower_data__;
   Eigen::Matrix<double,-1,1> delay_params_mean_data__;
@@ -2363,6 +4559,7 @@ private:
   int log_lik_1dim__;
   Eigen::Map<Eigen::Matrix<double,-1,1>> primary{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> delay_np_pmf{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> delay_np_est_alpha{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> delay_params_lower{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> delay_params_mean{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> delay_params_sd{nullptr, 0};
@@ -2391,39 +4588,39 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 51;
+      current_statement__ = 54;
       context__.validate_dims("data initialization", "t", "int",
         std::vector<size_t>{});
       t = std::numeric_limits<int>::min();
-      current_statement__ = 51;
+      current_statement__ = 54;
       t = context__.vals_i("t")[(1 - 1)];
-      current_statement__ = 52;
+      current_statement__ = 55;
       context__.validate_dims("data initialization", "lt", "int",
         std::vector<size_t>{});
       lt = std::numeric_limits<int>::min();
-      current_statement__ = 52;
+      current_statement__ = 55;
       lt = context__.vals_i("lt")[(1 - 1)];
-      current_statement__ = 53;
+      current_statement__ = 56;
       stan::math::validate_non_negative_index("obs", "t", t);
-      current_statement__ = 54;
+      current_statement__ = 57;
       context__.validate_dims("data initialization", "obs", "int",
         std::vector<size_t>{static_cast<size_t>(t)});
       obs = std::vector<int>(t, std::numeric_limits<int>::min());
-      current_statement__ = 54;
+      current_statement__ = 57;
       obs = context__.vals_i("obs");
-      current_statement__ = 54;
+      current_statement__ = 57;
       stan::math::check_greater_or_equal(function__, "obs", obs, 0);
-      current_statement__ = 55;
+      current_statement__ = 58;
       stan::math::validate_non_negative_index("obs_time", "lt", lt);
-      current_statement__ = 56;
+      current_statement__ = 59;
       context__.validate_dims("data initialization", "obs_time", "int",
         std::vector<size_t>{static_cast<size_t>(lt)});
       obs_time = std::vector<int>(lt, std::numeric_limits<int>::min());
-      current_statement__ = 56;
+      current_statement__ = 59;
       obs_time = context__.vals_i("obs_time");
-      current_statement__ = 57;
+      current_statement__ = 60;
       stan::math::validate_non_negative_index("primary", "t", t);
-      current_statement__ = 58;
+      current_statement__ = 61;
       context__.validate_dims("data initialization", "primary", "double",
         std::vector<size_t>{static_cast<size_t>(t)});
       primary_data__ = Eigen::Matrix<double,-1,1>::Constant(t,
@@ -2432,142 +4629,142 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(primary_data__.data(), t);
       {
         std::vector<local_scalar_t__> primary_flat__;
-        current_statement__ = 58;
+        current_statement__ = 61;
         primary_flat__ = context__.vals_r("primary");
-        current_statement__ = 58;
+        current_statement__ = 61;
         pos__ = 1;
-        current_statement__ = 58;
+        current_statement__ = 61;
         for (int sym1__ = 1; sym1__ <= t; ++sym1__) {
-          current_statement__ = 58;
+          current_statement__ = 61;
           stan::model::assign(primary, primary_flat__[(pos__ - 1)],
             "assigning variable primary", stan::model::index_uni(sym1__));
-          current_statement__ = 58;
+          current_statement__ = 61;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 59;
+      current_statement__ = 62;
       context__.validate_dims("data initialization", "burn_in", "int",
         std::vector<size_t>{});
       burn_in = std::numeric_limits<int>::min();
-      current_statement__ = 59;
+      current_statement__ = 62;
       burn_in = context__.vals_i("burn_in")[(1 - 1)];
-      current_statement__ = 60;
+      current_statement__ = 63;
       context__.validate_dims("data initialization", "any_accumulate", "int",
         std::vector<size_t>{});
       any_accumulate = std::numeric_limits<int>::min();
-      current_statement__ = 60;
+      current_statement__ = 63;
       any_accumulate = context__.vals_i("any_accumulate")[(1 - 1)];
-      current_statement__ = 61;
+      current_statement__ = 64;
       stan::math::validate_non_negative_index("accumulate", "t", t);
-      current_statement__ = 62;
+      current_statement__ = 65;
       context__.validate_dims("data initialization", "accumulate", "int",
         std::vector<size_t>{static_cast<size_t>(t)});
       accumulate = std::vector<int>(t, std::numeric_limits<int>::min());
-      current_statement__ = 62;
+      current_statement__ = 65;
       accumulate = context__.vals_i("accumulate");
-      current_statement__ = 63;
+      current_statement__ = 66;
       context__.validate_dims("data initialization", "seeding_time", "int",
         std::vector<size_t>{});
       seeding_time = std::numeric_limits<int>::min();
-      current_statement__ = 63;
+      current_statement__ = 66;
       seeding_time = context__.vals_i("seeding_time")[(1 - 1)];
-      current_statement__ = 64;
+      current_statement__ = 67;
       context__.validate_dims("data initialization", "cumulative", "int",
         std::vector<size_t>{});
       cumulative = std::numeric_limits<int>::min();
-      current_statement__ = 64;
+      current_statement__ = 67;
       cumulative = context__.vals_i("cumulative")[(1 - 1)];
-      current_statement__ = 65;
+      current_statement__ = 68;
       context__.validate_dims("data initialization", "historic", "int",
         std::vector<size_t>{});
       historic = std::numeric_limits<int>::min();
-      current_statement__ = 65;
+      current_statement__ = 68;
       historic = context__.vals_i("historic")[(1 - 1)];
-      current_statement__ = 66;
+      current_statement__ = 69;
       context__.validate_dims("data initialization", "primary_hist_additive",
         "int", std::vector<size_t>{});
       primary_hist_additive = std::numeric_limits<int>::min();
-      current_statement__ = 66;
+      current_statement__ = 69;
       primary_hist_additive = context__.vals_i("primary_hist_additive")[(1 -
         1)];
-      current_statement__ = 67;
+      current_statement__ = 70;
       context__.validate_dims("data initialization", "current", "int",
         std::vector<size_t>{});
       current = std::numeric_limits<int>::min();
-      current_statement__ = 67;
+      current_statement__ = 70;
       current = context__.vals_i("current")[(1 - 1)];
-      current_statement__ = 68;
+      current_statement__ = 71;
       context__.validate_dims("data initialization",
         "primary_current_additive", "int", std::vector<size_t>{});
       primary_current_additive = std::numeric_limits<int>::min();
-      current_statement__ = 68;
+      current_statement__ = 71;
       primary_current_additive = context__.vals_i("primary_current_additive")[(1
         - 1)];
-      current_statement__ = 69;
+      current_statement__ = 72;
       context__.validate_dims("data initialization", "delay_n", "int",
         std::vector<size_t>{});
       delay_n = std::numeric_limits<int>::min();
-      current_statement__ = 69;
+      current_statement__ = 72;
       delay_n = context__.vals_i("delay_n")[(1 - 1)];
-      current_statement__ = 69;
+      current_statement__ = 72;
       stan::math::check_greater_or_equal(function__, "delay_n", delay_n, 0);
-      current_statement__ = 70;
+      current_statement__ = 73;
       context__.validate_dims("data initialization", "delay_n_p", "int",
         std::vector<size_t>{});
       delay_n_p = std::numeric_limits<int>::min();
-      current_statement__ = 70;
+      current_statement__ = 73;
       delay_n_p = context__.vals_i("delay_n_p")[(1 - 1)];
-      current_statement__ = 70;
+      current_statement__ = 73;
       stan::math::check_greater_or_equal(function__, "delay_n_p", delay_n_p,
         0);
-      current_statement__ = 71;
+      current_statement__ = 74;
       context__.validate_dims("data initialization", "delay_n_np", "int",
         std::vector<size_t>{});
       delay_n_np = std::numeric_limits<int>::min();
-      current_statement__ = 71;
+      current_statement__ = 74;
       delay_n_np = context__.vals_i("delay_n_np")[(1 - 1)];
-      current_statement__ = 71;
+      current_statement__ = 74;
       stan::math::check_greater_or_equal(function__, "delay_n_np",
         delay_n_np, 0);
-      current_statement__ = 72;
+      current_statement__ = 75;
       stan::math::validate_non_negative_index("delay_max", "delay_n_p",
         delay_n_p);
-      current_statement__ = 73;
+      current_statement__ = 76;
       context__.validate_dims("data initialization", "delay_max", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n_p)});
       delay_max = std::vector<int>(delay_n_p,
                     std::numeric_limits<int>::min());
-      current_statement__ = 73;
+      current_statement__ = 76;
       delay_max = context__.vals_i("delay_max");
-      current_statement__ = 73;
+      current_statement__ = 76;
       stan::math::check_greater_or_equal(function__, "delay_max", delay_max,
         1);
-      current_statement__ = 74;
+      current_statement__ = 77;
       stan::math::validate_non_negative_index("delay_dist", "delay_n_p",
         delay_n_p);
-      current_statement__ = 75;
+      current_statement__ = 78;
       context__.validate_dims("data initialization", "delay_dist", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n_p)});
       delay_dist = std::vector<int>(delay_n_p,
                      std::numeric_limits<int>::min());
-      current_statement__ = 75;
+      current_statement__ = 78;
       delay_dist = context__.vals_i("delay_dist");
-      current_statement__ = 75;
+      current_statement__ = 78;
       stan::math::check_greater_or_equal(function__, "delay_dist",
-        delay_dist, 0);
-      current_statement__ = 76;
+        delay_dist, 1);
+      current_statement__ = 79;
       context__.validate_dims("data initialization", "delay_np_pmf_length",
         "int", std::vector<size_t>{});
       delay_np_pmf_length = std::numeric_limits<int>::min();
-      current_statement__ = 76;
+      current_statement__ = 79;
       delay_np_pmf_length = context__.vals_i("delay_np_pmf_length")[(1 - 1)];
-      current_statement__ = 76;
+      current_statement__ = 79;
       stan::math::check_greater_or_equal(function__, "delay_np_pmf_length",
         delay_np_pmf_length, 0);
-      current_statement__ = 77;
+      current_statement__ = 80;
       stan::math::validate_non_negative_index("delay_np_pmf",
         "delay_np_pmf_length", delay_np_pmf_length);
-      current_statement__ = 78;
+      current_statement__ = 81;
       context__.validate_dims("data initialization", "delay_np_pmf",
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_np_pmf_length)});
@@ -2578,51 +4775,132 @@ public:
         delay_np_pmf_length);
       {
         std::vector<local_scalar_t__> delay_np_pmf_flat__;
-        current_statement__ = 78;
+        current_statement__ = 81;
         delay_np_pmf_flat__ = context__.vals_r("delay_np_pmf");
-        current_statement__ = 78;
+        current_statement__ = 81;
         pos__ = 1;
-        current_statement__ = 78;
+        current_statement__ = 81;
         for (int sym1__ = 1; sym1__ <= delay_np_pmf_length; ++sym1__) {
-          current_statement__ = 78;
+          current_statement__ = 81;
           stan::model::assign(delay_np_pmf, delay_np_pmf_flat__[(pos__ - 1)],
             "assigning variable delay_np_pmf", stan::model::index_uni(sym1__));
-          current_statement__ = 78;
+          current_statement__ = 81;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 78;
+      current_statement__ = 81;
       stan::math::check_greater_or_equal(function__, "delay_np_pmf",
         delay_np_pmf, 0);
-      current_statement__ = 78;
+      current_statement__ = 81;
       stan::math::check_less_or_equal(function__, "delay_np_pmf",
         delay_np_pmf, 1);
-      current_statement__ = 79;
+      current_statement__ = 82;
       stan::math::validate_non_negative_index("delay_np_pmf_groups",
         "delay_n_np + 1", (delay_n_np + 1));
-      current_statement__ = 80;
+      current_statement__ = 83;
       context__.validate_dims("data initialization", "delay_np_pmf_groups",
         "int", std::vector<size_t>{static_cast<size_t>((delay_n_np + 1))});
       delay_np_pmf_groups = std::vector<int>((delay_n_np + 1),
                               std::numeric_limits<int>::min());
-      current_statement__ = 80;
+      current_statement__ = 83;
       delay_np_pmf_groups = context__.vals_i("delay_np_pmf_groups");
-      current_statement__ = 80;
+      current_statement__ = 83;
       stan::math::check_greater_or_equal(function__, "delay_np_pmf_groups",
         delay_np_pmf_groups, 1);
-      current_statement__ = 81;
+      current_statement__ = 84;
+      context__.validate_dims("data initialization", "delay_n_np_est", "int",
+        std::vector<size_t>{});
+      delay_n_np_est = std::numeric_limits<int>::min();
+      current_statement__ = 84;
+      delay_n_np_est = context__.vals_i("delay_n_np_est")[(1 - 1)];
+      current_statement__ = 84;
+      stan::math::check_greater_or_equal(function__, "delay_n_np_est",
+        delay_n_np_est, 0);
+      current_statement__ = 85;
+      context__.validate_dims("data initialization", "delay_np_est_length",
+        "int", std::vector<size_t>{});
+      delay_np_est_length = std::numeric_limits<int>::min();
+      current_statement__ = 85;
+      delay_np_est_length = context__.vals_i("delay_np_est_length")[(1 - 1)];
+      current_statement__ = 85;
+      stan::math::check_greater_or_equal(function__, "delay_np_est_length",
+        delay_np_est_length, 0);
+      current_statement__ = 86;
+      stan::math::validate_non_negative_index("delay_np_est_groups",
+        "delay_n_np_est + 1", (delay_n_np_est + 1));
+      current_statement__ = 87;
+      context__.validate_dims("data initialization", "delay_np_est_groups",
+        "int",
+        std::vector<size_t>{static_cast<size_t>((delay_n_np_est + 1))});
+      delay_np_est_groups = std::vector<int>((delay_n_np_est + 1),
+                              std::numeric_limits<int>::min());
+      current_statement__ = 87;
+      delay_np_est_groups = context__.vals_i("delay_np_est_groups");
+      current_statement__ = 88;
+      stan::math::validate_non_negative_index("delay_np_est_alpha",
+        "delay_np_est_length", delay_np_est_length);
+      current_statement__ = 89;
+      context__.validate_dims("data initialization", "delay_np_est_alpha",
+        "double",
+        std::vector<size_t>{static_cast<size_t>(delay_np_est_length)});
+      delay_np_est_alpha_data__ = Eigen::Matrix<double,-1,1>::Constant(delay_np_est_length,
+                                    std::numeric_limits<double>::quiet_NaN());
+      new (&delay_np_est_alpha)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(delay_np_est_alpha_data__.data(),
+        delay_np_est_length);
+      {
+        std::vector<local_scalar_t__> delay_np_est_alpha_flat__;
+        current_statement__ = 89;
+        delay_np_est_alpha_flat__ = context__.vals_r("delay_np_est_alpha");
+        current_statement__ = 89;
+        pos__ = 1;
+        current_statement__ = 89;
+        for (int sym1__ = 1; sym1__ <= delay_np_est_length; ++sym1__) {
+          current_statement__ = 89;
+          stan::model::assign(delay_np_est_alpha,
+            delay_np_est_alpha_flat__[(pos__ - 1)],
+            "assigning variable delay_np_est_alpha",
+            stan::model::index_uni(sym1__));
+          current_statement__ = 89;
+          pos__ = (pos__ + 1);
+        }
+      }
+      current_statement__ = 89;
+      stan::math::check_greater_or_equal(function__, "delay_np_est_alpha",
+        delay_np_est_alpha, 0);
+      current_statement__ = 90;
+      stan::math::validate_non_negative_index("delay_np_est_pos",
+        "delay_np_est_length", delay_np_est_length);
+      current_statement__ = 91;
+      context__.validate_dims("data initialization", "delay_np_est_pos",
+        "int", std::vector<size_t>{static_cast<size_t>(delay_np_est_length)});
+      delay_np_est_pos = std::vector<int>(delay_np_est_length,
+                           std::numeric_limits<int>::min());
+      current_statement__ = 91;
+      delay_np_est_pos = context__.vals_i("delay_np_est_pos");
+      current_statement__ = 92;
+      stan::math::validate_non_negative_index("delay_np_est_which",
+        "delay_n_np_est", delay_n_np_est);
+      current_statement__ = 93;
+      context__.validate_dims("data initialization", "delay_np_est_which",
+        "int", std::vector<size_t>{static_cast<size_t>(delay_n_np_est)});
+      delay_np_est_which = std::vector<int>(delay_n_np_est,
+                             std::numeric_limits<int>::min());
+      current_statement__ = 93;
+      delay_np_est_which = context__.vals_i("delay_np_est_which");
+      current_statement__ = 94;
       context__.validate_dims("data initialization", "delay_params_length",
         "int", std::vector<size_t>{});
       delay_params_length = std::numeric_limits<int>::min();
-      current_statement__ = 81;
+      current_statement__ = 94;
       delay_params_length = context__.vals_i("delay_params_length")[(1 - 1)];
-      current_statement__ = 81;
+      current_statement__ = 94;
       stan::math::check_greater_or_equal(function__, "delay_params_length",
         delay_params_length, 0);
-      current_statement__ = 82;
+      current_statement__ = 95;
       stan::math::validate_non_negative_index("delay_params_lower",
         "delay_params_length", delay_params_length);
-      current_statement__ = 83;
+      current_statement__ = 96;
       context__.validate_dims("data initialization", "delay_params_lower",
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_params_length)});
@@ -2633,25 +4911,25 @@ public:
         delay_params_length);
       {
         std::vector<local_scalar_t__> delay_params_lower_flat__;
-        current_statement__ = 83;
+        current_statement__ = 96;
         delay_params_lower_flat__ = context__.vals_r("delay_params_lower");
-        current_statement__ = 83;
+        current_statement__ = 96;
         pos__ = 1;
-        current_statement__ = 83;
+        current_statement__ = 96;
         for (int sym1__ = 1; sym1__ <= delay_params_length; ++sym1__) {
-          current_statement__ = 83;
+          current_statement__ = 96;
           stan::model::assign(delay_params_lower,
             delay_params_lower_flat__[(pos__ - 1)],
             "assigning variable delay_params_lower",
             stan::model::index_uni(sym1__));
-          current_statement__ = 83;
+          current_statement__ = 96;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 84;
+      current_statement__ = 97;
       stan::math::validate_non_negative_index("delay_params_mean",
         "delay_params_length", delay_params_length);
-      current_statement__ = 85;
+      current_statement__ = 98;
       context__.validate_dims("data initialization", "delay_params_mean",
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_params_length)});
@@ -2662,31 +4940,31 @@ public:
         delay_params_length);
       {
         std::vector<local_scalar_t__> delay_params_mean_flat__;
-        current_statement__ = 85;
+        current_statement__ = 98;
         delay_params_mean_flat__ = context__.vals_r("delay_params_mean");
-        current_statement__ = 85;
+        current_statement__ = 98;
         pos__ = 1;
-        current_statement__ = 85;
+        current_statement__ = 98;
         for (int sym1__ = 1; sym1__ <= delay_params_length; ++sym1__) {
-          current_statement__ = 85;
+          current_statement__ = 98;
           stan::model::assign(delay_params_mean,
             delay_params_mean_flat__[(pos__ - 1)],
             "assigning variable delay_params_mean",
             stan::model::index_uni(sym1__));
-          current_statement__ = 85;
+          current_statement__ = 98;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 85;
+      current_statement__ = 98;
       stan::math::check_matching_dims("constraint", "delay_params_mean",
         delay_params_mean, "lower", delay_params_lower);
-      current_statement__ = 85;
+      current_statement__ = 98;
       stan::math::check_greater_or_equal(function__, "delay_params_mean",
         delay_params_mean, delay_params_lower);
-      current_statement__ = 86;
+      current_statement__ = 99;
       stan::math::validate_non_negative_index("delay_params_sd",
         "delay_params_length", delay_params_length);
-      current_statement__ = 87;
+      current_statement__ = 100;
       context__.validate_dims("data initialization", "delay_params_sd",
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_params_length)});
@@ -2697,183 +4975,183 @@ public:
         delay_params_length);
       {
         std::vector<local_scalar_t__> delay_params_sd_flat__;
-        current_statement__ = 87;
+        current_statement__ = 100;
         delay_params_sd_flat__ = context__.vals_r("delay_params_sd");
-        current_statement__ = 87;
+        current_statement__ = 100;
         pos__ = 1;
-        current_statement__ = 87;
+        current_statement__ = 100;
         for (int sym1__ = 1; sym1__ <= delay_params_length; ++sym1__) {
-          current_statement__ = 87;
+          current_statement__ = 100;
           stan::model::assign(delay_params_sd, delay_params_sd_flat__[(pos__
             - 1)], "assigning variable delay_params_sd",
             stan::model::index_uni(sym1__));
-          current_statement__ = 87;
+          current_statement__ = 100;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 87;
+      current_statement__ = 100;
       stan::math::check_greater_or_equal(function__, "delay_params_sd",
         delay_params_sd, 0);
-      current_statement__ = 88;
+      current_statement__ = 101;
       stan::math::validate_non_negative_index("delay_params_groups",
         "delay_n_p + 1", (delay_n_p + 1));
-      current_statement__ = 89;
+      current_statement__ = 102;
       context__.validate_dims("data initialization", "delay_params_groups",
         "int", std::vector<size_t>{static_cast<size_t>((delay_n_p + 1))});
       delay_params_groups = std::vector<int>((delay_n_p + 1),
                               std::numeric_limits<int>::min());
-      current_statement__ = 89;
+      current_statement__ = 102;
       delay_params_groups = context__.vals_i("delay_params_groups");
-      current_statement__ = 89;
+      current_statement__ = 102;
       stan::math::check_greater_or_equal(function__, "delay_params_groups",
         delay_params_groups, 0);
-      current_statement__ = 90;
+      current_statement__ = 103;
       stan::math::validate_non_negative_index("delay_weight", "delay_n_p",
         delay_n_p);
-      current_statement__ = 91;
+      current_statement__ = 104;
       context__.validate_dims("data initialization", "delay_weight", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n_p)});
       delay_weight = std::vector<int>(delay_n_p,
                        std::numeric_limits<int>::min());
-      current_statement__ = 91;
+      current_statement__ = 104;
       delay_weight = context__.vals_i("delay_weight");
-      current_statement__ = 91;
+      current_statement__ = 104;
       stan::math::check_greater_or_equal(function__, "delay_weight",
         delay_weight, 0);
-      current_statement__ = 92;
+      current_statement__ = 105;
       context__.validate_dims("data initialization", "delay_types", "int",
         std::vector<size_t>{});
       delay_types = std::numeric_limits<int>::min();
-      current_statement__ = 92;
+      current_statement__ = 105;
       delay_types = context__.vals_i("delay_types")[(1 - 1)];
-      current_statement__ = 92;
+      current_statement__ = 105;
       stan::math::check_greater_or_equal(function__, "delay_types",
         delay_types, 0);
-      current_statement__ = 93;
+      current_statement__ = 106;
       stan::math::validate_non_negative_index("delay_types_p", "delay_n",
         delay_n);
-      current_statement__ = 94;
+      current_statement__ = 107;
       context__.validate_dims("data initialization", "delay_types_p", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n)});
       delay_types_p = std::vector<int>(delay_n,
                         std::numeric_limits<int>::min());
-      current_statement__ = 94;
+      current_statement__ = 107;
       delay_types_p = context__.vals_i("delay_types_p");
-      current_statement__ = 94;
+      current_statement__ = 107;
       stan::math::check_greater_or_equal(function__, "delay_types_p",
         delay_types_p, 0);
-      current_statement__ = 95;
+      current_statement__ = 108;
       stan::math::validate_non_negative_index("delay_types_id", "delay_n",
         delay_n);
-      current_statement__ = 96;
+      current_statement__ = 109;
       context__.validate_dims("data initialization", "delay_types_id", "int",
         std::vector<size_t>{static_cast<size_t>(delay_n)});
       delay_types_id = std::vector<int>(delay_n,
                          std::numeric_limits<int>::min());
-      current_statement__ = 96;
+      current_statement__ = 109;
       delay_types_id = context__.vals_i("delay_types_id");
-      current_statement__ = 96;
+      current_statement__ = 109;
       stan::math::check_greater_or_equal(function__, "delay_types_id",
         delay_types_id, 0);
-      current_statement__ = 97;
+      current_statement__ = 110;
       stan::math::validate_non_negative_index("delay_types_groups",
         "delay_types + 1", (delay_types + 1));
-      current_statement__ = 98;
+      current_statement__ = 111;
       context__.validate_dims("data initialization", "delay_types_groups",
         "int", std::vector<size_t>{static_cast<size_t>((delay_types + 1))});
       delay_types_groups = std::vector<int>((delay_types + 1),
                              std::numeric_limits<int>::min());
-      current_statement__ = 98;
+      current_statement__ = 111;
       delay_types_groups = context__.vals_i("delay_types_groups");
-      current_statement__ = 98;
+      current_statement__ = 111;
       stan::math::check_greater_or_equal(function__, "delay_types_groups",
         delay_types_groups, 0);
-      current_statement__ = 99;
+      current_statement__ = 112;
       stan::math::validate_non_negative_index("day_of_week",
         "t - seeding_time", (t - seeding_time));
-      current_statement__ = 100;
+      current_statement__ = 113;
       context__.validate_dims("data initialization", "day_of_week", "int",
         std::vector<size_t>{static_cast<size_t>((t - seeding_time))});
       day_of_week = std::vector<int>((t - seeding_time),
                       std::numeric_limits<int>::min());
-      current_statement__ = 100;
+      current_statement__ = 113;
       day_of_week = context__.vals_i("day_of_week");
-      current_statement__ = 101;
+      current_statement__ = 114;
       context__.validate_dims("data initialization", "model_type", "int",
         std::vector<size_t>{});
       model_type = std::numeric_limits<int>::min();
-      current_statement__ = 101;
+      current_statement__ = 114;
       model_type = context__.vals_i("model_type")[(1 - 1)];
-      current_statement__ = 102;
+      current_statement__ = 115;
       context__.validate_dims("data initialization", "week_effect", "int",
         std::vector<size_t>{});
       week_effect = std::numeric_limits<int>::min();
-      current_statement__ = 102;
+      current_statement__ = 115;
       week_effect = context__.vals_i("week_effect")[(1 - 1)];
-      current_statement__ = 103;
+      current_statement__ = 116;
       context__.validate_dims("data initialization", "obs_scale", "int",
         std::vector<size_t>{});
       obs_scale = std::numeric_limits<int>::min();
-      current_statement__ = 103;
+      current_statement__ = 116;
       obs_scale = context__.vals_i("obs_scale")[(1 - 1)];
-      current_statement__ = 104;
+      current_statement__ = 117;
       context__.validate_dims("data initialization", "obs_weight", "double",
         std::vector<size_t>{});
       obs_weight = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 104;
+      current_statement__ = 117;
       obs_weight = context__.vals_r("obs_weight")[(1 - 1)];
-      current_statement__ = 105;
+      current_statement__ = 118;
       context__.validate_dims("data initialization", "likelihood", "int",
         std::vector<size_t>{});
       likelihood = std::numeric_limits<int>::min();
-      current_statement__ = 105;
+      current_statement__ = 118;
       likelihood = context__.vals_i("likelihood")[(1 - 1)];
-      current_statement__ = 106;
+      current_statement__ = 119;
       context__.validate_dims("data initialization", "return_likelihood",
         "int", std::vector<size_t>{});
       return_likelihood = std::numeric_limits<int>::min();
-      current_statement__ = 106;
+      current_statement__ = 119;
       return_likelihood = context__.vals_i("return_likelihood")[(1 - 1)];
-      current_statement__ = 107;
+      current_statement__ = 120;
       context__.validate_dims("data initialization", "delay_id_truncation",
         "int", std::vector<size_t>{});
       delay_id_truncation = std::numeric_limits<int>::min();
-      current_statement__ = 107;
+      current_statement__ = 120;
       delay_id_truncation = context__.vals_i("delay_id_truncation")[(1 - 1)];
-      current_statement__ = 107;
+      current_statement__ = 120;
       stan::math::check_greater_or_equal(function__, "delay_id_truncation",
         delay_id_truncation, 0);
-      current_statement__ = 108;
+      current_statement__ = 121;
       context__.validate_dims("data initialization", "delay_id_reporting",
         "int", std::vector<size_t>{});
       delay_id_reporting = std::numeric_limits<int>::min();
-      current_statement__ = 108;
+      current_statement__ = 121;
       delay_id_reporting = context__.vals_i("delay_id_reporting")[(1 - 1)];
-      current_statement__ = 108;
+      current_statement__ = 121;
       stan::math::check_greater_or_equal(function__, "delay_id_reporting",
         delay_id_reporting, 0);
-      current_statement__ = 109;
+      current_statement__ = 122;
       context__.validate_dims("data initialization", "n_params_variable",
         "int", std::vector<size_t>{});
       n_params_variable = std::numeric_limits<int>::min();
-      current_statement__ = 109;
+      current_statement__ = 122;
       n_params_variable = context__.vals_i("n_params_variable")[(1 - 1)];
-      current_statement__ = 109;
+      current_statement__ = 122;
       stan::math::check_greater_or_equal(function__, "n_params_variable",
         n_params_variable, 0);
-      current_statement__ = 110;
+      current_statement__ = 123;
       context__.validate_dims("data initialization", "n_params_fixed", "int",
         std::vector<size_t>{});
       n_params_fixed = std::numeric_limits<int>::min();
-      current_statement__ = 110;
+      current_statement__ = 123;
       n_params_fixed = context__.vals_i("n_params_fixed")[(1 - 1)];
-      current_statement__ = 110;
+      current_statement__ = 123;
       stan::math::check_greater_or_equal(function__, "n_params_fixed",
         n_params_fixed, 0);
-      current_statement__ = 111;
+      current_statement__ = 124;
       stan::math::validate_non_negative_index("params_lower",
         "n_params_variable", n_params_variable);
-      current_statement__ = 112;
+      current_statement__ = 125;
       context__.validate_dims("data initialization", "params_lower",
         "double",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
@@ -2884,23 +5162,23 @@ public:
         n_params_variable);
       {
         std::vector<local_scalar_t__> params_lower_flat__;
-        current_statement__ = 112;
+        current_statement__ = 125;
         params_lower_flat__ = context__.vals_r("params_lower");
-        current_statement__ = 112;
+        current_statement__ = 125;
         pos__ = 1;
-        current_statement__ = 112;
+        current_statement__ = 125;
         for (int sym1__ = 1; sym1__ <= n_params_variable; ++sym1__) {
-          current_statement__ = 112;
+          current_statement__ = 125;
           stan::model::assign(params_lower, params_lower_flat__[(pos__ - 1)],
             "assigning variable params_lower", stan::model::index_uni(sym1__));
-          current_statement__ = 112;
+          current_statement__ = 125;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 113;
+      current_statement__ = 126;
       stan::math::validate_non_negative_index("params_upper",
         "n_params_variable", n_params_variable);
-      current_statement__ = 114;
+      current_statement__ = 127;
       context__.validate_dims("data initialization", "params_upper",
         "double",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
@@ -2911,24 +5189,24 @@ public:
         n_params_variable);
       {
         std::vector<local_scalar_t__> params_upper_flat__;
-        current_statement__ = 114;
+        current_statement__ = 127;
         params_upper_flat__ = context__.vals_r("params_upper");
-        current_statement__ = 114;
+        current_statement__ = 127;
         pos__ = 1;
-        current_statement__ = 114;
+        current_statement__ = 127;
         for (int sym1__ = 1; sym1__ <= n_params_variable; ++sym1__) {
-          current_statement__ = 114;
+          current_statement__ = 127;
           stan::model::assign(params_upper, params_upper_flat__[(pos__ - 1)],
             "assigning variable params_upper", stan::model::index_uni(sym1__));
-          current_statement__ = 114;
+          current_statement__ = 127;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 115;
+      current_statement__ = 128;
       stan::math::validate_non_negative_index("params_fixed_lookup",
         "n_params_fixed + n_params_variable", (n_params_fixed +
         n_params_variable));
-      current_statement__ = 116;
+      current_statement__ = 129;
       context__.validate_dims("data initialization", "params_fixed_lookup",
         "int",
         std::vector<size_t>{static_cast<size_t>((n_params_fixed +
@@ -2936,16 +5214,16 @@ public:
       params_fixed_lookup = std::vector<int>((n_params_fixed +
                               n_params_variable),
                               std::numeric_limits<int>::min());
-      current_statement__ = 116;
+      current_statement__ = 129;
       params_fixed_lookup = context__.vals_i("params_fixed_lookup");
-      current_statement__ = 116;
+      current_statement__ = 129;
       stan::math::check_greater_or_equal(function__, "params_fixed_lookup",
         params_fixed_lookup, 0);
-      current_statement__ = 117;
+      current_statement__ = 130;
       stan::math::validate_non_negative_index("params_variable_lookup",
         "n_params_fixed + n_params_variable", (n_params_fixed +
         n_params_variable));
-      current_statement__ = 118;
+      current_statement__ = 131;
       context__.validate_dims("data initialization",
         "params_variable_lookup", "int",
         std::vector<size_t>{static_cast<size_t>((n_params_fixed +
@@ -2953,15 +5231,15 @@ public:
       params_variable_lookup = std::vector<int>((n_params_fixed +
                                  n_params_variable),
                                  std::numeric_limits<int>::min());
-      current_statement__ = 118;
+      current_statement__ = 131;
       params_variable_lookup = context__.vals_i("params_variable_lookup");
-      current_statement__ = 118;
+      current_statement__ = 131;
       stan::math::check_greater_or_equal(function__,
         "params_variable_lookup", params_variable_lookup, 0);
-      current_statement__ = 119;
+      current_statement__ = 132;
       stan::math::validate_non_negative_index("params_value",
         "n_params_fixed", n_params_fixed);
-      current_statement__ = 120;
+      current_statement__ = 133;
       context__.validate_dims("data initialization", "params_value",
         "double", std::vector<size_t>{static_cast<size_t>(n_params_fixed)});
       params_value_data__ = Eigen::Matrix<double,-1,1>::Constant(n_params_fixed,
@@ -2971,46 +5249,46 @@ public:
         n_params_fixed);
       {
         std::vector<local_scalar_t__> params_value_flat__;
-        current_statement__ = 120;
+        current_statement__ = 133;
         params_value_flat__ = context__.vals_r("params_value");
-        current_statement__ = 120;
+        current_statement__ = 133;
         pos__ = 1;
-        current_statement__ = 120;
+        current_statement__ = 133;
         for (int sym1__ = 1; sym1__ <= n_params_fixed; ++sym1__) {
-          current_statement__ = 120;
+          current_statement__ = 133;
           stan::model::assign(params_value, params_value_flat__[(pos__ - 1)],
             "assigning variable params_value", stan::model::index_uni(sym1__));
-          current_statement__ = 120;
+          current_statement__ = 133;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 121;
+      current_statement__ = 134;
       stan::math::validate_non_negative_index("prior_dist",
         "n_params_variable", n_params_variable);
-      current_statement__ = 122;
+      current_statement__ = 135;
       context__.validate_dims("data initialization", "prior_dist", "int",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
       prior_dist = std::vector<int>(n_params_variable,
                      std::numeric_limits<int>::min());
-      current_statement__ = 122;
+      current_statement__ = 135;
       prior_dist = context__.vals_i("prior_dist");
-      current_statement__ = 122;
+      current_statement__ = 135;
       stan::math::check_greater_or_equal(function__, "prior_dist",
         prior_dist, 0);
-      current_statement__ = 123;
+      current_statement__ = 136;
       context__.validate_dims("data initialization",
         "prior_dist_params_length", "int", std::vector<size_t>{});
       prior_dist_params_length = std::numeric_limits<int>::min();
-      current_statement__ = 123;
+      current_statement__ = 136;
       prior_dist_params_length = context__.vals_i("prior_dist_params_length")[(1
         - 1)];
-      current_statement__ = 123;
+      current_statement__ = 136;
       stan::math::check_greater_or_equal(function__,
         "prior_dist_params_length", prior_dist_params_length, 0);
-      current_statement__ = 124;
+      current_statement__ = 137;
       stan::math::validate_non_negative_index("prior_dist_params",
         "prior_dist_params_length", prior_dist_params_length);
-      current_statement__ = 125;
+      current_statement__ = 138;
       context__.validate_dims("data initialization", "prior_dist_params",
         "double",
         std::vector<size_t>{static_cast<size_t>(prior_dist_params_length)});
@@ -3021,84 +5299,90 @@ public:
         prior_dist_params_length);
       {
         std::vector<local_scalar_t__> prior_dist_params_flat__;
-        current_statement__ = 125;
+        current_statement__ = 138;
         prior_dist_params_flat__ = context__.vals_r("prior_dist_params");
-        current_statement__ = 125;
+        current_statement__ = 138;
         pos__ = 1;
-        current_statement__ = 125;
+        current_statement__ = 138;
         for (int sym1__ = 1; sym1__ <= prior_dist_params_length; ++sym1__) {
-          current_statement__ = 125;
+          current_statement__ = 138;
           stan::model::assign(prior_dist_params,
             prior_dist_params_flat__[(pos__ - 1)],
             "assigning variable prior_dist_params",
             stan::model::index_uni(sym1__));
-          current_statement__ = 125;
+          current_statement__ = 138;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 126;
+      current_statement__ = 139;
       context__.validate_dims("data initialization",
         "param_id_fraction_observed", "int", std::vector<size_t>{});
       param_id_fraction_observed = std::numeric_limits<int>::min();
-      current_statement__ = 126;
+      current_statement__ = 139;
       param_id_fraction_observed = context__.vals_i("param_id_fraction_observed")[(1
         - 1)];
-      current_statement__ = 126;
+      current_statement__ = 139;
       stan::math::check_greater_or_equal(function__,
         "param_id_fraction_observed", param_id_fraction_observed, 0);
-      current_statement__ = 127;
+      current_statement__ = 140;
       context__.validate_dims("data initialization",
         "param_id_reporting_overdispersion", "int", std::vector<size_t>{});
       param_id_reporting_overdispersion = std::numeric_limits<int>::min();
-      current_statement__ = 127;
+      current_statement__ = 140;
       param_id_reporting_overdispersion = context__.vals_i("param_id_reporting_overdispersion")[(1
         - 1)];
-      current_statement__ = 127;
+      current_statement__ = 140;
       stan::math::check_greater_or_equal(function__,
         "param_id_reporting_overdispersion",
         param_id_reporting_overdispersion, 0);
-      current_statement__ = 128;
+      current_statement__ = 141;
       stan::math::validate_non_negative_index("delay_type_max",
         "delay_types", delay_types);
-      current_statement__ = 129;
+      current_statement__ = 142;
       delay_type_max = std::vector<int>(delay_types,
                          std::numeric_limits<int>::min());
-      current_statement__ = 129;
+      current_statement__ = 142;
       stan::model::assign(delay_type_max,
         get_delay_type_max(delay_types, delay_types_p, delay_types_id,
           delay_types_groups, delay_max, delay_np_pmf_groups, pstream__),
         "assigning variable delay_type_max");
-      current_statement__ = 130;
+      current_statement__ = 143;
       stan::math::validate_non_negative_index("delay_params",
         "delay_params_length", delay_params_length);
-      current_statement__ = 131;
+      current_statement__ = 144;
+      stan::math::validate_non_negative_index("delay_np_est_raw",
+        "delay_np_est_length", delay_np_est_length);
+      current_statement__ = 145;
       stan::math::validate_positive_index("day_of_week_simplex",
         "week_effect", week_effect);
-      current_statement__ = 132;
+      current_statement__ = 146;
       stan::math::validate_non_negative_index("params", "n_params_variable",
         n_params_variable);
-      current_statement__ = 133;
+      current_statement__ = 147;
+      stan::math::validate_non_negative_index("delay_np_pmf_use",
+        "delay_np_pmf_length", delay_np_pmf_length);
+      current_statement__ = 148;
       stan::math::validate_non_negative_index("secondary", "t", t);
-      current_statement__ = 134;
+      current_statement__ = 149;
       sim_secondary_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 134;
+      current_statement__ = 149;
       sim_secondary_1dim__ = (t - burn_in);
-      current_statement__ = 134;
+      current_statement__ = 149;
       stan::math::validate_non_negative_index("sim_secondary", "t - burn_in",
         sim_secondary_1dim__);
-      current_statement__ = 135;
+      current_statement__ = 150;
       log_lik_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 135;
+      current_statement__ = 150;
       log_lik_1dim__ = (stan::math::logical_gt(return_likelihood, 1) ? (t -
         burn_in) : 0);
-      current_statement__ = 135;
+      current_statement__ = 150;
       stan::math::validate_non_negative_index("log_lik",
         "return_likelihood > 1 ? t - burn_in : 0", log_lik_1dim__);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
-    num_params_r__ = delay_params_length + (week_effect - 1) +
-      n_params_variable;
+    num_params_r__ = delay_params_length + delay_np_est_length + (week_effect
+      - 1) + n_params_variable;
   }
   inline std::string model_name() const final {
     return "model_estimate_secondary";
@@ -3138,59 +5422,74 @@ public:
       current_statement__ = 1;
       stan::math::check_matching_dims("constraint", "delay_params",
         delay_params, "lower", delay_params_lower);
+      Eigen::Matrix<local_scalar_t__,-1,1> delay_np_est_raw =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(delay_np_est_length,
+          DUMMY_VAR__);
+      current_statement__ = 2;
+      delay_np_est_raw = in__.template read_constrain_lb<
+                           Eigen::Matrix<local_scalar_t__,-1,1>,
+                           jacobian__>(0, lp__, delay_np_est_length);
       Eigen::Matrix<local_scalar_t__,-1,1> day_of_week_simplex =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(week_effect,
           DUMMY_VAR__);
-      current_statement__ = 2;
+      current_statement__ = 3;
       day_of_week_simplex = in__.template read_constrain_simplex<
                               Eigen::Matrix<local_scalar_t__,-1,1>,
                               jacobian__>(lp__, week_effect);
       Eigen::Matrix<local_scalar_t__,-1,1> params =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_params_variable,
           DUMMY_VAR__);
-      current_statement__ = 3;
+      current_statement__ = 4;
       params = in__.template read_constrain_lub<
                  Eigen::Matrix<local_scalar_t__,-1,1>,
                  jacobian__>(params_lower, params_upper, lp__,
                  n_params_variable);
-      current_statement__ = 3;
+      current_statement__ = 4;
       stan::math::check_matching_dims("constraint", "params", params,
         "lower", params_lower);
-      current_statement__ = 3;
+      current_statement__ = 4;
       stan::math::check_matching_dims("constraint", "params", params,
         "upper", params_upper);
+      Eigen::Matrix<local_scalar_t__,-1,1> delay_np_pmf_use =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(delay_np_pmf_length,
+          DUMMY_VAR__);
+      current_statement__ = 5;
+      stan::model::assign(delay_np_pmf_use,
+        combine_np_pmf(delay_np_pmf, delay_n_np_est, delay_np_est_groups,
+          delay_np_est_pos, delay_np_est_raw, pstream__),
+        "assigning variable delay_np_pmf_use");
       Eigen::Matrix<local_scalar_t__,-1,1> secondary =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
       {
-        current_statement__ = 7;
+        current_statement__ = 9;
         stan::math::validate_non_negative_index("scaled", "t", t);
         Eigen::Matrix<local_scalar_t__,-1,1> scaled =
           Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-        current_statement__ = 9;
+        current_statement__ = 11;
         stan::math::validate_non_negative_index("convolved", "t", t);
         Eigen::Matrix<local_scalar_t__,-1,1> convolved =
           Eigen::Matrix<local_scalar_t__,-1,1>::Constant(t, DUMMY_VAR__);
-        current_statement__ = 10;
+        current_statement__ = 12;
         stan::model::assign(convolved, stan::math::rep_vector(1e-5, t),
           "assigning variable convolved");
-        current_statement__ = 16;
+        current_statement__ = 18;
         if (obs_scale) {
           local_scalar_t__ fraction_observed = DUMMY_VAR__;
-          current_statement__ = 13;
+          current_statement__ = 15;
           fraction_observed = get_param(param_id_fraction_observed,
                                 params_fixed_lookup, params_variable_lookup,
                                 params_value, params, pstream__);
-          current_statement__ = 14;
+          current_statement__ = 16;
           stan::model::assign(scaled,
             scale_obs(primary, fraction_observed, pstream__),
             "assigning variable scaled");
         } else {
-          current_statement__ = 11;
+          current_statement__ = 13;
           stan::model::assign(scaled, primary, "assigning variable scaled");
         }
-        current_statement__ = 23;
+        current_statement__ = 25;
         if (delay_id_reporting) {
-          current_statement__ = 19;
+          current_statement__ = 21;
           stan::math::validate_non_negative_index("reporting_rev_pmf",
             "delay_type_max[delay_id_reporting] + 1",
             (stan::model::rvalue(delay_type_max, "delay_type_max",
@@ -3202,42 +5501,42 @@ public:
                                                               stan::model::index_uni(
                                                                 delay_id_reporting))
               + 1), DUMMY_VAR__);
-          current_statement__ = 20;
+          current_statement__ = 22;
           stan::model::assign(reporting_rev_pmf,
             get_delay_rev_pmf(delay_id_reporting,
               (stan::model::rvalue(delay_type_max, "delay_type_max",
                  stan::model::index_uni(delay_id_reporting)) + 1),
               delay_types_p, delay_types_id, delay_types_groups, delay_max,
-              delay_np_pmf, delay_np_pmf_groups, delay_params,
+              delay_np_pmf_use, delay_np_pmf_groups, delay_params,
               delay_params_groups, delay_dist, 0, 1, 0, pstream__),
             "assigning variable reporting_rev_pmf");
-          current_statement__ = 21;
+          current_statement__ = 23;
           stan::model::assign(convolved,
             stan::math::add(stan::model::deep_copy(convolved),
               convolve_to_report(scaled, reporting_rev_pmf, 0, pstream__)),
             "assigning variable convolved");
         } else {
-          current_statement__ = 17;
+          current_statement__ = 19;
           stan::model::assign(convolved,
             stan::math::add(stan::model::deep_copy(convolved), scaled),
             "assigning variable convolved");
         }
-        current_statement__ = 24;
+        current_statement__ = 26;
         stan::model::assign(secondary,
           calculate_secondary(scaled, convolved, obs, cumulative, historic,
             primary_hist_additive, current, primary_current_additive, t,
             pstream__), "assigning variable secondary");
       }
-      current_statement__ = 28;
+      current_statement__ = 30;
       if (stan::math::logical_gt(week_effect, 1)) {
-        current_statement__ = 26;
+        current_statement__ = 28;
         stan::model::assign(secondary,
           day_of_week_effect(stan::model::deep_copy(secondary), day_of_week,
             day_of_week_simplex, pstream__), "assigning variable secondary");
       }
-      current_statement__ = 33;
+      current_statement__ = 35;
       if (delay_id_truncation) {
-        current_statement__ = 29;
+        current_statement__ = 31;
         stan::math::validate_non_negative_index("trunc_rev_cmf",
           "delay_type_max[delay_id_truncation] + 1",
           (stan::model::rvalue(delay_type_max, "delay_type_max",
@@ -3249,58 +5548,61 @@ public:
                                                             stan::model::index_uni(
                                                               delay_id_truncation))
             + 1), DUMMY_VAR__);
-        current_statement__ = 30;
+        current_statement__ = 32;
         stan::model::assign(trunc_rev_cmf,
           get_delay_rev_pmf(delay_id_truncation,
             (stan::model::rvalue(delay_type_max, "delay_type_max",
                stan::model::index_uni(delay_id_truncation)) + 1),
             delay_types_p, delay_types_id, delay_types_groups, delay_max,
-            delay_np_pmf, delay_np_pmf_groups, delay_params,
+            delay_np_pmf_use, delay_np_pmf_groups, delay_params,
             delay_params_groups, delay_dist, 0, 1, 1, pstream__),
           "assigning variable trunc_rev_cmf");
-        current_statement__ = 31;
+        current_statement__ = 33;
         stan::model::assign(secondary,
           truncate_obs(stan::model::deep_copy(secondary), trunc_rev_cmf, 0,
             pstream__), "assigning variable secondary");
       }
-      current_statement__ = 37;
+      current_statement__ = 39;
       if (any_accumulate) {
-        current_statement__ = 35;
+        current_statement__ = 37;
         {
           stan::math::profile<local_scalar_t__> profile__("accumulate",
             const_cast<stan::math::profile_map&>(profiles__));
-          current_statement__ = 34;
+          current_statement__ = 36;
           stan::model::assign(secondary,
             accumulate_reports(stan::model::deep_copy(secondary), accumulate,
               pstream__), "assigning variable secondary");
         }
       }
-      current_statement__ = 4;
+      current_statement__ = 6;
       stan::math::check_greater_or_equal(function__, "secondary", secondary,
         0);
       {
-        current_statement__ = 44;
+        current_statement__ = 46;
         delays_lp<propto__>(delay_params, delay_params_mean, delay_params_sd,
           delay_params_groups, delay_dist, delay_weight, lp__, lp_accum__,
           pstream__);
-        current_statement__ = 46;
+        current_statement__ = 47;
+        delays_np_lp<propto__>(delay_np_est_raw, delay_np_est_alpha, lp__,
+          lp_accum__, pstream__);
+        current_statement__ = 49;
         {
           stan::math::profile<local_scalar_t__> profile__("param lp",
             const_cast<stan::math::profile_map&>(profiles__));
-          current_statement__ = 45;
+          current_statement__ = 48;
           params_lp<propto__>(params, prior_dist, prior_dist_params,
             params_lower, params_upper, lp__, lp_accum__, pstream__);
         }
-        current_statement__ = 50;
+        current_statement__ = 53;
         if (likelihood) {
           local_scalar_t__ reporting_overdispersion = DUMMY_VAR__;
-          current_statement__ = 47;
+          current_statement__ = 50;
           reporting_overdispersion = get_param(
                                        param_id_reporting_overdispersion,
                                        params_fixed_lookup,
                                        params_variable_lookup, params_value,
                                        params, pstream__);
-          current_statement__ = 48;
+          current_statement__ = 51;
           report_lp<propto__>(
             stan::model::rvalue(
               stan::model::rvalue(obs, "obs",
@@ -3361,31 +5663,42 @@ public:
       current_statement__ = 1;
       stan::math::check_matching_dims("constraint", "delay_params",
         delay_params, "lower", delay_params_lower);
+      Eigen::Matrix<double,-1,1> delay_np_est_raw =
+        Eigen::Matrix<double,-1,1>::Constant(delay_np_est_length,
+          std::numeric_limits<double>::quiet_NaN());
+      current_statement__ = 2;
+      delay_np_est_raw = in__.template read_constrain_lb<
+                           Eigen::Matrix<local_scalar_t__,-1,1>,
+                           jacobian__>(0, lp__, delay_np_est_length);
       Eigen::Matrix<double,-1,1> day_of_week_simplex =
         Eigen::Matrix<double,-1,1>::Constant(week_effect,
           std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 2;
+      current_statement__ = 3;
       day_of_week_simplex = in__.template read_constrain_simplex<
                               Eigen::Matrix<local_scalar_t__,-1,1>,
                               jacobian__>(lp__, week_effect);
       Eigen::Matrix<double,-1,1> params =
         Eigen::Matrix<double,-1,1>::Constant(n_params_variable,
           std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 3;
+      current_statement__ = 4;
       params = in__.template read_constrain_lub<
                  Eigen::Matrix<local_scalar_t__,-1,1>,
                  jacobian__>(params_lower, params_upper, lp__,
                  n_params_variable);
-      current_statement__ = 3;
+      current_statement__ = 4;
       stan::math::check_matching_dims("constraint", "params", params,
         "lower", params_lower);
-      current_statement__ = 3;
+      current_statement__ = 4;
       stan::math::check_matching_dims("constraint", "params", params,
         "upper", params_upper);
+      Eigen::Matrix<double,-1,1> delay_np_pmf_use =
+        Eigen::Matrix<double,-1,1>::Constant(delay_np_pmf_length,
+          std::numeric_limits<double>::quiet_NaN());
       Eigen::Matrix<double,-1,1> secondary =
         Eigen::Matrix<double,-1,1>::Constant(t,
           std::numeric_limits<double>::quiet_NaN());
       out__.write(delay_params);
+      out__.write(delay_np_est_raw);
       out__.write(day_of_week_simplex);
       out__.write(params);
       if (stan::math::logical_negation(
@@ -3393,38 +5706,43 @@ public:
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
       }
+      current_statement__ = 5;
+      stan::model::assign(delay_np_pmf_use,
+        combine_np_pmf(delay_np_pmf, delay_n_np_est, delay_np_est_groups,
+          delay_np_est_pos, delay_np_est_raw, pstream__),
+        "assigning variable delay_np_pmf_use");
       {
-        current_statement__ = 7;
+        current_statement__ = 9;
         stan::math::validate_non_negative_index("scaled", "t", t);
         Eigen::Matrix<double,-1,1> scaled =
           Eigen::Matrix<double,-1,1>::Constant(t,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 9;
+        current_statement__ = 11;
         stan::math::validate_non_negative_index("convolved", "t", t);
         Eigen::Matrix<double,-1,1> convolved =
           Eigen::Matrix<double,-1,1>::Constant(t,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 10;
+        current_statement__ = 12;
         stan::model::assign(convolved, stan::math::rep_vector(1e-5, t),
           "assigning variable convolved");
-        current_statement__ = 16;
+        current_statement__ = 18;
         if (obs_scale) {
           double fraction_observed = std::numeric_limits<double>::quiet_NaN();
-          current_statement__ = 13;
+          current_statement__ = 15;
           fraction_observed = get_param(param_id_fraction_observed,
                                 params_fixed_lookup, params_variable_lookup,
                                 params_value, params, pstream__);
-          current_statement__ = 14;
+          current_statement__ = 16;
           stan::model::assign(scaled,
             scale_obs(primary, fraction_observed, pstream__),
             "assigning variable scaled");
         } else {
-          current_statement__ = 11;
+          current_statement__ = 13;
           stan::model::assign(scaled, primary, "assigning variable scaled");
         }
-        current_statement__ = 23;
+        current_statement__ = 25;
         if (delay_id_reporting) {
-          current_statement__ = 19;
+          current_statement__ = 21;
           stan::math::validate_non_negative_index("reporting_rev_pmf",
             "delay_type_max[delay_id_reporting] + 1",
             (stan::model::rvalue(delay_type_max, "delay_type_max",
@@ -3436,42 +5754,42 @@ public:
                                                     stan::model::index_uni(
                                                       delay_id_reporting)) +
               1), std::numeric_limits<double>::quiet_NaN());
-          current_statement__ = 20;
+          current_statement__ = 22;
           stan::model::assign(reporting_rev_pmf,
             get_delay_rev_pmf(delay_id_reporting,
               (stan::model::rvalue(delay_type_max, "delay_type_max",
                  stan::model::index_uni(delay_id_reporting)) + 1),
               delay_types_p, delay_types_id, delay_types_groups, delay_max,
-              delay_np_pmf, delay_np_pmf_groups, delay_params,
+              delay_np_pmf_use, delay_np_pmf_groups, delay_params,
               delay_params_groups, delay_dist, 0, 1, 0, pstream__),
             "assigning variable reporting_rev_pmf");
-          current_statement__ = 21;
+          current_statement__ = 23;
           stan::model::assign(convolved,
             stan::math::add(stan::model::deep_copy(convolved),
               convolve_to_report(scaled, reporting_rev_pmf, 0, pstream__)),
             "assigning variable convolved");
         } else {
-          current_statement__ = 17;
+          current_statement__ = 19;
           stan::model::assign(convolved,
             stan::math::add(stan::model::deep_copy(convolved), scaled),
             "assigning variable convolved");
         }
-        current_statement__ = 24;
+        current_statement__ = 26;
         stan::model::assign(secondary,
           calculate_secondary(scaled, convolved, obs, cumulative, historic,
             primary_hist_additive, current, primary_current_additive, t,
             pstream__), "assigning variable secondary");
       }
-      current_statement__ = 28;
+      current_statement__ = 30;
       if (stan::math::logical_gt(week_effect, 1)) {
-        current_statement__ = 26;
+        current_statement__ = 28;
         stan::model::assign(secondary,
           day_of_week_effect(stan::model::deep_copy(secondary), day_of_week,
             day_of_week_simplex, pstream__), "assigning variable secondary");
       }
-      current_statement__ = 33;
+      current_statement__ = 35;
       if (delay_id_truncation) {
-        current_statement__ = 29;
+        current_statement__ = 31;
         stan::math::validate_non_negative_index("trunc_rev_cmf",
           "delay_type_max[delay_id_truncation] + 1",
           (stan::model::rvalue(delay_type_max, "delay_type_max",
@@ -3483,36 +5801,37 @@ public:
                                                   stan::model::index_uni(
                                                     delay_id_truncation)) +
             1), std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 30;
+        current_statement__ = 32;
         stan::model::assign(trunc_rev_cmf,
           get_delay_rev_pmf(delay_id_truncation,
             (stan::model::rvalue(delay_type_max, "delay_type_max",
                stan::model::index_uni(delay_id_truncation)) + 1),
             delay_types_p, delay_types_id, delay_types_groups, delay_max,
-            delay_np_pmf, delay_np_pmf_groups, delay_params,
+            delay_np_pmf_use, delay_np_pmf_groups, delay_params,
             delay_params_groups, delay_dist, 0, 1, 1, pstream__),
           "assigning variable trunc_rev_cmf");
-        current_statement__ = 31;
+        current_statement__ = 33;
         stan::model::assign(secondary,
           truncate_obs(stan::model::deep_copy(secondary), trunc_rev_cmf, 0,
             pstream__), "assigning variable secondary");
       }
-      current_statement__ = 37;
+      current_statement__ = 39;
       if (any_accumulate) {
-        current_statement__ = 35;
+        current_statement__ = 37;
         {
           stan::math::profile<local_scalar_t__> profile__("accumulate",
             const_cast<stan::math::profile_map&>(profiles__));
-          current_statement__ = 34;
+          current_statement__ = 36;
           stan::model::assign(secondary,
             accumulate_reports(stan::model::deep_copy(secondary), accumulate,
               pstream__), "assigning variable secondary");
         }
       }
-      current_statement__ = 4;
+      current_statement__ = 6;
       stan::math::check_greater_or_equal(function__, "secondary", secondary,
         0);
       if (emit_transformed_parameters__) {
+        out__.write(delay_np_pmf_use);
         out__.write(secondary);
       }
       if (stan::math::logical_negation(emit_generated_quantities__)) {
@@ -3527,22 +5846,22 @@ public:
       {
         double reporting_overdispersion =
           std::numeric_limits<double>::quiet_NaN();
-        current_statement__ = 38;
+        current_statement__ = 40;
         reporting_overdispersion = get_param(
                                      param_id_reporting_overdispersion,
                                      params_fixed_lookup,
                                      params_variable_lookup, params_value,
                                      params, pstream__);
-        current_statement__ = 39;
+        current_statement__ = 41;
         stan::model::assign(sim_secondary,
           report_rng(
             stan::model::rvalue(secondary, "secondary",
               stan::model::index_min_max((burn_in + 1), t)),
             reporting_overdispersion, model_type, base_rng__, pstream__),
           "assigning variable sim_secondary");
-        current_statement__ = 42;
+        current_statement__ = 44;
         if (return_likelihood) {
-          current_statement__ = 40;
+          current_statement__ = 42;
           stan::model::assign(log_lik,
             report_log_lik(
               stan::model::rvalue(obs, "obs",
@@ -3583,10 +5902,18 @@ public:
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(delay_params_length),
         "assigning variable delay_params");
       out__.write_free_lb(delay_params_lower, delay_params);
+      Eigen::Matrix<local_scalar_t__,-1,1> delay_np_est_raw =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(delay_np_est_length,
+          DUMMY_VAR__);
+      current_statement__ = 2;
+      stan::model::assign(delay_np_est_raw,
+        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(delay_np_est_length),
+        "assigning variable delay_np_est_raw");
+      out__.write_free_lb(0, delay_np_est_raw);
       Eigen::Matrix<local_scalar_t__,-1,1> day_of_week_simplex =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(week_effect,
           DUMMY_VAR__);
-      current_statement__ = 2;
+      current_statement__ = 3;
       stan::model::assign(day_of_week_simplex,
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(week_effect),
         "assigning variable day_of_week_simplex");
@@ -3594,7 +5921,7 @@ public:
       Eigen::Matrix<local_scalar_t__,-1,1> params =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n_params_variable,
           DUMMY_VAR__);
-      current_statement__ = 3;
+      current_statement__ = 4;
       stan::model::assign(params,
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(n_params_variable),
         "assigning variable params");
@@ -3619,10 +5946,14 @@ public:
         "double",
         std::vector<size_t>{static_cast<size_t>(delay_params_length)});
       current_statement__ = 2;
+      context__.validate_dims("parameter initialization", "delay_np_est_raw",
+        "double",
+        std::vector<size_t>{static_cast<size_t>(delay_np_est_length)});
+      current_statement__ = 3;
       context__.validate_dims("parameter initialization",
         "day_of_week_simplex", "double",
         std::vector<size_t>{static_cast<size_t>(week_effect)});
-      current_statement__ = 3;
+      current_statement__ = 4;
       context__.validate_dims("parameter initialization", "params", "double",
         std::vector<size_t>{static_cast<size_t>(n_params_variable)});
       int pos__ = std::numeric_limits<int>::min();
@@ -3646,23 +5977,44 @@ public:
         }
       }
       out__.write_free_lb(delay_params_lower, delay_params);
+      Eigen::Matrix<local_scalar_t__,-1,1> delay_np_est_raw =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(delay_np_est_length,
+          DUMMY_VAR__);
+      {
+        std::vector<local_scalar_t__> delay_np_est_raw_flat__;
+        current_statement__ = 2;
+        delay_np_est_raw_flat__ = context__.vals_r("delay_np_est_raw");
+        current_statement__ = 2;
+        pos__ = 1;
+        current_statement__ = 2;
+        for (int sym1__ = 1; sym1__ <= delay_np_est_length; ++sym1__) {
+          current_statement__ = 2;
+          stan::model::assign(delay_np_est_raw,
+            delay_np_est_raw_flat__[(pos__ - 1)],
+            "assigning variable delay_np_est_raw",
+            stan::model::index_uni(sym1__));
+          current_statement__ = 2;
+          pos__ = (pos__ + 1);
+        }
+      }
+      out__.write_free_lb(0, delay_np_est_raw);
       Eigen::Matrix<local_scalar_t__,-1,1> day_of_week_simplex =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(week_effect,
           DUMMY_VAR__);
       {
         std::vector<local_scalar_t__> day_of_week_simplex_flat__;
-        current_statement__ = 2;
+        current_statement__ = 3;
         day_of_week_simplex_flat__ = context__.vals_r("day_of_week_simplex");
-        current_statement__ = 2;
+        current_statement__ = 3;
         pos__ = 1;
-        current_statement__ = 2;
+        current_statement__ = 3;
         for (int sym1__ = 1; sym1__ <= week_effect; ++sym1__) {
-          current_statement__ = 2;
+          current_statement__ = 3;
           stan::model::assign(day_of_week_simplex,
             day_of_week_simplex_flat__[(pos__ - 1)],
             "assigning variable day_of_week_simplex",
             stan::model::index_uni(sym1__));
-          current_statement__ = 2;
+          current_statement__ = 3;
           pos__ = (pos__ + 1);
         }
       }
@@ -3672,16 +6024,16 @@ public:
           DUMMY_VAR__);
       {
         std::vector<local_scalar_t__> params_flat__;
-        current_statement__ = 3;
+        current_statement__ = 4;
         params_flat__ = context__.vals_r("params");
-        current_statement__ = 3;
+        current_statement__ = 4;
         pos__ = 1;
-        current_statement__ = 3;
+        current_statement__ = 4;
         for (int sym1__ = 1; sym1__ <= n_params_variable; ++sym1__) {
-          current_statement__ = 3;
+          current_statement__ = 4;
           stan::model::assign(params, params_flat__[(pos__ - 1)],
             "assigning variable params", stan::model::index_uni(sym1__));
-          current_statement__ = 3;
+          current_statement__ = 4;
           pos__ = (pos__ + 1);
         }
       }
@@ -3694,10 +6046,10 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"delay_params", "day_of_week_simplex",
-                "params"};
+    names__ = std::vector<std::string>{"delay_params", "delay_np_est_raw",
+                "day_of_week_simplex", "params"};
     if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"secondary"};
+      std::vector<std::string> temp{"delay_np_pmf_use", "secondary"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -3714,11 +6066,13 @@ public:
     dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{static_cast<
                                                                     size_t>(
                                                                     delay_params_length)},
+                std::vector<size_t>{static_cast<size_t>(delay_np_est_length)},
                 std::vector<size_t>{static_cast<size_t>(week_effect)},
                 std::vector<size_t>{static_cast<size_t>(n_params_variable)}};
     if (emit_transformed_parameters__) {
       std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(t)}};
+        temp{std::vector<size_t>{static_cast<size_t>(delay_np_pmf_length)},
+             std::vector<size_t>{static_cast<size_t>(t)}};
       dimss__.reserve(dimss__.size() + temp.size());
       dimss__.insert(dimss__.end(), temp.begin(), temp.end());
     }
@@ -3738,6 +6092,10 @@ public:
       param_names__.emplace_back(std::string() + "delay_params" + '.' +
         std::to_string(sym1__));
     }
+    for (int sym1__ = 1; sym1__ <= delay_np_est_length; ++sym1__) {
+      param_names__.emplace_back(std::string() + "delay_np_est_raw" + '.' +
+        std::to_string(sym1__));
+    }
     for (int sym1__ = 1; sym1__ <= week_effect; ++sym1__) {
       param_names__.emplace_back(std::string() + "day_of_week_simplex" + '.'
         + std::to_string(sym1__));
@@ -3747,6 +6105,10 @@ public:
         std::to_string(sym1__));
     }
     if (emit_transformed_parameters__) {
+      for (int sym1__ = 1; sym1__ <= delay_np_pmf_length; ++sym1__) {
+        param_names__.emplace_back(std::string() + "delay_np_pmf_use" + '.' +
+          std::to_string(sym1__));
+      }
       for (int sym1__ = 1; sym1__ <= t; ++sym1__) {
         param_names__.emplace_back(std::string() + "secondary" + '.' +
           std::to_string(sym1__));
@@ -3771,6 +6133,10 @@ public:
       param_names__.emplace_back(std::string() + "delay_params" + '.' +
         std::to_string(sym1__));
     }
+    for (int sym1__ = 1; sym1__ <= delay_np_est_length; ++sym1__) {
+      param_names__.emplace_back(std::string() + "delay_np_est_raw" + '.' +
+        std::to_string(sym1__));
+    }
     for (int sym1__ = 1; sym1__ <= (week_effect - 1); ++sym1__) {
       param_names__.emplace_back(std::string() + "day_of_week_simplex" + '.'
         + std::to_string(sym1__));
@@ -3780,6 +6146,10 @@ public:
         std::to_string(sym1__));
     }
     if (emit_transformed_parameters__) {
+      for (int sym1__ = 1; sym1__ <= delay_np_pmf_length; ++sym1__) {
+        param_names__.emplace_back(std::string() + "delay_np_pmf_use" + '.' +
+          std::to_string(sym1__));
+      }
       for (int sym1__ = 1; sym1__ <= t; ++sym1__) {
         param_names__.emplace_back(std::string() + "secondary" + '.' +
           std::to_string(sym1__));
@@ -3797,10 +6167,10 @@ public:
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"day_of_week_simplex\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(week_effect) + "},\"block\":\"parameters\"},{\"name\":\"params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_params_variable) + "},\"block\":\"parameters\"},{\"name\":\"secondary\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(t) + "},\"block\":\"transformed_parameters\"},{\"name\":\"sim_secondary\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(sim_secondary_1dim__) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"log_lik\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(log_lik_1dim__) + "},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"delay_np_est_raw\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_np_est_length) + "},\"block\":\"parameters\"},{\"name\":\"day_of_week_simplex\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(week_effect) + "},\"block\":\"parameters\"},{\"name\":\"params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_params_variable) + "},\"block\":\"parameters\"},{\"name\":\"delay_np_pmf_use\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_np_pmf_length) + "},\"block\":\"transformed_parameters\"},{\"name\":\"secondary\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(t) + "},\"block\":\"transformed_parameters\"},{\"name\":\"sim_secondary\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(sim_secondary_1dim__) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"log_lik\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(log_lik_1dim__) + "},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"day_of_week_simplex\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string((week_effect -1)) + "},\"block\":\"parameters\"},{\"name\":\"params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_params_variable) + "},\"block\":\"parameters\"},{\"name\":\"secondary\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(t) + "},\"block\":\"transformed_parameters\"},{\"name\":\"sim_secondary\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(sim_secondary_1dim__) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"log_lik\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(log_lik_1dim__) + "},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"delay_params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_params_length) + "},\"block\":\"parameters\"},{\"name\":\"delay_np_est_raw\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_np_est_length) + "},\"block\":\"parameters\"},{\"name\":\"day_of_week_simplex\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string((week_effect -1)) + "},\"block\":\"parameters\"},{\"name\":\"params\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(n_params_variable) + "},\"block\":\"parameters\"},{\"name\":\"delay_np_pmf_use\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(delay_np_pmf_length) + "},\"block\":\"transformed_parameters\"},{\"name\":\"secondary\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(t) + "},\"block\":\"transformed_parameters\"},{\"name\":\"sim_secondary\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(sim_secondary_1dim__) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"log_lik\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(log_lik_1dim__) + "},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -3809,9 +6179,10 @@ public:
               emit_transformed_parameters = true, const bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = ((delay_params_length + week_effect) +
-      n_params_variable);
-    const size_t num_transformed = emit_transformed_parameters * (t);
+    const size_t num_params__ = (((delay_params_length + delay_np_est_length)
+      + week_effect) + n_params_variable);
+    const size_t num_transformed = emit_transformed_parameters *
+      ((delay_np_pmf_length + t));
     const size_t num_gen_quantities = emit_generated_quantities *
       ((sim_secondary_1dim__ + log_lik_1dim__));
     const size_t num_to_write = num_params__ + num_transformed +
@@ -3828,9 +6199,10 @@ public:
               emit_transformed_parameters = true, bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = ((delay_params_length + week_effect) +
-      n_params_variable);
-    const size_t num_transformed = emit_transformed_parameters * (t);
+    const size_t num_params__ = (((delay_params_length + delay_np_est_length)
+      + week_effect) + n_params_variable);
+    const size_t num_transformed = emit_transformed_parameters *
+      ((delay_np_pmf_length + t));
     const size_t num_gen_quantities = emit_generated_quantities *
       ((sim_secondary_1dim__ + log_lik_1dim__));
     const size_t num_to_write = num_params__ + num_transformed +

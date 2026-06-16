@@ -114,7 +114,10 @@ test_that("estimate_infections successfully returns estimates when accumulating 
 
 test_that("estimate_infections successfully returns estimates using the poisson observation model", {
   skip_integration()
-  test_estimate_infections(reported_cases, obs = obs_opts(family = "poisson"))
+  out <- test_estimate_infections(
+    reported_cases, obs = obs_opts(family = "poisson")
+  )
+  expect_false("reporting_overdispersion" %in% names(get_parameters(out)))
 })
 
 test_that("estimate_infections successfully returns estimates using a fixed Rt", {
@@ -247,6 +250,76 @@ test_that("estimate_infections output does not contain breakpoints effect when b
   expect_false("breakpoints" %in% unique(samples$variable))
 })
 
+test_that("Dirichlet concentration anchors the GT posterior to its prior", { # nolint
+  skip_integration()
+  # Simulate cases from a known true GT, then fit with a prior
+  # shifted away from the truth at a low and a high concentration.
+  # The generation time is only weakly identified from case data,
+  # so the concentration controls how far the posterior can move
+  # from the prior: a high concentration keeps it close to the
+  # (shifted) prior while a low one lets it drift further.
+  true_gt <- c(0, 0.1, 0.3, 0.35, 0.15, 0.07, 0.03)
+  shifted_prior <- c(0, 0.05, 0.15, 0.3, 0.25, 0.15, 0.1)
+
+  set.seed(123)
+  R_traj <- data.frame(
+    date = seq.Date(as.Date("2023-01-01"), length.out = 60, by = "day"),
+    R = c(rep(1.4, 30), rep(0.8, 30))
+  )
+  sim <- simulate_infections(
+    R = R_traj,
+    initial_infections = 100,
+    generation_time = gt_opts(NonParametric(true_gt)),
+    delays = delay_opts(Fixed(0)),
+    obs = obs_opts(family = "poisson")
+  )
+  sim_cases <- sim[variable == "reported_cases", c("date", "value")]
+  data.table::setnames(sim_cases, "value", "confirm")
+
+  fit_at <- function(conc) {
+    suppressWarnings(estimate_infections(
+      data = sim_cases,
+      generation_time = gt_opts(NonParametric(
+        pmf = Dirichlet(prior = shifted_prior, concentration = conc)
+      )),
+      delays = delay_opts(Fixed(0)),
+      rt = rt_opts(prior = LogNormal(mean = 1, sd = 0.2), rw = 7),
+      gp = NULL,
+      stan = stan_opts(
+        samples = 500, warmup = 500,
+        chains = 2, cores = 1
+      ),
+      verbose = FALSE
+    ))
+  }
+  out_loose <- fit_at(1)
+  out_tight <- fit_at(50)
+  expect_null(out_loose$error)
+  expect_null(out_tight$error)
+
+  pmf_of <- function(out) {
+    as.numeric(get_pmf(get_parameters(out)$generation_time))
+  }
+  loose_pmf <- pmf_of(out_loose)
+  tight_pmf <- pmf_of(out_tight)
+
+  # Both posteriors are valid PMFs over the GT support.
+  expect_equal(sum(loose_pmf), 1, tolerance = 1e-6)
+  expect_equal(sum(tight_pmf), 1, tolerance = 1e-6)
+  expect_true(all(loose_pmf >= 0))
+  expect_true(all(tight_pmf >= 0))
+
+  # The concentration anchors the posterior: a high concentration
+  # keeps it closer to the (shifted) prior than a low one.
+  drift_to <- function(p) sum((p - shifted_prior)^2)
+  expect_lt(drift_to(tight_pmf), drift_to(loose_pmf))
+
+  # The anchored (tight) fit is still pulled towards the truth by
+  # the data, ending up closer to it than the shifted prior.
+  err_to <- function(p) sum((p - true_gt)^2)
+  expect_lt(err_to(tight_pmf), err_to(shifted_prior))
+})
+
 # Non-integration tests (fast - use one MCMC fit for multiple checks) ----
 
 test_that("summary with type='parameters' returns all dates by default", {
@@ -273,72 +346,9 @@ test_that("summary with type='parameters' returns all dates by default", {
 
 # Deprecation tests -------------------------------------------------------
 
-test_that("summary.estimate_infections with type = 'samples' is deprecated", {
-  # Reuse pre-computed fit
+test_that("summary.estimate_infections with type = 'samples' errors", {
   out <- default_fit
-
-  expect_deprecated(summary(out, type = "samples"))
-
-  # Verify it returns the same as get_samples()
-  withr::local_options(lifecycle_verbosity = "quiet")
-  samples_quiet <- summary(out, type = "samples")
-  samples_new <- get_samples(out)
-
-  expect_equal(samples_quiet, samples_new)
-})
-
-test_that("extract_parameter_samples is deprecated", {
-  # Reuse pre-computed fit
-  out <- default_fit
-
-  # Reconstruct full date vector from unpadded observations + args
-  # (observations is now unpadded, but Stan generates samples for full period)
-  obs_dates <- out$observations$date
-  seeding_time <- out$args$seeding_time
-  horizon <- out$args$horizon
-
-  # Full dates: seeding period + observation period + forecast horizon
-  dates <- seq(
-    min(obs_dates) - seeding_time,
-    max(obs_dates) + horizon,
-    by = "days"
-  )
-  reported_dates <- dates[-(1:seeding_time)]
-
-  # Lifecycle warnings need special handling
-  expect_deprecated(extract_parameter_samples(
-    out$fit,
-    out$args,
-    reported_dates = reported_dates,
-    imputed_dates = reported_dates[out$args$imputed_times],
-    reported_inf_dates = dates,
-    drop_length_1 = FALSE,
-    merge = FALSE
-  ))
-
-  # Verify it returns the same as format_simulation_output()
-  withr::local_options(lifecycle_verbosity = "quiet")
-  old_quiet <- extract_parameter_samples(
-    out$fit,
-    out$args,
-    reported_dates = reported_dates,
-    imputed_dates = reported_dates[out$args$imputed_times],
-    reported_inf_dates = dates,
-    drop_length_1 = FALSE,
-    merge = FALSE
-  )
-
-  new_output <- format_simulation_output(
-    out$fit,
-    out$args,
-    reported_dates = reported_dates,
-    imputed_dates = reported_dates[out$args$imputed_times],
-    reported_inf_dates = dates,
-    drop_length_1 = FALSE,
-    merge = FALSE
-  )
-
-  expect_equal(old_quiet, new_output)
+  expect_error(summary(out, type = "samples"), "get_samples")
 })
 
 test_that("get_parameters works as expected for estimate_infections", {
@@ -390,46 +400,25 @@ test_that("get_parameters works as expected with fixed parameters", {
   expect_equal(as.vector(delay_returned[[1]]), expected_pmf)
 })
 
-test_that("$samples accessor is deprecated", {
-  # Reuse pre-computed fit
+test_that("$samples accessor errors", {
   out <- default_fit
-
-  expect_deprecated(out$samples)
-
-  # Verify it returns the same as get_samples()
-  withr::local_options(lifecycle_verbosity = "quiet")
-  samples_dollar <- out$samples
-  samples_new <- get_samples(out)
-
-  expect_equal(samples_dollar, samples_new)
+  expect_error(out$samples, "get_samples")
 })
 
-test_that("$summarised accessor is deprecated", {
-  # Reuse pre-computed fit
+test_that("$summarised accessor errors", {
   out <- default_fit
-
-  expect_deprecated(out$summarised)
-
-  # Verify it returns the same as summary(type = "parameters")
-  withr::local_options(lifecycle_verbosity = "quiet")
-  summarised_dollar <- out$summarised
-  summarised_new <- summary(out, type = "parameters")
-
-  expect_equal(summarised_dollar, summarised_new)
+  expect_error(out$summarised, "summary")
 })
 
 test_that("[[ accessor handles deprecated elements", {
-  # Reuse pre-computed fit
   out <- default_fit
+  expect_error(out[["samples"]], "get_samples")
+  expect_error(out[["summarised"]], "summary")
 
-  # Test deprecation warning for [[
-  expect_deprecated(out[["samples"]])
-  expect_deprecated(out[["summarised"]])
-
-  # Test non-deprecated elements work without warning
-  expect_no_warning(out[["fit"]])
-  expect_no_warning(out[["args"]])
-  expect_no_warning(out[["observations"]])
+  # Test non-deprecated elements work without error
+  expect_no_error(out[["fit"]])
+  expect_no_error(out[["args"]])
+  expect_no_error(out[["observations"]])
 })
 
 test_that("$ accessor works for non-deprecated elements", {
@@ -608,4 +597,94 @@ test_that("get_predictions format='quantile' compatible with scoringutils", {
   scores <- scoringutils::score(forecast_obj)
   expect_s3_class(scores, "data.table")
   expect_true("wis" %in% names(scores))
+})
+
+test_that("as_forecast_sample.estimate_infections produces a valid forecast_sample", {
+  skip_if_not_installed("scoringutils")
+
+  forecast_obj <- scoringutils::as_forecast_sample(
+    default_fit,
+    observations = example_confirmed
+  )
+  expect_s3_class(forecast_obj, "forecast_sample")
+  expect_no_error(
+    scoringutils::assert_forecast(forecast_obj, verbose = FALSE)
+  )
+})
+
+test_that("as_forecast_sample horizon arg sets the lower bound", {
+  skip_if_not_installed("scoringutils")
+
+  default_obj <- scoringutils::as_forecast_sample(
+    default_fit,
+    observations = example_confirmed
+  )
+  expect_true(all(default_obj$horizon >= 0))
+
+  later_obj <- scoringutils::as_forecast_sample(
+    default_fit,
+    observations = example_confirmed,
+    horizon = 5
+  )
+  expect_true(all(later_obj$horizon >= 5))
+
+  all_obj <- scoringutils::as_forecast_sample(
+    default_fit,
+    observations = example_confirmed,
+    horizon = -Inf
+  )
+  expect_true(any(all_obj$horizon < 0))
+})
+
+test_that("as_forecast_sample errors when observations are missing or invalid", {
+  skip_if_not_installed("scoringutils")
+
+  expect_error(
+    scoringutils::as_forecast_sample(default_fit),
+    "observations"
+  )
+  expect_error(
+    scoringutils::as_forecast_sample(
+      default_fit,
+      observations = data.frame(date = example_confirmed$date)
+    ),
+    "confirm"
+  )
+
+  duped <- rbind(
+    data.table::as.data.table(example_confirmed),
+    data.table::as.data.table(example_confirmed[1])
+  )
+  expect_error(
+    scoringutils::as_forecast_sample(default_fit, observations = duped),
+    "duplicated"
+  )
+
+  no_overlap <- data.table::copy(example_confirmed)
+  no_overlap$date <- no_overlap$date + as.difftime(1000, units = "days")
+  expect_error(
+    scoringutils::as_forecast_sample(default_fit, observations = no_overlap),
+    "merging"
+  )
+})
+
+test_that("as_forecast_sample.epinow dispatches and surfaces failed-run errors", {
+  skip_if_not_installed("scoringutils")
+
+  # Synthesise an epinow object by prepending the class to a successful fit
+  fake_epinow <- default_fit
+  class(fake_epinow) <- c("epinow", class(fake_epinow))
+
+  forecast_obj <- scoringutils::as_forecast_sample(
+    fake_epinow,
+    observations = example_confirmed
+  )
+  expect_s3_class(forecast_obj, "forecast_sample")
+
+  failed <- list(error = "boom")
+  class(failed) <- c("epinow", "list")
+  expect_error(
+    scoringutils::as_forecast_sample(failed, observations = example_confirmed),
+    "failed"
+  )
 })
